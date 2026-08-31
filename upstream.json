@@ -1,0 +1,13 @@
+{
+  "version": "0.2.4",
+  "tag": "v0.2.4",
+  "commit": "66c35837d3719b592fa25e0aa09bb5f1c33c14a5",
+  "api": {
+    "tag": "0.2.4",
+    "digest": "sha256:fb18146aa09f0ba24dda73db6e1119ed25eca8b86ae2555ebeb8dc04c8c0f026"
+  },
+  "web": {
+    "tag": "0.2.4",
+    "digest": "sha256:a34c35da7f2a6bde32633429edbc30cf0f4945c54fe7b957635bb0815a96ecc9"
+  }
+}

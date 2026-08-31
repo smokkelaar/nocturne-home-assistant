@@ -1,0 +1,31 @@
+{
+  "name": "Nocturne (experimental)",
+  "version": "0.1.0",
+  "slug": "nocturne_local",
+  "description": "Nocturne 0.2.4 with PostgreSQL. Experimental local app; not for clinical use.",
+  "url": "https://github.com/smokkelaar/nocturne-home-assistant",
+  "arch": ["amd64"],
+  "startup": "application",
+  "boot": "manual",
+  "init": false,
+  "timeout": 120,
+  "ingress": true,
+  "ingress_port": 8099,
+  "panel_icon": "mdi:heart-pulse",
+  "panel_title": "Nocturne",
+  "panel_admin": true,
+  "ports": {"8448/tcp": 8448},
+  "ports_description": {"8448/tcp": "Nocturne HTTPS - alleen lokaal gebruiken; extra toegangscode staat in de HA-webinterface"},
+  "map": [{"type": "ssl", "read_only": true}],
+  "backup": "cold",
+  "options": {
+    "public_url": "https://homeassistant.local:8448",
+    "certificate": "",
+    "private_key": ""
+  },
+  "schema": {
+    "public_url": "url",
+    "certificate": "str",
+    "private_key": "str"
+  }
+}
