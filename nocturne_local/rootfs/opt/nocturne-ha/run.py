@@ -299,7 +299,7 @@ def main():
         supervisor.wait_for('Nocturne API', lambda: api_reachable(options['hostname']), 300)
         supervisor.start('Nocturne Web', ['node', 'server.js'], user='nocturne-web',
                          env=web_env, cwd='/opt/nocturne-web/packages/app')
-        supervisor.wait_for('Nocturne Web', web_reachable, 120)
+        supervisor.wait_for('Nocturne Web', lambda: web_response_reachable(options), 120)
 
         hashed = subprocess.run(['openssl', 'passwd', '-6', '-stdin'], input=passwords['gateway'],
                                 text=True, capture_output=True, check=True).stdout.strip()
@@ -331,8 +331,8 @@ def main():
                     nginx, conf, nginx_config(options, snapshot.cert, snapshot.key),
                     snapshot.info.leaf_sha256, options['hostname']))
                 last_certificate_check = time.monotonic()
-                supervisor.checks = certificates.checks()
-                supervisor.checks['Laatste certificaatcontrole'] = time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())
+                supervisor.checks = {**certificates.checks(), 'Laatste certificaatcontrole':
+                    time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}
                 error = certificates.message if certificates.message.startswith('CERT_') else ''
                 if error and error != last_certificate_error:
                     log(error)

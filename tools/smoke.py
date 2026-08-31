@@ -28,6 +28,8 @@ import sys
 sys.path.insert(0, '/opt/nocturne-ha')
 import run
 assert run.api_reachable('homeassistant.local')
+if hasattr(run, 'web_response_reachable'):  # Baseline 0.1.0 predates this check.
+    assert run.web_response_reachable(run.validate_options({}))
 context = ssl._create_unverified_context()  # Only the disposable CI test certificate.
 url = 'https://127.0.0.1:8448/setup'
 headers = {'Host': 'homeassistant.local:8448'}
