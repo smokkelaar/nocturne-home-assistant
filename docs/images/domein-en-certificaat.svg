@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 690" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="690" viewBox="0 0 960 690" role="img" aria-labelledby="title desc">
   <title id="title">Domeinnaam, DNS en TLS moeten bij elkaar passen</title>
   <desc id="desc">De browser-URL en public_url bevatten dezelfde hostnaam en poort. Het certificaat dekt die hostnaam zonder poort. Lokale DNS stuurt die naam naar het LAN-adres van HA. Alle getoonde adressen zijn documentatievoorbeelden.</desc>
   <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#096e93"/></marker></defs>

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-labelledby="title desc">
   <title id="title">Drie inlogstappen die je niet met elkaar moet verwarren</title>
   <desc id="desc">Eerst het HA-beheerdersaccount voor de statuspagina. Daarna de browserpopup met gebruiker nocturne en de unieke gatewaycode uit HA. Ten slotte het eigen Nocturne-account met passkey en veilig bewaarde herstelcodes.</desc>
   <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#41617b"/></marker></defs>

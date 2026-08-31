@@ -41,6 +41,8 @@ class DocumentationTests(unittest.TestCase):
                 self.assertIsNotNone(root.find(SVG + 'title'))
                 self.assertIsNotNone(root.find(SVG + 'desc'))
                 self.assertIn('viewBox', root.attrib)
+                self.assertEqual('960', root.attrib.get('width'), 'Avoid tiny default SVG size in GitHub Markdown')
+                self.assertEqual(root.attrib['viewBox'].split()[3], root.attrib.get('height'))
                 for node in root.iter():
                     self.assertNotIn(node.tag, (SVG + 'script', SVG + 'foreignObject', SVG + 'image'))
                     for key, value in node.attrib.items():
