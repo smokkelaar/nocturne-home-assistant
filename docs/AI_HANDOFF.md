@@ -25,9 +25,17 @@ This is a shareable, Nocturne-only **HA app wrapper**, not HACS and not the full
 Read the [concrete solution proposals and acceptance tests](OPLOSPLAN.md) before choosing a follow-up. The [visual Dutch installation guide](INSTALLATIE.md) describes the current user-facing flow, not future functionality.
 
 1. A verified, non-destructive local-to-repository migration and backup/restore rehearsal.
-2. Cross-version upgrade CI using non-sensitive synthetic fixtures and a restore test.
+2. Expand the existing setup-only upgrade/restore CI with non-sensitive account/schema fixtures and real passkey recovery checks.
 3. Safe gateway-code-only rotation, without changing instance or database credentials.
-4. Validated TLS certificate renewal reload and IPv6 behavior.
+4. Validate the implemented TLS reload on HA/DuckDNS and multiple real clients; investigate IPv6 separately.
 5. External connector authentication design, only after backup/security boundaries are proven.
 
 The initial wrapper uses Dutch runtime messages. Preserve tested behavior while making the contributor documentation understandable internationally. Do not add unrelated Govee/PV/network configuration to this repository.
+
+## 0.1.1 handoff
+
+- Implemented: `tls.py` immutable TLS snapshots, explicit hostname/validity/key validation, nginx-only reload with leaf confirmation, server-versus-browser status checks, disposable cold restore and baseline-to-candidate upgrade CI. Read [certificate behavior](CERTIFICATEN.md) and [recovery scope](HERSTELPROEF.md).
+- `Validate` pins baseline wrapper 0.1.0 by full commit. Review/update that baseline deliberately when the supported upgrade floor changes. The upstream updater separately builds its pre-update `HEAD`, so it tests the immediate candidate transition as well.
+- No live HA configuration, credentials, account, backup or installation was changed as part of developing these features. Do not infer that the operator installed 0.1.1 from its source version or an ambient app URL.
+- Next human checks: confirm installed/source app identity; coordinate backup/test environment; check status UI with real certificate; real login/second client; actual Supervisor restore. Keep the working source installation untouched until those choices are made.
+- Certificates are stricter at startup in 0.1.1. A currently expired/mismatched/no-SAN certificate that formerly allowed process startup now blocks it safely; communicate this before an update. Never delete identity files to resolve TLS errors.

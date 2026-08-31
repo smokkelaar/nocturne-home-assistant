@@ -12,7 +12,7 @@ The updater:
 2. Requires a newer numeric three-part version; rejects equal-version retags and downgrades.
 3. Resolves **both** API and web images for that release and verifies manifest/blob digests, linux/amd64 availability and the API source commit.
 4. Updates both pins, the upstream source record, wrapper patch version, launcher metadata and changelog together.
-5. Runs offline tests, builds the proposed container and tests fresh boot, protected setup access, clean stop, restart and same-version data/key persistence in a disposable volume.
+5. Runs offline tests, builds the proposed container and tests fresh boot, protected setup access, certificate renewal, clean stop, restart and same-version data/key persistence. It also builds the pre-update `HEAD` baseline, rehearses baseline → candidate, and restores the pre-upgrade cold data into another empty volume on that baseline. [Fixture scope and limits](HERSTELPROEF.md).
 6. Opens or refreshes one `automation/nocturne-upstream` pull request **only if these checks pass**. It does not merge it.
 
 Missing images, changed patch signatures, an unexpected API revision or failing runtime tests stop the workflow. In that case no release is offered; check the failed workflow and upstream notes. Stable-image mutations under the same release number are deliberately not adopted automatically.
@@ -24,7 +24,7 @@ The build/smoke checks run inside the updater itself. This avoids relying on a b
 Before merging an update:
 
 - Read upstream release notes, schema migrations, authentication/routing and licensing changes.
-- Test the old-version → candidate-version upgrade on a **disposable, backed-up** instance. Current CI tests fresh boot and restart, **not a cross-version upgrade**.
+- Review the CI baseline → candidate and cold-restore results. These use a setup-only instance and synthetic row. Additionally test a **disposable, backed-up** instance with a non-sensitive account and realistic settings: fixture persistence alone does not validate every upstream data migration.
 - Verify passkey login and any supported connectors using non-sensitive test data.
 - Confirm the updated wrapper version/changelog, required CI checks and rollback/restore plan.
 

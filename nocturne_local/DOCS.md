@@ -39,13 +39,15 @@ Both certificate fields empty generates a self-signed 30-day test certificate. T
 
 Configure both certificate fields together for trusted HTTPS. Make sure the browser URL exactly matches the certificate hostname and the selected instance identity. If a hostname fails while an IPv4 connection succeeds, diagnose DNS/routing; switching permanently to an IP breaks passkeys. IPv6 host-port publication is not validated by this wrapper.
 
-This version loads certificates when nginx starts. **After renewal, restart the app** to load the new files. Automatic certificate-reload handling is a tracked follow-up, not an implemented guarantee.
+From wrapper 0.1.1, the app validates the certificate's DNS SAN/hostname, validity dates and matching key before startup. Invalid/expired pairs block startup without resetting data. During operation it checks changed files every 15 seconds, stages a stable validated pair, tests nginx and reloads only nginx. It confirms the served leaf certificate; failed candidates retain the old configuration. The old certificate can still expire. Browser trust remains a separate check. [Behavior and error codes](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/CERTIFICATEN.md).
 
 ## Persistence, backups and upgrades
 
 The complete PostgreSQL database and generated keys are stored in the app-private `/data` directory. Keep the database and `secrets.json` together. The app refuses to replace missing/corrupt keys or reset an incomplete database.
 
 The manifest requests **cold backups**. Before an update, make an HA backup including this app, download it to another device and verify you have its recovery information. Verify restore on a disposable installation before trusting it. This project has not yet validated the complete HA backup/restore flow.
+
+CI now rehearses a full cold-data copy, restore into a different disposable volume and baseline-to-candidate wrapper upgrade. This is not a Supervisor archive importer, local-to-repository migration or proof of real-account/passkey recovery. [Test scope](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/HERSTELPROEF.md).
 
 Do not assume downgrading an image reverses a database migration. Restoring a coordinated pre-upgrade database/key backup may be required. PostgreSQL major upgrades are explicitly refused; there is no automatic database reset.
 

@@ -5,6 +5,7 @@ PostgreSQL is shut down LAST, after both clients; /data is never auto-deleted.
 The only unauthenticated HTTP listener is reachable exclusively from HA Ingress.
 """
 import http.server
+import http.client
 import json
 import os
 import signal
@@ -18,6 +19,7 @@ from pathlib import Path
 
 from settings import (load_secrets, nginx_config, service_environments,
                       status_page, validate_options)
+from tls import CertificateWatcher, peer_fingerprint, reload_nginx
 
 DATA = Path('/data')
 RUNTIME = Path('/run/nocturne')
@@ -133,10 +135,30 @@ def web_reachable():
         return False
 
 
+def web_response_reachable(options):
+    connection = http.client.HTTPConnection('127.0.0.1', 8000, timeout=2)
+    try:
+        connection.request('GET', '/', headers={'Host': options['authority'],
+                           'X-Forwarded-Host': options['authority'], 'X-Forwarded-Proto': 'https'})
+        response = connection.getresponse()
+        if response.status == 200:
+            return True
+        if response.status in (302, 303, 307, 308):
+            target = response.getheader('Location', '')
+            return ((target.startswith('/') and not target.startswith('//')) or
+                    target.startswith(options['public_url'] + '/'))
+        return False
+    except (OSError, http.client.HTTPException):
+        return False
+    finally:
+        connection.close()
+
+
 class Supervisor:
     def __init__(self):
         self.stop = threading.Event()
         self.children = []
+        self.checks = {'Installatiecontrole': 'nog niet uitgevoerd'}
         self.status = {'PostgreSQL': 'nog niet gestart', 'Nocturne API': 'nog niet gestart',
                        'Nocturne Web': 'nog niet gestart', 'HTTPS': 'nog niet gestart'}
 
@@ -196,7 +218,8 @@ def make_handler(supervisor, options, passwords, test_certificate):
             if self.path.split('?')[0] != '/':
                 self.send_error(404)
                 return
-            body = status_page(options, supervisor.status, passwords['gateway'], test_certificate).encode()
+            body = status_page(options, supervisor.status, passwords['gateway'], test_certificate,
+                               supervisor.checks).encode()
             self.send_response(200)
             self.send_header('Content-Type', 'text/html; charset=utf-8')
             self.send_header('Cache-Control', 'no-store')
@@ -231,6 +254,9 @@ def main():
         owned_dir(RUNTIME / 'postgresql', 'postgres', 0o700)
         owned_dir(DATA / 'postgres', 'postgres')
         cert, key, test_certificate = prepare_tls(options)
+        certificates = CertificateWatcher(cert, key, options['hostname'], RUNTIME / 'tls')
+        cert, key = certificates.active.cert, certificates.active.key
+        supervisor.checks = certificates.checks()
         handler = make_handler(supervisor, options, passwords, test_certificate)
         server = http.server.ThreadingHTTPServer(('0.0.0.0', 8099), handler)
         threading.Thread(target=server.serve_forever, daemon=True).start()
@@ -273,7 +299,7 @@ def main():
         supervisor.wait_for('Nocturne API', lambda: api_reachable(options['hostname']), 300)
         supervisor.start('Nocturne Web', ['node', 'server.js'], user='nocturne-web',
                          env=web_env, cwd='/opt/nocturne-web/packages/app')
-        supervisor.wait_for('Nocturne Web', web_reachable, 120)
+        supervisor.wait_for('Nocturne Web', lambda: web_response_reachable(options), 120)
 
         hashed = subprocess.run(['openssl', 'passwd', '-6', '-stdin'], input=passwords['gateway'],
                                 text=True, capture_output=True, check=True).stdout.strip()
@@ -283,7 +309,7 @@ def main():
         conf = RUNTIME / 'nginx.conf'
         private_file(conf, nginx_config(options, cert, key))
         subprocess.run(['nginx', '-t', '-c', str(conf)], check=True)
-        supervisor.start('HTTPS', ['nginx', '-c', str(conf), '-g', 'daemon off;'])
+        nginx = supervisor.start('HTTPS', ['nginx', '-c', str(conf), '-g', 'daemon off;'])
         # Nginx tests certificate/key parsing with -t; the process must also bind its listener.
         def tls_listener():
             try:
@@ -292,11 +318,31 @@ def main():
             except OSError:
                 return False
         supervisor.wait_for('HTTPS', tls_listener, 20)
+        last_certificate_check = 0
+        last_certificate_error = ''
         log('Alle diensten gestart. Open Webinterface in HA voor status, link en toegangscode.')
         while not supervisor.stop.wait(5):
             supervisor.check_children()
             supervisor.status['Nocturne API'] = ('gereed' if api_reachable(options['hostname']) else 'antwoordcontrole mislukt')
-            supervisor.status['Nocturne Web'] = ('luistert; volledig inloggen nog testen' if web_reachable() else 'niet bereikbaar')
+            supervisor.status['Nocturne Web'] = ('HTTP-antwoord ontvangen; passkey-login nog apart testen'
+                if web_response_reachable(options) else 'WEB_RESPONSE: geen geldig HTTP-antwoord')
+            if time.monotonic() - last_certificate_check >= 15:
+                certificates.poll(lambda snapshot: reload_nginx(
+                    nginx, conf, nginx_config(options, snapshot.cert, snapshot.key),
+                    snapshot.info.leaf_sha256, options['hostname']))
+                last_certificate_check = time.monotonic()
+                supervisor.checks = {**certificates.checks(), 'Laatste certificaatcontrole':
+                    time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}
+                error = certificates.message if certificates.message.startswith('CERT_') else ''
+                if error and error != last_certificate_error:
+                    log(error)
+                last_certificate_error = error
+            try:
+                matched = peer_fingerprint(options['hostname']) == certificates.active.info.leaf_sha256
+            except OSError:
+                matched = False
+            supervisor.status['HTTPS'] = ('lokaal TLS-certificaat bevestigd; browservertrouwen nog testen'
+                if matched else 'TLS_RESPONSE: lokaal geladen certificaat niet bevestigd')
         return 0
     except InterruptedError:
         return 0

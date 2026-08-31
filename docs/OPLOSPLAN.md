@@ -1,6 +1,18 @@
 # Open punten: concrete oplossingen en een veilige volgorde
 
-**Voorstellen, geen reeds geïmplementeerde functies.** Dit document vult de gaten uit [de testmatrix](TESTING.md), [migratiewaarschuwing](MIGRATION.md) en [installatiehandleiding](INSTALLATIE.md) in met afgebakende ontwikkelstappen. Het is geen toestemming om een bestaande installatie te wijzigen of gegevens te wissen.
+Dit document bevat het oorspronkelijke plan plus de voortgang vanaf **0.1.1**. **Voorstellen, geen reeds geïmplementeerde functies** geldt voor de onderdelen die hieronder niet als gerealiseerd zijn aangeduid. De [testmatrix](TESTING.md) blijft leidend voor de bewijsgrenzen. Het plan is geen toestemming om een bestaande installatie te wijzigen of gegevens te wissen.
+
+## Gerealiseerd in 0.1.1 en wat nog openstaat
+
+| Werkpakket | Nu gebouwd | Nog gebruikersinput of vervolgwerk nodig |
+|---|---|---|
+| Herstel | Volledige koude CI-datakopie → nieuw volume → oude image, sleutels/testwaarde behouden; onvolledige set geweigerd | Echte HA/Supervisor-back-up herstellen en account/passkey controleren |
+| Migratie | Herstelbasis en expliciete grenzen vastgelegd | Overdracht tussen verschillende appidentiteiten; geen migratieknop |
+| Installatiecontrole | Publiek adres, certificaat/SAN/sleutel/verloop, echte HTTP-respons, onderscheid browserchecks | Browservertrouwen, DNS-route, passkey en tweede apparaat |
+| Certificaatvernieuwing | Stabiele private snapshot, validatie, nginx-only reload, aangeboden leaf bevestigd; foutpaar geweigerd | Echte DuckDNS-vernieuwing op HA met bestaande accountlogin |
+| Upgrade | 0.1.0 → kandidaat; bot test pre-update main → nieuwe upstream-kandidaat; herstel oude backup apart | Gevulde testaccounts/schema's, echte passkeys; 0.1.1 zelf verandert Nocturne 0.2.4 niet |
+
+Details: [herstelproef](HERSTELPROEF.md) en [certificaten](CERTIFICATEN.md). De volgende secties beschrijven de oorspronkelijke probleemstelling en de volledige acceptatiedoelen; alleen de hierboven genoemde deelresultaten zijn gebouwd.
 
 ## Eerst onderscheid maken
 
@@ -127,6 +139,6 @@ Maak daarnaast een korte matrix voor Windows/Android, lokale DNS versus de tijde
 
 ## Voorstel voor de eerstvolgende ronde
 
-**Eén afgebakend resultaat: een herstelde lege testinstantie aantoonbaar terugkrijgen uit een back-up.** Lever daarvoor een exacte procedure en testverslag op, zonder de huidige installatie te vervangen. Daarna kan de migratietool verantwoord worden ontworpen. Installatiechecks en certificaatherlading kunnen als afzonderlijke kleine wijzigingen volgen, elk met eigen tests en release-notities.
+**Eerstvolgende gebruikersproef: een afzonderlijke HA-testinstantie terugkrijgen uit een echte Supervisor-back-up, inclusief testaccount/passkey.** De koude containerherstelproef, installatiechecks en certificaatherlading zijn in 0.1.1 gebouwd en hebben eigen tests. De volledige HA-herstelroute en migratie zijn daarmee nog niet bewezen. Kies met de gebruiker een testomgeving en een backupmoment voordat een migratietool wordt toegepast.
 
 Dit volgt het principe: eerst gegevens kunnen terughalen, dan verplaatsen, daarna updates verder automatiseren. De bestaande werkende installatie blijft tot die tijd het uitgangspunt, niet het proefobject voor destructieve tests.

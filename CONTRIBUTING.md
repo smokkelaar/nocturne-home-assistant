@@ -4,7 +4,7 @@ Use issues to agree on a focused change, fork this repository and submit a pull 
 
 ## Development checks
 
-Python 3.12+ and Node 24:
+Python 3.12+, Node 24 and OpenSSL (installed in Ubuntu CI; required for actual certificate fixtures):
 
 ```sh
 python -m unittest discover -s tests -v
@@ -20,6 +20,10 @@ python tools/smoke.py --image nocturne-ha:dev
 ```
 
 The smoke test creates and removes only its own UUID-named container and volume. It does not mount user files or publish host ports. Never repurpose it to point at an existing instance's data. A production database should never be used as a CI fixture.
+
+See [cold restore / baseline upgrade CI](docs/HERSTELPROEF.md) and [TLS tests](docs/CERTIFICATEN.md) for their precise evidence limits. A CI pass does not prove a Supervisor restore or a real passkey/account migration.
+
+For visual review without HA or real credentials, run `python tools/preview_status.py` and open the printed loopback URL. The page explicitly uses fictional examples and the server serves no files. Stop it with Ctrl+C. Do not replace its example data with a user's credentials.
 
 ## Rules for changes
 
