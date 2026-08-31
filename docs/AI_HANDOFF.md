@@ -14,7 +14,7 @@ This is a shareable, Nocturne-only **HA app wrapper**, not HACS and not the full
 ## Non-negotiable boundaries
 
 - Do not read/upload private databases, credentials, account recovery material or raw health data for public debugging.
-- Do not expose ports publicly, remove gateway/authentication checks or weaken TLS/passkey validation to make setup appear to work.
+- Do not expose ports publicly or weaken TLS/passkey validation to make setup appear to work. `gateway_auth: false` is a supported guarded mode from 0.1.2, not permission to remove its startup checks or make it the implicit default.
 - Never regenerate instance/database keys or initialize over existing data. Preserve database and matching keys together.
 - Do not uninstall a local prototype as a shortcut to subscribing it to this repository. Repository app identity differs; migration is not automated.
 - A passing container boot/restart test is not an upgrade, passkey, connector or clinical validation.
@@ -35,7 +35,13 @@ The initial wrapper uses Dutch runtime messages. Preserve tested behavior while 
 ## 0.1.1 handoff
 
 - Implemented: `tls.py` immutable TLS snapshots, explicit hostname/validity/key validation, nginx-only reload with leaf confirmation, server-versus-browser status checks, disposable cold restore and baseline-to-candidate upgrade CI. Read [certificate behavior](CERTIFICATEN.md) and [recovery scope](HERSTELPROEF.md).
-- `Validate` pins baseline wrapper 0.1.0 by full commit. Review/update that baseline deliberately when the supported upgrade floor changes. The upstream updater separately builds its pre-update `HEAD`, so it tests the immediate candidate transition as well.
+- `Validate` originally pinned wrapper 0.1.0; the 0.1.2 work deliberately advances it to immutable wrapper 0.1.1. Review/update that baseline only when the supported upgrade floor changes. The upstream updater separately builds its pre-update `HEAD`, so it tests the immediate candidate transition as well.
 - No live HA configuration, credentials, account, backup or installation was changed as part of developing these features. Do not infer that the operator installed 0.1.1 from its source version or an ambient app URL.
 - Next human checks: confirm installed/source app identity; coordinate backup/test environment; check status UI with real certificate; real login/second client; actual Supervisor restore. Keep the working source installation untouched until those choices are made.
 - Certificates are stricter at startup in 0.1.1. A currently expired/mismatched/no-SAN certificate that formerly allowed process startup now blocks it safely; communicate this before an update. Never delete identity files to resolve TLS errors.
+
+## 0.1.2 handoff
+
+- Web readiness now requests exact `/health` instead of `/`; this prevents the wrapper's five-second probe from rendering the dashboard and creating anonymous chart `401` log noise. Do not fall back to `/`.
+- `gateway_auth` defaults to `true`. Explicit `false` requires configured TLS and read-only startup verification that native authentication is mandatory, the instance is loaded/non-demo and anonymous chart access returns `401`. Keep the canonical-host nginx guard and stripped credential headers.
+- Native-mode container CI uses an empty fixture and therefore cannot validate a real account/passkey. A user must verify existing passkey login, logout/login and app restart after a backup. Do not describe that as automated evidence.

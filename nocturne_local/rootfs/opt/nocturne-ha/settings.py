@@ -39,8 +39,13 @@ def validate_options(options):
     for value in (cert, key):
         if value and (not re.fullmatch(r'[a-zA-Z0-9_.-]+', value) or '..' in value):
             raise ValueError('Certificaten moeten bestandsnamen direct in /ssl zijn')
+    gateway_auth = options.get('gateway_auth', True)
+    if type(gateway_auth) is not bool:
+        raise ValueError('gateway_auth moet true of false zijn')
+    if not gateway_auth and not cert:
+        raise ValueError('GATEWAY_TLS: zonder extra gatewaycode zijn eigen certificate/private_key-bestanden vereist')
     return dict(public_url=public_url, hostname=hostname, authority=parsed.netloc.lower(),
-                certificate=cert, private_key=key)
+                certificate=cert, private_key=key, gateway_auth=gateway_auth)
 
 
 def load_secrets(data_dir):
@@ -73,6 +78,9 @@ def service_environments(options, passwords, timezone='Europe/Amsterdam'):
                ASPNETCORE_ENVIRONMENT='Production', ASPNETCORE_URLS='http://127.0.0.1:8080',
                ASPNETCORE_FORWARDEDHEADERS_ENABLED='true', DemoService__Enabled='false',
                WEB_URL='http://127.0.0.1:8000', Logging__LogLevel__Default='Warning')
+    if not options.get('gateway_auth', True):
+        # This is upstream Nocturne's own site lockdown, not an auth bypass.
+        api['Security__RequireAuthentication'] = 'true'
     for name, role in [('nocturne-postgres', 'app'), ('nocturne-postgres-migrator', 'migrator')]:
         api[f'ConnectionStrings__{name}'] = (
             f'Host=127.0.0.1;Port=5432;Database=nocturne;Username=nocturne_{role};Password={passwords[role]}')
@@ -85,8 +93,13 @@ def service_environments(options, passwords, timezone='Europe/Amsterdam'):
 
 
 def nginx_config(options, cert_path, key_path):
-    # All endpoints require an additional local-app password during this trial.
-    # No login bypass: Nocturne still performs its own authentication afterward.
+    # Native mode is opt-in and is verified before nginx starts. Neither mode
+    # sends a service credential or bypasses Nocturne's account authentication.
+    gate = ('auth_basic "Nocturne lokale test - code staat in Home Assistant";\n'
+            '    auth_basic_user_file /run/nocturne/gateway.htpasswd;')
+    if not options.get('gateway_auth', True):
+        gate = ('auth_basic off;\n'
+                f'    if ($host != "{options["hostname"]}") {{ return 421; }}')
     return f'''user www-data;
 worker_processes 1;
 pid /run/nocturne/nginx.pid;
@@ -102,8 +115,7 @@ http {{
     ssl_certificate {cert_path};
     ssl_certificate_key {key_path};
     ssl_protocols TLSv1.2 TLSv1.3;
-    auth_basic "Nocturne lokale test - code staat in Home Assistant";
-    auth_basic_user_file /run/nocturne/gateway.htpasswd;
+    {gate}
     proxy_http_version 1.1;
     proxy_set_header Host $http_host;
     proxy_set_header X-Forwarded-Host $http_host;
@@ -140,6 +152,14 @@ def status_page(options, statuses, gateway_password, test_certificate, checks=No
     certificate_text = ('Zelfondertekend testcertificaat: nog niet geschikt voor echte medische '
                         'gegevens. Vertrouwd HTTPS/passkey-inloggen moet apart worden getest.'
                         if test_certificate else 'Eigen certificaat ingesteld. Controleer de geldigheid in de browser.')
+    gateway_section = f'''<details><summary>Toegangscode voor deze lokale test tonen</summary>
+<p>Gebruiker: <code>nocturne</code><br>Wachtwoord: <code>{esc(gateway_password)}</code></p>
+<p>Dit is de extra beveiliging van de app, niet je Nocturne-account. Deel deze code niet.</p></details>'''
+    if not options.get('gateway_auth', True):
+        gateway_section = ('<p><strong>Geen extra gatewaycode nodig.</strong> '
+                           'Log rechtstreeks in met je Nocturne-account/passkey. '
+                           'Nocturne-aanmelding blijft verplicht.</p>')
+    open_url = options['public_url'] + ('' if options.get('gateway_auth', True) else '/auth/login')
     return f'''<!doctype html><html lang="nl"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Nocturne lokale test</title>
@@ -150,11 +170,9 @@ code{{overflow-wrap:anywhere}}button{{padding:10px;cursor:pointer}}.warning{{col
 <section><h2>Werkelijke dienststatus</h2><ul>{rows}</ul>
 <button onclick="location.reload()">Status vernieuwen</button></section>
 <section><h2>Nocturne openen</h2>
-<p><a href="{esc(options['public_url'], quote=True)}" target="_blank" rel="noopener noreferrer">Open het echte Nocturne-installatiescherm</a></p>
+<p><a href="{esc(open_url, quote=True)}" target="_blank" rel="noopener noreferrer">Open Nocturne</a></p>
 <p>Deze HA-pagina toont alleen de technische status; het is niet het Nocturne-dashboard.</p>
-<details><summary>Toegangscode voor deze lokale test tonen</summary>
-<p>Gebruiker: <code>nocturne</code><br>Wachtwoord: <code>{esc(gateway_password)}</code></p>
-<p>Dit is de extra beveiliging van de app, niet je Nocturne-account. Deel deze code niet.</p></details>
+{gateway_section}
 <p class="warning">{esc(certificate_text)}</p></section>
 <section><h2>Installatiecontrole</h2>
 <p><strong>Publiek adres:</strong> <code>{esc(options['public_url'])}</code> — URL-syntax gecontroleerd.</p>

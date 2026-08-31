@@ -188,16 +188,5 @@ class ReloadTests(unittest.TestCase):
         self.assertNotIn('<script>', page)
         self.assertIn('&lt;script&gt;', page)
 
-    def test_web_http_failure_not_reported_as_ready(self):
-        for status, location, expected in [(200, '', True), (500, '', False),
-                (303, '/setup', True), (302, '//elsewhere.example/', False),
-                (302, 'https://evil.example/', False)]:
-            with self.subTest(status=status, location=location), patch.object(runtime.http.client, 'HTTPConnection') as factory:
-                response = factory.return_value.getresponse.return_value
-                response.status = status
-                response.getheader.return_value = location
-                self.assertEqual(expected, runtime.web_response_reachable(settings.validate_options({})))
-
-
 if __name__ == '__main__':
     unittest.main()

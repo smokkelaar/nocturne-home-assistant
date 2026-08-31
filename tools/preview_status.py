@@ -11,7 +11,7 @@ from settings import status_page, validate_options
 def preview():
     page = status_page(validate_options({'public_url': 'https://nocturne.example.net:8448'}),
         {'PostgreSQL': 'gereed — voorbeeld', 'Nocturne API': 'gereed — voorbeeld',
-         'Nocturne Web': 'HTTP-antwoord ontvangen; passkey-login nog apart testen',
+         'Nocturne Web': 'HTTP-healthcheck geslaagd; passkey-login nog apart testen',
          'HTTPS': 'lokaal TLS-certificaat bevestigd; browservertrouwen nog testen'},
         'VOORBEELD-GEEN-WERKEND-WACHTWOORD', False,
         {'Geladen certificaat': 'SAN/domeinnaam en sleutelpaar gecontroleerd. Geldig tot 2030-01-01 12:00 UTC (voorbeeld).',

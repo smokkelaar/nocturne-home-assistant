@@ -2,8 +2,9 @@
 
 ```text
 HA authenticated ingress ──> :8099 status/launcher (Supervisor peer only)
-                                  │ HTTPS link + gateway code
-Browser ──trusted TLS + Basic auth─> :8448 nginx
+                                  │ HTTPS link (+ gateway code in default mode)
+Browser ──trusted TLS ─────────────> :8448 nginx
+             │ default: Basic auth; opt-in: native Nocturne auth only
                                   ├─> loopback :8000 Nocturne Web (UID 1655)
                                   └─> loopback :8080 Nocturne API (upstream app UID)
                                                │
@@ -14,7 +15,7 @@ Browser ──trusted TLS + Basic auth─> :8448 nginx
 
 The Python supervisor starts PostgreSQL, bootstraps dedicated roles, starts the API, waits for usable status, starts web and then nginx. Any child exit stops the app. Shutdown stops clients first and PostgreSQL last. `/data` is never automatically deleted/reset.
 
-An initial Nocturne `503 setup_required` status is a valid boot condition. Other 503 responses do not count as ready. The web listener probe alone does not prove end-to-end authentication; the CI smoke test separately requests the setup page through nginx.
+An initial Nocturne `503 setup_required` status is a valid boot condition in default gateway mode. Other 503 responses do not count as ready. Web readiness uses upstream's dedicated `/health` route, so it does not render the dashboard or call protected chart endpoints. This proves process health, not an account/passkey login.
 
 ## State and privileges
 
@@ -26,7 +27,7 @@ Only HTTPS 8448 is published to the host. HA ingress traffic on 8099 must origin
 
 ## Authentication and proxy behavior
 
-TLS uses explicitly configured read-only `/ssl` files or a clearly marked temporary test certificate. nginx requires gateway Basic auth on all proxied paths, preserves the external hostname **including port**, sets forwarded HTTPS headers, and strips incoming Authorization and internal instance-auth headers. Nocturne then performs its own account/passkey authentication.
+TLS uses explicitly configured read-only `/ssl` files or a clearly marked temporary test certificate. By default nginx requires gateway Basic auth on all proxied paths. Wrapper 0.1.2 adds an explicit native mode (`gateway_auth: false`) for an already configured owner account. Before nginx starts, the wrapper forces and verifies Nocturne authentication and confirms an anonymous protected-data request receives `401`; a setup/demo/unknown response fails closed. Native mode also requires the canonical configured host and a real configured certificate. Both modes preserve the external hostname **including port**, set forwarded HTTPS headers, and strip incoming Authorization and internal instance-auth headers. No service/admin credential is injected into browser requests.
 
 From 0.1.1, `tls.py` validates leaf SAN/hostname, validity and key match, then keeps a private immutable runtime snapshot. The watcher requires stable source bytes across two observations at least ten seconds apart. Renewal tests a candidate nginx configuration, atomically replaces its config, signals only nginx and verifies the served leaf fingerprint over loopback. Failed candidates retain/restore the previous config. It neither writes `/ssl` nor asserts trust in a client's CA store. Full chain parsing is checked by nginx; revocation and browser trust are outside this preflight. Runtime snapshots are not a persistent fallback after app restart.
 
