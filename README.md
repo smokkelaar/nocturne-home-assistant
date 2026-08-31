@@ -39,6 +39,8 @@ There is intentionally **no floating `latest` image and no unattended merge of d
 - [Contributing and local test commands](CONTRIBUTING.md)
 - [Architecture and security boundaries](docs/ARCHITECTURE.md)
 - [Known limitations and test evidence](docs/TESTING.md)
+- [Certificate preflight, automatic reload and error codes (Dutch)](docs/CERTIFICATEN.md)
+- [Cold restore and upgrade rehearsal: scope and remaining HA checks (Dutch)](docs/HERSTELPROEF.md)
 - [Concrete solutions and priorities for the remaining gaps (Dutch)](docs/OPLOSPLAN.md)
 - [Handoff for the next developer or AI](docs/AI_HANDOFF.md)
 - [Security reporting](SECURITY.md)

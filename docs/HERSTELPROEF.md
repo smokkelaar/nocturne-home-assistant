@@ -7,7 +7,7 @@ Deze ontwikkelaarstest gebruikt **alleen nieuw gemaakte Docker-volumes en synthe
 | Fase | Uitvoering | Controle |
 |---|---|---|
 | Baseline | Start de bekende vorige wrapper op lege data; voeg een herkenbare testwaarde toe | API, beschermde setup, sleutelidentiteit |
-| Koude kopie | Stop de app netjes; kopieer de volledige `/data` naar een apart back-upvolume | Schone exit; geen PostgreSQL PID-bestand; databasecontrolebestand en sleutels aanwezig |
+| Koude kopie | Stop de app netjes; kopieer de volledige `/data` naar een apart back-upvolume | Schone exit; geen PostgreSQL PID-bestand; controlebestand/sleutels aanwezig; inhoudshashes, eigenaar en bestandsrechten van de kopie identiek |
 | Upgrade | Start de kandidaat met de oorspronkelijke data | Zelfde sleutels, testwaarde, beschermde setup en API |
 | Herstel | Kopieer de **vooraf gemaakte** back-up naar nog een leeg volume en start de **oude** image | Zelfde testwaarde en sleutels komen terug |
 | Onvolledige set | Verwijder alleen op een aparte wegwerpkopie het sleutelbestand | De identiteitslader weigert nieuwe sleutels te maken; databasecontrolebestand blijft intact |

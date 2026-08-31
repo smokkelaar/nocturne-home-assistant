@@ -319,6 +319,7 @@ def main():
                 return False
         supervisor.wait_for('HTTPS', tls_listener, 20)
         last_certificate_check = 0
+        last_certificate_error = ''
         log('Alle diensten gestart. Open Webinterface in HA voor status, link en toegangscode.')
         while not supervisor.stop.wait(5):
             supervisor.check_children()
@@ -331,6 +332,11 @@ def main():
                     snapshot.info.leaf_sha256, options['hostname']))
                 last_certificate_check = time.monotonic()
                 supervisor.checks = certificates.checks()
+                supervisor.checks['Laatste certificaatcontrole'] = time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())
+                error = certificates.message if certificates.message.startswith('CERT_') else ''
+                if error and error != last_certificate_error:
+                    log(error)
+                last_certificate_error = error
             try:
                 matched = peer_fingerprint(options['hostname']) == certificates.active.info.leaf_sha256
             except OSError:

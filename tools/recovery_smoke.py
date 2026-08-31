@@ -15,14 +15,24 @@ CHECK_ROW = "import sys\nsys.path.insert(0, '/opt/nocturne-ha')\nimport run\nass
 # cp -a preserves database ownership/modes. Full /data includes WAL, roles,
 # instance keys and options. Both source and destination must be offline.
 COPY = '''
-import pathlib, subprocess
+import hashlib, pathlib, stat, subprocess
 source, target = pathlib.Path('/source'), pathlib.Path('/target')
 assert not any(target.iterdir()), 'Refuse nonempty destination'
 assert (source/'postgres/PG_VERSION').read_text().strip() == '17'
 assert (source/'postgres/global/pg_control').is_file()
 assert (source/'secrets.json').is_file()
 assert not (source/'postgres/postmaster.pid').exists(), 'Source is not cold'
+def inventory(root):
+    result = {}
+    for path in root.rglob('*'):
+        metadata = path.lstat()
+        assert not path.is_symlink(), 'No external tablespaces/symlinks in CI fixtures'
+        digest = hashlib.sha256(path.read_bytes()).digest() if path.is_file() else None
+        result[str(path.relative_to(root))] = (stat.S_IMODE(metadata.st_mode), metadata.st_uid, metadata.st_gid, digest)
+    return result
+expected = inventory(source)
 subprocess.run(['cp', '-a', '/source/.', '/target/'], check=True)
+assert inventory(target) == expected, 'Cold copy content/ownership/mode mismatch'
 '''
 
 

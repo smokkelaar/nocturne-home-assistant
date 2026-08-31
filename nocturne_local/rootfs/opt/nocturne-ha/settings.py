@@ -149,6 +149,13 @@ code{{overflow-wrap:anywhere}}button{{padding:10px;cursor:pointer}}.warning{{col
 <h1>Nocturne</h1><p>HA-testpakket {esc(versions['app'])} · Nocturne {esc(versions['nocturne'])} · amd64</p>
 <section><h2>Werkelijke dienststatus</h2><ul>{rows}</ul>
 <button onclick="location.reload()">Status vernieuwen</button></section>
+<section><h2>Nocturne openen</h2>
+<p><a href="{esc(options['public_url'], quote=True)}" target="_blank" rel="noopener noreferrer">Open het echte Nocturne-installatiescherm</a></p>
+<p>Deze HA-pagina toont alleen de technische status; het is niet het Nocturne-dashboard.</p>
+<details><summary>Toegangscode voor deze lokale test tonen</summary>
+<p>Gebruiker: <code>nocturne</code><br>Wachtwoord: <code>{esc(gateway_password)}</code></p>
+<p>Dit is de extra beveiliging van de app, niet je Nocturne-account. Deel deze code niet.</p></details>
+<p class="warning">{esc(certificate_text)}</p></section>
 <section><h2>Installatiecontrole</h2>
 <p><strong>Publiek adres:</strong> <code>{esc(options['public_url'])}</code> — URL-syntax gecontroleerd.</p>
 <h3>Door de app gecontroleerd</h3><ul>{check_rows}</ul>
@@ -163,13 +170,6 @@ De app vraagt geen nieuwe certificaten aan; bijvoorbeeld DuckDNS blijft daarvoor
 De server kan jouw DNS-route, certificaatvertrouwen of passkeyvoorziening niet bewijzen.</p>
 <p><a href="https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md" target="_blank" rel="noopener noreferrer">Visuele installatiehandleiding</a> ·
 <a href="https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/CERTIFICATEN.md" target="_blank" rel="noopener noreferrer">Certificaatcontrole en foutcodes</a></p></section>
-<section><h2>Nocturne openen</h2>
-<p><a href="{esc(options['public_url'], quote=True)}" target="_blank" rel="noopener noreferrer">Open het echte Nocturne-installatiescherm</a></p>
-<p>Deze HA-pagina toont alleen de technische status; het is niet het Nocturne-dashboard.</p>
-<details><summary>Toegangscode voor deze lokale test tonen</summary>
-<p>Gebruiker: <code>nocturne</code><br>Wachtwoord: <code>{esc(gateway_password)}</code></p>
-<p>Dit is de extra beveiliging van de app, niet je Nocturne-account. Deel deze code niet.</p></details>
-<p class="warning">{esc(certificate_text)}</p></section>
 <p>Test eerst alleen starten en het installatiescherm. Geen CGM/pomp koppelen, geen behandelgegevens invoeren.
 Geen internetpoorten openzetten. Deze experimentele app is geen HACS-integratie en geen medisch hulpmiddel.</p>
 <p><a href="https://github.com/smokkelaar/nocturne-home-assistant" target="_blank" rel="noopener noreferrer">Broncode, documentatie en bijdragen</a></p>
