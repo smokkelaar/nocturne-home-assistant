@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="850" viewBox="0 0 960 850" role="img" aria-labelledby="title desc">
+  <title id="title">Nocturne: acht stappen naar een lege werkende testinstallatie</title>
+  <desc id="desc">Eerst vaststellen of het een nieuwe installatie is. Daarna repository toevoegen, installeren, HTTPS voorbereiden, configureren, starten, gateway openen, account maken en de herstarttest uitvoeren.</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#41617b"/></marker></defs>
+  <rect width="960" height="850" rx="22" fill="#f3f7fb"/>
+  <g font-family="Arial, Helvetica, sans-serif" fill="#122d45">
+    <text x="40" y="52" font-size="28" font-weight="700">Van repository naar Nocturne</text>
+    <text x="40" y="82" font-size="18" fill="#41617b">Stappenkaart · nieuwe, lege testinstallatie · geen screenshot</text>
+    <rect x="40" y="107" width="880" height="77" rx="12" fill="#fff1d9" stroke="#b57416"/>
+    <text x="62" y="139" font-size="20" font-weight="700">Al een lokale testapp? Eerst het migratieplan.</text>
+    <text x="62" y="166" font-size="18">Niet verwijderen; toevoegen aan GitHub verplaatst je gegevens niet.</text>
+    <g fill="none" stroke="#41617b" stroke-width="3" marker-end="url(#arrow)">
+      <path d="M480 263 H516"/><path d="M724 319 V355"/>
+      <path d="M524 416 H488"/><path d="M238 472 V508"/>
+      <path d="M480 569 H516"/><path d="M724 625 V661"/>
+      <path d="M524 722 H488"/>
+    </g>
+    <g fill="#fff" stroke="#c6d4e0" stroke-width="1.5">
+      <rect x="40" y="211" width="440" height="108" rx="14"/>
+      <rect x="524" y="211" width="396" height="108" rx="14"/>
+      <rect x="524" y="364" width="396" height="108" rx="14"/>
+      <rect x="40" y="364" width="440" height="108" rx="14"/>
+      <rect x="40" y="517" width="440" height="108" rx="14"/>
+      <rect x="524" y="517" width="396" height="108" rx="14"/>
+      <rect x="524" y="670" width="396" height="108" rx="14"/>
+      <rect x="40" y="670" width="440" height="108" rx="14"/>
+    </g>
+    <g fill="#096e93">
+      <circle cx="76" cy="247" r="19"/><circle cx="560" cy="247" r="19"/>
+      <circle cx="560" cy="400" r="19"/><circle cx="76" cy="400" r="19"/>
+      <circle cx="76" cy="553" r="19"/><circle cx="560" cy="553" r="19"/>
+      <circle cx="560" cy="706" r="19"/><circle cx="76" cy="706" r="19"/>
+    </g>
+    <g fill="#fff" text-anchor="middle" font-size="21" font-weight="700">
+      <text x="76" y="254">1</text><text x="560" y="254">2</text>
+      <text x="560" y="407">3</text><text x="76" y="407">4</text>
+      <text x="76" y="560">5</text><text x="560" y="560">6</text>
+      <text x="560" y="713">7</text><text x="76" y="713">8</text>
+    </g>
+    <g font-size="22" font-weight="700">
+      <text x="109" y="254">Repository toevoegen</text><text x="593" y="254">App installeren</text>
+      <text x="593" y="407">HTTPS voorbereiden</text><text x="109" y="407">Opties opslaan</text>
+      <text x="109" y="560">Starten + status</text><text x="593" y="560">Gateway openen</text>
+      <text x="593" y="713">Account + passkey</text><text x="109" y="713">Herstarttest</text>
+    </g>
+    <g font-size="18" fill="#41617b">
+      <text x="62" y="290">Via HA-appwinkel; niet via HACS</text><text x="546" y="290">Eén build; wacht tot die klaar is</text>
+      <text x="546" y="443">Eigen naam + DNS + certificaat</text><text x="62" y="443">URL, certificaatnaam en sleutelnaam</text>
+      <text x="62" y="596">PostgreSQL, API, web en HTTPS gereed</text><text x="546" y="596">Gebruiker nocturne + code uit HA</text>
+      <text x="546" y="749">Herstelcodes bewaren; import skippen</text><text x="62" y="749">Bestaand account blijft werken</text>
+    </g>
+    <text x="40" y="822" font-size="18" font-weight="700" fill="#226548">Eindpunt: leeg dashboard + opnieuw inloggen + behoud na app-herstart.</text>
+  </g>
+</svg>

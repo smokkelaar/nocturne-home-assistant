@@ -11,6 +11,8 @@ This repository is **Nocturne only**. It contains the HA wrapper, its small upst
 
 ## Install
 
+**Start here: [Visuele Nederlandse installatiehandleiding — van repository tot werkend dashboard](docs/INSTALLATIE.md).** Eight numbered steps, diagrams, DNS/certificate setup, passkey registration and a restart checklist. [English installation reference](nocturne_local/DOCS.md).
+
 [![Add repository to Home Assistant](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fsmokkelaar%2Fnocturne-home-assistant)
 
 1. Add this repository to the **Home Assistant app store** (formerly add-on store).
@@ -37,6 +39,7 @@ There is intentionally **no floating `latest` image and no unattended merge of d
 - [Contributing and local test commands](CONTRIBUTING.md)
 - [Architecture and security boundaries](docs/ARCHITECTURE.md)
 - [Known limitations and test evidence](docs/TESTING.md)
+- [Concrete solutions and priorities for the remaining gaps (Dutch)](docs/OPLOSPLAN.md)
 - [Handoff for the next developer or AI](docs/AI_HANDOFF.md)
 - [Security reporting](SECURITY.md)
 - [Upstream provenance and licensing](UPSTREAM.md)
