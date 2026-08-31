@@ -31,7 +31,7 @@ def inventory(root):
         result[str(path.relative_to(root))] = (stat.S_IMODE(metadata.st_mode), metadata.st_uid, metadata.st_gid, digest)
     return result
 expected = inventory(source)
-subprocess.run(['cp', '-a', '/source/.', '/target/'], check=True)
+subprocess.run(['cp', '-a', '/source/.', '/target/'], check=True, timeout=90)
 assert inventory(target) == expected, 'Cold copy content/ownership/mode mismatch'
 '''
 

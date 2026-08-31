@@ -10,6 +10,20 @@ Keep the working local app installed. You can add the repository now to see it i
 
 For collaborators without an existing installation, use the normal fresh-installation instructions.
 
+## Alternative: deliberately start empty
+
+If the operator explicitly does **not** need the prototype's data/account, a fresh repository installation avoids migration entirely. A backup still provides a fallback; leave the prototype installed until the replacement has been tested.
+
+1. Preserve the backup outside HA and note the existing `public_url`, certificate and private-key **filenames**. Do not share private keys or gateway passwords.
+2. Install a published, tested repository version. Do not start it while the prototype uses the same HTTPS host port.
+3. Before cutover, turn off the prototype's start-on-boot/watchdog options if enabled and stop **only the prototype app**. It remains installed with its old data intact.
+4. Configure the new app with the intended stable HTTPS URL and existing certificate filenames. Keep automatic updating off during initial tests.
+5. Start the repository app. Its database is empty and it has a **new gateway code** in its own HA web interface; the prototype's gateway code does not transfer.
+6. Sign out of the old Nocturne session before cutover, or use a fresh/private browser window for initial setup. Create a new instance/account/passkey and save its new recovery codes. Existing prototype passkeys are not imported by this route.
+7. Verify dashboard access, sign-out/sign-in and an app restart before retiring the prototype. For fallback, stop the new app first, then start the old app; never run both on the same host port. New data in the replacement is not present in the old app.
+
+This is a **new installation**, not a test of backup restoration or account migration. It is inappropriate if the old account or data needs to be retained.
+
 ## Migration is not implemented yet
 
 Do not treat the following checklist as a tested copy/paste migration procedure:

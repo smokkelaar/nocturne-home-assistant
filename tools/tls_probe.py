@@ -22,7 +22,7 @@ with tempfile.TemporaryDirectory() as directory:
     cert, key = Path(directory) / 'new.crt', Path(directory) / 'new.key'
     subprocess.run(['openssl', 'req', '-x509', '-newkey', 'ec', '-pkeyopt', 'ec_paramgen_curve:prime256v1',
                     '-nodes', '-days', '30', '-keyout', str(key), '-out', str(cert), '-subj', '/CN=' + hostname,
-                    '-addext', 'subjectAltName=DNS:' + hostname], check=True, capture_output=True)
+                    '-addext', 'subjectAltName=DNS:' + hostname], check=True, capture_output=True, timeout=15)
     expected = inspect_pair(cert, key, hostname).leaf_sha256
     assert expected != old
     (data / 'test.crt').write_bytes(cert.read_bytes())
