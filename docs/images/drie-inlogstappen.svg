@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" role="img" aria-labelledby="title desc">
+  <title id="title">Drie inlogstappen die je niet met elkaar moet verwarren</title>
+  <desc id="desc">Eerst het HA-beheerdersaccount voor de statuspagina. Daarna de browserpopup met gebruiker nocturne en de unieke gatewaycode uit HA. Ten slotte het eigen Nocturne-account met passkey en veilig bewaarde herstelcodes.</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#41617b"/></marker></defs>
+  <rect width="960" height="720" rx="22" fill="#f3f7fb"/>
+  <g font-family="Arial, Helvetica, sans-serif" fill="#122d45">
+    <text x="40" y="52" font-size="28" font-weight="700">Stap 6–7 · welke inloggegevens horen waar?</text>
+    <text x="40" y="82" font-size="18" fill="#41617b">Schema — de vakken zijn geen echte inlogschermen en bevatten geen wachtwoorden.</text>
+    <rect x="40" y="112" width="880" height="140" rx="14" fill="#fff" stroke="#c6d4e0"/>
+    <rect x="40" y="112" width="70" height="140" rx="14" fill="#096e93"/>
+    <text x="75" y="161" fill="#fff" font-size="30" font-weight="700" text-anchor="middle">1</text>
+    <text x="138" y="147" font-size="23" font-weight="700">Home Assistant</text>
+    <text x="138" y="183" font-size="20">Jouw bestaande HA-beheerdersaccount</text>
+    <text x="138" y="220" font-size="18" fill="#41617b">Hier open je de statuspagina en bekijk je de unieke gatewaycode.</text>
+    <path d="M480 264 V288" stroke="#41617b" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="40" y="303" width="880" height="153" rx="14" fill="#fff" stroke="#c6d4e0"/>
+    <rect x="40" y="303" width="70" height="153" rx="14" fill="#795119"/>
+    <text x="75" y="352" fill="#fff" font-size="30" font-weight="700" text-anchor="middle">2</text>
+    <text x="138" y="338" font-size="23" font-weight="700">Kleine gebruikersnaam/wachtwoord-popup in de browser</text>
+    <text x="138" y="374" font-size="20">Gebruiker: nocturne · Wachtwoord: unieke code uit HA</text>
+    <text x="138" y="411" font-size="18" fill="#41617b">Dit is de extra gateway, niet je HA-wachtwoord en niet je Nocturne-account.</text>
+    <text x="138" y="438" font-size="18" fill="#41617b">Controleer eerst de hostnaam en het vertrouwde HTTPS-certificaat.</text>
+    <path d="M480 467 V491" stroke="#41617b" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="40" y="506" width="880" height="140" rx="14" fill="#fff" stroke="#c6d4e0"/>
+    <rect x="40" y="506" width="70" height="140" rx="14" fill="#226548"/>
+    <text x="75" y="555" fill="#fff" font-size="30" font-weight="700" text-anchor="middle">3</text>
+    <text x="138" y="541" font-size="23" font-weight="700">De Nocturne-interface zelf</text>
+    <text x="138" y="577" font-size="20">Eigen Nocturne-gebruikersnaam + passkey</text>
+    <text x="138" y="614" font-size="18" fill="#41617b">Maak het account eenmaal aan. Bewaar herstelcodes veilig buiten HA.</text>
+    <text x="40" y="689" font-size="18" font-weight="700">Deel geen gatewaycode, DuckDNS-token, herstelcodes of private sleutels.</text>
+  </g>
+</svg>

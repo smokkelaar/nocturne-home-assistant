@@ -1,5 +1,7 @@
 # Nocturne (experimental)
 
+**[Nederlandse visuele installatiehandleiding: van repository tot dashboard](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md)**
+
 Self-contained Nocturne API/web + PostgreSQL 17 + HTTPS gateway for Home Assistant OS on amd64.
 
 Use the **Documentation** tab before installing. This is an unofficial experimental app, not a HACS integration or a medically validated service.

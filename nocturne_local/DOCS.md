@@ -1,5 +1,7 @@
 # Installation and operation
 
+> **Nederlands, met afbeeldingen en exacte stappen:** [Volledige visuele installatiehandleiding](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md), van repository toevoegen tot dashboard en herstarttest. [Domein, certificaat en lokale DNS](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/HTTPS-EN-DNS.md) is apart uitgewerkt. These absolute links also work from Home Assistant's Documentation tab.
+
 ## Requirements
 
 - Home Assistant OS with Supervisor and the app store, **amd64**.

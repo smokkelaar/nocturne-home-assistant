@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 620" role="img" aria-labelledby="title desc">
+  <title id="title">Waar voeg je de Nocturne-repository toe?</title>
+  <desc id="desc">Volg Instellingen, Apps, App installeren. Open in de appwinkel het menu rechtsboven, kies Repositories, plak de volledige repository-URL en klik Toevoegen.</desc>
+  <rect width="960" height="620" rx="22" fill="#f3f7fb"/>
+  <g font-family="Arial, Helvetica, sans-serif" fill="#122d45">
+    <text x="40" y="52" font-size="28" font-weight="700">Stap 1 · de juiste plek in Home Assistant</text>
+    <text x="40" y="82" font-size="18" fill="#41617b">Klikroute als schema — geen nagebouwd HA-scherm</text>
+    <g fill="#fff" stroke="#c6d4e0" stroke-width="1.5">
+      <rect x="40" y="115" width="252" height="66" rx="12"/>
+      <rect x="354" y="115" width="252" height="66" rx="12"/>
+      <rect x="668" y="115" width="252" height="66" rx="12"/>
+    </g>
+    <g font-size="22" font-weight="700" text-anchor="middle">
+      <text x="166" y="156">Instellingen</text><text x="480" y="156">Apps</text><text x="794" y="156">App installeren</text>
+    </g>
+    <g font-size="34" text-anchor="middle" fill="#096e93"><text x="323" y="158">→</text><text x="637" y="158">→</text></g>
+    <text x="40" y="216" font-size="18" fill="#41617b">Oudere HA-versie? Apps = Add-ons · App installeren = Add-onwinkel</text>
+    <rect x="40" y="244" width="880" height="86" rx="12" fill="#dff1f8" stroke="#69a9c1"/>
+    <text x="64" y="277" font-size="22" font-weight="700">In de appwinkel: menu ⋮ rechtsboven → Repositories</text>
+    <text x="64" y="306" font-size="18">Niet in het menu van een bestaande app, dashboard of integratie.</text>
+    <rect x="40" y="357" width="880" height="165" rx="12" fill="#fff" stroke="#c6d4e0"/>
+    <text x="64" y="392" font-size="20" font-weight="700">Repository-adres</text>
+    <rect x="64" y="410" width="830" height="49" rx="7" fill="#f3f7fb" stroke="#96afc3"/>
+    <text x="80" y="441" font-family="Consolas, monospace" font-size="19">https://github.com/smokkelaar/nocturne-home-assistant</text>
+    <text x="64" y="493" font-size="20" font-weight="700" fill="#096e93">Toevoegen / Add → venster sluiten → appwinkel verversen</text>
+    <text x="40" y="558" font-size="20" font-weight="700" fill="#226548">Controle: Nocturne (experimental) verschijnt in de appwinkel.</text>
+    <text x="40" y="589" font-size="18" fill="#41617b">Geen ZIP kopiëren. Geen /pulls of /tree/main achter het adres.</text>
+  </g>
+</svg>

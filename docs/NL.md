@@ -1,5 +1,7 @@
 # Nederlandse snelstart
 
+**Wil je alle klikstappen, afbeeldingen en controlepunten? Open de [volledige visuele installatiehandleiding](INSTALLATIE.md).** Voor certificaat, DNS en Windows is er de [uitgewerkte HTTPS-handleiding](HTTPS-EN-DNS.md).
+
 Dit is een aparte, openbare Nocturne-repository voor de **Home Assistant-appwinkel**. Het is geen HACS-integratie. Anderen kunnen via Issues en pull requests meewerken.
 
 Voor een **nieuwe testinstallatie**:

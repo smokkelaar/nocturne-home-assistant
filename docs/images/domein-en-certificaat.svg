@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 690" role="img" aria-labelledby="title desc">
+  <title id="title">Domeinnaam, DNS en TLS moeten bij elkaar passen</title>
+  <desc id="desc">De browser-URL en public_url bevatten dezelfde hostnaam en poort. Het certificaat dekt die hostnaam zonder poort. Lokale DNS stuurt die naam naar het LAN-adres van HA. Alle getoonde adressen zijn documentatievoorbeelden.</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#096e93"/></marker></defs>
+  <rect width="960" height="690" rx="22" fill="#f3f7fb"/>
+  <g font-family="Arial, Helvetica, sans-serif" fill="#122d45">
+    <text x="40" y="52" font-size="28" font-weight="700">Stap 3 · één vaste naam, drie controles</text>
+    <text x="40" y="82" font-size="18" fill="#41617b">Schema met documentatievoorbeelden: vervang ze door jouw eigen waarden.</text>
+    <g fill="#fff" stroke="#c6d4e0" stroke-width="1.5">
+      <rect x="40" y="112" width="880" height="87" rx="12"/>
+      <rect x="40" y="213" width="880" height="87" rx="12"/>
+      <rect x="40" y="314" width="880" height="87" rx="12"/>
+    </g>
+    <g font-size="21" font-weight="700">
+      <text x="62" y="145">1 · Browser</text><text x="62" y="246">2 · public_url</text><text x="62" y="347">3 · Certificaat</text>
+    </g>
+    <g font-family="Consolas, monospace" font-size="21" fill="#096e93">
+      <text x="295" y="148">https://nocturne.example.net:8448</text>
+      <text x="295" y="249">https://nocturne.example.net:8448</text>
+      <text x="295" y="350">nocturne.example.net</text>
+    </g>
+    <g font-size="18" fill="#41617b">
+      <text x="295" y="177">Het adres dat je werkelijk opent</text>
+      <text x="295" y="278">De optie die je in de Nocturne-app opslaat</text>
+      <text x="295" y="379">Dekt de hostnaam; een certificaat bevat geen poortnummer</text>
+    </g>
+    <text x="40" y="441" font-size="21" font-weight="700">En de route op je lokale netwerk:</text>
+    <rect x="40" y="464" width="406" height="86" rx="12" fill="#dff1f8" stroke="#69a9c1"/>
+    <text x="62" y="496" font-size="19" font-weight="700">Lokale DNS / tijdelijke hosts-regel</text>
+    <text x="62" y="525" font-size="18">nocturne.example.net</text>
+    <path d="M460 507 H530" fill="none" stroke="#096e93" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="548" y="464" width="372" height="86" rx="12" fill="#e7f4ed" stroke="#8ab39c"/>
+    <text x="570" y="496" font-size="19" font-weight="700">LAN-adres van de HA-host</text>
+    <text x="570" y="525" font-size="18">192.0.2.50 · alleen een voorbeeld</text>
+    <text x="40" y="590" font-size="19" font-weight="700" fill="#8b4b0e">DNS maakt geen certificaat. Een certificaat maakt geen netwerkroute.</text>
+    <text x="40" y="622" font-size="18">Geen IP-adres als passkey-hostnaam. Geen internetpoort openen voor deze proef.</text>
+    <text x="40" y="652" font-size="18">Na starten: vertrouwd HTTPS + gatewaylogin + Nocturne-passkey afzonderlijk testen.</text>
+  </g>
+</svg>

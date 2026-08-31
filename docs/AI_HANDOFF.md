@@ -22,6 +22,8 @@ This is a shareable, Nocturne-only **HA app wrapper**, not HACS and not the full
 
 ## Useful next bounded contributions
 
+Read the [concrete solution proposals and acceptance tests](OPLOSPLAN.md) before choosing a follow-up. The [visual Dutch installation guide](INSTALLATIE.md) describes the current user-facing flow, not future functionality.
+
 1. A verified, non-destructive local-to-repository migration and backup/restore rehearsal.
 2. Cross-version upgrade CI using non-sensitive synthetic fixtures and a restore test.
 3. Safe gateway-code-only rotation, without changing instance or database credentials.

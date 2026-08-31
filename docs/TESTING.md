@@ -17,6 +17,8 @@ Before publication, the `0.1.0-test2` prototype was run on amd64 HA OS in Hyper-
 
 ## Still to verify / not supported
 
+For concrete implementation proposals, priorities and acceptance tests, see [the improvement plan (Dutch)](OPLOSPLAN.md). These proposals are not implemented features.
+
 - Complete HA cold-backup restore and local-app → repository-app migration.
 - Cross-version upgrades with real schema migrations and rollback/restore.
 - Certificate renewal/reload automation (currently restart the app after renewal).
