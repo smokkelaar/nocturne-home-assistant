@@ -4,6 +4,7 @@ Never run against a user container/volume. No credentials or raw logs are printe
 This checks boot/restart, not WebAuthn, data import, or database upgrade compatibility.
 """
 import argparse
+from pathlib import Path
 import subprocess
 import time
 import uuid
@@ -74,6 +75,8 @@ def main(image):
         docker('run', '-d', '--name', identity, '-v', volume + ':/data', image)
         wait_ready(identity)
         print('PASS: boot, API, authenticated setup, gateway rejection, ingress isolation')
+        print(execute(identity, Path(__file__).with_name('tls_probe.py').read_text()))
+        execute(identity, PROBE)
         before = execute(identity, "import hashlib\nfrom pathlib import Path\nprint(hashlib.sha256(Path('/data/secrets.json').read_bytes()).hexdigest())")
         execute(identity, "import sys\nsys.path.insert(0, '/opt/nocturne-ha')\nimport run\nrun.psql(database='nocturne', sql='CREATE TABLE public.ha_wrapper_smoke (id integer); INSERT INTO public.ha_wrapper_smoke VALUES (42)')")
         docker('stop', '-t', '100', identity)

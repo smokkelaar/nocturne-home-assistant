@@ -131,10 +131,12 @@ http {{
 '''
 
 
-def status_page(options, statuses, gateway_password, test_certificate):
+def status_page(options, statuses, gateway_password, test_certificate, checks=None):
     esc = html.escape
     versions = json.loads(Path(__file__).with_name('version.json').read_text())
     rows = ''.join(f'<li><strong>{esc(name)}</strong>: {esc(state)}</li>' for name, state in statuses.items())
+    check_rows = ''.join(f'<li><strong>{esc(name)}</strong>: {esc(state)}</li>'
+                         for name, state in (checks or {'Controles': 'nog niet uitgevoerd'}).items())
     certificate_text = ('Zelfondertekend testcertificaat: nog niet geschikt voor echte medische '
                         'gegevens. Vertrouwd HTTPS/passkey-inloggen moet apart worden getest.'
                         if test_certificate else 'Eigen certificaat ingesteld. Controleer de geldigheid in de browser.')
@@ -147,6 +149,20 @@ code{{overflow-wrap:anywhere}}button{{padding:10px;cursor:pointer}}.warning{{col
 <h1>Nocturne</h1><p>HA-testpakket {esc(versions['app'])} · Nocturne {esc(versions['nocturne'])} · amd64</p>
 <section><h2>Werkelijke dienststatus</h2><ul>{rows}</ul>
 <button onclick="location.reload()">Status vernieuwen</button></section>
+<section><h2>Installatiecontrole</h2>
+<p><strong>Publiek adres:</strong> <code>{esc(options['public_url'])}</code> — URL-syntax gecontroleerd.</p>
+<h3>Door de app gecontroleerd</h3><ul>{check_rows}</ul>
+<p>Bij een fout blijft het laatst geladen certificaat in gebruik. De geldigheidsduur daarvan loopt wel door.
+De app vraagt geen nieuwe certificaten aan; bijvoorbeeld DuckDNS blijft daarvoor verantwoordelijk.</p>
+<h3>Nog op jouw browser te controleren</h3>
+<ol><li>Open Nocturne via precies het publieke adres hierboven, niet via het IP-adres.</li>
+<li>Controleer dat de browser het certificaat vertrouwt, zonder waarschuwing.</li>
+<li>Controleer accountaanmaak/passkey-login en bewaar de herstelcodes veilig.</li>
+<li>Test opnieuw op een tweede apparaat en na een geplande app-herstart.</li></ol>
+<p>Deze browsercontroles zijn <strong>niet automatisch uitgevoerd</strong>.
+De server kan jouw DNS-route, certificaatvertrouwen of passkeyvoorziening niet bewijzen.</p>
+<p><a href="https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md" target="_blank" rel="noopener noreferrer">Visuele installatiehandleiding</a> ·
+<a href="https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/CERTIFICATEN.md" target="_blank" rel="noopener noreferrer">Certificaatcontrole en foutcodes</a></p></section>
 <section><h2>Nocturne openen</h2>
 <p><a href="{esc(options['public_url'], quote=True)}" target="_blank" rel="noopener noreferrer">Open het echte Nocturne-installatiescherm</a></p>
 <p>Deze HA-pagina toont alleen de technische status; het is niet het Nocturne-dashboard.</p>

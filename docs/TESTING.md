@@ -7,7 +7,9 @@ The current **Validate** GitHub Actions run is the authority for this commit's a
 - Python regression checks: options, secret persistence/failure handling, ingress isolation, proxy auth/headers, database privileges, process shutdown and guarded web patches.
 - Node fixtures: real ESM resolution/evaluation, dependency path isolation and the runtime UID guard.
 - Update checks: strict stable versions, paired image pins, source/digest/platform validation, downgrade rejection, version consistency and refusal to write on unexpected build signatures.
-- Linux amd64 container smoke: build, empty first boot, API readiness, TLS gateway 401 without credentials, authenticated setup HTML, direct-ingress rejection, clean stop and same-version restart with persistent keys/database row.
+- TLS regression checks: real OpenSSL pairs, SAN/hostname, key match, validity dates, staged renewals, rejected configuration and rollback without touching the source files.
+- Linux amd64 container smoke: build, empty first boot, API readiness, TLS gateway 401 without credentials, authenticated setup HTML, direct-ingress rejection, mismatched-then-corrected TLS renewal with unchanged database start time, clean stop and same-version restart with persistent keys/database row.
+- Recovery container rehearsal: immutable wrapper 0.1.0 baseline → candidate, full cold `/data` copy, restore into another empty volume using the old image, matching keys/test row, and refusal to recreate identity in an incomplete restore. [Exact scope](HERSTELPROEF.md).
 
 CI uses only a disposable empty database plus a non-health test row. No private HA connection, real account, passkey or medical data is used. The smoke test intentionally does not publish raw runtime logs or secrets on failure.
 
@@ -17,11 +19,11 @@ Before publication, the `0.1.0-test2` prototype was run on amd64 HA OS in Hyper-
 
 ## Still to verify / not supported
 
-For concrete implementation proposals, priorities and acceptance tests, see [the improvement plan (Dutch)](OPLOSPLAN.md). These proposals are not implemented features.
+For remaining proposals and the implemented subset, see [the improvement plan (Dutch)](OPLOSPLAN.md).
 
 - Complete HA cold-backup restore and local-app → repository-app migration.
-- Cross-version upgrades with real schema migrations and rollback/restore.
-- Certificate renewal/reload automation (currently restart the app after renewal).
+- Upgrades of populated real-account instances with upstream schema migrations; 0.1.0 → 0.1.1 is a wrapper upgrade on Nocturne 0.2.4, not a changed upstream schema.
+- Real HA/DuckDNS certificate renewal and client trust after renewal; the synthetic container reload mechanism is tested, not every real certificate authority/client combination.
 - Full HA/VM reboot, failures under resource pressure and long-running reliability.
 - IPv6 host-port publication, all client DNS configurations and all passkey platforms.
 - ARM64 builds; the upstream images supporting ARM does not prove this wrapper does.

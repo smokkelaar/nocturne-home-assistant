@@ -38,3 +38,11 @@ jobs:
           persist-credentials: false
       - run: docker build --platform linux/amd64 --tag nocturne-ha:ci nocturne_local
       - run: python3 tools/smoke.py --image nocturne-ha:ci
+      - name: Check out immutable baseline release 0.1.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: 24c93193bc73a36e8ffd52e3d18a8e1419bc4884
+          path: .ci-baseline
+          persist-credentials: false
+      - run: docker build --platform linux/amd64 --tag nocturne-ha:baseline .ci-baseline/nocturne_local
+      - run: python3 tools/recovery_smoke.py --image nocturne-ha:ci --baseline nocturne-ha:baseline

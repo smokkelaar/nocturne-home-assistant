@@ -134,6 +134,6 @@ Open de URL zonder certificaatwaarschuwing, gebruik de gatewaygegevens uit HA en
 
 ## Onderhoud
 
-Houd de DNS-naam stabiel en controleer of certificaatvernieuwing blijft werken. Deze wrapper herlaadt vernieuwde certificaten nog niet automatisch: herstart Nocturne na vernieuwing en controleer het geladen certificaat. Een domeinwijziging na accountaanmaak is geen gewone cosmetische wijziging vanwege de passkey-/instantie-identiteit.
+Houd de DNS-naam stabiel en controleer of certificaatvernieuwing blijft werken. Vanaf wrapper 0.1.1 worden stabiele, passende vernieuwde bestanden automatisch gecontroleerd en door alleen nginx herladen. Bekijk **Installatiecontrole** en controleer daarna ook het certificaat in je browser. Zie [werking, foutcodes en grenzen](CERTIFICATEN.md). Op 0.1.0 was nog een app-herstart nodig. Een domeinwijziging na accountaanmaak is geen gewone cosmetische wijziging vanwege de passkey-/instantie-identiteit.
 
 De Windows-opdrachten hierboven zijn diagnostiek, geen verzoek om wachtwoorden of tokens te delen. Plaats ook geslaagde uitvoer niet ongeschoond in een openbaar issue: die kan je netwerkadres of hostnaam bevatten.

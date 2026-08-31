@@ -28,6 +28,8 @@ Only HTTPS 8448 is published to the host. HA ingress traffic on 8099 must origin
 
 TLS uses explicitly configured read-only `/ssl` files or a clearly marked temporary test certificate. nginx requires gateway Basic auth on all proxied paths, preserves the external hostname **including port**, sets forwarded HTTPS headers, and strips incoming Authorization and internal instance-auth headers. Nocturne then performs its own account/passkey authentication.
 
+From 0.1.1, `tls.py` validates leaf SAN/hostname, validity and key match, then keeps a private immutable runtime snapshot. The watcher requires stable source bytes across two observations at least ten seconds apart. Renewal tests a candidate nginx configuration, atomically replaces its config, signals only nginx and verifies the served leaf fingerprint over loopback. Failed candidates retain/restore the previous config. It neither writes `/ssl` nor asserts trust in a client's CA store. Full chain parsing is checked by nginx; revocation and browser trust are outside this preflight. Runtime snapshots are not a persistent fallback after app restart.
+
 Specific OIDC, OAuth, discovery and hub paths route to API; ordinary paths route to web. Dev/operator endpoints are blocked. External token-based clients/connectors are not validated through this gateway and may need a future deliberate authentication design. Do not fix them by removing authentication globally.
 
 ## Build coupling and limits

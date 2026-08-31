@@ -1,6 +1,6 @@
 {
   "name": "Nocturne (experimental)",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "slug": "nocturne_local",
   "description": "Nocturne 0.2.4 with PostgreSQL. Experimental local app; not for clinical use.",
   "url": "https://github.com/smokkelaar/nocturne-home-assistant",

@@ -47,6 +47,10 @@ jobs:
         run: |
           docker build --platform linux/amd64 --tag nocturne-ha:candidate nocturne_local
           python tools/smoke.py --image nocturne-ha:candidate
+          mkdir -p "$RUNNER_TEMP/nocturne-baseline"
+          git archive HEAD nocturne_local | tar -x -C "$RUNNER_TEMP/nocturne-baseline"
+          docker build --platform linux/amd64 --tag nocturne-ha:baseline "$RUNNER_TEMP/nocturne-baseline/nocturne_local"
+          python tools/recovery_smoke.py --image nocturne-ha:candidate --baseline nocturne-ha:baseline
       - name: Open or refresh reviewed update proposal
         if: steps.changes.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
@@ -66,8 +70,10 @@ jobs:
             HA app version, launcher metadata and changelog are updated together.
 
             Unit checks, container build, clean startup, authenticated setup and same-version
-            restart/persistence passed in the [updater run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
-            This is NOT a database upgrade, passkey, data-import or clinical compatibility test.
+            restart/persistence, current-main-to-candidate upgrade and cold restore to a new
+            disposable volume passed in the [updater run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+            Fixtures are a setup-only instance and a synthetic row, NOT a real account,
+            passkey, Supervisor backup archive, health-data import or clinical compatibility test.
 
             Maintainer: read upstream release/migration notes, approve PR workflows if GitHub
             requests this, test an upgrade on a backed-up disposable instance, then merge.

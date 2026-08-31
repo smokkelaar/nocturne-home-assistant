@@ -150,6 +150,8 @@ private_key: privkey.pem
 
 **Controlepunt:** alle vier diensten zijn gestart, er staat geen zelfondertekend-testcertificaatwaarschuwing bij een installatie met eigen certificaat, en de Nocturne-link wijst naar jouw gekozen hostnaam/poort. Een status **gereed** bewijst nog niet dat het certificaat op jouw apparaat vertrouwd is; dat controleer je in de volgende stap.
 
+Vanaf app 0.1.1 staat hier ook **Installatiecontrole** met het ingestelde adres, certificaatverloop en herlaadstatus. Het blok **Nog op jouw browser te controleren** blijft bewust onbevestigd tot jij die stappen uitvoert. Zie [certificaatcontrole en foutcodes](CERTIFICATEN.md). Een ongeldig startcertificaat geeft een gerichte fout in **Logboeken**, voordat de statuspagina beschikbaar is.
+
 Zie je **nog niet gestart**, **STARTFOUT** of **gestopt**? Lees de foutmelding; ga niet door met accountaanmaak en verwijder geen database of sleutels.
 
 ## Stap 6: het echte Nocturne openen
@@ -244,7 +246,7 @@ Maak vóór upgrades of verdere inrichting via **Instellingen → Systeem → Ba
 | **Failed to fetch** | Controleer eerst normale HTTPS-toegang, gatewaylogin, appstatus en dezelfde hostnaam/poort. Herlaad de tab na correcties; noteer of het gebeurt vóór of ná het passkeyvenster. Niet opnieuw installeren of sleutels wissen. |
 | **invalid domain** bij passkey | Je gebruikt waarschijnlijk een IP-adres of een verkeerde domein/origin-instelling. Volg stap 3 en 4; wijzigen van een al gebruikte identiteit vraagt extra zorg. |
 | Na herstart weer **Name your instance** | Stop. Controleer of je dezelfde app en URL opent. Een nieuwe repository-installatie kan leeg zijn terwijl de oude lokale app de gegevens nog heeft. Maak niet meteen een nieuw account; lees MIGRATION.md. |
-| Certificaat vernieuwd maar browser ziet het oude | Deze versie laadt het certificaat bij het starten van nginx: herstart de Nocturne-app en controleer daarna de browser opnieuw. |
+| Certificaat vernieuwd maar browser ziet het oude | Vanaf 0.1.1: wacht ongeveer 15–45 seconden en ververs **Installatiecontrole**. Een verkeerd/half bijgewerkt paar wordt niet geladen. Zie [foutcodes](CERTIFICATEN.md); controleer daarna een nieuwe browserverbinding. Op 0.1.0 was nog een app-herstart nodig. |
 
 Voor hulp: meld **bij welke stap**, de HA-app- en Nocturne-versie, het type installatie en een kort **geschoond** foutfragment. Supervisor-logboeken zijn voor de build/installatie; app-logboeken voor het starten van PostgreSQL/API/web/nginx. Deel geen privé-IP's/domeinen, tokens, gatewaycode, herstelcodes of gezondheidsgegevens.
 
