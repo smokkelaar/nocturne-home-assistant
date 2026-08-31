@@ -5,6 +5,7 @@ This checks boot/restart, not WebAuthn, data import, or database upgrade compati
 """
 import argparse
 from pathlib import Path
+import re
 import subprocess
 import time
 import uuid
@@ -13,7 +14,11 @@ import uuid
 def docker(*args, check=True, input=None):
     result = subprocess.run(['docker', *args], input=input, text=True, capture_output=True, timeout=180)
     if check and result.returncode:
-        raise RuntimeError('Docker operation failed: ' + args[0])
+        # A dedicated probe may emit only this bounded, non-sensitive marker.
+        # Never publish arbitrary container output, which can contain secrets.
+        marker = re.search(r'NATIVE_PROBE_FAILED:[A-Z_]+:[A-Za-z]+', result.stdout + result.stderr)
+        detail = ' (' + marker.group(0) + ')' if marker else ''
+        raise RuntimeError('Docker operation failed: ' + args[0] + detail)
     return result.stdout.strip()
 
 
