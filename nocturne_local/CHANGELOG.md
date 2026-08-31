@@ -1,3 +1,11 @@
+## 0.1.2
+
+- Probe Nocturne Web through its dedicated `/health` route. The previous five-second request to `/` could render the dashboard and generate repeated, harmless `401 Bearer` chart errors in the app log.
+- Add an explicit `gateway_auth: false` option for an existing instance whose owner account and passkey are already configured. This removes only the extra browser Basic-authentication prompt; Nocturne's own account/passkey authentication remains required.
+- Native Nocturne authentication fails closed: startup verifies trusted TLS is configured, Nocturne reports authentication as mandatory and an anonymous protected-data request is denied. A fresh/unconfigured instance must first be completed with `gateway_auth: true`.
+- Preserve existing database, account, passkey, instance keys and gateway secret. The option defaults to `true`, so updating does not switch authentication mode automatically.
+- Nocturne remains 0.2.4. Real-account/passkey acceptance of the opt-in mode still requires a manual post-install test; CI uses only a disposable empty instance and no medical data.
+
 ## 0.1.1
 
 - Validate TLS SAN/hostname, leaf validity and matching private key before startup; reject invalid pairs with safe error codes. Browser trust is still a separate test.

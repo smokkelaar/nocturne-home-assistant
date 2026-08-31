@@ -18,7 +18,7 @@ De volledige PostgreSQL-cluster, inclusief WAL, rollen en bestandsrechten, wordt
 
 ## Wat GitHub automatisch uitvoert
 
-- **Validate / Container smoke test:** verse installatie, certificaatherlading en herstart van de kandidaat; daarna wrapper **0.1.0** (immutable broncommit `24c93193bc73a36e8ffd52e3d18a8e1419bc4884`) → kandidaat → herstel naar 0.1.0.
+- **Validate / Container smoke test:** verse installatie, certificaatherlading en herstart van de kandidaat; daarna wrapper **0.1.1** (immutable broncommit `300a0c48bc349246d64effbd606b4cf9f8221819`) → kandidaat → herstel naar 0.1.1.
 - **Check Nocturne updates:** bouwt daarnaast de versie die vóór de update in `HEAD`/main stond. Die vormt de baseline voor de voorgestelde upstream-update. Een mislukte proef verhindert dat de bot het updatevoorstel publiceert.
 - De publieke logs tonen alleen versiemetadata en PASS/foutmeldingen, geen sleutels, ruwe app-logs of data-export. Tijdelijke containers en volumes worden na afloop opgeruimd.
 
@@ -36,7 +36,7 @@ De scriptinterface biedt bewust geen bestaande volumeparameter. Gebruik deze opd
 
 ## Grenzen: nog geen volledige gebruikersherstelproef
 
-Er is geen echt account, passkey, herstelcode, medische meting of connector toegevoegd. De eerste proef 0.1.0 → 0.1.1 gebruikt aan beide kanten Nocturne 0.2.4: zij test een **wrapper-upgrade**, geen gewijzigde upstream-databasemigratie. Toekomstige botproeven gebruiken de werkelijke vorige en nieuwe upstream-versies, maar de fixtures blijven beperkt.
+Er is geen echt account, passkey, herstelcode, medische meting of connector toegevoegd. De proef 0.1.1 → 0.1.2 gebruikt aan beide kanten Nocturne 0.2.4: zij test een **wrapper-upgrade**, geen gewijzigde upstream-databasemigratie. Toekomstige botproeven gebruiken de werkelijke vorige en nieuwe upstream-versies, maar de fixtures blijven beperkt.
 
 Nog met de gebruiker te doen:
 

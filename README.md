@@ -18,7 +18,7 @@ This repository is **Nocturne only**. It contains the HA wrapper, its small upst
 1. Add this repository to the **Home Assistant app store** (formerly add-on store).
 2. Install **Nocturne (experimental)**. The initial installation builds a container locally and can take several minutes.
 3. Configure a stable HTTPS hostname and trusted certificate, then start the app.
-4. Open its HA web interface for service status, the Nocturne link and the extra gateway access code. Complete Nocturne's own passkey setup in the separate tab.
+4. Open its HA web interface for service status, the Nocturne link and the extra gateway access code. Complete Nocturne's own passkey setup in the separate tab. From wrapper 0.1.2 an existing configured instance can [safely opt out of only that extra popup](docs/GATEWAY.md); Nocturne's passkey login stays enabled.
 
 Read the [installation guide](nocturne_local/DOCS.md) first. Requirements: **Home Assistant OS / Supervisor, amd64**, enough free storage/memory for a local build and PostgreSQL, and working local DNS/trusted HTTPS for passkeys. ARM64 and Home Assistant Container/Core without Supervisor are not supported by this wrapper yet.
 
@@ -40,6 +40,7 @@ There is intentionally **no floating `latest` image and no unattended merge of d
 - [Architecture and security boundaries](docs/ARCHITECTURE.md)
 - [Known limitations and test evidence](docs/TESTING.md)
 - [Certificate preflight, automatic reload and error codes (Dutch)](docs/CERTIFICATEN.md)
+- [Extra gateway popup safely enable/disable (Dutch)](docs/GATEWAY.md)
 - [Cold restore and upgrade rehearsal: scope and remaining HA checks (Dutch)](docs/HERSTELPROEF.md)
 - [Concrete solutions and priorities for the remaining gaps (Dutch)](docs/OPLOSPLAN.md)
 - [Handoff for the next developer or AI](docs/AI_HANDOFF.md)

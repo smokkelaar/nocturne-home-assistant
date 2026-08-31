@@ -12,7 +12,7 @@ Open de app → **Webinterface openen** → **Installatiecontrole**.
 | Geladen certificaat | DNS SAN past bij de hostnaam, privésleutel past, begin- en einddatum gecontroleerd; einddatum in UTC |
 | BINNENKORT VERLOPEN | Minder dan 14 hele dagen over; controleer DuckDNS of je eigen certificaatvernieuwer |
 | Certificaatvernieuwing | Bestanden ongewijzigd, stabiliteitscontrole bezig, nieuwe versie geladen of gerichte foutcode |
-| Nocturne Web | Een echt HTTP-antwoord of lokale omleiding ontvangen, niet uitsluitend een open poort |
+| Nocturne Web | De speciale `/health`-route antwoordt exact met `ok`; de dashboardpagina of gegevens-API wordt hiervoor niet geopend |
 | HTTPS | Het via een nieuwe lokale TLS-verbinding aangeboden leaf-certificaat komt overeen met de geaccepteerde kopie |
 | Nog op jouw browser te controleren | DNS-route, vertrouwen in de certificaatketen, passkey-login, tweede apparaat en geplande herstart; **niet automatisch geslaagd** |
 
@@ -44,6 +44,7 @@ De bestaande nginx-workers handelen bestaande verbindingen af. Dit volgt het [ge
 | `CERT_EXPIRED` | Controleer vernieuwing bij DuckDNS/eigen uitgever; geen browserbeveiliging uitschakelen. |
 | `CERT_RELOAD` | De herlading kon niet worden bevestigd. Bekijk een geschoonde app-log en controleer de status opnieuw. Herstart niet blind met een ongeldig bronpaar. |
 | `WEB_RESPONSE` / `TLS_RESPONSE` | De web- of TLS-antwoordcontrole faalde; een draaiend proces alleen is onvoldoende. Controleer de appstatus en relevante geschoonde logs. |
+| `GATEWAY_SETUP` / `GATEWAY_AUTH` | `gateway_auth: false` is nog niet veilig bruikbaar: voltooi eerst de eigenaar/passkey met de gateway aan, of herstel de verplichte Nocturne-authenticatie. Zie [gatewaymodus](GATEWAY.md). |
 
 Bij een ongeldig startcertificaat stopt de app met de foutcode in **Logboeken**; de statuspagina kan dan nog niet beschikbaar zijn. Database en identiteitsbestanden worden niet opnieuw aangemaakt ter reparatie van een certificaatfout.
 

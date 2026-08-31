@@ -27,7 +27,7 @@ No router port-forwarding is required or recommended for this test. A publicly r
 
 4. Leave the default published HTTPS port at `8448`, or ensure the externally configured port matches `public_url`. Do not expose API, PostgreSQL or ingress ports.
 5. Start the app and open **Web interface**. Wait for PostgreSQL, API, web and HTTPS readiness. “Listening” is not proof of a successful account login.
-6. Open the Nocturne link. If the browser asks for HTTP Basic credentials, use username `nocturne` and the random gateway code shown in the protected HA page. This is **not** your HA login or your Nocturne account password.
+6. Open the Nocturne link. By default, if the browser asks for HTTP Basic credentials, use username `nocturne` and the random gateway code shown in the protected HA page. This is **not** your HA login or your Nocturne account password.
 7. Complete Nocturne's own setup and create a passkey. Skip Nightscout/data connections in this initial test.
 8. Verify dashboard access, sign out/in, then restart **only this app** and verify it opens without repeating setup.
 
@@ -56,6 +56,7 @@ Automatic app updates are optional in HA. Leave them off for this experimental p
 ## Known boundaries
 
 - Ingress is a status/launcher only; login takes place in a separate HTTPS tab.
-- Mandatory gateway Basic authentication remains enabled. External Nightscout clients/API tokens and connectors have **not** been validated through this gateway; incoming Authorization is stripped before reaching the backend.
+- Gateway Basic authentication defaults to enabled. From wrapper 0.1.2, an existing fully configured owner account can set `gateway_auth: false` to remove only that browser popup. Trusted configured TLS and native Nocturne authentication are then checked before startup; Nocturne's own passkey stays required. First setup must use `true`. [Exact switch, test and rollback steps](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/GATEWAY.md).
+- External Nightscout clients/API tokens and connectors have **not** been validated through this gateway; incoming Authorization is stripped before reaching the backend.
 - No clinical reliability, automatic dosing, external data connectors or internet-facing deployment has been validated.
 - Never paste full logs, keys, recovery codes or health data into public issues. Report only a sanitized relevant excerpt with the app/Nocturne versions.

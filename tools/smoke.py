@@ -31,19 +31,23 @@ assert run.api_reachable('homeassistant.local')
 if hasattr(run, 'web_response_reachable'):  # Baseline 0.1.0 predates this check.
     assert run.web_response_reachable(run.validate_options({}))
 context = ssl._create_unverified_context()  # Only the disposable CI test certificate.
-url = 'https://127.0.0.1:8448/setup'
+base_url = 'https://127.0.0.1:8448'
 headers = {'Host': 'homeassistant.local:8448'}
-try:
-    urllib.request.urlopen(urllib.request.Request(url, headers=headers), context=context, timeout=10)
-except urllib.error.HTTPError as e:
-    assert e.code == 401
-else:
-    raise AssertionError('Gateway accepted unauthenticated request')
+for path in ('/setup', '/health'):
+    try:
+        urllib.request.urlopen(urllib.request.Request(base_url + path, headers=headers), context=context, timeout=10)
+    except urllib.error.HTTPError as e:
+        assert e.code == 401
+    else:
+        raise AssertionError('Gateway accepted unauthenticated request')
 secret = json.loads(Path('/data/secrets.json').read_text())['gateway']
 headers['Authorization'] = 'Basic ' + base64.b64encode(('nocturne:' + secret).encode()).decode()
-with urllib.request.urlopen(urllib.request.Request(url, headers=headers), context=context, timeout=10) as response:
+with urllib.request.urlopen(urllib.request.Request(base_url + '/setup', headers=headers), context=context, timeout=10) as response:
     assert response.status == 200
     assert b'nocturne' in response.read(2_000_000).lower()
+with urllib.request.urlopen(urllib.request.Request(base_url + '/health', headers=headers), context=context, timeout=10) as response:
+    assert response.status == 200
+    assert response.read(3) == b'ok'
 try:
     urllib.request.urlopen('http://127.0.0.1:8099/', timeout=10)
 except urllib.error.HTTPError as e:
@@ -77,6 +81,7 @@ def main(image):
         docker('run', '-d', '--name', identity, '-v', volume + ':/data', image)
         wait_ready(identity)
         print('PASS: boot, API, authenticated setup, gateway rejection, ingress isolation')
+        print(execute(identity, Path(__file__).with_name('native_gateway_probe.py').read_text()))
         print(execute(identity, Path(__file__).with_name('tls_probe.py').read_text()))
         execute(identity, PROBE)
         before = execute(identity, "import hashlib\nfrom pathlib import Path\nprint(hashlib.sha256(Path('/data/secrets.json').read_bytes()).hexdigest())")

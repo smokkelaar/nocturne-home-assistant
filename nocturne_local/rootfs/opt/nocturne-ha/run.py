@@ -136,20 +136,55 @@ def web_reachable():
 
 
 def web_response_reachable(options):
+    """Check liveness without rendering the dashboard or supplying credentials."""
     connection = http.client.HTTPConnection('127.0.0.1', 8000, timeout=2)
     try:
-        connection.request('GET', '/', headers={'Host': options['authority'],
+        connection.request('GET', '/health', headers={'Host': options['authority'],
                            'X-Forwarded-Host': options['authority'], 'X-Forwarded-Proto': 'https'})
         response = connection.getresponse()
-        if response.status == 200:
-            return True
-        if response.status in (302, 303, 307, 308):
-            target = response.getheader('Location', '')
-            return ((target.startswith('/') and not target.startswith('//')) or
-                    target.startswith(options['public_url'] + '/'))
-        return False
+        # Pinned Nocturne returns exactly "ok". Reject HTML and redirects;
+        # cap the read instead of mistaking a login page for a healthy response.
+        return response.status == 200 and response.read(3) == b'ok'
     except (OSError, http.client.HTTPException):
         return False
+    finally:
+        connection.close()
+
+
+def verify_native_auth(options):
+    """Refuse to remove the outer gate until configured Nocturne enforces login.
+
+    No session, instance key or health data is read. The bounded status document
+    is inspected in memory only; the protected probe's response body is ignored.
+    """
+    headers = {'Host': options['authority'], 'X-Forwarded-Host': options['authority'],
+               'X-Forwarded-Proto': 'https'}
+    connection = http.client.HTTPConnection('127.0.0.1', 8080, timeout=3)
+    try:
+        connection.request('GET', '/api/v4/status', headers=headers)
+        response = connection.getresponse()
+        if response.status != 200:
+            raise ValueError('GATEWAY_SETUP: voltooi eerst Nocturne-accountaanmaak met gateway_auth: true')
+        raw = response.read(65537)
+        if len(raw) > 65536:
+            raise ValueError('GATEWAY_AUTH: ongeldige statusrespons; extra toegang blijft vereist')
+        status = json.loads(raw)
+        if (not isinstance(status, dict) or not isinstance(status.get('settings'), dict)
+                or status['settings'].get('requireAuthentication') is not True
+                or status.get('runtimeState') != 'loaded' or status.get('isDemo') is True):
+            raise ValueError('GATEWAY_AUTH: verplichte Nocturne-aanmelding niet bevestigd')
+    except (OSError, http.client.HTTPException, json.JSONDecodeError, UnicodeError):
+        raise ValueError('GATEWAY_AUTH: Nocturne-aanmelding kon niet veilig worden gecontroleerd') from None
+    finally:
+        connection.close()
+
+    connection = http.client.HTTPConnection('127.0.0.1', 8080, timeout=3)
+    try:
+        connection.request('GET', '/api/v4/ChartData/dashboard', headers=headers)
+        if connection.getresponse().status != 401:
+            raise ValueError('GATEWAY_AUTH: niet-aangemelde gegevensaanvraag is niet als 401 geweigerd')
+    except (OSError, http.client.HTTPException):
+        raise ValueError('GATEWAY_AUTH: toegangsweigering kon niet veilig worden gecontroleerd') from None
     finally:
         connection.close()
 
@@ -297,6 +332,9 @@ def main():
         supervisor.start('Nocturne API', ['dotnet', '/app/Nocturne.API.dll'],
                          user='app', env=api_env, cwd='/app')
         supervisor.wait_for('Nocturne API', lambda: api_reachable(options['hostname']), 300)
+        if not options['gateway_auth']:
+            verify_native_auth(options)
+            log('Geen extra gateway-pop-up; verplichte Nocturne-aanmelding en API-toegangsweigering bevestigd')
         supervisor.start('Nocturne Web', ['node', 'server.js'], user='nocturne-web',
                          env=web_env, cwd='/opt/nocturne-web/packages/app')
         supervisor.wait_for('Nocturne Web', lambda: web_response_reachable(options), 120)
@@ -324,8 +362,8 @@ def main():
         while not supervisor.stop.wait(5):
             supervisor.check_children()
             supervisor.status['Nocturne API'] = ('gereed' if api_reachable(options['hostname']) else 'antwoordcontrole mislukt')
-            supervisor.status['Nocturne Web'] = ('HTTP-antwoord ontvangen; passkey-login nog apart testen'
-                if web_response_reachable(options) else 'WEB_RESPONSE: geen geldig HTTP-antwoord')
+            supervisor.status['Nocturne Web'] = ('HTTP-healthcheck geslaagd; passkey-login nog apart testen'
+                if web_response_reachable(options) else 'WEB_RESPONSE: geen geldig /health-antwoord')
             if time.monotonic() - last_certificate_check >= 15:
                 certificates.poll(lambda snapshot: reload_nginx(
                     nginx, conf, nginx_config(options, snapshot.cert, snapshot.key),
