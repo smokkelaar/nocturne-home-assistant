@@ -1,4 +1,5 @@
 """Opt-in removal of HTTP Basic must preserve Nocturne's own authentication."""
+import ast
 import http.client
 import importlib
 import json
@@ -143,9 +144,22 @@ class NativeGatewayTests(unittest.TestCase):
                         target.close.assert_called_once()
 
     def test_boot_guard_precedes_public_listener(self):
-        main = (CODE / 'run.py').read_text().split('def main():', 1)[1]
-        self.assertIn("if not options['gateway_auth']:\n            verify_native_auth(options)", main)
-        self.assertLess(main.index('verify_native_auth(options)'), main.index("supervisor.start('HTTPS'"))
+        tree = ast.parse((CODE / 'run.py').read_text())
+        main = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'main')
+        native_if = next(node for node in ast.walk(main)
+                         if isinstance(node, ast.If)
+                         and ast.unparse(node.test) == "not options['gateway_auth']")
+        guard = next(node for node in ast.walk(native_if)
+                     if isinstance(node, ast.Call)
+                     and isinstance(node.func, ast.Name)
+                     and node.func.id == 'verify_native_auth')
+        https_start = next(node for node in ast.walk(main)
+                           if isinstance(node, ast.Call)
+                           and isinstance(node.func, ast.Attribute)
+                           and node.func.attr == 'start'
+                           and node.args and isinstance(node.args[0], ast.Constant)
+                           and node.args[0].value == 'HTTPS')
+        self.assertLess(guard.lineno, https_start.lineno)
 
 
 if __name__ == '__main__':

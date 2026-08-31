@@ -25,7 +25,10 @@ try:
     try:
         run.verify_native_auth(options)
     except ValueError as error:
-        assert str(error).startswith('GATEWAY_SETUP:'), 'Unexpected bootstrap guard result'
+        # The running disposable container was started in default gateway mode,
+        # so its API may report either incomplete setup or absent forced native
+        # authentication. Both must refuse this opt-in configuration.
+        assert str(error).startswith(('GATEWAY_SETUP:', 'GATEWAY_AUTH:')), 'Unexpected bootstrap guard result'
     else:
         raise AssertionError('Native mode accepted a fresh instance without an owner account')
 
@@ -62,12 +65,13 @@ try:
                 assert process.poll() is None, 'Native nginx fixture exited early'
                 try:
                     with request('/health') as response:
-                        assert response.status == 200
-                        assert response.read(3) == b'ok'
-                        assert not response.headers.get('WWW-Authenticate', '').startswith('Basic')
-                    break
+                        healthy = (response.status == 200 and response.read(3) == b'ok'
+                                   and not response.headers.get('WWW-Authenticate', '').startswith('Basic'))
+                    if healthy:
+                        break
                 except urllib.error.URLError:
-                    time.sleep(0.2)
+                    pass
+                time.sleep(0.2)
             else:
                 raise AssertionError('Native nginx fixture did not start')
             phase = 'WRONG_HOST'
