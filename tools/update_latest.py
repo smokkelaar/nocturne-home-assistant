@@ -5,7 +5,7 @@ Dockerfile always uses immutable OCI digests and records the exact source
 commit plus the successful upstream build job that produced the pair.
 """
 import argparse
-from datetime import datetime
+from datetime import datetime, timezone
 import hashlib
 import json
 import os
@@ -59,11 +59,14 @@ def validate_lock(lock):
         raise ValueError('Invalid Latest channel/source commit')
     if type(lock.get('workflow_run')) is not int or lock['workflow_run'] <= 0:
         raise ValueError('Invalid upstream workflow provenance')
-    published = lock.get('published_at', '')
-    try:
-        datetime.fromisoformat(published.replace('Z', '+00:00'))
-    except (TypeError, ValueError):
-        raise ValueError('Invalid upstream publication timestamp') from None
+    for field, label in [('commit_at', 'commit'), ('published_at', 'publication')]:
+        value = lock.get(field, '')
+        try:
+            parsed = datetime.fromisoformat(value.replace('Z', '+00:00'))
+        except (AttributeError, TypeError, ValueError):
+            raise ValueError(f'Invalid upstream {label} timestamp') from None
+        if parsed.tzinfo is None:
+            raise ValueError(f'Invalid upstream {label} timestamp')
     for kind in ('api', 'web'):
         if lock.get(kind, {}).get('tag') != 'latest':
             raise ValueError('Latest discovery tags must remain paired')
@@ -115,7 +118,8 @@ def successful_build(commit):
 
 def resolve_candidate(current):
     validate_lock(current)
-    commit = github('commits/main')['sha']
+    head = github('commits/main')
+    commit = head['sha']
     if commit == current['commit']:
         return current
     comparison = github(f"compare/{current['commit']}...{commit}")
@@ -124,7 +128,7 @@ def resolve_candidate(current):
     run = successful_build(commit)
     candidate = {
         'channel': 'main', 'commit': commit, 'workflow_run': run['id'],
-        'published_at': run['created_at'],
+        'commit_at': head['commit']['committer']['date'], 'published_at': run['created_at'],
         'api': resolve_image('api', commit), 'web': resolve_image('web', commit),
     }
     # Close the race where main or the floating discovery tag changes while
@@ -144,7 +148,9 @@ def render(root, lock, app_version):
     semver(app_version)
     config = json.loads((root / 'nocturne_latest/config.json').read_text())
     config['version'] = app_version
-    config['description'] = (f"Daily-tested Nocturne main snapshot {lock['commit'][:7]} with PostgreSQL. "
+    commit_at = datetime.fromisoformat(lock['commit_at'].replace('Z', '+00:00'))
+    commit_at = commit_at.astimezone(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
+    config['description'] = (f"Daily-tested Nocturne main {lock['commit'][:7]} - {commit_at} with PostgreSQL. "
                              'Highly experimental; not for clinical use.')
     dockerfile = (root / 'nocturne_latest/Dockerfile').read_text()
     for kind in ('api', 'web'):

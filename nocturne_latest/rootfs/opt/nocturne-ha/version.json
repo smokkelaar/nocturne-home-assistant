@@ -1,5 +1,5 @@
 {
-  "app": "0.1.0",
+  "app": "0.1.1",
   "nocturne": "main@3b75145",
   "name": "Nocturne Latest Release",
   "default_public_url": "https://homeassistant.local:8449"

@@ -1,3 +1,8 @@
+## 0.1.1
+
+- Show the exact upstream `main` commit date and time in UTC next to its short commit ID in the Home Assistant app-store description.
+- Record and validate the commit timestamp as part of the immutable Latest provenance; daily promotions update it automatically.
+
 ## 0.1.0
 
 - First separately installable **Nocturne Latest Release** channel.

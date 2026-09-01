@@ -28,6 +28,8 @@ Official wijzigt alleen nadat iemand de workflow **Check Official Nocturne relea
 
 Latest controleert dagelijks of upstream `main` een nieuwer commit heeft waarvoor de officiële `build-and-push`-job volledig is geslaagd. De updater controleert de API-broncommit, kiest precies één linux/amd64-manifest, zet API en web vast op digest en sluit races met veranderende tags uit. Daarna moeten unit-tests, beide container-smoketests en een vorige-Latest-naar-kandidaat-herstelproef slagen. Branchbeveiliging blokkeert auto-merge zolang verplichte controles niet groen zijn.
 
+De Home Assistant app-storebeschrijving toont bij Latest de korte commitcode plus de exacte upstream-committijd in UTC. Beide worden door dezelfde dagelijkse promotie bijgewerkt, zodat de zichtbare datum bij de werkelijk vastgezette code blijft horen.
+
 Een Latest-update kan ondanks deze technische tests functioneel onvolledig zijn of een niet-terugdraaibare databasemigratie bevatten. Houd Latest-data vervangbaar, maak koude back-ups en gebruik hem niet voor behandelbeslissingen, alarmen of automatische dosering.
 
 [Installatie](INSTALLATIE.md) · [Updatebeleid](UPDATES.md) · [Testbereik](TESTING.md)
