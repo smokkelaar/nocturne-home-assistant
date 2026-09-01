@@ -16,7 +16,7 @@ Browser ──trusted TLS ─────────────> host :8448 Of
 
 The Python supervisor starts PostgreSQL, bootstraps dedicated roles, starts the API, waits for usable status, starts web and then nginx. Any child exit stops the app. Shutdown stops clients first and PostgreSQL last. `/data` is never automatically deleted/reset.
 
-An initial Nocturne `503 setup_required` status is a valid boot condition in default gateway mode. Other 503 responses do not count as ready. Web readiness uses upstream's dedicated `/health` route, so it does not render the dashboard or call protected chart endpoints. This proves process health, not an account/passkey login.
+An initial Nocturne `503 setup_required` or explicit `recovery_mode_active` status is a valid boot condition in default gateway mode. Other 503 responses do not count as ready. Native mode refuses setup/recovery before opening nginx. Web readiness uses upstream's dedicated `/health` route, so it does not render the dashboard or call protected chart endpoints. This proves process health, not an account/passkey login.
 
 ## State and privileges
 
@@ -28,7 +28,7 @@ Only container HTTPS port 8448 is published to the host. Official maps it to hos
 
 ## Authentication and proxy behavior
 
-TLS uses explicitly configured read-only `/ssl` files or a clearly marked temporary test certificate. By default nginx requires gateway Basic auth on all proxied paths. Wrapper 0.1.2 adds an explicit native mode (`gateway_auth: false`) for an already configured owner account. Before nginx starts, the wrapper forces and verifies Nocturne authentication and confirms an anonymous protected-data request receives `401`; a setup/demo/unknown response fails closed. Native mode also requires the canonical configured host and a real configured certificate. Both modes preserve the external hostname **including port**, set forwarded HTTPS headers, and strip incoming Authorization and internal instance-auth headers. No service/admin credential is injected into browser requests.
+TLS uses explicitly configured read-only `/ssl` files or a clearly marked temporary test certificate. By default nginx requires gateway Basic auth on all proxied paths. Explicit native mode (`gateway_auth: false`) requires an already configured owner account. Wrapper 0.1.4 fixes its startup guard: it verifies a loaded, non-demo status with `anonymousReadAccess: false`, then requires a real anonymous protected-data request to return `401`. It no longer forces or trusts the obsolete `Security:RequireAuthentication` / `settings.requireAuthentication` flag; current main always reports that compatibility field as false. Setup/recovery/demo/unknown states fail closed. Native mode requires the canonical configured host and configured certificate files. Both modes preserve the external hostname **including port**, set forwarded HTTPS headers, and strip incoming Authorization and internal instance-auth headers. No service/admin credential is injected into browser requests.
 
 From 0.1.1, `tls.py` validates leaf SAN/hostname, validity and key match, then keeps a private immutable runtime snapshot. The watcher requires stable source bytes across two observations at least ten seconds apart. Renewal tests a candidate nginx configuration, atomically replaces its config, signals only nginx and verifies the served leaf fingerprint over loopback. Failed candidates retain/restore the previous config. It neither writes `/ssl` nor asserts trust in a client's CA store. Full chain parsing is checked by nginx; revocation and browser trust are outside this preflight. Runtime snapshots are not a persistent fallback after app restart.
 
@@ -38,7 +38,7 @@ Specific OIDC, OAuth, discovery and hub paths route to API; ordinary paths route
 
 `nocturne_local` is the long-lived Official Supervisor slug so existing repository installs retain their identity and `/data`. `nocturne_latest` is a second Supervisor app with a separate private `/data`, account, passkey, keys, database, options and backup lifecycle. No runtime path reads from the other app. Different default host ports prevent a bind conflict if both are accidentally started.
 
-Runtime/security files are intentionally duplicated because HA app packages are self-contained. Tests require those shared files to remain byte-identical. Channel metadata, Docker image pins, version, changelog, name, slug, default URL and published host port are allowed to differ. Never solve duplication by sharing or mounting one channel's private data into the other.
+Runtime/security files are intentionally duplicated because HA app packages are self-contained. Tests require those shared files to remain byte-identical and use one functional `wrapper.json` version. Channel metadata, Docker image pins, delivery counter, changelog, name, slug, default URL and published host port may differ. Never solve duplication by sharing or mounting one channel's private data into the other.
 
 ## Build coupling and limits
 

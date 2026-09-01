@@ -1,3 +1,11 @@
+## 0.1.4-1 — shared wrapper 0.1.4
+
+- Fix native startup against current Nocturne: verify private status and anonymous API denial instead of an obsolete auth flag.
+- Keep TLS, completed-owner setup, canonical-host restrictions and Nocturne passkey authentication required. Preserve existing data, keys and default gateway settings.
+- Share one functional wrapper version across both channels; independent delivery suffixes track upstream updates without implying different wrapper functionality.
+- Show channel/wrapper/package/upstream at startup and the pinned main timestamp on Latest's status page.
+- Test configured-native boot/restart in disposable containers with synthetic owner fixtures. Real browser/passkey acceptance remains a manual check.
+
 ## 0.1.1
 
 - Show the exact upstream `main` commit date and time in UTC next to its short commit ID in the Home Assistant app-store description.

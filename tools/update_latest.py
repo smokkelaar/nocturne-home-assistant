@@ -14,6 +14,8 @@ import re
 import urllib.error
 import urllib.request
 
+from versioning import next_package, package_build, wrapper_version
+
 ROOT = Path(__file__).resolve().parents[1]
 PROJECT = 'nightscout/nocturne'
 ACCEPT = ', '.join([
@@ -26,12 +28,6 @@ ACCEPT = ', '.join([
 
 class NotReady(ValueError):
     """The current upstream head has no complete paired image build yet."""
-
-
-def semver(value):
-    if not isinstance(value, str) or not re.fullmatch(r'(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)', value):
-        raise ValueError('HA app version must be stable three-part numeric semver')
-    return tuple(map(int, value.split('.')))
 
 
 def fetch(url, headers=None, expected_digest=None):
@@ -145,14 +141,15 @@ def dumps(value):
 
 def render(root, lock, app_version):
     validate_lock(lock)
-    semver(app_version)
-    config = json.loads((root / 'nocturne_latest/config.json').read_text())
+    package_build(root, app_version)
+    wrapper = wrapper_version(root)
+    config = json.loads((root / 'nocturne_latest/config.json').read_text(encoding='utf-8'))
     config['version'] = app_version
     commit_at = datetime.fromisoformat(lock['commit_at'].replace('Z', '+00:00'))
     commit_at = commit_at.astimezone(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
-    config['description'] = (f"Daily-tested Nocturne main {lock['commit'][:7]} - {commit_at} with PostgreSQL. "
+    config['description'] = (f"HA wrapper {wrapper} · Nocturne main {lock['commit'][:7]} - {commit_at}. "
                              'Highly experimental; not for clinical use.')
-    dockerfile = (root / 'nocturne_latest/Dockerfile').read_text()
+    dockerfile = (root / 'nocturne_latest/Dockerfile').read_text(encoding='utf-8')
     for kind in ('api', 'web'):
         pattern = rf'(?m)^FROM ghcr\.io/nightscout/nocturne/nocturne-{kind}@sha256:[0-9a-f]{{64}}'
         replacement = f"FROM ghcr.io/{PROJECT}/nocturne-{kind}@{lock[kind]['digest']}"
@@ -167,7 +164,8 @@ def render(root, lock, app_version):
         'nocturne_latest/config.json': dumps(config),
         'nocturne_latest/Dockerfile': dockerfile,
         'nocturne_latest/rootfs/opt/nocturne-ha/version.json': dumps({
-            'app': app_version, 'nocturne': 'main@' + lock['commit'][:7],
+            'app': wrapper, 'package': app_version,
+            'nocturne': 'main@' + lock['commit'][:7], 'commit_at': lock['commit_at'],
             'name': 'Nocturne Latest Release',
             'default_public_url': 'https://homeassistant.local:8449',
         }),
@@ -179,9 +177,8 @@ def apply_update(root, current, candidate):
     validate_lock(candidate)
     if candidate['commit'] == current['commit']:
         raise ValueError('Refusing an unchanged Latest snapshot')
-    version = json.loads((root / 'nocturne_latest/config.json').read_text())['version']
-    major, minor, patch = semver(version)
-    next_version = f'{major}.{minor}.{patch + 1}'
+    version = json.loads((root / 'nocturne_latest/config.json').read_text(encoding='utf-8'))['version']
+    next_version = next_package(root, version)
     prepared = render(root, candidate, next_version)  # Validate all before writing any file.
     changelog = root / 'nocturne_latest/CHANGELOG.md'
     note = (f"## {next_version}\n\n- Update Nocturne Latest from `{current['commit'][:7]}` "
@@ -191,7 +188,7 @@ def apply_update(root, current, candidate):
             f"{candidate['workflow_run']}\n"
             '- Automated container and previous-Latest upgrade tests are required before merge. '
             'Keep a cold backup; rollback after a development schema migration is not guaranteed.\n\n')
-    prepared['nocturne_latest/CHANGELOG.md'] = note + changelog.read_text()
+    prepared['nocturne_latest/CHANGELOG.md'] = note + changelog.read_text(encoding='utf-8')
     for name, content in prepared.items():
         (root / name).write_text(content, encoding='utf-8', newline='\n')
     return next_version
@@ -204,12 +201,12 @@ def main():
     mode.add_argument('--check-upstream', action='store_true', help='Online read-only: compare tested main')
     mode.add_argument('--update', action='store_true', help='Online: prepare a newer tested main snapshot')
     args = parser.parse_args()
-    current = json.loads((ROOT / 'upstream-latest.json').read_text())
+    current = json.loads((ROOT / 'upstream-latest.json').read_text(encoding='utf-8'))
     validate_lock(current)
     if args.check:
-        version = json.loads((ROOT / 'nocturne_latest/config.json').read_text())['version']
+        version = json.loads((ROOT / 'nocturne_latest/config.json').read_text(encoding='utf-8'))['version']
         for name, expected in render(ROOT, current, version).items():
-            actual = (ROOT / name).read_text()
+            actual = (ROOT / name).read_text(encoding='utf-8')
             same = json.loads(actual) == json.loads(expected) if name.endswith('.json') else actual == expected
             if not same:
                 raise ValueError('Inconsistent generated Latest metadata: ' + name)

@@ -21,7 +21,8 @@ class NativeGatewayTests(unittest.TestCase):
             'public_url': 'https://nocturne.example.net:8448',
             'certificate': 'fullchain.pem', 'private_key': 'privkey.pem', 'gateway_auth': False,
         })
-        self.status = {'settings': {'requireAuthentication': True}, 'runtimeState': 'loaded'}
+        self.status = {'status': 'ok', 'anonymousReadAccess': False, 'isDemo': False,
+                       'settings': {'requireAuthentication': False}, 'runtimeState': 'loaded'}
 
     def test_old_options_keep_basic_auth_by_default(self):
         options = settings.validate_options({})
@@ -38,10 +39,10 @@ class NativeGatewayTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'GATEWAY_TLS'):
             settings.validate_options({'gateway_auth': False})
 
-    def test_native_mode_enforces_upstream_lockdown_in_production(self):
+    def test_both_modes_use_native_upstream_authorization_in_production(self):
         passwords = {key: '0' * 64 for key in settings.SECRET_FIELDS}
         api, web = settings.service_environments(self.options, passwords)
-        self.assertEqual('true', api['Security__RequireAuthentication'])
+        self.assertNotIn('Security__RequireAuthentication', api)
         self.assertEqual('Production', api['ASPNETCORE_ENVIRONMENT'])
         self.assertEqual('production', web['NODE_ENV'])
         normal_api, _ = settings.service_environments(settings.validate_options({}), passwords)
@@ -75,7 +76,7 @@ class NativeGatewayTests(unittest.TestCase):
         protected.getresponse.return_value.status = protected_code
         return status, protected
 
-    def test_native_guard_checks_setup_lockdown_and_unauthenticated_denial(self):
+    def test_native_guard_accepts_private_instance_despite_false_legacy_flag(self):
         status, protected = self.connections()
         with patch.object(runtime.http.client, 'HTTPConnection', side_effect=[status, protected]) as factory:
             runtime.verify_native_auth(self.options)
@@ -92,23 +93,40 @@ class NativeGatewayTests(unittest.TestCase):
             status.getresponse.return_value.read.assert_called_once_with(65537)
             protected.getresponse.return_value.read.assert_not_called()
 
-    def test_incomplete_setup_or_unavailable_status_stays_closed(self):
+    def test_unavailable_status_stays_closed_with_http_code(self):
         for code in (301, 401, 404, 500, 503):
             with self.subTest(code=code):
                 status, protected = self.connections(status_code=code)
                 with patch.object(runtime.http.client, 'HTTPConnection', return_value=status) as factory:
-                    with self.assertRaisesRegex(ValueError, 'GATEWAY_SETUP'):
+                    with self.assertRaisesRegex(ValueError, f'GATEWAY_STATUS:.*HTTP {code}'):
                         runtime.verify_native_auth(self.options)
                     factory.assert_called_once()
                     status.close.assert_called_once()
-                    status.getresponse.return_value.read.assert_not_called()
+                    status.getresponse.return_value.read.assert_called_once_with(65537)
+
+    def test_setup_and_recovery_have_actionable_errors_without_raw_data(self):
+        for code, payload, error in (
+            (200, {'status': 'setup_required'}, 'GATEWAY_SETUP'),
+            (503, {'setupRequired': True}, 'GATEWAY_SETUP'),
+            (503, {'error': 'setup_required'}, 'GATEWAY_SETUP'),
+            (503, {'recoveryMode': True}, 'GATEWAY_RECOVERY'),
+            (503, {'error': 'recovery_mode_active'}, 'GATEWAY_RECOVERY'),
+        ):
+            with self.subTest(code=code, payload=payload):
+                status, _ = self.connections(status_code=code, payload=json.dumps(payload).encode())
+                with patch.object(runtime.http.client, 'HTTPConnection', return_value=status):
+                    with self.assertRaisesRegex(ValueError, error + ':.*gateway_auth: true'):
+                        runtime.verify_native_auth(self.options)
 
     def test_unknown_unlocked_demo_or_malformed_status_stays_closed(self):
         payloads = [b'not json', b'\xff', b'{}', b'[]', b'x' * 65537]
-        for status in ({'settings': []}, {**self.status, 'settings': {}},
-                       {**self.status, 'settings': {'requireAuthentication': False}},
-                       {**self.status, 'settings': {'requireAuthentication': 'true'}},
-                       {**self.status, 'runtimeState': 'demo'}, {**self.status, 'isDemo': True}):
+        for status in ({'settings': []}, {**self.status, 'status': 'unknown'},
+                       {**self.status, 'anonymousReadAccess': True},
+                       {**self.status, 'anonymousReadAccess': 'false'},
+                       {**self.status, 'anonymousReadAccess': None},
+                       {**self.status, 'anonymousReadAccess': 0},
+                       {**self.status, 'runtimeState': 'demo'}, {**self.status, 'isDemo': True},
+                       {**self.status, 'isDemo': 'false'}, {**self.status, 'isDemo': 0}):
             payloads.append(json.dumps(status).encode())
         for payload in payloads:
             with self.subTest(payload=payload[:60]):
@@ -118,6 +136,13 @@ class NativeGatewayTests(unittest.TestCase):
                         runtime.verify_native_auth(self.options)
                     factory.assert_called_once()
                     status.close.assert_called_once()
+
+    def test_legacy_settings_and_nullable_demo_flag_do_not_override_real_checks(self):
+        for legacy in (True, False, None):
+            payload = {**self.status, 'settings': {'requireAuthentication': legacy}, 'isDemo': None}
+            status, protected = self.connections(payload=json.dumps(payload).encode())
+            with patch.object(runtime.http.client, 'HTTPConnection', side_effect=[status, protected]):
+                runtime.verify_native_auth(self.options)
 
     def test_protected_route_must_deny_instead_of_succeed_redirect_or_disappear(self):
         for code in (200, 204, 301, 302, 403, 404, 500, 503):

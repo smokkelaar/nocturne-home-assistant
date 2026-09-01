@@ -29,6 +29,12 @@ This is an app-store repository, **not a HACS integration**. HA ingress currentl
 
 ## How updates reach you
 
+Both apps use **one shared functional HA-wrapper version** (currently 0.1.4).
+Official pairs it with Nocturne 0.2.4; Latest pairs it with a pinned main snapshot.
+HA's technical package version adds a delivery counter, e.g. `0.1.4-1`.
+Daily upstream updates change that counter, not wrapper functionality.
+[Version numbers explained](docs/VERSIES.md).
+
 **Official:** manually started release check → paired image/source pins → full tests → reviewed pull request → manual publication.
 
 **Latest:** daily upstream-`main` check → successful upstream paired-image job → immutable digests → container and previous-Latest upgrade tests → protected pull request checks → automatic merge. A user's HA installation updates automatically only when automatic updates are enabled for **Latest itself**.

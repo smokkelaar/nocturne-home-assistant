@@ -4,6 +4,7 @@ import ipaddress
 import json
 import re
 import secrets
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -79,9 +80,6 @@ def service_environments(options, passwords, timezone='Europe/Amsterdam'):
                ASPNETCORE_ENVIRONMENT='Production', ASPNETCORE_URLS='http://127.0.0.1:8080',
                ASPNETCORE_FORWARDEDHEADERS_ENABLED='true', DemoService__Enabled='false',
                WEB_URL='http://127.0.0.1:8000', Logging__LogLevel__Default='Warning')
-    if not options.get('gateway_auth', True):
-        # This is upstream Nocturne's own site lockdown, not an auth bypass.
-        api['Security__RequireAuthentication'] = 'true'
     for name, role in [('nocturne-postgres', 'app'), ('nocturne-postgres-migrator', 'migrator')]:
         api[f'ConnectionStrings__{name}'] = (
             f'Host=127.0.0.1;Port=5432;Database=nocturne;Username=nocturne_{role};Password={passwords[role]}')
@@ -148,6 +146,11 @@ def status_page(options, statuses, gateway_password, test_certificate, checks=No
     esc = html.escape
     versions = json.loads(Path(__file__).with_name('version.json').read_text())
     app_name = versions.get('name', 'Nocturne')
+    snapshot = ''
+    if versions.get('commit_at'):
+        stamp = datetime.fromisoformat(versions['commit_at'].replace('Z', '+00:00'))
+        stamp = stamp.astimezone(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
+        snapshot = f'<p>Upstream main-commit: {esc(stamp)} (vastgezette code, geen live status van main).</p>'
     rows = ''.join(f'<li><strong>{esc(name)}</strong>: {esc(state)}</li>' for name, state in statuses.items())
     check_rows = ''.join(f'<li><strong>{esc(name)}</strong>: {esc(state)}</li>'
                          for name, state in (checks or {'Controles': 'nog niet uitgevoerd'}).items())
@@ -168,7 +171,11 @@ def status_page(options, statuses, gateway_password, test_certificate, checks=No
 <style>body{{font:16px system-ui;max-width:760px;margin:32px auto;padding:20px;background:#101724;color:#e5edf7}}
 a{{color:#80d5fc}}li{{margin:10px 0}}section{{background:#1d293c;padding:20px;border-radius:12px;margin:20px 0}}
 code{{overflow-wrap:anywhere}}button{{padding:10px;cursor:pointer}}.warning{{color:#ffd291}}</style>
-<h1>{esc(app_name)}</h1><p>HA-pakket {esc(versions['app'])} · Nocturne {esc(versions['nocturne'])} · amd64</p>
+<h1>{esc(app_name)}</h1><p><strong>HA-wrapper {esc(versions['app'])}</strong> · Nocturne {esc(versions['nocturne'])}</p>
+{snapshot}
+<details><summary>Technische pakketgegevens</summary>
+<p>HA-pakket {esc(versions['package'])} · amd64. Het getal na het streepje is de pakketbuild,
+niet een andere wrapperfunctionaliteit. Official en Latest gebruiken dezelfde wrapperversie.</p></details>
 <section><h2>Werkelijke dienststatus</h2><ul>{rows}</ul>
 <button onclick="location.reload()">Status vernieuwen</button></section>
 <section><h2>Nocturne openen</h2>

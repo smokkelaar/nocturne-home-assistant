@@ -5,11 +5,13 @@ import io
 import json
 from pathlib import Path
 import shutil
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'tools'))
 spec = importlib.util.spec_from_file_location('update_upstream', ROOT / 'tools/update_upstream.py')
 updater = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(updater)
@@ -17,7 +19,7 @@ spec.loader.exec_module(updater)
 
 class UpdateTests(unittest.TestCase):
     def setUp(self):
-        self.lock = json.loads((ROOT / 'upstream.json').read_text())
+        self.lock = json.loads((ROOT / 'upstream.json').read_text(encoding='utf-8'))
 
     def candidate(self):
         value = copy.deepcopy(self.lock)
@@ -47,13 +49,14 @@ class UpdateTests(unittest.TestCase):
                 updater.validate_lock(lock)
 
     def test_all_generated_metadata_agrees(self):
-        version = json.loads((ROOT / 'nocturne_local/config.json').read_text())['version']
+        version = json.loads((ROOT / 'nocturne_local/config.json').read_text(encoding='utf-8'))['version']
         for name, expected in updater.render(ROOT, self.lock, version).items():
-            actual = (ROOT / name).read_text()
+            actual = (ROOT / name).read_text(encoding='utf-8')
             self.assertEqual(json.loads(expected), json.loads(actual)) if name.endswith('.json') else self.assertEqual(expected, actual)
 
     def fixture(self, directory):
         root = Path(directory)
+        shutil.copyfile(ROOT / 'wrapper.json', root / 'wrapper.json')
         for name in ['config.json', 'Dockerfile', 'CHANGELOG.md']:
             target = root / 'nocturne_local' / name
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -62,17 +65,20 @@ class UpdateTests(unittest.TestCase):
         (root / 'upstream.json').write_text(json.dumps(self.lock))
         return root
 
-    def test_update_bumps_wrapper_and_preserves_options(self):
+    def test_upstream_update_bumps_delivery_not_wrapper_and_preserves_options(self):
         with tempfile.TemporaryDirectory() as directory:
             root = self.fixture(directory)
-            original = json.loads((root / 'nocturne_local/config.json').read_text())
+            original = json.loads((root / 'nocturne_local/config.json').read_text(encoding='utf-8'))
             version = updater.apply_update(root, self.lock, self.candidate())
-            config = json.loads((root / 'nocturne_local/config.json').read_text())
+            config = json.loads((root / 'nocturne_local/config.json').read_text(encoding='utf-8'))
             self.assertEqual(version, config['version'])
             self.assertNotEqual(original['version'], config['version'])
+            runtime = json.loads((root / 'nocturne_local/rootfs/opt/nocturne-ha/version.json').read_text(encoding='utf-8'))
+            self.assertEqual(updater.wrapper_version(root), runtime['app'])
+            self.assertEqual(updater.next_package(root, original['version']), runtime['package'])
             self.assertEqual(original['options'], config['options'])
             self.assertEqual(original['slug'], config['slug'])
-            self.assertIn(version, (root / 'nocturne_local/CHANGELOG.md').read_text())
+            self.assertIn(version, (root / 'nocturne_local/CHANGELOG.md').read_text(encoding='utf-8'))
 
     def test_same_version_retag_and_downgrade_cannot_change_files(self):
         with tempfile.TemporaryDirectory() as directory:

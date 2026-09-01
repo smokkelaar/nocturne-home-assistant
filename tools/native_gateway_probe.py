@@ -25,9 +25,8 @@ try:
     try:
         run.verify_native_auth(options)
     except ValueError as error:
-        # The running disposable container was started in default gateway mode,
-        # so its API may report either incomplete setup or absent forced native
-        # authentication. Both must refuse this opt-in configuration.
+        # This fresh instance has no owner. Do not depend on any legacy global
+        # authentication flag; its setup/status must refuse native mode.
         assert str(error).startswith(('GATEWAY_SETUP:', 'GATEWAY_AUTH:')), 'Unexpected bootstrap guard result'
     else:
         raise AssertionError('Native mode accepted a fresh instance without an owner account')

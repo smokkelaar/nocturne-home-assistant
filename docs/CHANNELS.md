@@ -16,6 +16,11 @@ Na één keer toevoegen van deze repository toont Home Assistant twee losse apps
 
 ## Isolatie
 
+Beide kanalen hebben vanaf 0.1.4 één gedeelde functionele **HA-wrapperversie**.
+Het aparte Nocturne-versienummer of de main-commit bepaalt de meegeleverde
+upstream-code. Alleen het technische leveringsnummer mag daarna per kanaal
+oplopen. Zie [uitleg met voorbeelden](VERSIES.md).
+
 De slugs bepalen afzonderlijke Supervisor-apps en afzonderlijke private gegevensmappen. Installeren van Latest leest, kopieert of migreert niets uit Official. Accounts, passkeys, herstelcodes, database en `secrets.json` zijn dus niet gedeeld.
 
 De standaard hostpoorten verschillen, zodat beide geïnstalleerd kunnen blijven en zelfs een onbedoelde gelijktijdige start geen poortbotsing veroorzaakt. Gelijktijdig draaien is niet nodig en verdubbelt ongeveer de actieve database/API/web-belasting. Controleer altijd aan de appnaam, poort en statuspagina in welk kanaal je werkt.
@@ -23,6 +28,11 @@ De standaard hostpoorten verschillen, zodat beide geïnstalleerd kunnen blijven 
 Gebruik bij dezelfde hostnaam voor ieder kanaal zijn eigen URL met de juiste poort. Maak voor Latest een eigen Nocturne-account/passkey aan; probeer geen Official-database of sleutels te kopiëren. De twee passkeys kunnen in dezelfde browser zichtbaar zijn omdat de hostnaam gelijk is, dus geef ze herkenbare namen in je wachtwoord-/passkeybeheerder.
 
 ## Updategrenzen
+
+Let op bij één hostnaam met twee poorten: browsercookies zijn niet per poort
+gescheiden. Wisselen van kanaal kan daarom een nieuwe aanmelding vragen.
+Dat betekent niet dat databases gedeeld zijn. Gebruik desgewenst aparte
+browserprofielen voor tests; verander een bestaand passkey-domein niet zomaar.
 
 Official wijzigt alleen nadat iemand de workflow **Check Official Nocturne release manually** start, de gegenereerde wijziging controleert en samenvoegt.
 
