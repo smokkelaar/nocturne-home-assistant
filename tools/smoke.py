@@ -82,6 +82,11 @@ def wait_ready(name, probe=PROBE):
             return
         except RuntimeError as error:
             last_error = str(error)  # docker() only exposes bounded safe markers.
+            # njs request-time exceptions do not stop nginx. Abort this disposable
+            # test early, exposing a fixed marker but never raw cookie/error logs.
+            logs = docker('logs', name, check=False).lower()
+            if 'js exception' in logs or 'js function' in logs or 'js vm start' in logs:
+                raise RuntimeError('Container cookie adapter failed at request time: NJS_RUNTIME')
             time.sleep(3)
     raise RuntimeError('Container readiness/authentication smoke test timed out: ' + last_error)
 
