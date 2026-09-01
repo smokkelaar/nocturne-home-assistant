@@ -5,6 +5,7 @@ const PREFIXES = ['NocturneOfficial_', 'NocturneLatest_'];
 // Keeping them unchanged avoids modifying/cache-busting upstream JS bundles.
 const PREFERENCES = ['nocturne-language', 'nocturne-prefs', 'sidebar:state'];
 const UI_HINT = 'IsAuthenticated=true; Path=/; Secure; SameSite=Lax';
+const SECURITY_PREFIXES = ['__Host-', '__Secure-'];
 
 function prefixFor(namespace) {
     if (PREFIXES.indexOf(namespace) === -1) throw Error('Invalid cookie namespace');
@@ -19,6 +20,10 @@ function validName(name) {
     return /^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/.test(name);
 }
 
+function securityPrefix(name) {
+    return SECURITY_PREFIXES.find(prefix => name.startsWith(prefix)) || '';
+}
+
 function decode(header, namespace) {
     const prefix = prefixFor(namespace);
     const found = Object.create(null);
@@ -28,11 +33,14 @@ function decode(header, namespace) {
         const separator = pair.indexOf('=');
         if (separator < 1) continue;
         const external = pair.slice(0, separator);
+        const security = securityPrefix(external);
+        const scoped = external.slice(security.length);
         let name;
-        if (external.startsWith(prefix)) {
-            name = external.slice(prefix.length);
+        if (scoped.startsWith(prefix)) {
+            const original = scoped.slice(prefix.length);
+            name = security + original;
             if (!validName(name) || preference(name)
-                    || PREFIXES.some(p => name.startsWith(p))) continue;
+                    || PREFIXES.some(p => original.startsWith(p))) continue;
         } else if (preference(external)) {
             name = external;
         } else {
@@ -59,7 +67,10 @@ function encode(headers, namespace, htmlPage) {
         if (!validName(name) && !preference(name)) continue;
         // Preserve value and ALL attributes, including expiry/deletion, HttpOnly,
         // Secure, SameSite, Domain and Path. Never split Set-Cookie on commas.
-        const target = preference(name) ? name : prefix + name;
+        // Keep browser-enforced __Host-/__Secure- semantics for future upstream
+        // cookies; the channel namespace goes AFTER their reserved prefix.
+        const security = securityPrefix(name);
+        const target = preference(name) ? name : security + prefix + name.slice(security.length);
         result.push(target + header.slice(separator));
         if (name === 'IsAuthenticated') needsHint = true;
     }

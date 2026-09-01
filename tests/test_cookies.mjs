@@ -37,6 +37,17 @@ test('expiry commas, domains, paths and deletions are preserved exactly', () => 
   assert.deepEqual(cookies.encode([header], latest, false), [latest + header]);
 });
 
+test('reserved browser security prefixes keep their original meaning', () => {
+  for (const security of ['__Host-', '__Secure-']) {
+    const header = security + 'session=opaque; Path=/; Secure; HttpOnly';
+    const scoped = security + official + 'session=opaque; Path=/; Secure; HttpOnly';
+    assert.deepEqual(cookies.encode([header], official, false), [scoped]);
+    assert.equal(cookies.decode(scoped.split(';')[0], official), security + 'session=opaque');
+    assert.equal(cookies.decode(scoped.split(';')[0], latest), '');
+    assert.equal(cookies.decode(header.split(';')[0], official), '');
+  }
+});
+
 test('duplicate same-name credentials are not forwarded in either order', () => {
   for (const values of ['one; ' + official + access + '=two', 'two; ' + official + access + '=one']) {
     assert.equal(cookies.decode(`${official}${access}=${values}`, official), '');
