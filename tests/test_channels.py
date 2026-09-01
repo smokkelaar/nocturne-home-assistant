@@ -56,6 +56,7 @@ class ChannelTests(unittest.TestCase):
             'build/check_web.mjs', 'build/prepare_web.py',
             'rootfs/opt/nocturne-ha/bootstrap.sql', 'rootfs/opt/nocturne-ha/run.py',
             'rootfs/opt/nocturne-ha/settings.py', 'rootfs/opt/nocturne-ha/tls.py',
+            'translations/nl.json', 'translations/en.json',
         ]
         for relative in common:
             with self.subTest(file=relative):
@@ -95,6 +96,16 @@ class ChannelTests(unittest.TestCase):
         for name in ('Nocturne Official Release', 'Nocturne Latest Release'):
             self.assertIn(name, install)
             self.assertIn(name, channels)
+
+    def test_ha_option_labels_cover_exactly_the_supported_schema(self):
+        for package in ('nocturne_local', 'nocturne_latest'):
+            schema = json.loads((ROOT / package / 'config.json').read_text())['schema']
+            for language in ('nl', 'en'):
+                translation = json.loads((ROOT / package / 'translations' / (language + '.json')).read_text(encoding='utf-8'))
+                self.assertEqual(set(schema), set(translation['configuration']))
+                for entry in translation['configuration'].values():
+                    self.assertTrue(entry['name'])
+                    self.assertTrue(entry['description'])
 
 
 if __name__ == '__main__':

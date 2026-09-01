@@ -118,6 +118,16 @@ class NativeGatewayTests(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError, error + ':.*gateway_auth: true'):
                         runtime.verify_native_auth(self.options)
 
+    def test_non_json_error_keeps_http_code_without_body(self):
+        for code in (301, 500, 503):
+            for payload in (b'<html>private backend error</html>', b'', b'\xff', b'[]', b'x' * 65537):
+                with self.subTest(code=code, payload=payload[:20]):
+                    status, _ = self.connections(status_code=code, payload=payload)
+                    with patch.object(runtime.http.client, 'HTTPConnection', return_value=status):
+                        with self.assertRaisesRegex(ValueError, f'GATEWAY_STATUS:.*HTTP {code}') as caught:
+                            runtime.verify_native_auth(self.options)
+                        self.assertNotIn('private', str(caught.exception))
+
     def test_unknown_unlocked_demo_or_malformed_status_stays_closed(self):
         payloads = [b'not json', b'\xff', b'{}', b'[]', b'x' * 65537]
         for status in ({'settings': []}, {**self.status, 'status': 'unknown'},

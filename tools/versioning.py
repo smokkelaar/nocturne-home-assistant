@@ -4,7 +4,7 @@ import re
 
 
 def wrapper_version(root):
-    version = json.loads((root / 'wrapper.json').read_text())['version']
+    version = json.loads((root / 'wrapper.json').read_text(encoding='utf-8'))['version']
     if not isinstance(version, str) or not re.fullmatch(r'(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)', version):
         raise ValueError('Wrapper version must be three-part numeric semver')
     return version

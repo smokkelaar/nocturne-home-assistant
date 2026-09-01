@@ -19,6 +19,8 @@ delivery version (`<wrapper>-<counter>`). See [VERSIES](VERSIES.md).
   Setup/recovery/status/auth errors have distinct instructions; no raw responses are logged.
 - Both channels share wrapper 0.1.4. Upstream-only promotions increment only
   their delivery counter. Do not let either updater bump wrapper functionality.
+- HA configuration has Dutch/English labels explaining first setup versus
+  removing only the extra popup. Keep translations identical across channels.
 - Smoke CI now seeds a synthetic owner with a nonfunctional credential **only**
   in its disposable container, then tests native main-entrypoint boot/restart.
   This is not real enrollment/passkey or human-account upgrade evidence.

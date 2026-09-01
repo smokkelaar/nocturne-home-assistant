@@ -165,18 +165,21 @@ def verify_native_auth(options):
         connection.request('GET', '/api/v4/status', headers=headers)
         response = connection.getresponse()
         raw = response.read(65537)
-        if len(raw) > 65536:
-            raise ValueError('GATEWAY_AUTH: ongeldige statusrespons; extra toegang blijft vereist')
-        status = json.loads(raw)
-        if not isinstance(status, dict):
-            raise ValueError('GATEWAY_AUTH: ongeldige statusrespons; extra toegang blijft vereist')
-        if status.get('recoveryMode') is True or status.get('error') == 'recovery_mode_active':
+        try:
+            status = json.loads(raw) if len(raw) <= 65536 else None
+        except (json.JSONDecodeError, UnicodeError):
+            status = None
+        if isinstance(status, dict) and (status.get('recoveryMode') is True
+                                         or status.get('error') == 'recovery_mode_active'):
             raise ValueError('GATEWAY_RECOVERY: Nocturne vraagt accountherstel; zet gateway_auth: true en herstel het bestaande account, wis geen gegevens')
-        if (status.get('setupRequired') is True or status.get('error') == 'setup_required'
-                or status.get('status') == 'setup_required'):
+        if isinstance(status, dict) and (status.get('setupRequired') is True
+                                        or status.get('error') == 'setup_required'
+                                        or status.get('status') == 'setup_required'):
             raise ValueError('GATEWAY_SETUP: voltooi eerst Nocturne-accountaanmaak met gateway_auth: true')
         if response.status != 200:
             raise ValueError(f'GATEWAY_STATUS: statuscontrole gaf HTTP {response.status}; extra toegang blijft vereist')
+        if not isinstance(status, dict):
+            raise ValueError('GATEWAY_AUTH: ongeldige statusrespons; extra toegang blijft vereist')
         # requireAuthentication is a legacy Nightscout compatibility field.
         # Current upstream main always sets it false, even on a private instance.
         # Check actual anonymous access and the real authorization result below.

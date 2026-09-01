@@ -24,7 +24,7 @@ Een nieuwe lege instantie moet eerst met `gateway_auth: true` worden ingericht. 
 1. Werk de repository-app bij naar wrapper **0.1.4** (HA-pakket **0.1.4-1** of hoger) en controleer dat de bestaande instantie nog normaal opent.
 2. Open **Instellingen → Apps → Nocturne Official Release / Nocturne Latest Release → Configuratie**. Kies de bedoelde instantie.
 3. Zet **Ongebruikte optionele configuratieopties tonen** aan als `gateway_auth` niet zichtbaar is.
-4. Zet alleen `gateway_auth` uit. Laat `public_url`, `certificate`, `private_key` en de hostpoort ongewijzigd.
+4. Zet alleen **Extra gebruikersnaam/wachtwoord-popup** (`gateway_auth`) uit. Laat `public_url`, `certificate`, `private_key` en de hostpoort ongewijzigd.
 5. Klik **Opslaan** en herstart alleen de Nocturne-app.
 
 In de YAML-editor is de relevante extra regel:
