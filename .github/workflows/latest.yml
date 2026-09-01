@@ -1,0 +1,96 @@
+name: Promote Nocturne Latest daily
+on:
+  schedule:
+    - cron: '53 6 * * *'
+  workflow_dispatch:
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+concurrency:
+  group: latest-upstream-update
+  cancel-in-progress: false
+jobs:
+  update:
+    if: github.repository == 'smokkelaar/nocturne-home-assistant'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - name: Resolve the newest completely published upstream main snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/update_latest.py --update
+      - name: Detect Latest changes
+        id: changes
+        run: |
+          if git diff --quiet -- upstream-latest.json nocturne_latest; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Validate generated Latest update
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          python -m unittest discover -s tests -v
+          node --test tests/test_web_check.mjs
+          python tools/update_upstream.py --check
+          python tools/update_latest.py --check
+      - name: Build and smoke-test Latest candidate and previous-Latest upgrade
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          docker build --platform linux/amd64 --tag nocturne-latest:candidate nocturne_latest
+          python tools/smoke.py --image nocturne-latest:candidate
+          mkdir -p "$RUNNER_TEMP/nocturne-latest-baseline"
+          git archive HEAD nocturne_latest | tar -x -C "$RUNNER_TEMP/nocturne-latest-baseline"
+          docker build --platform linux/amd64 --tag nocturne-latest:baseline "$RUNNER_TEMP/nocturne-latest-baseline/nocturne_latest"
+          python tools/recovery_smoke.py --image nocturne-latest:candidate --baseline nocturne-latest:baseline
+      - name: Open or refresh the isolated Latest proposal
+        id: proposal
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ github.token }}
+          branch: automation/nocturne-latest
+          title: 'Update Nocturne Latest Release'
+          commit-message: 'Promote tested Nocturne main snapshot to Latest'
+          add-paths: |
+            upstream-latest.json
+            nocturne_latest/config.json
+            nocturne_latest/Dockerfile
+            nocturne_latest/CHANGELOG.md
+            nocturne_latest/rootfs/opt/nocturne-ha/version.json
+          body: |
+            Daily Latest-channel proposal from an exact upstream `main` commit and paired,
+            immutable API/web image digests. Upstream's `build-and-push` job, local metadata
+            checks, a full container smoke test and previous-Latest-to-candidate cold upgrade
+            rehearsal passed before this proposal was created.
+
+            This PR changes only the separate `nocturne_latest` channel and its lock file.
+            It never reads or changes a user's HA installation, Official app data, accounts,
+            passkeys or health data. Required repository validation is dispatched below;
+            auto-merge remains blocked unless those protected checks pass.
+
+            Latest is deliberately high risk: upstream schema migrations can be frequent and
+            downgrade is not guaranteed. Users must keep cold backups and enable HA automatic
+            app updates only for the Latest app if they accept that risk.
+      - name: Dispatch protected validation for the Latest proposal
+        if: steps.changes.outputs.changed == 'true' && steps.proposal.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROPOSAL_BRANCH: ${{ steps.proposal.outputs.pull-request-branch }}
+        run: gh workflow run validate.yml --ref "$PROPOSAL_BRANCH"
+      - name: Enable auto-merge only after required checks pass
+        if: steps.changes.outputs.changed == 'true' && steps.proposal.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROPOSAL_NUMBER: ${{ steps.proposal.outputs.pull-request-number }}
+        run: gh pr merge "$PROPOSAL_NUMBER" --auto --squash

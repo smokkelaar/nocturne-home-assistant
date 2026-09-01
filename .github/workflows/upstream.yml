@@ -1,13 +1,12 @@
-name: Check Nocturne updates
+name: Check Official Nocturne release manually
 on:
-  schedule:
-    - cron: '23 6 * * *'
   workflow_dispatch:
 permissions:
+  actions: write
   contents: write
   pull-requests: write
 concurrency:
-  group: upstream-update
+  group: official-upstream-update
   cancel-in-progress: false
 jobs:
   update:
@@ -24,7 +23,7 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '24'
-      - name: Resolve a newer stable upstream release
+      - name: Resolve a newer official upstream release
         env:
           GH_TOKEN: ${{ github.token }}
         run: python tools/update_upstream.py --update
@@ -52,12 +51,13 @@ jobs:
           docker build --platform linux/amd64 --tag nocturne-ha:baseline "$RUNNER_TEMP/nocturne-baseline/nocturne_local"
           python tools/recovery_smoke.py --image nocturne-ha:candidate --baseline nocturne-ha:baseline
       - name: Open or refresh reviewed update proposal
+        id: proposal
         if: steps.changes.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ github.token }}
-          branch: automation/nocturne-upstream
-          title: 'Update Nocturne to the latest stable release'
+          branch: automation/nocturne-official
+          title: 'Update Nocturne Official Release'
           commit-message: 'Update paired Nocturne release and HA app version'
           add-paths: |
             upstream.json
@@ -66,7 +66,7 @@ jobs:
             nocturne_local/CHANGELOG.md
             nocturne_local/rootfs/opt/nocturne-ha/version.json
           body: |
-            Automatically discovered stable upstream release. API/web pins, source commit,
+            Manually requested official upstream release check. API/web pins, source commit,
             HA app version, launcher metadata and changelog are updated together.
 
             Unit checks, container build, clean startup, authenticated setup and same-version
@@ -78,3 +78,9 @@ jobs:
             Maintainer: read upstream release/migration notes, approve PR workflows if GitHub
             requests this, test an upgrade on a backed-up disposable instance, then merge.
             See docs/UPDATES.md. No automatic merge or production installation is performed.
+      - name: Start required validation for the proposal
+        if: steps.changes.outputs.changed == 'true' && steps.proposal.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROPOSAL_BRANCH: ${{ steps.proposal.outputs.pull-request-branch }}
+        run: gh workflow run validate.yml --ref "$PROPOSAL_BRANCH"

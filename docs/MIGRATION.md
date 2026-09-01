@@ -1,6 +1,6 @@
 # Existing local prototype: read before switching
 
-The original prototype was installed from HA's local app directory, with a Supervisor identity such as `local_nocturne_local`. This repository keeps the app slug `nocturne_local`, but **Supervisor adds a different repository prefix**. It is consequently a separate installation with a separate private `/data` directory.
+The original prototype was installed from HA's local app directory, with a Supervisor identity such as `local_nocturne_local`. This repository keeps the Official app slug `nocturne_local`, but **Supervisor adds a different repository prefix**. It is consequently a separate installation with a separate private `/data` directory. In this document “repository app” means **Nocturne Official Release**. Latest has another slug and is never a migration destination for existing Official/prototype data.
 
 Adding this GitHub repository does **not** automatically adopt the existing database, gateway code, instance keys, passkeys or account. An empty setup page in a new installation is not evidence that the old data was migrated.
 
@@ -8,7 +8,7 @@ Adding this GitHub repository does **not** automatically adopt the existing data
 
 Keep the working local app installed. You can add the repository now to see it in the store, but do not uninstall the old app or start two instances on the same host port. Ordinary local-app restarts should continue to use the existing data.
 
-For collaborators without an existing installation, use the normal fresh-installation instructions.
+For collaborators without an existing installation, use the normal fresh-installation instructions. They may also install Latest separately on its default host port 8449, but it starts empty with its own account and recovery material.
 
 ## Alternative: deliberately start empty
 
@@ -37,3 +37,7 @@ Do not treat the following checklist as a tested copy/paste migration procedure:
 Source-code updates in the local prototype directory are a different, manual workflow; they do not subscribe that app to this GitHub repository. There is no promise that HA's normal restore UI automatically maps backups across different repository identities.
 
 **Do not uninstall the local app as a migration step before a verified backup/restore plan exists.** A future migration tool must be non-destructive, explicitly authorized and covered by restore tests.
+
+## Official and Latest are not migration peers
+
+Installing Latest does not clone Official. Do not manually copy `/data`, PostgreSQL files, `secrets.json`, passkeys or Supervisor backups between the two repository apps. Schema revisions can differ and their identities/backups must remain independent. If you stop one and start the other, identify it by full app name and host port before entering data.

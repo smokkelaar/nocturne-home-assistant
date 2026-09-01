@@ -60,7 +60,8 @@ class DocumentationTests(unittest.TestCase):
         self.assertIn('geen screenshots', guide)
 
     def test_entrypoints_make_dutch_guide_discoverable(self):
-        for name in ['README.md', 'nocturne_local/README.md', 'nocturne_local/DOCS.md', 'docs/NL.md']:
+        for name in ['README.md', 'nocturne_local/README.md', 'nocturne_local/DOCS.md',
+                     'nocturne_latest/README.md', 'nocturne_latest/DOCS.md', 'docs/NL.md']:
             self.assertIn('INSTALLATIE.md', (ROOT / name).read_text(encoding='utf-8'))
 
     def test_proposals_do_not_claim_implementation(self):

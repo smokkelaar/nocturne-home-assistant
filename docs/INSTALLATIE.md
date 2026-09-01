@@ -1,11 +1,11 @@
 # Nocturne installeren: van repository tot werkend dashboard
 
-**Nederlandse stap-voor-staphandleiding · HA-app 0.1.x · Nocturne 0.2.4 · gecontroleerd op 31 augustus 2026.**
+**Nederlandse stap-voor-staphandleiding · twee gescheiden HA-apps · gecontroleerd op 1 september 2026.**
 
 Doel: een **nieuwe, lege testinstallatie** openen via vertrouwd HTTPS, een account met passkey maken en na een app-herstart opnieuw kunnen inloggen. Dit is nog geen gevalideerde medische omgeving of handleiding voor CGM/pomp/Nightscout-import.
 
 > [!WARNING]
-> **Heb je al de lokale Nocturne-testapp? Stop vóór installeren of starten.** De repository-app heeft een andere interne identiteit en gegevensmap. Voeg de repository gerust toe, maar verwijder de lokale app niet en start geen tweede app op dezelfde poort. Lees eerst [de migratiewaarschuwing](MIGRATION.md). Deze handleiding verplaatst geen bestaande accounts of gegevens.
+> **Heb je al de lokale Nocturne-testapp? Stop vóór installeren of starten.** De repository-apps hebben andere interne identiteiten en gegevensmappen. Voeg de repository gerust toe, maar verwijder de lokale app niet. De lokale prototype-app en Official gebruiken standaard beide hostpoort 8448. Lees eerst [de migratiewaarschuwing](MIGRATION.md). Deze handleiding verplaatst geen bestaande accounts of gegevens.
 
 ![Installatieroute in acht stappen, met de voorwaarde dat een bestaande lokale installatie eerst een aparte migratie nodig heeft.](images/installatieroute.svg)
 
@@ -65,16 +65,22 @@ In nieuwe HA-versies heet de pagina **Apps**; oudere versies gebruiken **Add-ons
 
 5. Klik **Toevoegen / Add**, sluit het venster en ververs zo nodig de appwinkel.
 
-**Controlepunt:** je ziet de repository **Nocturne for Home Assistant (experimental)** en daarin de app **Nocturne (experimental)**. De knop installeert nog niets en importeert geen bestaande gegevens. De [officiële HA-repositorystappen](https://www.home-assistant.io/common-tasks/os/#installing-a-third-party-app-repository) tonen ook de appwinkelroute.
+**Controlepunt:** je ziet in dezelfde repository **Nocturne Official Release** en **Nocturne Latest Release**. De repository toevoegen installeert nog niets en importeert geen bestaande gegevens. De [officiële HA-repositorystappen](https://www.home-assistant.io/common-tasks/os/#installing-a-third-party-app-repository) tonen ook de appwinkelroute.
 
 ## Stap 2: de app installeren
 
-1. Zoek in de appwinkel op **Nocturne**.
-2. Open **Nocturne (experimental)** uit de zojuist toegevoegde repository, niet een eventueel bestaande **Nocturne Local (test)**.
+1. Zoek in de appwinkel op **Nocturne**. Je krijgt twee keuzen uit dezelfde repository:
+
+   | App | Kies deze voor | Gegevens | Standaard hostpoort |
+   |---|---|---|---|
+   | **Nocturne Official Release** | De handmatig bevorderde officiële Nocturne-release; aanbevolen als basis | Eigen map; behoudt de identiteit van eerdere repositoryversies | 8448 |
+   | **Nocturne Latest Release** | Veelvuldig testen van een exact vastgezette upstream-`main`-momentopname | Volledig aparte map en eigen account/passkey | 8449 |
+
+2. Open het gewenste kanaal uit de zojuist toegevoegde repository, niet een eventueel bestaande **Nocturne Local (test)**. [Lees de volledige kanaalvergelijking](CHANNELS.md). Beide repository-apps mogen geïnstalleerd blijven; ze hoeven niet tegelijk te draaien.
 3. Lees de beschrijving en kies **Installeren / Install** één keer.
 4. Wacht op de volledige build. De duur hangt af van je host, downloads en vrije ruimte; enkele minuten is normaal, langer kan ook.
 
-**Controlepunt:** de appdetailpagina toont de geïnstalleerde versie en **Starten / Start**. **Start nog niet**; eerst bereiden we HTTPS voor. Bij de eerste openbare uitgave zijn HA-app **0.1.0** en Nocturne **0.2.4** verschillende versienummers, geen fout.
+**Controlepunt:** de appdetailpagina toont de gekozen naam, de geïnstalleerde wrapperversie en **Starten / Start**. **Start nog niet**; eerst bereiden we HTTPS voor. De wrapperversie en Nocturne-versie zijn verschillende versienummers, geen fout.
 
 > [!TIP]
 > Een fout **Another job is running** betekent dat er al een installatie/buildactie loopt. Klik niet herhaaldelijk op installeren of bijwerken. Controleer **Instellingen → Systeem → Logboeken → Supervisor** en wacht tot de lopende taak is afgerond of aantoonbaar mislukt.
@@ -101,19 +107,19 @@ Gebruik straks één adres in de vorm:
 https://nocturne.example.net:8448
 ```
 
-`nocturne.example.net` is een **documentatievoorbeeld**, niet een werkend adres. Vervang de hele hostnaam door je eigen naam. Gebruik geen IP-adres voor accountregistratie en verander de gekozen hostnaam niet zomaar nadat passkeys zijn aangemaakt. Een zelfondertekend testcertificaat overslaan in de browser is geen oplossing voor vertrouwde passkey-registratie.
+`nocturne.example.net` is een **documentatievoorbeeld**, niet een werkend adres. Vervang de hele hostnaam door je eigen naam. Gebruik voor Official standaard poort **8448** en voor Latest **8449**. Gebruik geen IP-adres voor accountregistratie en verander de gekozen hostnaam niet zomaar nadat passkeys zijn aangemaakt. Een zelfondertekend testcertificaat overslaan in de browser is geen oplossing voor vertrouwde passkey-registratie.
 
 **Controlepunt vóór stap 4:** je eigen hostnaam ligt vast, de naam wijst lokaal naar de HA-host, en het passende certificaat plus sleutel staan in `/ssl`. De poorttest en browsercontrole doen we nadat de app gestart is. Zet hiervoor geen internetpoorten open en verander HA's eigen HTTP/HTTPS-instellingen niet.
 
 ## Stap 4: Nocturne configureren
 
-1. Ga terug naar **Instellingen → Apps → Nocturne (experimental)**.
+1. Ga terug naar **Instellingen → Apps** en open precies **Nocturne Official Release** of **Nocturne Latest Release**.
 2. Open **Configuratie / Configuration**.
 3. Vul onderstaande drie velden in. Als lege optionele velden verborgen zijn, schakel **Ongebruikte optionele configuratieopties tonen** in.
 
 | Optie | Invullen | Niet invullen |
 |---|---|---|
-| `public_url` | Je volledige vaste URL, bijvoorbeeld `https://nocturne.example.net:8448` | Geen IP, `/setup`, gebruikersnaam, wachtwoord of querystring |
+| `public_url` | Je volledige vaste URL, bijvoorbeeld Official `https://nocturne.example.net:8448` of Latest `https://nocturne.example.net:8449` | Geen IP, `/setup`, gebruikersnaam, wachtwoord of querystring |
 | `certificate` | `fullchain.pem` of jouw eigen certificaatbestandsnaam | Geen `/ssl/` ervoor |
 | `private_key` | `privkey.pem` of jouw eigen sleutelbestandsnaam | Niet de inhoud van de sleutel |
 
@@ -125,8 +131,10 @@ certificate: fullchain.pem
 private_key: privkey.pem
 ```
 
+Gebruik je **Latest**, verander in dit voorbeeld alleen de poort naar `8449`. Laat de hostnaam gelijk aan de naam in het certificaat.
+
 4. Klik **Opslaan / Save**. Open de configuratie eventueel opnieuw om te zien of de waarden bewaard zijn.
-5. Controleer onder **Netwerk** de hostpoort: laat **8448/tcp → 8448** staan. Gebruik niet dezelfde hostpoort voor een tweede app. De HTTPS-poort in `public_url` moet overeenkomen met de extern bereikbare hostpoort.
+5. Controleer onder **Netwerk** de hostpoort: Official gebruikt standaard **8448/tcp → 8448**; Latest publiceert dezelfde interne containerpoort standaard als **8448/tcp → 8449**. De poort in `public_url` moet gelijk zijn aan de hostpoort rechts. Geef twee geïnstalleerde apps nooit dezelfde hostpoort.
 
 **Controlepunt:** beide certificaatvelden zijn gevuld, het adres gebruikt `https://`, de naam klopt en de poort is beschikbaar. Laat **Automatisch bijwerken** tijdens deze experimentele fase uit.
 
@@ -135,7 +143,7 @@ private_key: privkey.pem
 
 ## Stap 5: starten en dienststatus controleren
 
-1. Open de tab **Informatie / Info** van de Nocturne-app.
+1. Open de tab **Informatie / Info** van het gekozen Nocturne-kanaal en controleer de volledige appnaam.
 2. Klik **Starten**. De eerste start maakt een eigen database en sleutels aan.
 3. Open **Logboeken / Logs** bij deze app als het starten lijkt te blijven hangen.
 4. Kies **Webinterface openen / Open Web UI**. Dit opent eerst de **HA-statuspagina**, nog niet het Nocturne-dashboard.
@@ -213,7 +221,7 @@ Verschijnt **Connect your Nightscout**, een uploaderkeuze of een vraag naar een 
 
 1. Meld je via Nocturne's accountmenu af en daarna met je passkey weer aan op **hetzelfde HTTPS-adres**.
 2. Controleer dat je in hetzelfde account en dezelfde instantie terugkomt.
-3. Ga in HA naar **Instellingen → Apps → Nocturne (experimental) → Informatie → Herstarten**. Herstart alleen deze app, niet heel HA of de Hyper-V-machine.
+3. Ga in HA naar **Instellingen → Apps → het gekozen Nocturne-kanaal → Informatie → Herstarten**. Herstart alleen deze app, niet het andere kanaal, heel HA of de Hyper-V-machine.
 4. Wacht totdat de vier diensten weer gereed zijn en open Nocturne opnieuw.
 5. Als opnieuw aanmelden nodig is, gebruik je bestaande passkey. Je mag **niet opnieuw een instantie of eigenaar hoeven aanmaken**.
 
@@ -230,7 +238,7 @@ Verschijnt **Connect your Nightscout**, een uploaderkeuze of een vraag naar een 
 
 **Je lege testinstallatie is nu operationeel.** Zet daarna desgewenst **Bij systeemstart starten** aan. Dit vervangt geen volledige herstarttest van HA/VM; die is een aparte volgende proef.
 
-Maak vóór upgrades of verdere inrichting via **Instellingen → Systeem → Back-ups** een back-up waarin deze app is opgenomen en bewaar een kopie buiten HA. De app vraagt een koude back-up; **volledig terugzetten en migratie moeten nog apart worden getest**. Downloadbare back-ups, herstelcodes en database-/instantiesleutels zijn verschillende dingen en moeten veilig bewaard blijven.
+Maak vóór upgrades of verdere inrichting via **Instellingen → Systeem → Back-ups** een back-up waarin precies deze app is opgenomen en bewaar een kopie buiten HA. Official en Latest hebben afzonderlijke back-updata; een back-up van de ene is geen herstelkopie van de andere. De app vraagt een koude back-up; **volledig terugzetten en migratie moeten nog apart worden getest**. Downloadbare back-ups, herstelcodes en database-/instantiesleutels zijn verschillende dingen en moeten veilig bewaard blijven.
 
 ## Problemen oplossen
 
@@ -241,7 +249,7 @@ Maak vóór upgrades of verdere inrichting via **Instellingen → Systeem → Ba
 | **Another job is running** | Er loopt al een installatie-/buildtaak. Wacht op het resultaat in Supervisor; klik niet steeds opnieuw. |
 | **Image … does not exist** | De gewenste versie heeft nog geen geslaagde imagebuild. Lees eerst de Supervisor-buildfout; alleen herstarten maakt geen image. |
 | Certificaatbestand ontbreekt / **STARTFOUT** | Controleer de bestanden in `/ssl` en de twee kale bestandsnamen in de appopties. Lees of deel nooit de private sleutel om dit te bewijzen. |
-| **ERR_CONNECTION_CLOSED**, weigering of time-out | Controleer dienststatus, poort 8448 en DNS via [de HTTPS/DNS-test](HTTPS-EN-DNS.md#bereikbaarheid-controleren-na-starten). Een werkende HA-poort 8123 bewijst niets over Nocturne-poort 8448. |
+| **ERR_CONNECTION_CLOSED**, weigering of time-out | Controleer dienststatus, de gekozen hostpoort (Official 8448 / Latest 8449) en DNS via [de HTTPS/DNS-test](HTTPS-EN-DNS.md#bereikbaarheid-controleren-na-starten). Een werkende HA-poort 8123 bewijst niets over de Nocturne-poort. |
 | Via IP lijkt er iets te werken, via domeinnaam niet | Controleer lokale A/AAAA-resolutie. Los de route voor die naam op; vervang de passkey-hostnaam niet door het IP-adres. Schakel IPv6 niet overal uit als snelle oplossing. |
 | Certificaatwaarschuwing | Naam, geldigheid, keten of vertrouwensstatus klopt niet. Herstel dit vóór login; geen `-k` of browserbeveiligingsomzeiling. |
 | Gebruikersnaam/wachtwoord-popup | Standaard: gebruik gatewaygebruiker **nocturne** en de code uit HA. Bestaande ingerichte instanties kunnen vanaf 0.1.2 [veilig naar alleen Nocturne-passkey omschakelen](GATEWAY.md). |
@@ -255,7 +263,7 @@ Voor hulp: meld **bij welke stap**, de HA-app- en Nocturne-versie, het type inst
 
 ## Updates en verder bouwen
 
-De repository controleert dagelijks op nieuwe stabiele Nocturne-versies en maakt na build/tests een updatevoorstel. **Een beheerder keurt publicatie goed**; daarna kan HA een hogere appversie aanbieden. Automatisch installeren in HA is een aparte gebruikersinstelling. Laat die tijdens deze proef uit. Zie [updatebeleid](UPDATES.md), [bekende beperkingen](TESTING.md) en [overdracht voor ontwikkelaars/AI](AI_HANDOFF.md).
+Official controleert upstream alleen nadat een beheerder de handmatige releaseworkflow start en wordt nooit automatisch samengevoegd. Latest controleert dagelijks een nieuwe upstream-`main`-momentopname en mag uitsluitend zijn eigen pakket na alle verplichte tests automatisch samenvoegen. Automatisch installeren in HA is per app een aparte gebruikersinstelling. Laat dit voor Official uit; zet het voor Latest pas aan wanneer je Latest-data vervangbaar houdt en back-ups hebt getest. Zie [updatebeleid](UPDATES.md), [kanaalgrenzen](CHANNELS.md), [bekende beperkingen](TESTING.md) en [overdracht voor ontwikkelaars/AI](AI_HANDOFF.md).
 
 Wil je de resterende gaten helpen oplossen? In het [oplosplan](OPLOSPLAN.md) staat per onderwerp een concrete aanpak, prioriteit en acceptatietest. Dit zijn voorstellen, geen al aanwezige functies.
 

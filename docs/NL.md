@@ -7,17 +7,19 @@ Dit is een aparte, openbare Nocturne-repository voor de **Home Assistant-appwink
 Voor een **nieuwe testinstallatie**:
 
 1. Voeg `https://github.com/smokkelaar/nocturne-home-assistant` toe bij de repositories van de appwinkel.
-2. Installeer **Nocturne (experimental)**. De eerste containerbuild duurt enkele minuten.
-3. Stel je eigen vaste HTTPS-domeinnaam en vertrouwde certificaatbestanden in; zie [Documentatie](../nocturne_local/DOCS.md).
+2. Kies **Nocturne Official Release** (handmatig bevorderde officiële Nocturne-release, poort 8448) of **Nocturne Latest Release** (dagelijks geteste upstream-`main`, aparte data, poort 8449). Je kunt beide geïnstalleerd houden. [Vergelijk de kanalen](CHANNELS.md).
+3. Stel per gekozen app je vaste HTTPS-domeinnaam, juiste poort en vertrouwde certificaatbestanden in; zie [Official-documentatie](../nocturne_local/DOCS.md) of [Latest-documentatie](../nocturne_latest/DOCS.md).
 4. Start de app en open de webinterface voor status, link en extra toegangscode. Nocturne zelf opent in een aparte tab en gebruikt daarna zijn eigen passkey-account.
 
 Gebruik eerst een lege testomgeving zonder Nightscout/CGM/pomp-koppeling. Dit is geen medisch gevalideerd systeem.
 
-## Automatische updates
+## Twee updatekanalen
 
-GitHub controleert dagelijks op een nieuwe stabiele Nocturne-versie. De API en webinterface worden samen vastgezet, gebouwd en getest. Bij succes wordt automatisch een updatevoorstel aangemaakt. De beheerder beoordeelt onder andere de databasemigratie en keurt het voorstel goed. Daarna ziet HA bij het verversen van de appwinkel de hogere appversie.
+Official wordt uitsluitend gecontroleerd nadat een beheerder de handmatige workflow start. De API en webinterface worden samen vastgezet, gebouwd en getest; de beheerder beoordeelt en publiceert bewust.
 
-HA kan die update desgewenst automatisch installeren via zijn app-instelling, maar laat dat tijdens deze experimentele fase uit totdat back-up/terugzetten en upgrades zijn getest. Het is dus **automatische ontdekking en voorbereiding, met bewuste goedkeuring vóór publicatie**; geen ongecontroleerde `latest`-download bij iedere herstart.
+Latest controleert dagelijks upstream `main`. Alleen een volledig herleidbaar API/web-paar wordt op exacte commit en digests vastgezet. Na container-, upgrade- en verplichte repositorytests kan uitsluitend de Latest-wijziging automatisch worden samengevoegd.
+
+HA kan per app updates automatisch installeren. Laat dit bij Official uit. Bij Latest kun je het later bewust aanzetten voor dagelijkse doorstroming, maar alleen als Latest-testdata vervangbaar is en herstel is geoefend. Ook Latest downloadt bij start geen ongecontroleerde zwevende tag: iedere aangeboden versie bevat exacte digests.
 
 ## Je huidige lokale installatie
 

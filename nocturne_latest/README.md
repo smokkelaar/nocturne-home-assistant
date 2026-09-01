@@ -1,8 +1,10 @@
-# Nocturne Official Release
+# Nocturne Latest Release
 
 **[Nederlandse visuele installatiehandleiding: van repository tot dashboard](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md)**
 
-The manually promoted official-release channel: self-contained Nocturne API/web + PostgreSQL 17 + HTTPS gateway for Home Assistant OS on amd64. Its existing `nocturne_local` identity is retained for safe updates from wrapper 0.1.x.
+The frequently updated upstream-`main` channel: self-contained Nocturne API/web + PostgreSQL 17 + HTTPS gateway for Home Assistant OS on amd64. It has its own `nocturne_latest` identity, private data and default host port 8449.
+
+Do not restore an Official backup into Latest or treat Latest as a rollback path. Development snapshots can introduce unfinished features and irreversible database migrations.
 
 Use the **Documentation** tab before installing. This is an unofficial experimental app, not a HACS integration or a medically validated service.
 
