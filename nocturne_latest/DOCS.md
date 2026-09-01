@@ -1,6 +1,6 @@
-# Nocturne Official Release — installation and operation
+# Nocturne Latest Release — installation and operation
 
-> This is the manually promoted official-release channel. It keeps the existing repository app identity and defaults to host port **8448**. For frequent disposable testing of upstream `main`, choose the separate **Nocturne Latest Release** on port 8449. Never copy `/data`, accounts or keys between them.
+> This is the frequently updated upstream-`main` channel. It is a separate HA app with its own data and default host port **8449**. For the manually promoted stable channel choose **Nocturne Official Release**. Never copy `/data`, accounts or keys between them.
 
 > **Nederlands, met afbeeldingen en exacte stappen:** [Volledige visuele installatiehandleiding](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md), van repository toevoegen tot dashboard en herstarttest. [Domein, certificaat en lokale DNS](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/HTTPS-EN-DNS.md) is apart uitgewerkt. These absolute links also work from Home Assistant's Documentation tab.
 
@@ -16,18 +16,18 @@ No router port-forwarding is required or recommended for this test. A publicly r
 ## Fresh installation
 
 1. Add `https://github.com/smokkelaar/nocturne-home-assistant` in the HA app store repository settings.
-2. Install **Nocturne Official Release**. This release has no prebuilt wrapper image: Supervisor builds it from its Dockerfile. Wait for that job to finish; repeatedly clicking install/update can produce “Another job is running”.
+2. Install **Nocturne Latest Release**. This channel has no prebuilt wrapper image: Supervisor builds it from its Dockerfile. Wait for that job to finish; repeatedly clicking install/update can produce “Another job is running”.
 3. Configure the following options with **your own** hostname/certificate filenames:
 
    ```yaml
-   public_url: https://nocturne.example.net:8448
+   public_url: https://nocturne.example.net:8449
    certificate: fullchain.pem
    private_key: privkey.pem
    ```
 
    `example.net` is documentation-only. Put the real certificate and private key in HA's `/ssl` directory. Options accept filenames directly inside that directory, not `/ssl/...` paths. This app mounts `/ssl` read-only. Never publish those files.
 
-4. Leave the default published HTTPS port at `8448`, or ensure the externally configured port matches `public_url`. Do not expose API, PostgreSQL or ingress ports.
+4. Leave the Latest host port at `8449` (container port `8448/tcp`), or ensure the externally configured port matches `public_url`. Do not expose API, PostgreSQL or ingress ports.
 5. Start the app and open **Web interface**. Wait for PostgreSQL, API, web and HTTPS readiness. “Listening” is not proof of a successful account login.
 6. Open the Nocturne link. By default, if the browser asks for HTTP Basic credentials, use username `nocturne` and the random gateway code shown in the protected HA page. This is **not** your HA login or your Nocturne account password.
 7. Complete Nocturne's own setup and create a passkey. Skip Nightscout/data connections in this initial test.
@@ -53,7 +53,7 @@ CI now rehearses a full cold-data copy, restore into a different disposable volu
 
 Do not assume downgrading an image reverses a database migration. Restoring a coordinated pre-upgrade database/key backup may be required. PostgreSQL major upgrades are explicitly refused; there is no automatic database reset.
 
-Official app updates are intentionally manual in this repository and optional in HA. Leave HA automatic updates off for this channel. See the repository's `docs/UPDATES.md` for both update processes.
+Automatic app updates are optional per app in HA. Enable them only for **Nocturne Latest Release** if its data is replaceable and you deliberately accept daily tested development snapshots. Keep Official's switch off. See the repository's `docs/UPDATES.md` for both update processes.
 
 ## Known boundaries
 

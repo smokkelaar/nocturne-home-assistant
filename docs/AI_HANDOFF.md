@@ -2,7 +2,7 @@
 
 ## Scope
 
-This is a shareable, Nocturne-only **HA app wrapper**, not HACS and not the full upstream application. Read README, DOCS, ARCHITECTURE, UPDATES and MIGRATION before changing runtime behavior. `upstream.json` and `nocturne_local/config.json` are authoritative version inputs; never infer the active version from an old screenshot.
+This is a shareable, Nocturne-only **HA app wrapper**, not HACS and not the full upstream application. One repository exposes two apps. Read README, CHANNELS, both DOCS files, ARCHITECTURE, UPDATES and MIGRATION before changing runtime behavior. `upstream.json` + `nocturne_local/config.json` are authoritative for Official; `upstream-latest.json` + `nocturne_latest/config.json` for Latest. Never infer the active channel/version from an old screenshot.
 
 ## Start here
 
@@ -18,7 +18,8 @@ This is a shareable, Nocturne-only **HA app wrapper**, not HACS and not the full
 - Never regenerate instance/database keys or initialize over existing data. Preserve database and matching keys together.
 - Do not uninstall a local prototype as a shortcut to subscribing it to this repository. Repository app identity differs; migration is not automated.
 - A passing container boot/restart test is not an upgrade, passkey, connector or clinical validation.
-- Do not auto-merge upstream schema changes or add `latest` tags. Check source provenance and the two guarded web patches.
+- Official must never auto-merge. Latest may auto-merge only its isolated package after protected checks; its Dockerfile still uses exact digests, never a floating `latest` reference. Check source provenance and both guarded web patches.
+- Preserve the slugs: `nocturne_local` is Official's existing data identity, while `nocturne_latest` is deliberately separate. Never copy `/data`, passkeys, keys or databases between them.
 
 ## Useful next bounded contributions
 
@@ -31,6 +32,14 @@ Read the [concrete solution proposals and acceptance tests](OPLOSPLAN.md) before
 5. External connector authentication design, only after backup/security boundaries are proven.
 
 The initial wrapper uses Dutch runtime messages. Preserve tested behavior while making the contributor documentation understandable internationally. Do not add unrelated Govee/PV/network configuration to this repository.
+
+## Two-channel handoff
+
+- Official is named **Nocturne Official Release**, keeps slug `nocturne_local`, defaults to host 8448 and is updated only through the manually triggered Official workflow.
+- Latest is named **Nocturne Latest Release**, uses slug `nocturne_latest`, defaults to host 8449 and is checked daily from upstream `main`.
+- Shared runtime/security files in both package directories must remain byte-identical; `tests/test_channels.py` enforces this. Channel manifests, pins and changelogs intentionally differ.
+- A Latest automation PR must change only `upstream-latest.json` and the five allowed Latest metadata/build files, explicitly dispatch required Validate, and rely on branch protection before auto-merge.
+- Adding the repository shows both apps. Installing one never creates, migrates or modifies the other. HA's per-app auto-update switch is the final delivery control.
 
 ## 0.1.1 handoff
 

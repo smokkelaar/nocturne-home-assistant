@@ -240,14 +240,17 @@ class PackagingTests(unittest.TestCase):
 
     def test_visible_version_matches_manifest(self):
         version = json.loads((ROOT / 'nocturne_local/config.json').read_text())['version']
-        self.assertIn('HA-testpakket ' + version, settings.status_page(settings.validate_options({}), {}, '', True))
+        page = settings.status_page(settings.validate_options({}), {}, '', True)
+        self.assertIn('HA-pakket ' + version, page)
+        self.assertIn('Nocturne Official Release', page)
         self.assertIn('ARG BUILD_VERSION=' + version, (ROOT / 'nocturne_local/Dockerfile').read_text())
 
     def test_source_files_are_lf_without_bom(self):
-        for file in (ROOT / 'nocturne_local').rglob('*'):
-            if file.is_file() and file.suffix in ('.py', '.sql', '.json'):
-                self.assertNotIn(b'\r\n', file.read_bytes(), str(file))
-                self.assertFalse(file.read_bytes().startswith(b'\xef\xbb\xbf'), str(file))
+        for package in ('nocturne_local', 'nocturne_latest'):
+            for file in (ROOT / package).rglob('*'):
+                if file.is_file() and file.suffix in ('.py', '.sql', '.json'):
+                    self.assertNotIn(b'\r\n', file.read_bytes(), str(file))
+                    self.assertFalse(file.read_bytes().startswith(b'\xef\xbb\xbf'), str(file))
 
 
 if __name__ == '__main__':

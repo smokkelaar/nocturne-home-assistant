@@ -27,6 +27,7 @@ jobs:
       - run: python -m unittest discover -s tests -v
       - run: node --test tests/test_web_check.mjs
       - run: python tools/update_upstream.py --check
+      - run: python tools/update_latest.py --check
   container:
     name: Container smoke test
     needs: unit
@@ -36,13 +37,19 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - run: docker build --platform linux/amd64 --tag nocturne-ha:ci nocturne_local
-      - run: python3 tools/smoke.py --image nocturne-ha:ci
-      - name: Check out immutable baseline release 0.1.1
+      - name: Build and smoke-test Official channel
+        run: |
+          docker build --platform linux/amd64 --tag nocturne-official:ci nocturne_local
+          python3 tools/smoke.py --image nocturne-official:ci
+      - name: Build and smoke-test Latest channel
+        run: |
+          docker build --platform linux/amd64 --tag nocturne-latest:ci nocturne_latest
+          python3 tools/smoke.py --image nocturne-latest:ci
+      - name: Check out immutable Official baseline release 0.1.2
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: 300a0c48bc349246d64effbd606b4cf9f8221819
+          ref: 5a1958a6c91991039950d1e3ea7bb28fd3ada35f
           path: .ci-baseline
           persist-credentials: false
-      - run: docker build --platform linux/amd64 --tag nocturne-ha:baseline .ci-baseline/nocturne_local
-      - run: python3 tools/recovery_smoke.py --image nocturne-ha:ci --baseline nocturne-ha:baseline
+      - run: docker build --platform linux/amd64 --tag nocturne-official:baseline .ci-baseline/nocturne_local
+      - run: python3 tools/recovery_smoke.py --image nocturne-official:ci --baseline nocturne-official:baseline

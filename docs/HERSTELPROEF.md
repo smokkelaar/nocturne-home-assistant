@@ -18,8 +18,9 @@ De volledige PostgreSQL-cluster, inclusief WAL, rollen en bestandsrechten, wordt
 
 ## Wat GitHub automatisch uitvoert
 
-- **Validate / Container smoke test:** verse installatie, certificaatherlading en herstart van de kandidaat; daarna wrapper **0.1.1** (immutable broncommit `300a0c48bc349246d64effbd606b4cf9f8221819`) → kandidaat → herstel naar 0.1.1.
-- **Check Nocturne updates:** bouwt daarnaast de versie die vóór de update in `HEAD`/main stond. Die vormt de baseline voor de voorgestelde upstream-update. Een mislukte proef verhindert dat de bot het updatevoorstel publiceert.
+- **Validate / Container smoke test:** bouwt en rooktest zowel Official als Latest. Daarna volgt de vorige gepubliceerde Official-baseline → Official-kandidaat → herstel naar die baseline.
+- **Check Official Nocturne release manually:** bouwt daarnaast de Official-versie die vóór het voorstel in `HEAD`/main stond en gebruikt die als directe updatebaseline. Een mislukte proef verhindert publicatie van het voorstel.
+- **Check Latest Nocturne main daily:** archiveert en bouwt de vorige Latest uit `HEAD`, bouwt de exact vastgezette kandidaat en voert vorige Latest → kandidaat → koude herstelproef uit vóór het automatische voorstel.
 - De publieke logs tonen alleen versiemetadata en PASS/foutmeldingen, geen sleutels, ruwe app-logs of data-export. Tijdelijke containers en volumes worden na afloop opgeruimd.
 
 De CI-run van de concrete commit is leidend; alleen aanwezigheid van dit script is geen geslaagde proef. De bron is gepind, maar OS-pakketten worden tijdens de build opnieuw opgehaald. Dit is dus geen bit-identieke reproductie van een historische image.
@@ -36,7 +37,7 @@ De scriptinterface biedt bewust geen bestaande volumeparameter. Gebruik deze opd
 
 ## Grenzen: nog geen volledige gebruikersherstelproef
 
-Er is geen echt account, passkey, herstelcode, medische meting of connector toegevoegd. De proef 0.1.1 → 0.1.2 gebruikt aan beide kanten Nocturne 0.2.4: zij test een **wrapper-upgrade**, geen gewijzigde upstream-databasemigratie. Toekomstige botproeven gebruiken de werkelijke vorige en nieuwe upstream-versies, maar de fixtures blijven beperkt.
+Er is geen echt account, passkey, herstelcode, medische meting of connector toegevoegd. Een wrapper-only overgang met dezelfde Nocturne-versie is geen gewijzigde upstream-databasemigratie. Latest-botproeven gebruiken de werkelijke vorige en nieuwe vastgezette upstreambeelden, maar de fixtures blijven beperkt tot setup/synthetische data.
 
 Nog met de gebruiker te doen:
 
@@ -44,7 +45,7 @@ Nog met de gebruiker te doen:
 2. Via HA een koude back-up maken en buiten HA bewaren.
 3. Die met de ondersteunde HA-herstelroute in een lege testomgeving met dezelfde appidentiteit herstellen.
 4. Bestaand testaccount, passkey, opties, tweede apparaat en herstart controleren.
-5. Pas daarna een overdracht tussen `local_nocturne_local` en de repository-app ontwerpen/testen. Die hebben verschillende Supervisor-identiteiten.
+5. Pas daarna een overdracht tussen `local_nocturne_local` en **Official** ontwerpen/testen. Die hebben verschillende Supervisor-identiteiten. Official en Latest blijven altijd twee afzonderlijke bestemmingen; gebruik geen Latest-back-up om Official te overschrijven.
 
 Geen productie-installatie verwijderen of overschrijven. Na ingebruikname van een nieuwere instantie kan de oude bron achterlopen; terugschakelen mag nieuwe gegevens niet stilzwijgend verliezen.
 

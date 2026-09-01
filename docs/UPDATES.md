@@ -1,50 +1,26 @@
 # Update policy
 
-There are two separate update systems: **Nocturne upstream → this wrapper repository**, and **this repository → a user's HA installation**.
+This repository exposes two independent Home Assistant apps. Their update policies deliberately differ:
 
-## 1. Upstream discovery and preparation
+| Channel | Upstream source | Discovery | Merge | Recommended HA setting |
+|---|---|---|---|---|
+| **Nocturne Official Release** | Latest numbered, non-prerelease Nocturne release | Maintainer starts the workflow manually | Maintainer reviews and merges manually | Automatic update off |
+| **Nocturne Latest Release** | Current upstream `main`, only after its paired image build succeeded | Daily at 06:53 UTC and on demand | Auto-merge may complete only after required checks | Optional, only for replaceable test data |
 
-The `Check Nocturne updates` GitHub workflow is scheduled daily at 06:23 UTC and can also be started with **Run workflow**. It uses the repository's built-in `GITHUB_TOKEN`; users do not need a Nocturne account, API key or personal GitHub token.
+Both channels use immutable source commits and OCI digests in the version that Home Assistant builds. Neither app downloads a floating `latest` image at startup. [Identity, port and data separation](CHANNELS.md).
 
-The updater:
+## Official: deliberate release promotion
+
+The **Check Official Nocturne release manually** workflow has no schedule. A maintainer starts it with **Run workflow**. The updater:
 
 1. Reads the latest non-draft, non-prerelease release from `nightscout/nocturne`.
-2. Requires a newer numeric three-part version; rejects equal-version retags and downgrades.
-3. Resolves **both** API and web images for that release and verifies manifest/blob digests, linux/amd64 availability and the API source commit.
-4. Updates both pins, the upstream source record, wrapper patch version, launcher metadata and changelog together.
-5. Runs offline tests, builds the proposed container and tests fresh boot, protected setup access, certificate renewal, clean stop, restart and same-version data/key persistence. It also builds the pre-update `HEAD` baseline, rehearses baseline → candidate, and restores the pre-upgrade cold data into another empty volume on that baseline. [Fixture scope and limits](HERSTELPROEF.md).
-6. Opens or refreshes one `automation/nocturne-upstream` pull request **only if these checks pass**. It does not merge it.
+2. Requires a newer numeric three-part version; it rejects equal-version retags and downgrades.
+3. Resolves both API and web images, validates blobs, linux/amd64 availability and the API source commit.
+4. Updates `upstream.json` and only the `nocturne_local` package as one proposal.
+5. Runs offline checks, candidate smoke tests and a baseline-to-candidate/cold-restore rehearsal.
+6. Opens or refreshes `automation/nocturne-official` and explicitly dispatches the required Validate workflow.
 
-Missing images, changed patch signatures, an unexpected API revision or failing runtime tests stop the workflow. In that case no release is offered; check the failed workflow and upstream notes. Stable-image mutations under the same release number are deliberately not adopted automatically.
-
-The build/smoke checks run inside the updater itself. This avoids relying on a bot-created PR to trigger CI immediately: GitHub can require maintainer approval for those PR workflow runs. Approve the **Validate** runs when requested; do not bypass required checks.
-
-## 2. Maintainer review and publication
-
-Before merging an update:
-
-- Read upstream release notes, schema migrations, authentication/routing and licensing changes.
-- Review the CI baseline → candidate and cold-restore results. These use a setup-only instance and synthetic row. Additionally test a **disposable, backed-up** instance with a non-sensitive account and realistic settings: fixture persistence alone does not validate every upstream data migration.
-- Verify passkey login and any supported connectors using non-sensitive test data.
-- Confirm the updated wrapper version/changelog, required CI checks and rollback/restore plan.
-
-Merging changes to `main` publishes the new app version to the app store repository. A GitHub Release tag can also be published for release notes/source archives; that alone does not update HA unless `main` contains the new app manifest. Do not merge an untested update into `main` merely to collect feedback: HA users might have auto-update enabled.
-
-Automatic merging is intentionally disabled in this experimental repository. **Discovery and preparation are automatic; final release approval is not.** There is no guarantee that upstream releases become available immediately, or without maintainer attention.
-
-## 3. Home Assistant delivery
-
-HA must have installed the app **from this repository**, not from the old local directory. On its store refresh, it can detect a higher app version and offer an update. The user can choose the app's **Automatic update** option in HA, but it is optional and should remain off until backup/restore and upgrades have been verified for their deployment.
-
-Users do not clone source, paste YAML changes or run the updater themselves for normal repository-app updates. Supervisor performs the local image build. It may take several minutes and require network access. No health data or settings are sent to GitHub by this workflow.
-
-## Repository setup and monitoring
-
-- Enable GitHub Actions and, under Actions → General → Workflow permissions, allow Actions to create pull requests. Individual workflows request their minimal required permissions.
-- Keep `main` protected with successful **Unit tests** and **Container smoke test** checks before merge.
-- Watch workflow failures and update PRs. GitHub schedules can be delayed and public-repository schedules can be disabled after 60 days without activity; this is not a guaranteed always-on update service.
-- Dependabot proposes GitHub Actions dependency updates weekly. PostgreSQL major changes, Node/base OS pins and non-Nocturne system dependencies require separate review.
-- Forks do not run the scheduled updater by default: its job checks the canonical repository name. A fork maintainer must deliberately change that guard and enable workflows.
+The workflow never requests auto-merge. A maintainer must review upstream release notes, schema/authentication/licensing changes, CI evidence and the recovery plan before merging. Stable image mutation under an unchanged release number is not silently adopted.
 
 Read-only local check:
 
@@ -52,10 +28,60 @@ Read-only local check:
 python tools/update_upstream.py --check-upstream
 ```
 
-Prepare a proposal in a clean contributor branch (writes local tracked files, not HA):
+Prepare the same proposal locally:
 
 ```sh
 python tools/update_upstream.py --update
 ```
+
+## Latest: daily tested snapshot
+
+The **Check Latest Nocturne main daily** workflow runs daily and can also be started manually. It does not trust a moving tag as an install input. The updater:
+
+1. Reads the exact current commit of upstream `main`.
+2. Finds an upstream `docker-publish.yml` run whose **build-and-push** job succeeded for that commit. Another unrelated job in that upstream workflow may have failed; API and web still must originate from the same successful paired build job.
+3. Resolves exactly one linux/amd64 API and web manifest. The API image's embedded `GIT_COMMIT` must equal `main`.
+4. Repeats the main/API lookup after resolving web so a moving tag cannot mix two publications.
+5. Writes the exact commit, workflow run and image digests to `upstream-latest.json` and changes only `nocturne_latest` version/build metadata.
+6. Runs all unit checks, both updater consistency checks, a real Latest container smoke test and a previous-Latest-to-candidate cold-restore rehearsal.
+7. Opens or refreshes `automation/nocturne-latest`, dispatches the required Validate workflow and requests squash auto-merge.
+
+The pull request is restricted to the Latest lock and package metadata/build files. Branch protection keeps it open until **Unit tests** and **Container smoke test** pass. The repository setting **Allow auto-merge** must be enabled; bypassing checks or allowing direct main pushes is not a substitute.
+
+If upstream main has no complete promotable paired build, patch signatures changed, provenance is ambiguous or any test fails, no new app version is offered. This is an expected safe no-op/failure, not a reason to fall back to `:latest`.
+
+Read-only local check:
+
+```sh
+python tools/update_latest.py --check-upstream
+```
+
+Prepare the same candidate locally:
+
+```sh
+python tools/update_latest.py --update
+```
+
+Latest remains highly experimental. Automated technical tests do not prove dashboard completeness, passkey behavior on every client, connector compatibility or safe real-data migrations.
+
+## Delivery to Home Assistant
+
+Merging a changed package version into `main` lets the HA app store offer that channel's update after a repository refresh. The two app versions and HA's **Automatic update** switches are independent:
+
+- An Official merge never changes or restarts Latest.
+- A Latest merge never changes or restarts Official.
+- GitHub does not remotely install or restart either app.
+- Supervisor performs the local image build when the user installs/updates.
+
+For Official, keep HA automatic updates off and update after a reviewed backup/checkpoint. For Latest, daily end-to-end delivery is possible only if the user explicitly enables automatic updates on **Nocturne Latest Release**. Leave Official's switch off. A cold backup remains necessary; an old image is not a rollback for a migrated database.
+
+## Repository setup and monitoring
+
+- Enable Actions to create pull requests and enable repository auto-merge for the protected Latest PR path.
+- Protect `main` with successful **Unit tests** and **Container smoke test** checks and conversation resolution before merge.
+- Keep the Official workflow manual and the Latest workflow restricted to its own package paths.
+- Watch scheduled-workflow failures. GitHub schedules can be delayed or disabled after prolonged public-repository inactivity; this is not a guaranteed always-on service.
+- Dependabot proposes GitHub Actions dependency updates separately. PostgreSQL, Node/base OS and other wrapper dependencies remain maintainer-reviewed.
+- Canonical-repository guards prevent forks from unexpectedly running publisher workflows.
 
 References: [GitHub workflow triggering](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow), [scheduled events](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule), [HA app repositories](https://developers.home-assistant.io/docs/apps/repository/).

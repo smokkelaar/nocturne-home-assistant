@@ -1,3 +1,9 @@
+## 0.1.3
+
+- Rename the existing app to **Nocturne Official Release** without changing its `nocturne_local` slug or private data directory.
+- Add a separately installable Latest channel elsewhere in the same repository; no data, account, passkey or settings are copied between channels.
+- Nocturne remains the pinned official 0.2.4 release.
+
 ## 0.1.2
 
 - Probe Nocturne Web through its dedicated `/health` route. The previous five-second request to `/` could render the dashboard and generate repeated, harmless `401 Bearer` chart errors in the app log.

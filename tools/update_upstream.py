@@ -1,4 +1,4 @@
-"""Pair stable Nocturne releases, verify OCI content, and update explicit pins.
+"""Manually promote official Nocturne releases and update explicit pins.
 
 No dependencies, no floating latest images, no auto-merge, no access to HA.
 """
@@ -107,7 +107,8 @@ def render(root, lock, app_version):
     semver(app_version)
     config = json.loads((root / 'nocturne_local/config.json').read_text())
     config['version'] = app_version
-    config['description'] = f"Nocturne {lock['version']} with PostgreSQL. Experimental local app; not for clinical use."
+    config['description'] = (f"Official Nocturne {lock['version']} release with PostgreSQL. "
+                             'Experimental; not for clinical use.')
     dockerfile = (root / 'nocturne_local/Dockerfile').read_text()
     for kind in ('api', 'web'):
         pattern = rf'(?m)^FROM ghcr\.io/nightscout/nocturne/nocturne-{kind}@sha256:[0-9a-f]{{64}}'
@@ -122,7 +123,10 @@ def render(root, lock, app_version):
         'upstream.json': dumps(lock),
         'nocturne_local/config.json': dumps(config),
         'nocturne_local/Dockerfile': dockerfile,
-        'nocturne_local/rootfs/opt/nocturne-ha/version.json': dumps({'app': app_version, 'nocturne': lock['version']}),
+        'nocturne_local/rootfs/opt/nocturne-ha/version.json': dumps({
+            'app': app_version, 'nocturne': lock['version'], 'name': 'Nocturne Official Release',
+            'default_public_url': 'https://homeassistant.local:8448',
+        }),
     }
 
 

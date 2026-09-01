@@ -1,0 +1,14 @@
+{
+  "channel": "main",
+  "commit": "3b7514591f854f4794deeeb75d43e33d979d1ee4",
+  "workflow_run": 33436615686,
+  "published_at": "2026-08-31T20:32:51Z",
+  "api": {
+    "tag": "latest",
+    "digest": "sha256:eb9c3b6846eb0e9bbdb84cdff54b621f690d09cf18c18846f93936f1c22467c4"
+  },
+  "web": {
+    "tag": "latest",
+    "digest": "sha256:36f7f56c74556db60521a32e668f8f92bbb0f9b445d1e9680b44e8653283a92b"
+  }
+}

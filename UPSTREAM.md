@@ -2,7 +2,10 @@
 
 Canonical project: https://github.com/nightscout/nocturne
 
-The machine-readable authority for the selected upstream release is [`upstream.json`](upstream.json). It records the stable release tag, exact source commit and the published API/web OCI digests. `nocturne_local/Dockerfile` must agree with it. The initial release is Nocturne 0.2.4, source commit `66c35837d3719b592fa25e0aa09bb5f1c33c14a5`.
+There are two machine-readable authorities:
+
+- [`upstream.json`](upstream.json) records Official's stable release tag, exact source commit and published API/web OCI digests. `nocturne_local/Dockerfile` must agree with it. The initial release is Nocturne 0.2.4, source commit `66c35837d3719b592fa25e0aa09bb5f1c33c14a5`.
+- [`upstream-latest.json`](upstream-latest.json) records Latest's exact upstream `main` commit, successful paired-image workflow run, publication time and API/web OCI digests. `nocturne_latest/Dockerfile` must agree with it. The moving registry tag is discovery input only and never remains in an installable Dockerfile.
 
 Source for the initial paired images: https://github.com/nightscout/nocturne/tree/66c35837d3719b592fa25e0aa09bb5f1c33c14a5
 
@@ -10,7 +13,7 @@ Source for the initial paired images: https://github.com/nightscout/nocturne/tre
 
 It does not rebuild or replace Nocturne's application source. It uses the published API and prebuilt SvelteKit web output, adds a local PostgreSQL server and TLS gateway, then reinstalls the frontend's locked production dependencies for glibc.
 
-Two exact-match, build-time web patches are maintained in `nocturne_local/build/prepare_web.py`:
+Two exact-match, build-time web patches are maintained identically in each channel's `build/prepare_web.py`:
 
 1. Disable pnpm's global virtual store so the non-root runtime user can access its dependencies.
 2. Bind the web server explicitly to `127.0.0.1` inside the container.
@@ -25,7 +28,7 @@ Our original wrapper code is explicitly AGPL-3.0-only; a complete license text i
 
 **This initial repository distributes wrapper source, not prebuilt combined container images.** Supervisor builds locally using upstream images. Before introducing public binary distribution, resolve the missing upstream license-file detail with upstream and audit corresponding-source availability, notices and dependency obligations. The updater does not perform a legal/license compliance audit; maintainers must recheck provenance/licensing on upgrades.
 
-The updater verifies registry content hashes, linux/amd64 availability, a shared release tag and the API's embedded source revision. Nocturne 0.2.4's web image does not expose a source-revision label, so its exact source-to-binary correspondence is an upstream release assertion, not independently proved here.
+The Official updater verifies registry content hashes, linux/amd64 availability, a shared release tag and the API's embedded source revision. The Latest updater additionally requires one successful upstream paired `build-and-push` job, the exact current `main` commit and a repeated API/main lookup after resolving web. Nocturne's web image does not expose a source-revision label, so web correspondence relies on the same upstream paired-image job and immutable manifest digest rather than an embedded revision label.
 
 ## Other dependencies
 
