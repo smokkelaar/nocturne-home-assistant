@@ -33,9 +33,9 @@ For visual review without HA or real credentials, run `python tools/preview_stat
 - Keep this repository focused on Nocturne packaging and HA integration. Prefer upstream Nocturne PRs for product features.
 - Keep Python runtime helpers dependency-light and testable offline. Write LF/UTF-8 files.
 - Keep API and web images paired. Official changes use `upstream.json`; Latest changes use `upstream-latest.json`. Update only the corresponding package's manifest, Dockerfile, `version.json` and changelog, then run both consistency tests.
-- Bump the changed channel's three-part `config.json` wrapper version for installable changes. It is independent of the upstream Nocturne version.
+- The functional wrapper version is shared in `wrapper.json`. Change it for both channels when shared runtime changes. Upstream-only promotions increment only the changed channel's delivery suffix, e.g. `0.1.4-1` → `0.1.4-2`. Keep generated runtime `app` (wrapper) and `package` (delivery) metadata distinct. See [versioning](docs/VERSIES.md).
 - Preserve both stable slugs: `nocturne_local` for Official and `nocturne_latest` for Latest. Preserve keys, database state, loopback listeners and least-privilege roles. No silent reset, cross-channel data copy or authentication bypass.
-- Shared runtime/security files in both packages must remain byte-identical. Channel names, slugs, default host ports, upstream pins, wrapper versions and changelogs intentionally differ.
+- Shared runtime/security files and functional wrapper versions must remain identical. Channel names, slugs, default host ports, upstream pins, delivery counters and changelogs intentionally differ.
 - Describe migration implications and unresolved verification clearly. Passing a clean-start test does not prove a real-data upgrade is safe.
 - GitHub Actions dependencies are pinned by commit and reviewed through Dependabot. No privileged `pull_request_target` execution of contribution code.
 - Do not publish locally generated data, certs, credentials, raw logs, personal hostnames/IPs or machine paths.

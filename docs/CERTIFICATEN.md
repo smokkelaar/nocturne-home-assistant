@@ -45,6 +45,8 @@ De bestaande nginx-workers handelen bestaande verbindingen af. Dit volgt het [ge
 | `CERT_RELOAD` | De herlading kon niet worden bevestigd. Bekijk een geschoonde app-log en controleer de status opnieuw. Herstart niet blind met een ongeldig bronpaar. |
 | `WEB_RESPONSE` / `TLS_RESPONSE` | De web- of TLS-antwoordcontrole faalde; een draaiend proces alleen is onvoldoende. Controleer de appstatus en relevante geschoonde logs. |
 | `GATEWAY_SETUP` / `GATEWAY_AUTH` | `gateway_auth: false` is nog niet veilig bruikbaar: voltooi eerst de eigenaar/passkey met de gateway aan, of herstel de verplichte Nocturne-authenticatie. Zie [gatewaymodus](GATEWAY.md). |
+| `GATEWAY_RECOVERY` | Het bestaande account vraagt herstel. Gateway weer aan en het account herstellen; geen gegevens wissen. |
+| `GATEWAY_STATUS` | De statusaanvraag gaf een onverwachte HTTP-code, ook als het antwoord geen JSON bevat. Meld de code en versies, geen ruwe inhoud. |
 
 Bij een ongeldig startcertificaat stopt de app met de foutcode in **Logboeken**; de statuspagina kan dan nog niet beschikbaar zijn. Database en identiteitsbestanden worden niet opnieuw aangemaakt ter reparatie van een certificaatfout.
 

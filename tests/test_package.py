@@ -163,6 +163,7 @@ class LifecycleTests(unittest.TestCase):
 
     def test_ready_probe_does_not_accept_arbitrary_503(self):
         for payload, expected in [(b'{"error":"setup_required"}', True),
+                                  (b'{"error":"recovery_mode_active","recoveryMode":true}', True),
                                   (b'{"error":"database_failure"}', False), (b'bad gateway', False)]:
             error = urllib.error.HTTPError('http://local', 503, 'Unavailable', {}, io.BytesIO(payload))
             with patch.object(runtime.urllib.request, 'urlopen', side_effect=error):
@@ -241,6 +242,8 @@ class PackagingTests(unittest.TestCase):
     def test_visible_version_matches_manifest(self):
         version = json.loads((ROOT / 'nocturne_local/config.json').read_text())['version']
         page = settings.status_page(settings.validate_options({}), {}, '', True)
+        wrapper = json.loads((ROOT / 'wrapper.json').read_text())['version']
+        self.assertIn('HA-wrapper ' + wrapper, page)
         self.assertIn('HA-pakket ' + version, page)
         self.assertIn('Nocturne Official Release', page)
         self.assertIn('ARG BUILD_VERSION=' + version, (ROOT / 'nocturne_local/Dockerfile').read_text())

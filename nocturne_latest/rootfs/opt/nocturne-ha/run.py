@@ -119,7 +119,8 @@ def api_reachable(hostname):
         if err.code == 503:
             try:
                 result = json.loads(err.read(65536))
-                return result.get('setupRequired') is True or result.get('error') == 'setup_required'
+                return (result.get('setupRequired') is True or result.get('error') == 'setup_required'
+                        or result.get('recoveryMode') is True or result.get('error') == 'recovery_mode_active')
             except (ValueError, AttributeError):
                 pass
         return False
@@ -163,16 +164,29 @@ def verify_native_auth(options):
     try:
         connection.request('GET', '/api/v4/status', headers=headers)
         response = connection.getresponse()
-        if response.status != 200:
-            raise ValueError('GATEWAY_SETUP: voltooi eerst Nocturne-accountaanmaak met gateway_auth: true')
         raw = response.read(65537)
-        if len(raw) > 65536:
+        try:
+            status = json.loads(raw) if len(raw) <= 65536 else None
+        except (json.JSONDecodeError, UnicodeError):
+            status = None
+        if isinstance(status, dict) and (status.get('recoveryMode') is True
+                                         or status.get('error') == 'recovery_mode_active'):
+            raise ValueError('GATEWAY_RECOVERY: Nocturne vraagt accountherstel; zet gateway_auth: true en herstel het bestaande account, wis geen gegevens')
+        if isinstance(status, dict) and (status.get('setupRequired') is True
+                                        or status.get('error') == 'setup_required'
+                                        or status.get('status') == 'setup_required'):
+            raise ValueError('GATEWAY_SETUP: voltooi eerst Nocturne-accountaanmaak met gateway_auth: true')
+        if response.status != 200:
+            raise ValueError(f'GATEWAY_STATUS: statuscontrole gaf HTTP {response.status}; extra toegang blijft vereist')
+        if not isinstance(status, dict):
             raise ValueError('GATEWAY_AUTH: ongeldige statusrespons; extra toegang blijft vereist')
-        status = json.loads(raw)
-        if (not isinstance(status, dict) or not isinstance(status.get('settings'), dict)
-                or status['settings'].get('requireAuthentication') is not True
-                or status.get('runtimeState') != 'loaded' or status.get('isDemo') is True):
-            raise ValueError('GATEWAY_AUTH: verplichte Nocturne-aanmelding niet bevestigd')
+        # requireAuthentication is a legacy Nightscout compatibility field.
+        # Current upstream main always sets it false, even on a private instance.
+        # Check actual anonymous access and the real authorization result below.
+        if (status.get('status') != 'ok' or status.get('runtimeState') != 'loaded'
+                or status.get('anonymousReadAccess') is not False
+                or (status.get('isDemo') is not None and status.get('isDemo') is not False)):
+            raise ValueError('GATEWAY_AUTH: geladen private Nocturne-instantie niet bevestigd')
     except (OSError, http.client.HTTPException, json.JSONDecodeError, UnicodeError):
         raise ValueError('GATEWAY_AUTH: Nocturne-aanmelding kon niet veilig worden gecontroleerd') from None
     finally:
@@ -181,8 +195,9 @@ def verify_native_auth(options):
     connection = http.client.HTTPConnection('127.0.0.1', 8080, timeout=3)
     try:
         connection.request('GET', '/api/v4/ChartData/dashboard', headers=headers)
-        if connection.getresponse().status != 401:
-            raise ValueError('GATEWAY_AUTH: niet-aangemelde gegevensaanvraag is niet als 401 geweigerd')
+        code = connection.getresponse().status
+        if code != 401:
+            raise ValueError(f'GATEWAY_AUTH: niet-aangemelde gegevensaanvraag gaf HTTP {code}, verwacht 401')
     except (OSError, http.client.HTTPException):
         raise ValueError('GATEWAY_AUTH: toegangsweigering kon niet veilig worden gecontroleerd') from None
     finally:
@@ -278,7 +293,13 @@ def main():
     for sig in (signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, lambda *_: supervisor.stop.set())
     try:
+        versions = json.loads((BASE / 'version.json').read_text())
+        log(f"Start {versions['name']} | HA-wrapper {versions['app']} | "
+            f"pakket {versions['package']} | Nocturne {versions['nocturne']}")
         options = validate_options(json.loads((DATA / 'options.json').read_text()))
+        auth_check = ('Extra gatewaycode ingeschakeld; Nocturne heeft daarnaast zijn eigen aanmelding'
+                      if options['gateway_auth'] else 'Zonder extra gatewaycode aangevraagd; startcontrole nog niet afgerond')
+        log(auth_check)
         passwords = load_secrets(DATA)
         # Nginx master is root; workers need read access to the htpasswd file only.
         import grp
@@ -291,11 +312,11 @@ def main():
         cert, key, test_certificate = prepare_tls(options)
         certificates = CertificateWatcher(cert, key, options['hostname'], RUNTIME / 'tls')
         cert, key = certificates.active.cert, certificates.active.key
-        supervisor.checks = certificates.checks()
+        supervisor.checks = {**certificates.checks(), 'Toegangscontrole': auth_check}
         handler = make_handler(supervisor, options, passwords, test_certificate)
         server = http.server.ThreadingHTTPServer(('0.0.0.0', 8099), handler)
         threading.Thread(target=server.serve_forever, daemon=True).start()
-        log('Lokale proef start; geen bestaande HA-database of configuratie wordt gebruikt')
+        log('Appdiensten starten; bestaande appgegevens en sleutels blijven behouden')
 
         pgdata = DATA / 'postgres'
         if not (pgdata / 'PG_VERSION').exists():
@@ -334,6 +355,8 @@ def main():
         supervisor.wait_for('Nocturne API', lambda: api_reachable(options['hostname']), 300)
         if not options['gateway_auth']:
             verify_native_auth(options)
+            auth_check = 'Private Nocturne-instantie bevestigd; anonieme gegevensaanvraag geweigerd (401), geen extra gatewaycode'
+            supervisor.checks['Toegangscontrole'] = auth_check
             log('Geen extra gateway-pop-up; verplichte Nocturne-aanmelding en API-toegangsweigering bevestigd')
         supervisor.start('Nocturne Web', ['node', 'server.js'], user='nocturne-web',
                          env=web_env, cwd='/opt/nocturne-web/packages/app')
@@ -358,7 +381,7 @@ def main():
         supervisor.wait_for('HTTPS', tls_listener, 20)
         last_certificate_check = 0
         last_certificate_error = ''
-        log('Alle diensten gestart. Open Webinterface in HA voor status, link en toegangscode.')
+        log('Alle diensten gestart. Open Webinterface in HA voor status, link en toegangsmodus.')
         while not supervisor.stop.wait(5):
             supervisor.check_children()
             supervisor.status['Nocturne API'] = ('gereed' if api_reachable(options['hostname']) else 'antwoordcontrole mislukt')
@@ -369,7 +392,7 @@ def main():
                     nginx, conf, nginx_config(options, snapshot.cert, snapshot.key),
                     snapshot.info.leaf_sha256, options['hostname']))
                 last_certificate_check = time.monotonic()
-                supervisor.checks = {**certificates.checks(), 'Laatste certificaatcontrole':
+                supervisor.checks = {**certificates.checks(), 'Toegangscontrole': auth_check, 'Laatste certificaatcontrole':
                     time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}
                 error = certificates.message if certificates.message.startswith('CERT_') else ''
                 if error and error != last_certificate_error:

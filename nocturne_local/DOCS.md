@@ -58,7 +58,7 @@ Official app updates are intentionally manual in this repository and optional in
 ## Known boundaries
 
 - Ingress is a status/launcher only; login takes place in a separate HTTPS tab.
-- Gateway Basic authentication defaults to enabled. From wrapper 0.1.2, an existing fully configured owner account can set `gateway_auth: false` to remove only that browser popup. Trusted configured TLS and native Nocturne authentication are then checked before startup; Nocturne's own passkey stays required. First setup must use `true`. [Exact switch, test and rollback steps](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/GATEWAY.md).
+- Gateway Basic authentication defaults to enabled. From wrapper 0.1.4, an existing fully configured owner account can set `gateway_auth: false` to remove only that browser popup. Trusted configured TLS and native Nocturne authentication are then checked before startup; Nocturne's own passkey stays required. First setup must use `true`. [Exact switch, test and rollback steps](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/GATEWAY.md).
 - External Nightscout clients/API tokens and connectors have **not** been validated through this gateway; incoming Authorization is stripped before reaching the backend.
 - No clinical reliability, automatic dosing, external data connectors or internet-facing deployment has been validated.
 - Never paste full logs, keys, recovery codes or health data into public issues. Report only a sanitized relevant excerpt with the app/Nocturne versions.

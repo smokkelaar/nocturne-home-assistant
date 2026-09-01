@@ -6,6 +6,30 @@ This is a shareable, Nocturne-only **HA app wrapper**, not HACS and not the full
 
 ## Start here
 
+Current functional version source: `wrapper.json`, shared across both channels.
+Runtime `version.json.app` is that version; `package` is the per-channel HA
+delivery version (`<wrapper>-<counter>`). See [VERSIES](VERSIES.md).
+
+## 0.1.4 handoff
+
+- Native auth no longer forces/trusts the legacy `requireAuthentication` field.
+  Upstream main hardcodes it false even for private instances. Require loaded,
+  non-demo, `anonymousReadAccess: false` plus a real anonymous ChartData 401.
+- Logs identify channel, wrapper, delivery and upstream before option validation.
+  Setup/recovery/status/auth errors have distinct instructions; no raw responses are logged.
+- Both channels share wrapper 0.1.4. Upstream-only promotions increment only
+  their delivery counter. Do not let either updater bump wrapper functionality.
+- HA configuration has Dutch/English labels explaining first setup versus
+  removing only the extra popup. Keep translations identical across channels.
+- Smoke CI now seeds a synthetic owner with a nonfunctional credential **only**
+  in its disposable container, then tests native main-entrypoint boot/restart.
+  This is not real enrollment/passkey or human-account upgrade evidence.
+- No live HA configuration, app data or credentials are changed by this PR.
+  The reported live startup failure still needs an exact installed version/log
+  and the user's post-update test; do not claim the code fix proves their HA works.
+
+## Working procedure
+
 1. Read the current GitHub Actions results, open issues and `git status`.
 2. Run the three offline commands in CONTRIBUTING. Docker testing must use a disposable environment, never the user's existing volume.
 3. Keep changes small, deliver a clear next test and say precisely what was or was not verified.

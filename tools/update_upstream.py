@@ -11,6 +11,8 @@ import re
 import urllib.error
 import urllib.request
 
+from versioning import next_package, package_build, wrapper_version
+
 ROOT = Path(__file__).resolve().parents[1]
 PROJECT = 'nightscout/nocturne'
 ACCEPT = ', '.join([
@@ -104,12 +106,13 @@ def dumps(value):
 
 def render(root, lock, app_version):
     validate_lock(lock)
-    semver(app_version)
-    config = json.loads((root / 'nocturne_local/config.json').read_text())
+    package_build(root, app_version)
+    wrapper = wrapper_version(root)
+    config = json.loads((root / 'nocturne_local/config.json').read_text(encoding='utf-8'))
     config['version'] = app_version
-    config['description'] = (f"Official Nocturne {lock['version']} release with PostgreSQL. "
+    config['description'] = (f"HA wrapper {wrapper} · Official Nocturne {lock['version']} with PostgreSQL. "
                              'Experimental; not for clinical use.')
-    dockerfile = (root / 'nocturne_local/Dockerfile').read_text()
+    dockerfile = (root / 'nocturne_local/Dockerfile').read_text(encoding='utf-8')
     for kind in ('api', 'web'):
         pattern = rf'(?m)^FROM ghcr\.io/nightscout/nocturne/nocturne-{kind}@sha256:[0-9a-f]{{64}}'
         replacement = f"FROM ghcr.io/{PROJECT}/nocturne-{kind}@{lock[kind]['digest']}"
@@ -124,7 +127,8 @@ def render(root, lock, app_version):
         'nocturne_local/config.json': dumps(config),
         'nocturne_local/Dockerfile': dockerfile,
         'nocturne_local/rootfs/opt/nocturne-ha/version.json': dumps({
-            'app': app_version, 'nocturne': lock['version'], 'name': 'Nocturne Official Release',
+            'app': wrapper, 'package': app_version,
+            'nocturne': lock['version'], 'name': 'Nocturne Official Release',
             'default_public_url': 'https://homeassistant.local:8448',
         }),
     }
@@ -135,15 +139,14 @@ def apply_update(root, current, candidate):
     validate_lock(candidate)
     if semver(candidate['version']) <= semver(current['version']):
         raise ValueError('Refusing an equal version, retag, or downgrade')
-    version = json.loads((root / 'nocturne_local/config.json').read_text())['version']
-    major, minor, patch = semver(version)
-    next_version = f'{major}.{minor}.{patch + 1}'
+    version = json.loads((root / 'nocturne_local/config.json').read_text(encoding='utf-8'))['version']
+    next_version = next_package(root, version)
     prepared = render(root, candidate, next_version)  # Validate ALL before writing ANY.
     changelog = root / 'nocturne_local/CHANGELOG.md'
     note = (f"## {next_version}\n\n- Update paired Nocturne API/web to {candidate['version']}.\n"
             f"- [Upstream release](https://github.com/{PROJECT}/releases/tag/{candidate['tag']}).\n"
             '- Maintainer review and backup required before installation; database migrations may occur.\n\n')
-    prepared['nocturne_local/CHANGELOG.md'] = note + changelog.read_text()
+    prepared['nocturne_local/CHANGELOG.md'] = note + changelog.read_text(encoding='utf-8')
     for name, content in prepared.items():
         (root / name).write_text(content, encoding='utf-8', newline='\n')
     return next_version
@@ -156,12 +159,12 @@ def main():
     mode.add_argument('--check-upstream', action='store_true', help='Online read-only: compare latest stable release')
     mode.add_argument('--update', action='store_true', help='Online: prepare a newer stable release in this checkout')
     args = parser.parse_args()
-    current = json.loads((ROOT / 'upstream.json').read_text())
+    current = json.loads((ROOT / 'upstream.json').read_text(encoding='utf-8'))
     validate_lock(current)
     if args.check:
-        version = json.loads((ROOT / 'nocturne_local/config.json').read_text())['version']
+        version = json.loads((ROOT / 'nocturne_local/config.json').read_text(encoding='utf-8'))['version']
         for name, expected in render(ROOT, current, version).items():
-            actual = (ROOT / name).read_text()
+            actual = (ROOT / name).read_text(encoding='utf-8')
             same = json.loads(actual) == json.loads(expected) if name.endswith('.json') else actual == expected
             if not same:
                 raise ValueError('Inconsistent generated metadata: ' + name)

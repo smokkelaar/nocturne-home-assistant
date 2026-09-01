@@ -66,6 +66,12 @@ Latest remains highly experimental. Automated technical tests do not prove dashb
 
 ## Delivery to Home Assistant
 
+Since wrapper 0.1.4, `wrapper.json` defines one functional version shared by
+both packages. An upstream-only promotion changes only a delivery counter:
+`0.1.4-1` → `0.1.4-2`. The status page still reports wrapper 0.1.4 alongside
+the new upstream version/commit. Shared wrapper changes advance both channels
+together. [Version model](VERSIES.md).
+
 Merging a changed package version into `main` lets the HA app store offer that channel's update after a repository refresh. The two app versions and HA's **Automatic update** switches are independent:
 
 - An Official merge never changes or restarts Latest.

@@ -30,6 +30,15 @@ class ChannelTests(unittest.TestCase):
         self.assertEqual({'8448/tcp': 8449}, self.latest['ports'])
         self.assertNotEqual(self.official['options']['public_url'], self.latest['options']['public_url'])
 
+    def test_both_channels_have_one_shared_functional_wrapper_version(self):
+        wrapper = json.loads((ROOT / 'wrapper.json').read_text())['version']
+        for package, manifest in (('nocturne_local', self.official), ('nocturne_latest', self.latest)):
+            runtime = json.loads((ROOT / package / 'rootfs/opt/nocturne-ha/version.json').read_text())
+            self.assertEqual(wrapper, runtime['app'])
+            self.assertEqual(manifest['version'], runtime['package'])
+            self.assertRegex(runtime['package'], '^' + wrapper.replace('.', r'\.') + r'-[1-9]\d*$')
+            self.assertIn('HA wrapper ' + wrapper, manifest['description'])
+
     def test_latest_uses_only_immutable_image_references(self):
         dockerfile = (ROOT / 'nocturne_latest/Dockerfile').read_text()
         images = [line for line in dockerfile.splitlines() if line.startswith('FROM ')]
@@ -47,6 +56,7 @@ class ChannelTests(unittest.TestCase):
             'build/check_web.mjs', 'build/prepare_web.py',
             'rootfs/opt/nocturne-ha/bootstrap.sql', 'rootfs/opt/nocturne-ha/run.py',
             'rootfs/opt/nocturne-ha/settings.py', 'rootfs/opt/nocturne-ha/tls.py',
+            'translations/nl.json', 'translations/en.json',
         ]
         for relative in common:
             with self.subTest(file=relative):
@@ -86,6 +96,16 @@ class ChannelTests(unittest.TestCase):
         for name in ('Nocturne Official Release', 'Nocturne Latest Release'):
             self.assertIn(name, install)
             self.assertIn(name, channels)
+
+    def test_ha_option_labels_cover_exactly_the_supported_schema(self):
+        for package in ('nocturne_local', 'nocturne_latest'):
+            schema = json.loads((ROOT / package / 'config.json').read_text())['schema']
+            for language in ('nl', 'en'):
+                translation = json.loads((ROOT / package / 'translations' / (language + '.json')).read_text(encoding='utf-8'))
+                self.assertEqual(set(schema), set(translation['configuration']))
+                for entry in translation['configuration'].values():
+                    self.assertTrue(entry['name'])
+                    self.assertTrue(entry['description'])
 
 
 if __name__ == '__main__':

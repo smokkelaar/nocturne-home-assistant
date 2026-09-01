@@ -16,7 +16,7 @@ def docker(*args, check=True, input=None):
     if check and result.returncode:
         # A dedicated probe may emit only this bounded, non-sensitive marker.
         # Never publish arbitrary container output, which can contain secrets.
-        marker = re.search(r'NATIVE_PROBE_FAILED:[A-Z_]+:[A-Za-z]+', result.stdout + result.stderr)
+        marker = re.search(r'NATIVE_PROBE_FAILED:[A-Z_0-9]+:[A-Za-z]+', result.stdout + result.stderr)
         detail = ' (' + marker.group(0) + ')' if marker else ''
         raise RuntimeError('Docker operation failed: ' + args[0] + detail)
     return result.stdout.strip()
@@ -62,17 +62,19 @@ else:
 '''
 
 
-def wait_ready(name):
+def wait_ready(name, probe=PROBE):
     deadline = time.monotonic() + 420
+    last_error = ''
     while time.monotonic() < deadline:
         if docker('inspect', '--format', '{{.State.Running}}', name) != 'true':
             raise RuntimeError('Container exited before becoming ready (inspect CI locally; no raw logs published)')
         try:
-            execute(name, PROBE)
+            execute(name, probe)
             return
-        except RuntimeError:
+        except RuntimeError as error:
+            last_error = str(error)  # docker() only exposes bounded safe markers.
             time.sleep(3)
-    raise RuntimeError('Container readiness/authentication smoke test timed out')
+    raise RuntimeError('Container readiness/authentication smoke test timed out: ' + last_error)
 
 
 def main(image):
@@ -81,7 +83,8 @@ def main(image):
     docker('volume', 'create', volume)
     try:
         docker('run', '--rm', '-i', '--entrypoint', 'python3', '-v', volume + ':/data', image, '-', input=(
-            "from pathlib import Path\nPath('/data/options.json').write_text('{}')\n"))
+            "from pathlib import Path\nPath('/data/options.json').write_text('{}')\n"
+            f"Path('/data/.disposable-ci').write_text('{identity}')\n"))
         # No published host ports and no Supervisor token; never mounts user paths.
         docker('run', '-d', '--name', identity, '-v', volume + ':/data', image)
         wait_ready(identity)
@@ -101,6 +104,22 @@ def main(image):
             raise RuntimeError('Secrets changed on restart')
         execute(identity, "import sys\nsys.path.insert(0, '/opt/nocturne-ha')\nimport run\nassert run.psql(database='nocturne', sql='SELECT id FROM public.ha_wrapper_smoke') == '42'")
         print('PASS: clean stop, restart, persistent secrets and database row')
+        # Exercise the actual main() startup with false, not only generated nginx.
+        # Deliberately no real enrollment, login, health data, or published ports.
+        print(docker('exec', '-i', '-e', 'NOCTURNE_CI_FIXTURE=' + identity,
+                     identity, 'python3', '-', input=Path(__file__).with_name(
+                         'configured_native_fixture.py').read_text()))
+        native_probe = Path(__file__).with_name('configured_native_probe.py').read_text()
+        for attempt in range(2):
+            docker('stop', '-t', '100', identity)
+            if docker('inspect', '--format', '{{.State.ExitCode}}', identity) != '0':
+                raise RuntimeError('Native-mode container did not stop cleanly')
+            docker('start', identity)
+            wait_ready(identity, native_probe)
+            after = execute(identity, "import hashlib\nfrom pathlib import Path\nprint(hashlib.sha256(Path('/data/secrets.json').read_bytes()).hexdigest())")
+            if before != after:
+                raise RuntimeError('Secrets changed in native mode')
+        print('PASS: configured native startup and second restart; no Basic prompt; anonymous data 401; stable keys')
     finally:
         # These exact UUID names were created above, never accepted from user input.
         docker('rm', '-f', identity, check=False)

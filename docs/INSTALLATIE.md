@@ -182,7 +182,7 @@ Zie je **nog niet gestart**, **STARTFOUT** of **gestopt**? Lees de foutmelding; 
 **Controlepunt:** je ziet de donkere Nocturne-interface met **Name your instance** (nieuwe installatie), of het eigen Nocturne-inlogscherm als de instantie al bestaat. Je HA-account, gatewaycode en Nocturne-passkey zijn drie verschillende toegangen. Een browser kan de gatewaygegevens tijdens een sessie onthouden; niet iedere bezoekpoging toont daarom opnieuw het eerste venster.
 
 > [!TIP]
-> **Bestaat je eigenaar/passkey al?** Vanaf wrapper 0.1.2 kun je na een back-up alleen deze extra popup uitschakelen met `gateway_auth: false`. Nocturne's eigen passkey blijft verplicht en de app controleert dit vóór de HTTPS-poort opent. Doe dit niet tijdens de eerste setup. Volg de [exacte omschakel-, test- en herstelstappen](GATEWAY.md).
+> **Bestaat je eigenaar/passkey al?** Vanaf wrapper 0.1.4 kun je na een back-up alleen deze extra popup uitschakelen met `gateway_auth: false`. Nocturne's eigen passkey blijft verplicht en de app controleert dit vóór de HTTPS-poort opent. Doe dit niet tijdens de eerste setup. Volg de [exacte omschakel-, test- en herstelstappen](GATEWAY.md).
 
 ## Stap 7: instantie en passkey-account maken
 
@@ -252,7 +252,7 @@ Maak vóór upgrades of verdere inrichting via **Instellingen → Systeem → Ba
 | **ERR_CONNECTION_CLOSED**, weigering of time-out | Controleer dienststatus, de gekozen hostpoort (Official 8448 / Latest 8449) en DNS via [de HTTPS/DNS-test](HTTPS-EN-DNS.md#bereikbaarheid-controleren-na-starten). Een werkende HA-poort 8123 bewijst niets over de Nocturne-poort. |
 | Via IP lijkt er iets te werken, via domeinnaam niet | Controleer lokale A/AAAA-resolutie. Los de route voor die naam op; vervang de passkey-hostnaam niet door het IP-adres. Schakel IPv6 niet overal uit als snelle oplossing. |
 | Certificaatwaarschuwing | Naam, geldigheid, keten of vertrouwensstatus klopt niet. Herstel dit vóór login; geen `-k` of browserbeveiligingsomzeiling. |
-| Gebruikersnaam/wachtwoord-popup | Standaard: gebruik gatewaygebruiker **nocturne** en de code uit HA. Bestaande ingerichte instanties kunnen vanaf 0.1.2 [veilig naar alleen Nocturne-passkey omschakelen](GATEWAY.md). |
+| Gebruikersnaam/wachtwoord-popup | Standaard: gebruik gatewaygebruiker **nocturne** en de code uit HA. Bestaande ingerichte instanties kunnen vanaf 0.1.4 [veilig naar alleen Nocturne-passkey omschakelen](GATEWAY.md). |
 | **Continue** blijft grijs | Vul beide velden in en wacht op **Available**. De servervalidatie moet slagen; zie stap 7A. |
 | **Failed to fetch** | Controleer eerst normale HTTPS-toegang, gatewaylogin, appstatus en dezelfde hostnaam/poort. Herlaad de tab na correcties; noteer of het gebeurt vóór of ná het passkeyvenster. Niet opnieuw installeren of sleutels wissen. |
 | **invalid domain** bij passkey | Je gebruikt waarschijnlijk een IP-adres of een verkeerde domein/origin-instelling. Volg stap 3 en 4; wijzigen van een al gebruikte identiteit vraagt extra zorg. |
