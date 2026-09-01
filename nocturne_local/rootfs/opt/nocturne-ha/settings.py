@@ -11,7 +11,8 @@ SECRET_FIELDS = ('instance', 'postgres', 'migrator', 'app', 'web', 'gateway')
 
 
 def validate_options(options):
-    public_url = options.get('public_url', 'https://homeassistant.local:8448').rstrip('/')
+    versions = json.loads(Path(__file__).with_name('version.json').read_text())
+    public_url = options.get('public_url', versions['default_public_url']).rstrip('/')
     if any(c.isspace() for c in public_url):
         raise ValueError('public_url mag geen spaties of regelovergangen bevatten')
     try:

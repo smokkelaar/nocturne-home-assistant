@@ -125,6 +125,7 @@ def render(root, lock, app_version):
         'nocturne_local/Dockerfile': dockerfile,
         'nocturne_local/rootfs/opt/nocturne-ha/version.json': dumps({
             'app': app_version, 'nocturne': lock['version'], 'name': 'Nocturne Official Release',
+            'default_public_url': 'https://homeassistant.local:8448',
         }),
     }
 

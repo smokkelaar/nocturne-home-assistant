@@ -54,10 +54,12 @@ class ChannelTests(unittest.TestCase):
                                  (ROOT / 'nocturne_latest' / relative).read_bytes())
 
     def test_each_status_page_names_its_channel(self):
-        for package, name in [('nocturne_local', 'Nocturne Official Release'),
-                              ('nocturne_latest', 'Nocturne Latest Release')]:
+        for package, name, port in [('nocturne_local', 'Nocturne Official Release', 8448),
+                                    ('nocturne_latest', 'Nocturne Latest Release', 8449)]:
             settings = load_settings(package)
-            page = settings.status_page(settings.validate_options({}), {}, '', True)
+            options = settings.validate_options({})
+            self.assertEqual(f'https://homeassistant.local:{port}', options['public_url'])
+            page = settings.status_page(options, {}, '', True)
             self.assertIn('<h1>' + name + '</h1>', page)
 
     def test_latest_never_inherits_official_identity_or_default_port(self):

@@ -99,6 +99,22 @@ class LatestUpdateTests(unittest.TestCase):
                 {'name': 'build-and-push', 'conclusion': 'success'}]}]):
             self.assertEqual(7, updater.successful_build(commit)['id'])
 
+    def test_resolver_pins_the_inspected_amd64_manifest_not_parent_index(self):
+        commit = 'a' * 40
+        selected = 'sha256:' + '1' * 64
+        parent = 'sha256:' + '2' * 64
+        config_digest = 'sha256:' + '3' * 64
+        responses = [
+            ({'token': 'test'}, 'unused'),
+            ({'manifests': [{'digest': selected, 'platform': {
+                'os': 'linux', 'architecture': 'amd64'}}]}, parent),
+            ({'config': {'digest': config_digest}}, selected),
+            ({'os': 'linux', 'architecture': 'amd64', 'config': {
+                'Env': ['GIT_COMMIT=' + commit]}}, config_digest),
+        ]
+        with patch.object(updater, 'fetch', side_effect=responses):
+            self.assertEqual(selected, updater.resolve_image('api', commit)['digest'])
+
 
 if __name__ == '__main__':
     unittest.main()

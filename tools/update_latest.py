@@ -84,6 +84,9 @@ def resolve_image(kind, commit):
             raise ValueError('Expected exactly one linux/amd64 image')
         selected = entries[0]['digest']
         manifest, _ = fetch(f'https://ghcr.io/v2/{repository}/manifests/{selected}', headers, selected)
+        # Pin exactly the amd64 manifest we inspected, not the parent index.
+        # An unrelated architecture changing must not churn this HA package.
+        digest = selected
     config_digest = manifest['config']['digest']
     config, _ = fetch(f'https://ghcr.io/v2/{repository}/blobs/{config_digest}', headers, config_digest)
     if config.get('architecture') != 'amd64' or config.get('os') != 'linux':
@@ -160,6 +163,7 @@ def render(root, lock, app_version):
         'nocturne_latest/rootfs/opt/nocturne-ha/version.json': dumps({
             'app': app_version, 'nocturne': 'main@' + lock['commit'][:7],
             'name': 'Nocturne Latest Release',
+            'default_public_url': 'https://homeassistant.local:8449',
         }),
     }
 
