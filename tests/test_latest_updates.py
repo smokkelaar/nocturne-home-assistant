@@ -23,6 +23,7 @@ class LatestUpdateTests(unittest.TestCase):
         value = copy.deepcopy(self.lock)
         value['commit'] = 'b' * 40
         value['workflow_run'] += 1
+        value['commit_at'] = '2026-09-01T06:52:58Z'
         value['published_at'] = '2026-09-01T06:53:00Z'
         value['api']['digest'] = 'sha256:' + 'c' * 64
         value['web']['digest'] = 'sha256:' + 'd' * 64
@@ -42,6 +43,7 @@ class LatestUpdateTests(unittest.TestCase):
 
     def test_lock_rejects_floating_or_malformed_provenance(self):
         mutations = [('channel', 'dev'), ('commit', 'short'), ('workflow_run', 0),
+                     ('commit_at', 'yesterday'),
                      ('published_at', 'yesterday')]
         for field, value in mutations:
             lock = copy.deepcopy(self.lock)
@@ -68,7 +70,13 @@ class LatestUpdateTests(unittest.TestCase):
             self.assertEqual(version, config['version'])
             self.assertEqual('nocturne_latest', config['slug'])
             self.assertEqual(original['options'], config['options'])
+            self.assertIn('2026-09-01 06:52 UTC', config['description'])
             self.assertIn(self.candidate()['commit'][:7], (root / 'nocturne_latest/CHANGELOG.md').read_text())
+
+    def test_store_description_shows_exact_main_commit_time_in_utc(self):
+        config = json.loads(updater.render(ROOT, self.lock, '0.1.1')[
+            'nocturne_latest/config.json'])
+        self.assertIn('3b75145 - 2026-08-31 20:32 UTC', config['description'])
 
     def test_unchanged_commit_and_invalid_dockerfile_write_nothing(self):
         with tempfile.TemporaryDirectory() as directory:
