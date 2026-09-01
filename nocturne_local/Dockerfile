@@ -48,7 +48,8 @@ RUN dotnet --list-runtimes && /usr/lib/postgresql/17/bin/postgres --version
 
 COPY rootfs/ /
 RUN python3 -m compileall -q /opt/nocturne-ha \
-    && chmod 755 /opt/nocturne-ha/run.py
+    && chmod 755 /opt/nocturne-ha/run.py \
+    && nginx -t -c /opt/nocturne-ha-build/check_cookies.conf
 ENV NODE_ENV=production DOTNET_ENVIRONMENT=Production ASPNETCORE_ENVIRONMENT=Production
 WORKDIR /app
 EXPOSE 8099 8448

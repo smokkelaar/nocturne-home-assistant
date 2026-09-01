@@ -53,7 +53,7 @@ class ChannelTests(unittest.TestCase):
 
     def test_shared_wrapper_security_code_stays_identical(self):
         common = [
-            'build/check_web.mjs', 'build/prepare_web.py',
+            'build/check_web.mjs', 'build/prepare_web.py', 'build/check_cookies.conf',
             'rootfs/opt/nocturne-ha/bootstrap.sql', 'rootfs/opt/nocturne-ha/run.py',
             'rootfs/opt/nocturne-ha/settings.py', 'rootfs/opt/nocturne-ha/tls.py',
             'rootfs/opt/nocturne-ha/cookies.mjs',

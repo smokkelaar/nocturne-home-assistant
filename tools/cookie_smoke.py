@@ -15,7 +15,7 @@ import urllib.error
 import urllib.request
 import uuid
 
-from smoke import docker, execute, wait_ready
+from smoke import docker, wait_ready
 
 
 SEED_SESSION = '''

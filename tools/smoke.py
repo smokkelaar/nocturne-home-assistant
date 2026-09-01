@@ -67,7 +67,16 @@ def wait_ready(name, probe=PROBE):
     last_error = ''
     while time.monotonic() < deadline:
         if docker('inspect', '--format', '{{.State.Running}}', name) != 'true':
-            raise RuntimeError('Container exited before becoming ready (inspect CI locally; no raw logs published)')
+            # Inspect logs ONLY in this disposable test, returning fixed markers
+            # instead of publishing raw errors/headers/credentials.
+            logs = docker('logs', name, check=False)
+            markers = [label for label, signature in (
+                ('JS_SYNTAX', 'SyntaxError'), ('JS_REFERENCE', 'ReferenceError'),
+                ('NGINX_CONFIG', 'nginx:'), ('JS_NAMESPACE', 'Invalid cookie namespace'),
+                ('PY_KEY', 'KeyError'), ('PERMISSION', 'Permission denied'),
+            ) if signature in logs]
+            raise RuntimeError('Container exited before becoming ready; safe markers: '
+                               + (','.join(markers) or 'NONE'))
         try:
             execute(name, probe)
             return
