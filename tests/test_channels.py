@@ -53,9 +53,10 @@ class ChannelTests(unittest.TestCase):
 
     def test_shared_wrapper_security_code_stays_identical(self):
         common = [
-            'build/check_web.mjs', 'build/prepare_web.py',
+            'build/check_web.mjs', 'build/prepare_web.py', 'build/check_cookies.conf',
             'rootfs/opt/nocturne-ha/bootstrap.sql', 'rootfs/opt/nocturne-ha/run.py',
             'rootfs/opt/nocturne-ha/settings.py', 'rootfs/opt/nocturne-ha/tls.py',
+            'rootfs/opt/nocturne-ha/cookies.mjs',
             'translations/nl.json', 'translations/en.json',
         ]
         for relative in common:
@@ -77,6 +78,24 @@ class ChannelTests(unittest.TestCase):
         self.assertNotIn('"slug": "nocturne_local"', serialized)
         self.assertNotEqual(8448, self.latest['ports']['8448/tcp'])
         self.assertTrue(self.latest['options']['public_url'].endswith(':8449'))
+
+    def test_cookie_namespace_is_fixed_by_channel_not_user_url_or_option(self):
+        for package, namespace in [('nocturne_local', 'NocturneOfficial_'),
+                                    ('nocturne_latest', 'NocturneLatest_')]:
+            settings = load_settings(package)
+            for port in (8448, 8449):
+                options = settings.validate_options({
+                    'public_url': f'https://example.net:{port}',
+                    'cookie_namespace': 'attacker_',
+                })
+                self.assertEqual(namespace, options['cookie_namespace'])
+                nginx = settings.nginx_config(options, '/cert', '/key')
+                self.assertIn(f'set $ha_cookie_namespace "{namespace}";', nginx)
+                self.assertIn('proxy_set_header Cookie $ha_upstream_cookie;', nginx)
+                self.assertEqual(2, nginx.count('js_header_filter ha_cookies.responseCookies;'))
+            options['cookie_namespace'] = 'invalid'
+            with self.assertRaises(ValueError):
+                settings.nginx_config(options, '/cert', '/key')
 
     def test_automation_policies_are_channel_specific(self):
         official = (ROOT / '.github/workflows/upstream.yml').read_text()

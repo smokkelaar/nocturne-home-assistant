@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: '24'
       - run: python -m unittest discover -s tests -v
-      - run: node --test tests/test_web_check.mjs
+      - run: node --test tests/test_web_check.mjs tests/test_cookies.mjs
       - run: python tools/update_upstream.py --check
       - run: python tools/update_latest.py --check
   container:
@@ -53,3 +53,5 @@ jobs:
           persist-credentials: false
       - run: docker build --platform linux/amd64 --tag nocturne-official:baseline .ci-baseline/nocturne_local
       - run: python3 tools/recovery_smoke.py --image nocturne-official:ci --baseline nocturne-official:baseline
+      - name: Same-host Official and Latest session isolation
+        run: python3 tools/cookie_smoke.py --official nocturne-official:ci --latest nocturne-latest:ci

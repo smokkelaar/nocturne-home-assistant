@@ -130,6 +130,7 @@ def render(root, lock, app_version):
             'app': wrapper, 'package': app_version,
             'nocturne': lock['version'], 'name': 'Nocturne Official Release',
             'default_public_url': 'https://homeassistant.local:8448',
+            'cookie_namespace': 'NocturneOfficial_',
         }),
     }
 

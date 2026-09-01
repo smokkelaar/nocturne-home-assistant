@@ -168,6 +168,7 @@ def render(root, lock, app_version):
             'nocturne': 'main@' + lock['commit'][:7], 'commit_at': lock['commit_at'],
             'name': 'Nocturne Latest Release',
             'default_public_url': 'https://homeassistant.local:8449',
+            'cookie_namespace': 'NocturneLatest_',
         }),
     }
 

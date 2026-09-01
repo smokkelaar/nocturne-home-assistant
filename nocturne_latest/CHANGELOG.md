@@ -1,3 +1,10 @@
+## 0.1.5-1 — shared wrapper 0.1.5
+
+- Isolate session/setup cookies from Official even when both use the same hostname.
+- Ignore old shared sessions; sign in once again using existing passkeys. No URL, account, database or key changes.
+- Preserve internal Nocturne cookie names through a header-only nginx njs adapter; no frontend bundle rewrite.
+- Add offline cookie tests and a two-real-container synthetic-session regression test. Real browser/passkey acceptance remains manual.
+
 ## 0.1.4-1 — shared wrapper 0.1.4
 
 - Fix native startup against current Nocturne: verify private status and anonymous API denial instead of an obsolete auth flag.

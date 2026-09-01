@@ -6,6 +6,10 @@
 
 ## Requirements
 
+**Upgrading to wrapper 0.1.5:** session cookies are now isolated from Official even
+on the same hostname. Sign in once again with your existing passkey; do not
+recreate the account or change its URL. [Cookie isolation and browser checklist](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/COOKIES.md).
+
 - Home Assistant OS with Supervisor and the app store, **amd64**.
 - Spare memory, storage and network access for downloading/building the pinned images and running PostgreSQL/API/web. No reliable minimum resource benchmark has been established; do not exhaust the resources required by HA itself.
 - One stable **DNS hostname**, reachable on the local network and covered by a certificate trusted by your browser/device. Passkey setup cannot use an IP address as its domain.

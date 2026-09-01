@@ -13,6 +13,9 @@ SECRET_FIELDS = ('instance', 'postgres', 'migrator', 'app', 'web', 'gateway')
 
 def validate_options(options):
     versions = json.loads(Path(__file__).with_name('version.json').read_text())
+    cookie_namespace = versions['cookie_namespace']
+    if cookie_namespace not in ('NocturneOfficial_', 'NocturneLatest_'):
+        raise ValueError('Ongeldige cookieruimte in pakketmetadata')
     public_url = options.get('public_url', versions['default_public_url']).rstrip('/')
     if any(c.isspace() for c in public_url):
         raise ValueError('public_url mag geen spaties of regelovergangen bevatten')
@@ -47,7 +50,8 @@ def validate_options(options):
     if not gateway_auth and not cert:
         raise ValueError('GATEWAY_TLS: zonder extra gatewaycode zijn eigen certificate/private_key-bestanden vereist')
     return dict(public_url=public_url, hostname=hostname, authority=parsed.netloc.lower(),
-                certificate=cert, private_key=key, gateway_auth=gateway_auth)
+                certificate=cert, private_key=key, gateway_auth=gateway_auth,
+                cookie_namespace=cookie_namespace)
 
 
 def load_secrets(data_dir):
@@ -99,16 +103,23 @@ def nginx_config(options, cert_path, key_path):
     if not options.get('gateway_auth', True):
         gate = ('auth_basic off;\n'
                 f'    if ($host != "{options["hostname"]}") {{ return 421; }}')
-    return f'''user www-data;
+    namespace = options['cookie_namespace']
+    if namespace not in ('NocturneOfficial_', 'NocturneLatest_'):
+        raise ValueError('Ongeldige cookieruimte')
+    return f'''load_module /usr/lib/nginx/modules/ngx_http_js_module.so;
+user www-data;
 worker_processes 1;
 pid /run/nocturne/nginx.pid;
 error_log /dev/stderr warn;
 events {{ worker_connections 256; }}
 http {{
+  js_import ha_cookies from /opt/nocturne-ha/cookies.mjs;
+  js_set $ha_upstream_cookie ha_cookies.requestCookies;
   access_log off;
   client_max_body_size 20m;
   map $http_upgrade $connection_upgrade {{ default upgrade; '' close; }}
   server {{
+    set $ha_cookie_namespace "{namespace}";
     listen 8448 ssl;
     server_name {options['hostname']};
     ssl_certificate {cert_path};
@@ -124,6 +135,7 @@ http {{
     proxy_set_header X-Instance-Key "";
     proxy_set_header X-Instance-Service "";
     proxy_set_header Authorization "";
+    proxy_set_header Cookie $ha_upstream_cookie;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection $connection_upgrade;
     proxy_read_timeout 300s;
@@ -134,9 +146,13 @@ http {{
     location ^~ /api/v4/dev-only {{ return 404; }}
     location ~ ^/(scalar|openapi)(/|$) {{ return 404; }}
     location ~ ^/(api/auth/(oidc|platform-access)(/|$)|api/oauth(/|$)|\\.well-known/|hubs/) {{
+      js_header_filter ha_cookies.responseCookies;
       proxy_pass http://127.0.0.1:8080;
     }}
-    location / {{ proxy_pass http://127.0.0.1:8000; }}
+    location / {{
+      js_header_filter ha_cookies.responseCookies;
+      proxy_pass http://127.0.0.1:8000;
+    }}
   }}
 }}
 '''
@@ -182,6 +198,8 @@ niet een andere wrapperfunctionaliteit. Official en Latest gebruiken dezelfde wr
 <p><a href="{esc(open_url, quote=True)}" target="_blank" rel="noopener noreferrer">Open Nocturne</a></p>
 <p>Deze HA-pagina toont alleen de technische status; het is niet het Nocturne-dashboard.</p>
 {gateway_section}
+<p>Sessiecookies zijn per kanaal gescheiden. Na de eerste update naar wrapper 0.1.5
+eenmalig opnieuw inloggen; bestaande accounts en passkeys blijven behouden.</p>
 <p class="warning">{esc(certificate_text)}</p></section>
 <section><h2>Installatiecontrole</h2>
 <p><strong>Publiek adres:</strong> <code>{esc(options['public_url'])}</code> — URL-syntax gecontroleerd.</p>

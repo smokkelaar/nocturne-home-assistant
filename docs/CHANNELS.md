@@ -29,10 +29,11 @@ Gebruik bij dezelfde hostnaam voor ieder kanaal zijn eigen URL met de juiste poo
 
 ## Updategrenzen
 
-Let op bij één hostnaam met twee poorten: browsercookies zijn niet per poort
-gescheiden. Wisselen van kanaal kan daarom een nieuwe aanmelding vragen.
-Dat betekent niet dat databases gedeeld zijn. Gebruik desgewenst aparte
-browserprofielen voor tests; verander een bestaand passkey-domein niet zomaar.
+Vanaf wrapper **0.1.5** scheidt de HTTPS-ingang de sessiecookies per kanaal, ook
+bij één hostnaam met twee poorten. Na de update is eenmalig opnieuw aanmelden
+nodig; accounts/passkeys blijven behouden. Displayvoorkeuren kunnen gedeeld
+blijven. [Werking, grenzen en browsercontrole](COOKIES.md).
+Oudere wrappers hebben deze scheiding niet: gebruik daarvoor aparte browserprofielen.
 
 Official wijzigt alleen nadat iemand de workflow **Check Official Nocturne release manually** start, de gegenereerde wijziging controleert en samenvoegt.
 

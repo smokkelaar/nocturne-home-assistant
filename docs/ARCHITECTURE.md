@@ -42,6 +42,12 @@ Runtime/security files are intentionally duplicated because HA app packages are 
 
 ## Build coupling and limits
 
+From wrapper 0.1.5 the nginx njs header adapter isolates browser session/setup
+cookies per channel on both proxy routes. Internal API/Web cookie names are
+unchanged. No JS body patch, DNS/domain change or credential migration is used.
+Read [COOKIES](COOKIES.md) for the deliberately non-authoritative client hint,
+display-preference exceptions, migration and the exact test boundaries.
+
 The API image is Ubuntu/glibc, so the Node binary is copied from a compatible Debian/glibc image, not Alpine. The pinned upstream web output is copied, guarded patches applied, then production dependencies are installed with its frozen lockfile. Dependency resolution/imports are checked as the real runtime UID, in both app and bridge module contexts.
 
 PostgreSQL 17 is added using PGDG's Ubuntu noble repository. A future upstream base OS change can require a wrapper change even when upstream images exist. Tests intentionally stop publication when compatibility signatures change. Official tracks only manually promoted releases. Latest discovers upstream `main`, but converts it to an exact commit and paired immutable digests before any package is offered.

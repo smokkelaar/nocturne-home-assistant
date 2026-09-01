@@ -29,9 +29,9 @@ This is an app-store repository, **not a HACS integration**. HA ingress currentl
 
 ## How updates reach you
 
-Both apps use **one shared functional HA-wrapper version** (currently 0.1.4).
+Both apps use **one shared functional HA-wrapper version** (currently 0.1.5).
 Official pairs it with Nocturne 0.2.4; Latest pairs it with a pinned main snapshot.
-HA's technical package version adds a delivery counter, e.g. `0.1.4-1`.
+HA's technical package version adds a delivery counter, e.g. `0.1.5-1`.
 Daily upstream updates change that counter, not wrapper functionality.
 [Version numbers explained](docs/VERSIES.md).
 
@@ -51,6 +51,7 @@ Neither Dockerfile contains a floating image reference: even Latest is converted
 - [Known limitations and test evidence](docs/TESTING.md)
 - [Certificate preflight, automatic reload and error codes (Dutch)](docs/CERTIFICATEN.md)
 - [Extra gateway popup safely enable/disable (Dutch)](docs/GATEWAY.md)
+- [Official/Latest session isolation and one-time re-login after 0.1.5](docs/COOKIES.md)
 - [Cold restore and upgrade rehearsal: scope and remaining HA checks (Dutch)](docs/HERSTELPROEF.md)
 - [Concrete solutions and priorities for the remaining gaps (Dutch)](docs/OPLOSPLAN.md)
 - [Handoff for the next developer or AI](docs/AI_HANDOFF.md)
