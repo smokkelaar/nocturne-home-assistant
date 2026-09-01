@@ -21,14 +21,19 @@ function validName(name) {
 }
 
 function securityPrefix(name) {
-    return SECURITY_PREFIXES.find(prefix => name.startsWith(prefix)) || '';
+    for (let index = 0; index < SECURITY_PREFIXES.length; index++) {
+        if (name.indexOf(SECURITY_PREFIXES[index]) === 0) return SECURITY_PREFIXES[index];
+    }
+    return '';
 }
 
 function decode(header, namespace) {
     const prefix = prefixFor(namespace);
     const found = Object.create(null);
     const duplicates = Object.create(null);
-    for (const part of (header || '').split(';')) {
+    const parts = (header || '').split(';');
+    for (let index = 0; index < parts.length; index++) {
+        const part = parts[index];
         const pair = part.trim();
         const separator = pair.indexOf('=');
         if (separator < 1) continue;
@@ -36,11 +41,11 @@ function decode(header, namespace) {
         const security = securityPrefix(external);
         const scoped = external.slice(security.length);
         let name;
-        if (scoped.startsWith(prefix)) {
+        if (scoped.indexOf(prefix) === 0) {
             const original = scoped.slice(prefix.length);
             name = security + original;
             if (!validName(name) || preference(name)
-                    || PREFIXES.some(p => original.startsWith(p))) continue;
+                    || PREFIXES.some(p => original.indexOf(p) === 0)) continue;
         } else if (preference(external)) {
             name = external;
         } else {
@@ -60,7 +65,9 @@ function encode(headers, namespace, htmlPage) {
     const prefix = prefixFor(namespace);
     const result = [];
     let needsHint = htmlPage;
-    for (const header of headers || []) {
+    const input = headers || [];
+    for (let index = 0; index < input.length; index++) {
+        const header = input[index];
         const separator = header.indexOf('=');
         if (separator < 1) continue;
         const name = header.slice(0, separator).trim();
