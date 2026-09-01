@@ -41,7 +41,7 @@ jobs:
         if: steps.changes.outputs.changed == 'true'
         run: |
           python -m unittest discover -s tests -v
-          node --test tests/test_web_check.mjs
+          node --test tests/test_web_check.mjs tests/test_cookies.mjs
           python tools/update_upstream.py --check
           python tools/update_latest.py --check
       - name: Build and smoke-test Latest candidate and previous-Latest upgrade

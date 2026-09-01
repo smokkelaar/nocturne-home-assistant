@@ -6,6 +6,8 @@ The current **Validate** GitHub Actions run is the authority for this commit's a
 
 - Python regression checks: options, secret persistence/failure handling, ingress isolation, proxy auth/headers, database privileges, process shutdown, dedicated `/health` probing and guarded web patches.
 - Node fixtures: real ESM resolution/evaluation, dependency path isolation and the runtime UID guard.
+- Node cookie adapter tests: separate namespaces, preserved cookie attributes/deletions, legacy/foreign/duplicate rejection and non-authoritative UI-hint handling.
+- Two-app cookie test: real Official/Latest containers, a same-host cookie jar, synthetic refresh-token fixtures, SSR/API renewal, isolated logout/restart and anonymous denial. [Details and manual acceptance](COOKIES.md). This does not perform a real passkey ceremony.
 - Official update checks: strict stable versions, paired image pins, source/digest/platform validation, downgrade rejection, version consistency and refusal to write on unexpected build signatures.
 - Latest update checks: exact upstream-main commit, one successful paired build job, API revision proof, amd64 manifest selection, double-read race closure, immutable digests, isolated file writes and refusal of incomplete/ambiguous publications.
 - TLS regression checks: real OpenSSL pairs, SAN/hostname, key match, validity dates, staged renewals, rejected configuration and rollback without touching the source files.

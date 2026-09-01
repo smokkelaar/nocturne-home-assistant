@@ -8,7 +8,7 @@ Python 3.12+, Node 24 and OpenSSL (installed in Ubuntu CI; required for actual c
 
 ```sh
 python -m unittest discover -s tests -v
-node --test tests/test_web_check.mjs
+node --test tests/test_web_check.mjs tests/test_cookies.mjs
 python tools/update_upstream.py --check
 python tools/update_latest.py --check
 ```
@@ -20,6 +20,7 @@ docker build --platform linux/amd64 --tag nocturne-ha:dev nocturne_local
 python tools/smoke.py --image nocturne-ha:dev
 docker build --platform linux/amd64 --tag nocturne-ha-latest:dev nocturne_latest
 python tools/smoke.py --image nocturne-ha-latest:dev
+python tools/cookie_smoke.py --official nocturne-ha:dev --latest nocturne-ha-latest:dev
 ```
 
 The smoke test creates and removes only its own UUID-named container and volume. It does not mount user files or publish host ports. Never repurpose it to point at an existing instance's data. A production database should never be used as a CI fixture.
