@@ -39,24 +39,6 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Build and smoke-test Official channel
-        run: |
-          docker build --platform linux/amd64 --tag nocturne-official:ci nocturne_local
-          python3 tools/smoke.py --image nocturne-official:ci
-      - name: Build and smoke-test Latest channel
-        run: |
-          docker build --platform linux/amd64 --tag nocturne-latest:ci nocturne_latest
-          python3 tools/smoke.py --image nocturne-latest:ci
-      - name: Check out immutable Official baseline release 0.1.2
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: 5a1958a6c91991039950d1e3ea7bb28fd3ada35f
-          path: .ci-baseline
-          persist-credentials: false
-      - run: docker build --platform linux/amd64 --tag nocturne-official:baseline .ci-baseline/nocturne_local
-      - run: python3 tools/recovery_smoke.py --image nocturne-official:ci --baseline nocturne-official:baseline
-      - name: Same-host Official and Latest session isolation
-        run: python3 tools/cookie_smoke.py --official nocturne-official:ci --latest nocturne-latest:ci
       - name: Detect Personal changes without changing Daily promotion requirements
         id: personal
         env:
@@ -80,6 +62,24 @@ jobs:
           python3 tools/update_personal.py --check
           docker build --platform linux/amd64 --tag nocturne-personal:ci nocturne_personal
           python3 tools/smoke.py --image nocturne-personal:ci
+      - name: Build and smoke-test Official channel
+        run: |
+          docker build --platform linux/amd64 --tag nocturne-official:ci nocturne_local
+          python3 tools/smoke.py --image nocturne-official:ci
+      - name: Build and smoke-test Latest channel
+        run: |
+          docker build --platform linux/amd64 --tag nocturne-latest:ci nocturne_latest
+          python3 tools/smoke.py --image nocturne-latest:ci
+      - name: Check out immutable Official baseline release 0.1.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: 5a1958a6c91991039950d1e3ea7bb28fd3ada35f
+          path: .ci-baseline
+          persist-credentials: false
+      - run: docker build --platform linux/amd64 --tag nocturne-official:baseline .ci-baseline/nocturne_local
+      - run: python3 tools/recovery_smoke.py --image nocturne-official:ci --baseline nocturne-official:baseline
+      - name: Same-host Official and Latest session isolation
+        run: python3 tools/cookie_smoke.py --official nocturne-official:ci --latest nocturne-latest:ci
       - name: Personal cold restore and previous Personal upgrade
         if: steps.personal.outputs.changed == 'true'
         run: |
