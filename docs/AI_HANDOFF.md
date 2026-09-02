@@ -20,18 +20,27 @@ Current functional version source: `wrapper.json`, shared across both channels.
 Runtime `version.json.app` is that version; `package` is the per-channel HA
 delivery version (`<wrapper>-<counter>`). See [VERSIES](VERSIES.md).
 
-## Google Health proposal (2026-09-02, not implemented)
+## Personal 0.2.0 health and medication (2026-09-02)
 
-Read [GOOGLE_HEALTH](GOOGLE_HEALTH.md) before starting health-data connector work.
-It proposes an optional helper in Personal only, a read-only Google preview first,
-and scoped Nocturne writes. No accounts have been linked or health data imported.
-The requested UX is Google login, selecting data and automatic Nocturne import.
-Every selectable type must work end to end; three initial test types are not a
-permanent product limit. Do not silently discard selected unsupported data.
-The gateway strips external Authorization; do not globally relax it. Latest's
-body-weight writer currently needs broad therapy permission; treat narrow-scope
-support as an open requirement. Source availability and both-channel OAuth/API
-contract tests remain necessary. This document is not runtime support or a release.
+Read [GOOGLE_HEALTH](GOOGLE_HEALTH.md) and the source fork's PERSONAL_USAGE.md.
+Personal now contains native Google OAuth (state, PKCE, encrypted refresh tokens),
+read-only reconciled steps/heart-rate/weight imports and own history UI. No external
+helper or gateway Authorization relaxation was added. Other types are visible but
+disabled; three initial types are not a permanent product limit. Source availability
+and real Google consent remain untested without the operator's Google Cloud client.
+No live health data or account credentials were accessed during implementation.
+
+Medication records are separate tenant-scoped entities: actual/skipped, explicit
+mg/microgram, timestamps, route/site/notes, revision-conflict checks and deletion.
+Never add dose schedules/advice, pen clicks or insulin/IOB influence implicitly.
+Personal health tables have EF tenant filters and PostgreSQL RLS denying share access.
+Sync concurrency is single-API-process (the HA topology), not a distributed lease.
+
+Source checks include OAuth/import/medication and V4 write-scope tests. The required
+HA Container smoke test additionally invokes personal_feature_probe.py from the
+disposable three-app cookie fixture: real API writes, migration/RLS/encryption,
+restart persistence and deletion. It never calls Google. Full upstream typecheck
+and authorization suites have pre-existing failures; do not claim they are all green.
 
 ## 0.1.5 cookie isolation handoff
 

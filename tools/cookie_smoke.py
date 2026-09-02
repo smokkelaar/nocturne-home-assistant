@@ -103,13 +103,13 @@ def main(official, latest, personal=None):
                                              urllib.request.HTTPCookieProcessor(jar), NoRedirect())
         anonymous = urllib.request.build_opener(urllib.request.ProxyHandler({}), Handler(), NoRedirect())
 
-        def request(port, path, method='GET', opener=browser, raw_cookie=None):
+        def request(port, path, method='GET', opener=browser, raw_cookie=None, body=None):
             base = f'https://homeassistant.local:{port}'
             headers = {'Origin': base, 'Content-Type': 'application/json'}
             if raw_cookie is not None:
                 headers['Cookie'] = raw_cookie
             req = urllib.request.Request(base + path, headers=headers, method=method,
-                                         data=b'{}' if method == 'POST' else None)
+                                         data=json.dumps(body).encode() if body is not None else b'{}' if method == 'POST' else None)
             try:
                 response = opener.open(req, timeout=30)
             except urllib.error.HTTPError as error:
@@ -159,6 +159,14 @@ def main(official, latest, personal=None):
                 assert request(port, '/api/v4/ChartData/dashboard', opener=anonymous,
                                raw_cookie=raw)[0] == 401
 
+        if personal:
+            phase = 'PERSONAL_FEATURES'
+            from personal_feature_probe import exercise, after_restart, STORAGE_PROBE
+            personal_record = exercise(request, anonymous)
+            name = instances[2][0]
+            docker('exec', '-i', '-e', 'NOCTURNE_CI_FIXTURE=' + name,
+                   name, 'python3', '-', input=STORAGE_PROBE)
+
         phase = 'LOGOUT_ONLY_OFFICIAL'
         other = values('NocturneLatest_')
         assert request(8448, '/api/auth/oidc/logout', 'POST')[0] == 200
@@ -175,6 +183,8 @@ def main(official, latest, personal=None):
             routes[8450] = docker('inspect', '--format',
                                  '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}', name)
             session_for(8450, True, instances[2][3]['subject'])
+            phase = 'PERSONAL_FEATURES_AFTER_RESTART'
+            after_restart(request, personal_record)
             other = values('NocturneLatest_')
             assert request(8450, '/api/auth/oidc/logout', 'POST')[0] == 200
             assert values('NocturneLatest_') == other

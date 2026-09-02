@@ -1,10 +1,35 @@
 # Google Health / Health Connect naar Nocturne
 
+## Gebouwd in Personal 0.2.0
+
+De Google-login en import van stappen, hartslag en gewicht zijn nu onderdeel van
+de Personal-broncode, met een eigen scherm, dataselectie, periodieke synchronisatie
+en versleutelde tokens. Daarnaast bestaat een zelfstandig medicatielogboek.
+[Installeren](PERSONAL.md) · [Google en medicatie instellen](https://github.com/smokkelaar/nocturne-personal/blob/personal/PERSONAL_USAGE.md).
+
+De gekozen implementatie is een **native Personal-module**, geen externe helper
+die brede Nocturne-schrijfpermissies nodig heeft. De API beheert eigen tenant-
+afgeschermde tabellen met row-level security. Reconciled stappenintervallen en
+bronwaarden blijven behouden; ontbrekende hartslagnauwkeurigheid wordt niet verzonnen.
+De metingen zijn nog niet opgenomen in de bestaande Nocturne-rapporten. Hiervoor
+is later een expliciete, verliesvrije koppeling nodig.
+
+De broncode-, container- en API-proeven gebruiken synthetische gegevens. Zij bewijzen
+geen echte Google-consent, Health Connect-toegang of beschikbaarheid van jouw data.
+Alleen daadwerkelijk geïmplementeerde typen zijn aanvinkbaar; drie typen vormen
+geen permanente productlimiet. Official en Latest veranderen niet.
+
+## Eerder ontwerp — geen beschrijving van de huidige installatie
+
+Onderstaande voorsteltekst is behouden als achtergrond voor toekomstige typen
+en Health Connect. De externe-helperarchitectuur is **niet** wat Personal 0.2.0
+installeert; gebruik voor installatie uitsluitend de handleiding hierboven.
+
 **Kanaalkeuze bijgewerkt:** de gebruiker wil deze uitbreidingen uitsluitend in
 de aparte **Nocturne Personal Release**. De bestaande Official- en Daily-apps en
 hun installatieopties blijven ongewijzigd. [Personal](PERSONAL.md).
 
-**Status: technisch ontwerp, nog niet gebouwd of gekoppeld.** Onderzocht op
+**Status van het oorspronkelijke voorstel: technisch ontwerp.** Onderzocht op
 2 september 2026, voor HA-wrapper 0.1.5. Dit document verandert geen installatie,
 toestemmingen of gezondheidsgegevens. Het is geen installatiehandleiding voor
 een al beschikbare functie.
