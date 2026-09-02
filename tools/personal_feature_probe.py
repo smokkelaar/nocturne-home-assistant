@@ -59,8 +59,14 @@ def exercise(request, anonymous):
     updated = call(path, 'PUT', {**entry, 'revision': saved['revision'], 'notes': 'Edited fixture'})
     assert updated['revision'] != saved['revision']
     call(path + '?revision=' + saved['revision'], 'DELETE', expected=409)
-    assert len(call(MEDICATIONS)) == 1
-    return updated
+    persisted = call(MEDICATIONS)
+    assert len(persisted) == 1
+    # PostgreSQL stores bookkeeping timestamps at microsecond precision, while
+    # the immediate .NET write response may still have 100 ns ticks. Clinical
+    # time (integer mills) and every user-entered field must match exactly.
+    assert all(persisted[0][key] == value for key, value in updated.items() if key != 'updatedAt')
+    assert persisted[0]['updatedAt']
+    return persisted[0]
 
 
 def after_restart(request, record):
