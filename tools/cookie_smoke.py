@@ -1,4 +1,4 @@
-"""CI-only: two real apps, same-host cookie jar, synthetic sessions, no host ports.
+"""CI-only: isolated real apps, same-host cookie jar, synthetic sessions, no host ports.
 
 Never accepts a user's containers or volumes. No real passkey ceremony or health
 data. Temporary refresh tokens and HTTP bodies remain in memory, never in logs.
@@ -53,13 +53,15 @@ def cookie(name, value):
         '/', True, True, None, True, None, None, {}, False)
 
 
-def main(official, latest):
+def main(official, latest, personal=None):
     containers, volumes, routes = [], [], {}
     phase = 'START'
     try:
         instances = []
-        for image, port, prefix in [(official, 8448, 'NocturneOfficial_'),
-                                     (latest, 8449, 'NocturneLatest_')]:
+        targets = [(official, 8448, 'NocturneOfficial_'), (latest, 8449, 'NocturneLatest_')]
+        if personal:
+            targets.append((personal, 8450, 'NocturnePersonal_'))
+        for image, port, prefix in targets:
             phase = 'BOOT_' + str(port)
             name = 'nocturne-ci-' + uuid.uuid4().hex
             volume = name + '-data'
@@ -144,10 +146,9 @@ def main(official, latest):
                 session_for(port, True, seed['subject'])
         for _, port, prefix, seed in instances:
             phase = 'EXPLICIT_ROTATION_' + str(port)
-            other = 'NocturneLatest_' if port == 8448 else 'NocturneOfficial_'
-            previous = values(other)
+            previous = {other: values(other) for _, other_port, other, _ in instances if other_port != port}
             assert request(port, '/api/auth/oidc/refresh', 'POST')[0] == 200
-            assert values(other) == previous
+            assert all(values(other) == saved for other, saved in previous.items())
             session_for(port, True, seed['subject'])
 
         phase = 'LEGACY_AND_HINT_DENIAL'
@@ -164,6 +165,22 @@ def main(official, latest):
         assert values('NocturneLatest_') == other
         session_for(8448, False)
         session_for(8449, True, instances[1][3]['subject'])
+        if personal:
+            phase = 'PERSONAL_SURVIVES_OTHER_LOGOUT_AND_OWN_RESTART'
+            session_for(8450, True, instances[2][3]['subject'])
+            name = instances[2][0]
+            docker('stop', '-t', '100', name)
+            docker('start', name)
+            wait_ready(name, Path(__file__).with_name('configured_native_probe.py').read_text())
+            routes[8450] = docker('inspect', '--format',
+                                 '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}', name)
+            session_for(8450, True, instances[2][3]['subject'])
+            other = values('NocturneLatest_')
+            assert request(8450, '/api/auth/oidc/logout', 'POST')[0] == 200
+            assert values('NocturneLatest_') == other
+            session_for(8449, True, instances[1][3]['subject'])
+            session_for(8450, False)
+            assert request(8450, '/api/v4/ChartData/dashboard')[0] == 401
         assert request(8448, '/api/v4/ChartData/dashboard')[0] == 401
 
         phase = 'LATEST_SESSION_AFTER_RESTART'
@@ -174,7 +191,7 @@ def main(official, latest):
         routes[8449] = docker('inspect', '--format',
                              '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}', name)
         session_for(8449, True, instances[1][3]['subject'])
-        print('PASS: real Official/Latest SSR rotation, shared cookie jar, session refresh, isolated logout, restart, legacy/hint denial')
+        print('PASS: real channel SSR rotation, shared cookie jar, session refresh, isolated logout, restart, legacy/hint denial; channels=' + str(len(instances)))
     except BaseException as error:
         print(f'COOKIE_PROBE_FAILED:{phase}:{type(error).__name__}', file=sys.stderr)
         raise SystemExit(1) from None
@@ -190,5 +207,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--official', required=True)
     parser.add_argument('--latest', required=True)
+    parser.add_argument('--personal')
     args = parser.parse_args()
-    main(args.official, args.latest)
+    main(args.official, args.latest, args.personal)

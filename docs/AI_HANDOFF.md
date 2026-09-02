@@ -6,9 +6,32 @@ This is a shareable, Nocturne-only **HA app wrapper**, not HACS and not the full
 
 ## Start here
 
+Personal is a third independent app: read [PERSONAL](PERSONAL.md). Never change
+the existing Official/Latest packages to implement personal product features.
+Source fork: `smokkelaar/nocturne-personal`, default branch `personal`.
+Personal alone compiles that pinned source. Its slug, port and cookie namespace
+are `nocturne_personal`, 8450 and `NocturnePersonal_`. Personal package version
+uses its own extension version plus delivery counter; wrapper stays separately
+visible. `upstream-personal.json` and `tools/update_personal.py` define its build.
+The required Validate container job gates Personal-changing proposals; do not
+add a globally required separate check which the existing Daily bot never dispatches.
+
 Current functional version source: `wrapper.json`, shared across both channels.
 Runtime `version.json.app` is that version; `package` is the per-channel HA
 delivery version (`<wrapper>-<counter>`). See [VERSIES](VERSIES.md).
+
+## Google Health proposal (2026-09-02, not implemented)
+
+Read [GOOGLE_HEALTH](GOOGLE_HEALTH.md) before starting health-data connector work.
+It proposes an optional helper in Personal only, a read-only Google preview first,
+and scoped Nocturne writes. No accounts have been linked or health data imported.
+The requested UX is Google login, selecting data and automatic Nocturne import.
+Every selectable type must work end to end; three initial test types are not a
+permanent product limit. Do not silently discard selected unsupported data.
+The gateway strips external Authorization; do not globally relax it. Latest's
+body-weight writer currently needs broad therapy permission; treat narrow-scope
+support as an open requirement. Source availability and both-channel OAuth/API
+contract tests remain necessary. This document is not runtime support or a release.
 
 ## 0.1.5 cookie isolation handoff
 

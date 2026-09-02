@@ -1,0 +1,44 @@
+{
+  "name": "Nocturne Personal Release",
+  "version": "0.1.0-1",
+  "slug": "nocturne_personal",
+  "description": "HA wrapper 0.1.5 \u00b7 Personal 0.1.0 \u00b7 Daily 3b75145 - 2026-08-31 20:32 UTC. Experimental.",
+  "url": "https://github.com/smokkelaar/nocturne-home-assistant",
+  "arch": [
+    "amd64"
+  ],
+  "startup": "application",
+  "boot": "manual",
+  "init": false,
+  "timeout": 120,
+  "ingress": true,
+  "ingress_port": 8099,
+  "panel_icon": "mdi:heart-pulse",
+  "panel_title": "Nocturne Personal",
+  "panel_admin": true,
+  "ports": {
+    "8448/tcp": 8450
+  },
+  "ports_description": {
+    "8448/tcp": "Nocturne HTTPS - alleen lokaal gebruiken; extra toegangscode staat in de HA-webinterface"
+  },
+  "map": [
+    {
+      "type": "ssl",
+      "read_only": true
+    }
+  ],
+  "backup": "cold",
+  "options": {
+    "public_url": "https://homeassistant.local:8450",
+    "certificate": "",
+    "private_key": "",
+    "gateway_auth": true
+  },
+  "schema": {
+    "public_url": "url",
+    "certificate": "str",
+    "private_key": "str",
+    "gateway_auth": "bool"
+  }
+}
