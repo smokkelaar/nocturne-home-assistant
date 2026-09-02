@@ -8,7 +8,7 @@ Three **experimental, unofficial Home Assistant apps** that each run [Nocturne](
 
 This repository is **Nocturne only**. It contains the HA wrapper, its small upstream compatibility patches, tests and contributor documentation; it is not a fork of the entire Nocturne application. Upstream Nocturne remains the source of the API and web interface. [Compare the two channels](docs/CHANNELS.md).
 
-**Not a medical device or a clinically validated deployment.** Start with an empty test instance. Do not depend on it for treatment decisions, alarms or automated dosing. Importing health data, connecting devices and internet exposure are outside this initial test scope.
+**Not a medical device or a clinically validated deployment.** Start with an empty test instance. Do not depend on it for treatment decisions, alarms or automated dosing. Automated tests use synthetic data; real health-source accuracy, device connections and internet exposure require separate evaluation.
 
 ## Install
 

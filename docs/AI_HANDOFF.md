@@ -2,7 +2,7 @@
 
 ## Scope
 
-This is a shareable, Nocturne-only **HA app wrapper**, not HACS and not the full upstream application. One repository exposes two apps. Read README, CHANNELS, both DOCS files, ARCHITECTURE, UPDATES and MIGRATION before changing runtime behavior. `upstream.json` + `nocturne_local/config.json` are authoritative for Official; `upstream-latest.json` + `nocturne_latest/config.json` for Latest. Never infer the active channel/version from an old screenshot.
+This is a shareable, Nocturne-only **HA app wrapper**, not HACS and not the full upstream application. One repository exposes three apps. Read README, CHANNELS, the DOCS files, ARCHITECTURE, UPDATES, PERSONAL and MIGRATION before changing runtime behavior. `upstream.json` + `nocturne_local/config.json` are authoritative for Official; `upstream-latest.json` + `nocturne_latest/config.json` for Latest; `upstream-personal.json` + `nocturne_personal/config.json` for Personal. Never infer the active channel/version from an old screenshot.
 
 ## Start here
 
