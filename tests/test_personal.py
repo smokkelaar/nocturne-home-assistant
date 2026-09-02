@@ -87,6 +87,14 @@ class PersonalTests(unittest.TestCase):
         with patch.object(updater, 'github', return_value={'status': 'ahead', 'merge_base_commit': {'sha': self.lock['commit']}}):
             updater.validate_transition(self.lock, changed)
 
+    def test_required_container_job_does_not_skip_missing_comparison_base(self):
+        workflow = (ROOT / '.github/workflows/validate.yml').read_text()
+        container = workflow.split('  container:', 1)[1]
+        self.assertIn('fetch-depth: 0', container)
+        missing = container.split('if ! git cat-file', 1)[1].split('fi', 1)[0]
+        self.assertIn('git fetch --no-tags origin "$base"', missing)
+        self.assertNotIn('base=origin/main', missing)
+
 
 if __name__ == '__main__':
     unittest.main()
