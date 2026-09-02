@@ -1,0 +1,53 @@
+name: Promote Personal daily
+on:
+  schedule:
+    - cron: '43 7 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+concurrency:
+  group: personal-package-promotion
+  cancel-in-progress: false
+jobs:
+  update:
+    if: github.repository == 'smokkelaar/nocturne-home-assistant'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Resolve exact Personal source following the approved Daily
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/update_personal.py --update
+      - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1
+        id: proposal
+        with:
+          token: ${{ github.token }}
+          branch: automation/nocturne-personal
+          title: 'Update Nocturne Personal Release'
+          commit-message: 'Prepare pinned Personal source build'
+          add-paths: |
+            upstream-personal.json
+            nocturne_personal
+          body: |
+            Personal-only source promotion, following the Daily base already accepted here.
+            API and web are compiled from the same exact fork commit and archive checksum.
+            This proposal is not a passing build: required Validate includes the
+            Personal source build and upgrade before protected auto-merge.
+            Official/Latest packages, app settings and live data are untouched.
+      - name: Dispatch all required checks before protected auto-merge
+        if: steps.proposal.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ steps.proposal.outputs.pull-request-branch }}
+          PR: ${{ steps.proposal.outputs.pull-request-number }}
+        run: |
+          gh workflow run validate.yml --ref "$BRANCH"
+          gh pr merge "$PR" --auto --squash

@@ -4,7 +4,7 @@
 [![Official release check](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/upstream.yml/badge.svg)](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/upstream.yml)
 [![Latest daily](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/latest.yml/badge.svg)](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/latest.yml)
 
-Two **experimental, unofficial Home Assistant apps** that each run [Nocturne](https://github.com/nightscout/nocturne), PostgreSQL and an HTTPS gateway in one container. Adding this repository once offers both channels in HA's app store.
+Three **experimental, unofficial Home Assistant apps** that each run [Nocturne](https://github.com/nightscout/nocturne), PostgreSQL and an HTTPS gateway in one container. Official and Latest remain unchanged; the separate [Personal app](docs/PERSONAL.md) builds your extension fork on the approved Daily base.
 
 This repository is **Nocturne only**. It contains the HA wrapper, its small upstream compatibility patches, tests and contributor documentation; it is not a fork of the entire Nocturne application. Upstream Nocturne remains the source of the API and web interface. [Compare the two channels](docs/CHANNELS.md).
 
@@ -20,6 +20,11 @@ This repository is **Nocturne only**. It contains the HA wrapper, its small upst
 2. Choose **Nocturne Official Release** or **Nocturne Latest Release**. Both can be installed; they have separate data. The initial installation builds a container locally and can take several minutes.
 3. Configure a stable HTTPS hostname and trusted certificate. Official defaults to host port 8448; Latest to 8449.
 4. Open its HA web interface for service status, the Nocturne link and the extra gateway access code. Complete Nocturne's own passkey setup in the separate tab. From wrapper 0.1.4 an existing configured instance can [safely opt out of only that extra popup](docs/GATEWAY.md); Nocturne's passkey login stays enabled.
+
+**Personal extensions:** choose **Nocturne Personal Release** as a separate third
+installation, default port **8450**. It starts with its own empty database/account
+and compiles [the Personal fork](https://github.com/smokkelaar/nocturne-personal).
+Google Health is not implemented yet. [Personal installation and daily updates](docs/PERSONAL.md).
 
 Read the [Official installation reference](nocturne_local/DOCS.md) or [Latest reference](nocturne_latest/DOCS.md) first. Requirements: **Home Assistant OS / Supervisor, amd64**, enough free storage/memory for a local build and PostgreSQL, and working local DNS/trusted HTTPS for passkeys. ARM64 and Home Assistant Container/Core without Supervisor are not supported by this wrapper yet.
 
@@ -54,6 +59,8 @@ Neither Dockerfile contains a floating image reference: even Latest is converted
 - [Official/Latest session isolation and one-time re-login after 0.1.5](docs/COOKIES.md)
 - [Cold restore and upgrade rehearsal: scope and remaining HA checks (Dutch)](docs/HERSTELPROEF.md)
 - [Concrete solutions and priorities for the remaining gaps (Dutch)](docs/OPLOSPLAN.md)
+- [Google Health / Health Connect bridge proposal — not implemented (Dutch)](docs/GOOGLE_HEALTH.md)
+- [Personal fork, separate third installation and update boundaries (Dutch)](docs/PERSONAL.md)
 - [Handoff for the next developer or AI](docs/AI_HANDOFF.md)
 - [Security reporting](SECURITY.md)
 - [Upstream provenance and licensing](UPSTREAM.md)

@@ -26,13 +26,14 @@ jobs:
           node-version: '24'
       - run: python -m unittest discover -s tests -v
       - run: node --test tests/test_web_check.mjs tests/test_cookies.mjs
+      - run: node --test tests/test_personal_cookies.mjs
       - run: python tools/update_upstream.py --check
       - run: python tools/update_latest.py --check
   container:
     name: Container smoke test
     needs: unit
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 95
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -55,3 +56,37 @@ jobs:
       - run: python3 tools/recovery_smoke.py --image nocturne-official:ci --baseline nocturne-official:baseline
       - name: Same-host Official and Latest session isolation
         run: python3 tools/cookie_smoke.py --official nocturne-official:ci --latest nocturne-latest:ci
+      - name: Detect Personal changes without changing Daily promotion requirements
+        id: personal
+        env:
+          BEFORE: ${{ github.event.before }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          base="${BASE:-${BEFORE:-origin/main}}"
+          if ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+            base=origin/main
+          fi
+          if git diff --quiet "$base" HEAD -- nocturne_personal upstream-personal.json tools/update_personal.py tests/test_personal.py tests/test_personal_cookies.mjs .github/workflows/personal.yml; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Compile and smoke-test exact Personal source
+        if: steps.personal.outputs.changed == 'true'
+        run: |
+          python3 tools/update_personal.py --check
+          docker build --platform linux/amd64 --tag nocturne-personal:ci nocturne_personal
+          python3 tools/smoke.py --image nocturne-personal:ci
+      - name: Personal cold restore and previous Personal upgrade
+        if: steps.personal.outputs.changed == 'true'
+        run: |
+          if git cat-file -e origin/main:nocturne_personal/config.json 2>/dev/null; then
+            mkdir -p "$RUNNER_TEMP/personal-baseline"
+            git archive origin/main nocturne_personal | tar -x -C "$RUNNER_TEMP/personal-baseline"
+            docker build --platform linux/amd64 --tag nocturne-personal:baseline "$RUNNER_TEMP/personal-baseline/nocturne_personal"
+          else
+            docker tag nocturne-personal:ci nocturne-personal:baseline
+            echo 'First Personal delivery: same-version cold restore; no earlier Personal exists.'
+          fi
+          python3 tools/recovery_smoke.py --image nocturne-personal:ci --baseline nocturne-personal:baseline
