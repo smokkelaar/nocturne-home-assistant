@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import sys
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
@@ -75,6 +76,16 @@ class PersonalTests(unittest.TestCase):
         self.assertNotIn('nocturne_latest', allowlist)
         self.assertNotIn('nocturne_local', allowlist)
         self.assertIn('upstream-personal.json', allowlist)
+
+    def test_transition_rejects_version_and_source_rollbacks(self):
+        with self.assertRaises(ValueError):
+            updater.validate_transition(self.lock, {**self.lock, 'version': '0.0.1'})
+        changed = {**self.lock, 'commit': 'a' * 40}
+        with patch.object(updater, 'github', return_value={'status': 'diverged', 'merge_base_commit': {'sha': 'b' * 40}}):
+            with self.assertRaises(ValueError):
+                updater.validate_transition(self.lock, changed)
+        with patch.object(updater, 'github', return_value={'status': 'ahead', 'merge_base_commit': {'sha': self.lock['commit']}}):
+            updater.validate_transition(self.lock, changed)
 
 
 if __name__ == '__main__':

@@ -81,6 +81,15 @@ def replace_once(text, old, new):
     return text.replace(old, new)
 
 
+def validate_transition(old, new):
+    if tuple(map(int, new['version'].split('.'))) < tuple(map(int, old['version'].split('.'))):
+        raise ValueError('Personal extension version cannot move backwards')
+    if old['commit'] != new['commit']:
+        comparison = github(f'compare/{old["commit"]}...{new["commit"]}')
+        if comparison['status'] != 'ahead' or comparison['merge_base_commit']['sha'] != old['commit']:
+            raise ValueError('Personal source must preserve the previously published source history')
+
+
 def files(lock, delivery):
     validate(lock)
     latest = ROOT / 'nocturne_latest'
@@ -180,6 +189,8 @@ def update():
         check(lock)
         print('No new Personal source; no package change.')
         return
+    if old:
+        validate_transition(old, lock)
     directory = ROOT / 'nocturne_personal'
     delivery = lock['version'] + '-1'
     if old and old['version'] == lock['version']:

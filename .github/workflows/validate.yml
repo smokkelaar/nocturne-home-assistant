@@ -67,7 +67,7 @@ jobs:
           if ! git cat-file -e "$base^{commit}" 2>/dev/null; then
             base=origin/main
           fi
-          if git diff --quiet "$base" HEAD -- nocturne_personal upstream-personal.json tools/update_personal.py tests/test_personal.py tests/test_personal_cookies.mjs .github/workflows/personal.yml; then
+          if git diff --quiet "$base" HEAD -- nocturne_personal upstream-personal.json tools/update_personal.py tools/cookie_smoke.py tests/test_personal.py tests/test_personal_cookies.mjs .github/workflows/personal.yml .github/workflows/validate.yml; then
             echo 'changed=false' >> "$GITHUB_OUTPUT"
           else
             echo 'changed=true' >> "$GITHUB_OUTPUT"
@@ -90,3 +90,6 @@ jobs:
             echo 'First Personal delivery: same-version cold restore; no earlier Personal exists.'
           fi
           python3 tools/recovery_smoke.py --image nocturne-personal:ci --baseline nocturne-personal:baseline
+      - name: Three real instances share a browser without sharing credentials
+        if: steps.personal.outputs.changed == 'true'
+        run: python3 tools/cookie_smoke.py --official nocturne-official:ci --latest nocturne-latest:ci --personal nocturne-personal:ci
