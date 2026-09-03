@@ -101,6 +101,7 @@ def main():
                                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 # Trust only the self-created fixture certificate and its hostname.
                 context = ssl.create_default_context(cafile=str(cert))
+                context.minimum_version = ssl.TLSVersion.TLSv1_2
 
                 def request(path, authorization='', cookie='', host=None):
                     connection = http.client.HTTPSConnection('homeassistant.local', port, context=context, timeout=3)
