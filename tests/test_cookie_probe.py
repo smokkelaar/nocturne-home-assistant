@@ -5,10 +5,41 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
 import cookie_smoke
-from personal_feature_probe import expect_status
+from personal_feature_probe import complete_fixture_onboarding, expect_status
 
 
 class CookieProbeTests(unittest.TestCase):
+    def test_fixture_completes_real_onboarding_only_after_authentication(self):
+        from unittest.mock import Mock
+        request = Mock(side_effect=[
+            (401, b''), (200, b'{"onboardingCompleted":false}'),
+            (303, b''), (204, b''), (200, b'{"onboardingCompleted":true}'),
+        ])
+        anonymous = object()
+        complete_fixture_onboarding(request, anonymous)
+        calls = request.call_args_list
+        self.assertIs(calls[0].kwargs['opener'], anonymous)
+        self.assertEqual(calls[3].args, (8450, '/api/auth/passkey/onboarding/complete', 'POST'))
+        self.assertNotIn('opener', calls[3].kwargs)
+        self.assertTrue(all('raw_cookie' not in call.kwargs for call in calls))
+
+    def test_fixture_rejects_a_completion_request_without_authentication(self):
+        from unittest.mock import Mock
+        from personal_feature_probe import ProbeHttpError
+        request = Mock(return_value=(204, b''))
+        with self.assertRaises(ProbeHttpError):
+            complete_fixture_onboarding(request, object())
+        self.assertEqual(request.call_count, 1)
+
+    def test_fixture_verifies_persisted_completion_not_just_success_status(self):
+        from unittest.mock import Mock
+        request = Mock(side_effect=[
+            (401, b''), (200, b'{"onboardingCompleted":false}'),
+            (303, b''), (204, b''), (200, b'{"onboardingCompleted":false}'),
+        ])
+        with self.assertRaises(AssertionError):
+            complete_fixture_onboarding(request, object())
+
     def test_http_diagnostic_has_status_and_source_location_not_response_data(self):
         secret = 'synthetic-secret-must-not-be-logged'
         try:

@@ -22,6 +22,25 @@ def expect_status(actual, expected):
         raise ProbeHttpError(actual, expected)
 
 
+def complete_fixture_onboarding(request, anonymous):
+    """Complete normal onboarding through the API, only for the disposable owner.
+
+    Seeding a nonfunctional credential is enough for API readiness, but the web
+    UI correctly redirects to setup until the owner finishes onboarding. Do not
+    forge the setup cookie or bypass that guard in application code.
+    """
+    endpoint = '/api/auth/passkey/onboarding/complete'
+    expect_status(request(8450, endpoint, 'POST', opener=anonymous)[0], 401)
+    code, raw = request(8450, '/api/auth/passkey/status')
+    expect_status(code, 200)
+    assert json.loads(raw)['onboardingCompleted'] is False
+    expect_status(request(8450, '/personal')[0], 303)
+    expect_status(request(8450, endpoint, 'POST')[0], 204)
+    code, raw = request(8450, '/api/auth/passkey/status')
+    expect_status(code, 200)
+    assert json.loads(raw)['onboardingCompleted'] is True
+
+
 def exercise(request, anonymous):
     def call(path, method='GET', body=None, expected=200):
         code, raw = request(8450, path, method, body=body)

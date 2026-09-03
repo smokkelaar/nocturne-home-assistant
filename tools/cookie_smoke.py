@@ -177,8 +177,10 @@ def main(official=None, latest=None, personal=None):
                                raw_cookie=raw)[0] == 401
 
         if personal:
+            phase = 'PERSONAL_COMPLETE_ONBOARDING'
+            from personal_feature_probe import complete_fixture_onboarding, exercise, after_restart, STORAGE_PROBE
+            complete_fixture_onboarding(request, anonymous)
             phase = 'PERSONAL_FEATURES'
-            from personal_feature_probe import exercise, after_restart, STORAGE_PROBE
             personal_record = exercise(request, anonymous)
             name = by_port[8450][0]
             docker('exec', '-i', '-e', 'NOCTURNE_CI_FIXTURE=' + name,
