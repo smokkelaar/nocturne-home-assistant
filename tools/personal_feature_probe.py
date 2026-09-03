@@ -10,16 +10,28 @@ GOOGLE = '/api/v4/personal/google-health'
 MEDICATIONS = '/api/v4/personal/medications'
 
 
+class ProbeHttpError(AssertionError):
+    def __init__(self, actual, expected):
+        self.actual = int(actual)
+        self.expected = int(expected)
+        super().__init__('Unexpected HTTP status')
+
+
+def expect_status(actual, expected):
+    if actual != expected:
+        raise ProbeHttpError(actual, expected)
+
+
 def exercise(request, anonymous):
     def call(path, method='GET', body=None, expected=200):
         code, raw = request(8450, path, method, body=body)
-        assert code == expected, f'Personal route/status mismatch: {path}: {code}'
+        expect_status(code, expected)
         return json.loads(raw) if raw and expected == 200 else None
 
     for path in (GOOGLE, MEDICATIONS):
-        assert request(8450, path, opener=anonymous)[0] == 401
+        expect_status(request(8450, path, opener=anonymous)[0], 401)
     for path in ('/personal', '/personal/google', '/personal/medications'):
-        assert request(8450, path)[0] == 200
+        expect_status(request(8450, path)[0], 200)
     status = call(GOOGLE)
     assert status['configured'] is False and status['connected'] is False
     assert {c['dataType'] for c in status['capabilities'] if c['supported']} == {'steps', 'heart-rate', 'weight'}

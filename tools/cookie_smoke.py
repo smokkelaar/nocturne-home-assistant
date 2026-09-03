@@ -16,6 +16,7 @@ import urllib.request
 import uuid
 
 from smoke import docker, wait_ready
+from personal_feature_probe import ProbeHttpError
 
 
 SEED_SESSION = '''
@@ -53,12 +54,26 @@ def cookie(name, value):
         '/', True, True, None, True, None, None, {}, False)
 
 
-def main(official, latest, personal=None):
+def failure_summary(phase, error):
+    locations = []
+    trace = error.__traceback__
+    while trace:
+        filename = Path(trace.tb_frame.f_code.co_filename).name
+        if filename in ('cookie_smoke.py', 'personal_feature_probe.py'):
+            locations.append(f'{filename}:{trace.tb_lineno}')
+        trace = trace.tb_next
+    http = f':HTTP_{error.actual}_EXPECTED_{error.expected}' if isinstance(error, ProbeHttpError) else ''
+    return f'COOKIE_PROBE_FAILED:{phase}:{type(error).__name__}{http}:at={",".join(locations)}'
+
+
+def main(official=None, latest=None, personal=None):
+    if bool(official) != bool(latest) or not (official or personal):
+        raise ValueError('Supply both Official/Latest images, or Personal alone')
     containers, volumes, routes = [], [], {}
     phase = 'START'
     try:
         instances = []
-        targets = [(official, 8448, 'NocturneOfficial_'), (latest, 8449, 'NocturneLatest_')]
+        targets = [(official, 8448, 'NocturneOfficial_'), (latest, 8449, 'NocturneLatest_')] if official else []
         if personal:
             targets.append((personal, 8450, 'NocturnePersonal_'))
         for image, port, prefix in targets:
@@ -84,6 +99,8 @@ def main(official, latest, personal=None):
             session = json.loads(docker('exec', '-i', '-e', 'NOCTURNE_CI_FIXTURE=' + name,
                                         name, 'python3', '-', input=SEED_SESSION))
             instances.append((name, port, prefix, session))
+
+        by_port = {instance[1]: instance for instance in instances}
 
         # Virtual URLs share one DNS hostname, just like a browser. Only their TCP
         # route is replaced with the corresponding unpublished Docker IP/port.
@@ -163,47 +180,49 @@ def main(official, latest, personal=None):
             phase = 'PERSONAL_FEATURES'
             from personal_feature_probe import exercise, after_restart, STORAGE_PROBE
             personal_record = exercise(request, anonymous)
-            name = instances[2][0]
+            name = by_port[8450][0]
             docker('exec', '-i', '-e', 'NOCTURNE_CI_FIXTURE=' + name,
                    name, 'python3', '-', input=STORAGE_PROBE)
 
-        phase = 'LOGOUT_ONLY_OFFICIAL'
-        other = values('NocturneLatest_')
-        assert request(8448, '/api/auth/oidc/logout', 'POST')[0] == 200
-        assert values('NocturneLatest_') == other
-        session_for(8448, False)
-        session_for(8449, True, instances[1][3]['subject'])
+        if official:
+            phase = 'LOGOUT_ONLY_OFFICIAL'
+            other = values('NocturneLatest_')
+            assert request(8448, '/api/auth/oidc/logout', 'POST')[0] == 200
+            assert values('NocturneLatest_') == other
+            session_for(8448, False)
+            session_for(8449, True, by_port[8449][3]['subject'])
         if personal:
             phase = 'PERSONAL_SURVIVES_OTHER_LOGOUT_AND_OWN_RESTART'
-            session_for(8450, True, instances[2][3]['subject'])
-            name = instances[2][0]
+            session_for(8450, True, by_port[8450][3]['subject'])
+            name = by_port[8450][0]
             docker('stop', '-t', '100', name)
             docker('start', name)
             wait_ready(name, Path(__file__).with_name('configured_native_probe.py').read_text())
             routes[8450] = docker('inspect', '--format',
                                  '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}', name)
-            session_for(8450, True, instances[2][3]['subject'])
+            session_for(8450, True, by_port[8450][3]['subject'])
             phase = 'PERSONAL_FEATURES_AFTER_RESTART'
             after_restart(request, personal_record)
             other = values('NocturneLatest_')
             assert request(8450, '/api/auth/oidc/logout', 'POST')[0] == 200
             assert values('NocturneLatest_') == other
-            session_for(8449, True, instances[1][3]['subject'])
+            if latest:
+                session_for(8449, True, by_port[8449][3]['subject'])
             session_for(8450, False)
             assert request(8450, '/api/v4/ChartData/dashboard')[0] == 401
-        assert request(8448, '/api/v4/ChartData/dashboard')[0] == 401
-
-        phase = 'LATEST_SESSION_AFTER_RESTART'
-        name = instances[1][0]
-        docker('stop', '-t', '100', name)
-        docker('start', name)
-        wait_ready(name, Path(__file__).with_name('configured_native_probe.py').read_text())
-        routes[8449] = docker('inspect', '--format',
-                             '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}', name)
-        session_for(8449, True, instances[1][3]['subject'])
+        if latest:
+            assert request(8448, '/api/v4/ChartData/dashboard')[0] == 401
+            phase = 'LATEST_SESSION_AFTER_RESTART'
+            name = by_port[8449][0]
+            docker('stop', '-t', '100', name)
+            docker('start', name)
+            wait_ready(name, Path(__file__).with_name('configured_native_probe.py').read_text())
+            routes[8449] = docker('inspect', '--format',
+                                 '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}', name)
+            session_for(8449, True, by_port[8449][3]['subject'])
         print('PASS: real channel SSR rotation, shared cookie jar, session refresh, isolated logout, restart, legacy/hint denial; channels=' + str(len(instances)))
     except BaseException as error:
-        print(f'COOKIE_PROBE_FAILED:{phase}:{type(error).__name__}', file=sys.stderr)
+        print(failure_summary(phase, error), file=sys.stderr)
         raise SystemExit(1) from None
     finally:
         # Exact generated UUID names only; never accepts user containers/volumes.
@@ -215,8 +234,8 @@ def main(official, latest, personal=None):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--official', required=True)
-    parser.add_argument('--latest', required=True)
+    parser.add_argument('--official')
+    parser.add_argument('--latest')
     parser.add_argument('--personal')
     args = parser.parse_args()
     main(args.official, args.latest, args.personal)
