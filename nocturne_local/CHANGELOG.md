@@ -1,3 +1,9 @@
+## 0.1.6-2
+
+- Update paired Nocturne API/web to 0.2.6.
+- [Upstream release](https://github.com/nightscout/nocturne/releases/tag/v0.2.6).
+- Maintainer review and backup required before installation; database migrations may occur.
+
 ## 0.1.6-1
 
 - Wrapper 0.1.6 forwards external OAuth Bearer tokens in guarded native mode and routes authenticated v4 requests directly to the API.

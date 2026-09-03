@@ -1,8 +1,8 @@
 {
   "name": "Nocturne Official Release",
-  "version": "0.1.6-1",
+  "version": "0.1.6-2",
   "slug": "nocturne_local",
-  "description": "HA wrapper 0.1.6 \u00b7 Official Nocturne 0.2.4 with PostgreSQL. Experimental; not for clinical use.",
+  "description": "HA wrapper 0.1.6 \u00b7 Official Nocturne 0.2.6 with PostgreSQL. Experimental; not for clinical use.",
   "url": "https://github.com/smokkelaar/nocturne-home-assistant",
   "arch": [
     "amd64"

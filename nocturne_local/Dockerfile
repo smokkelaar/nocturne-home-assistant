@@ -1,10 +1,10 @@
 # API and frontend are paired by upstream.json and pinned by OCI digest.
-FROM ghcr.io/nightscout/nocturne/nocturne-web@sha256:a34c35da7f2a6bde32633429edbc30cf0f4945c54fe7b957635bb0815a96ecc9 AS web
+FROM ghcr.io/nightscout/nocturne/nocturne-web@sha256:76f3e8e477dbe148f270c2c53081372b0799b5e5908136d67d49218af539b3e8 AS web
 FROM node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d AS node
-FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:fb18146aa09f0ba24dda73db6e1119ed25eca8b86ae2555ebeb8dc04c8c0f026
+FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:a4a820fb4db8e8f97c25553d4ff32cdfff7a27560d4cb07e8da106d5e4595475
 
 USER root
-ARG BUILD_VERSION=0.1.6-1
+ARG BUILD_VERSION=0.1.6-2
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Official Release - Home Assistant app" \
