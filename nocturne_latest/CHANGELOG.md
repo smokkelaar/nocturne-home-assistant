@@ -1,3 +1,9 @@
+## 0.1.5-2
+
+- Update Nocturne Latest from `3b75145` to [`f5024f5`](https://github.com/nightscout/nocturne/compare/3b7514591f854f4794deeeb75d43e33d979d1ee4...f5024f57fd545da7f08ddde8fcf339ed53d32660).
+- Upstream paired-image build: https://github.com/nightscout/nocturne/actions/runs/33687748274
+- Automated container and previous-Latest upgrade tests are required before merge. Keep a cold backup; rollback after a development schema migration is not guaranteed.
+
 ## 0.1.5-1 — shared wrapper 0.1.5
 
 - Isolate session/setup cookies from Official even when both use the same hostname.
