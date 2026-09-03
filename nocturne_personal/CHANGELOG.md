@@ -1,3 +1,7 @@
+# 0.2.0-3
+
+Personal 0.2.0; source `033a77fb38853c7975b4c6e511d458540fc59157`; Daily base `ad5dee272c0d939b7b9e5f14f631c3434706b10e`.
+
 ## 0.2.0-2
 
 - Wrapper 0.1.6 forwards external OAuth Bearer tokens in guarded native mode and routes authenticated v4 requests directly to the API.
