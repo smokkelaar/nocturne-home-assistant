@@ -8,7 +8,7 @@ Three **experimental, unofficial Home Assistant apps** that each run [Nocturne](
 
 This repository is **Nocturne only**. It contains the HA wrapper, its small upstream compatibility patches, tests and contributor documentation; it is not a fork of the entire Nocturne application. Upstream Nocturne remains the source of the API and web interface. [Compare the two channels](docs/CHANNELS.md).
 
-**Not a medical device or a clinically validated deployment.** Start with an empty test instance. Do not depend on it for treatment decisions, alarms or automated dosing. Importing health data, connecting devices and internet exposure are outside this initial test scope.
+**Not a medical device or a clinically validated deployment.** Start with an empty test instance. Do not depend on it for treatment decisions, alarms or automated dosing. Automated tests use synthetic data; real health-source accuracy, device connections and internet exposure require separate evaluation.
 
 ## Install
 
@@ -24,7 +24,10 @@ This repository is **Nocturne only**. It contains the HA wrapper, its small upst
 **Personal extensions:** choose **Nocturne Personal Release** as a separate third
 installation, default port **8450**. It starts with its own empty database/account
 and compiles [the Personal fork](https://github.com/smokkelaar/nocturne-personal).
-Google Health is not implemented yet. [Personal installation and daily updates](docs/PERSONAL.md).
+Personal 0.2.0 adds Google Health login/import for steps, heart rate and weight,
+plus a separate medication log (including Mounjaro-style medications, without dosing advice).
+Your own Google OAuth client and consent are required; real Google account access remains a user test.
+[Personal installation, feature setup and daily updates](docs/PERSONAL.md).
 
 Read the [Official installation reference](nocturne_local/DOCS.md) or [Latest reference](nocturne_latest/DOCS.md) first. Requirements: **Home Assistant OS / Supervisor, amd64**, enough free storage/memory for a local build and PostgreSQL, and working local DNS/trusted HTTPS for passkeys. ARM64 and Home Assistant Container/Core without Supervisor are not supported by this wrapper yet.
 
@@ -59,7 +62,7 @@ Neither Dockerfile contains a floating image reference: even Latest is converted
 - [Official/Latest session isolation and one-time re-login after 0.1.5](docs/COOKIES.md)
 - [Cold restore and upgrade rehearsal: scope and remaining HA checks (Dutch)](docs/HERSTELPROEF.md)
 - [Concrete solutions and priorities for the remaining gaps (Dutch)](docs/OPLOSPLAN.md)
-- [Google Health / Health Connect bridge proposal — not implemented (Dutch)](docs/GOOGLE_HEALTH.md)
+- [Google Health implementation, limits and earlier bridge proposal (Dutch)](docs/GOOGLE_HEALTH.md)
 - [Personal fork, separate third installation and update boundaries (Dutch)](docs/PERSONAL.md)
 - [Handoff for the next developer or AI](docs/AI_HANDOFF.md)
 - [Security reporting](SECURITY.md)

@@ -20,6 +20,12 @@ class PersonalTests(unittest.TestCase):
     def test_generated_package_matches_exact_source_and_recipe(self):
         updater.check()
 
+    def test_generated_feature_docs_follow_extension_version(self):
+        lock = {**self.lock, 'version': '0.2.99'}
+        generated = updater.files(lock, '0.2.99-1')
+        for path in ('DOCS.md', 'README.md'):
+            self.assertIn(b'Personal 0.2.99 adds Google Health', generated[path])
+
     def test_three_distinct_data_and_network_identities(self):
         all_configs = [json.loads((ROOT / package / 'config.json').read_text())
                        for package in ('nocturne_local', 'nocturne_latest', 'nocturne_personal')]

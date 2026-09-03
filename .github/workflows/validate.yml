@@ -51,7 +51,7 @@ jobs:
             git fetch --no-tags origin "$base"
             git cat-file -e "$base^{commit}"
           fi
-          if git diff --quiet "$base" HEAD -- nocturne_personal upstream-personal.json tools/update_personal.py tools/cookie_smoke.py tests/test_personal.py tests/test_personal_cookies.mjs .github/workflows/personal.yml .github/workflows/validate.yml; then
+          if git diff --quiet "$base" HEAD -- nocturne_personal upstream-personal.json tools/update_personal.py tools/cookie_smoke.py tools/personal_feature_probe.py tests/test_personal.py tests/test_personal_cookies.mjs tests/test_cookie_probe.py .github/workflows/personal.yml .github/workflows/validate.yml; then
             echo 'changed=false' >> "$GITHUB_OUTPUT"
           else
             echo 'changed=true' >> "$GITHUB_OUTPUT"
@@ -62,6 +62,9 @@ jobs:
           python3 tools/update_personal.py --check
           docker build --platform linux/amd64 --tag nocturne-personal:ci nocturne_personal
           python3 tools/smoke.py --image nocturne-personal:ci
+      - name: Personal features and restart (fail fast before baseline builds)
+        if: steps.personal.outputs.changed == 'true'
+        run: python3 tools/cookie_smoke.py --personal nocturne-personal:ci
       - name: Build and smoke-test Official channel
         run: |
           docker build --platform linux/amd64 --tag nocturne-official:ci nocturne_local

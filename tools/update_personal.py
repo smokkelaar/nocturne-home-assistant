@@ -108,8 +108,9 @@ def files(lock, delivery):
     docs = docs.replace('the frequently updated upstream-`main` channel', 'the Personal source-fork channel following the approved Daily base')
     docs = docs.replace('Leave the Latest host port', 'Leave the Personal host port')
     docs = docs.replace('isolated from Official even', 'isolated from Official and Latest even')
-    generated['DOCS.md'] = docs + '\nPersonal compiles API and web from its pinned fork source. Builds need more time and resources than Latest. Google Health is not implemented yet. [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
-    generated['README.md'] = '# Nocturne Personal Release\n\nIndependent Personal fork on the tested Daily base. Default host port 8450, separate data and cookies.\n\n[Installation and updates](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md). Google Health is not implemented yet.\n'
+    features = f"Personal {lock['version']} adds Google Health (steps, heart rate, weight) and a separate medication log. Google requires your own OAuth client and consent; real account access must still be tested. No dosing advice or insulin/IOB changes. [Feature setup](https://github.com/smokkelaar/nocturne-personal/blob/personal/PERSONAL_USAGE.md)."
+    generated['DOCS.md'] = docs + '\nPersonal compiles API and web from its pinned fork source. Builds need more time and resources than Latest. ' + features + ' [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
+    generated['README.md'] = '# Nocturne Personal Release\n\nIndependent Personal fork on the tested Daily base. Default host port 8450, separate data and cookies.\n\n' + features + '\n\n[Installation and updates](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
     runtime = dict(app=wrapper, package=delivery, personal=lock['version'],
                    source_commit=lock['commit'], source_at=lock['commit_at'],
                    nocturne='main@' + lock['upstream']['commit'][:7],

@@ -40,11 +40,27 @@ instellingen, pakketversies, poorten en gegevens. Personal is geen migratie.
 De optie `gateway_auth: false` kan pas na de bestaande veilige eerste inrichting,
 net als bij de andere apps. [Gateway-instructies](GATEWAY.md).
 
-## Wat zit in de eerste Personal-versie?
+## Google Health en medicatie vanaf Personal 0.2.0
 
-De aparte broncode-, bouw- en updatebasis. Google Health is nog **niet** ingebouwd;
-de gewenste Google-login en meettypeselectie horen uitsluitend in deze variant.
-[Ontwerp van de gezondheidskoppeling](GOOGLE_HEALTH.md).
+Log in als beheerder en kies **Personal** in het Nocturne-menu:
+
+| Onderdeel | Wat werkt in deze eerste uitbreiding |
+| --- | --- |
+| Google Health | Google-login, zelf stappen/hartslag/gewicht kiezen, import ongeveer elke 15 minuten, meetgeschiedenis, ontkoppelen en import wissen |
+| Medicatielogboek | Middel en werkzame stof, werkelijke hoeveelheid in mg/microgram, tijdstip, toegediend/overgeslagen, plaats en notities, wijzigen/verwijderen |
+
+**[Stap-voor-stap functiehandleiding](https://github.com/smokkelaar/nocturne-personal/blob/personal/PERSONAL_USAGE.md)**
+met de eenmalige Google Cloud-clientinstellingen. Gebruik de callback-URL uit je
+eigen Personal-scherm; deel het client-secret niet in issues of chats.
+
+De metingen staan in de eigen Personal-weergave, nog niet in alle bestaande
+Nocturne-rapporten. Niet-ondersteunde typen blijven zichtbaar maar niet selecteerbaar.
+Google Health is geen toegang op afstand tot de lokale Android Health Connect-database.
+Echte Google-toestemming en bronbeschikbaarheid vragen nog een proef met jouw account.
+
+Het medicatielogboek is geschikt om bijvoorbeeld Mounjaro te noteren, niet om de
+dosis of een opbouwschema te bepalen. Het verandert geen insuline-/IOB-berekeningen.
+Begin met een herkenbare testregistratie en controleer bewaren, wijzigen en wissen.
 
 Personal begint met dezelfde Nocturne-basis als de goedgekeurde Daily, maar
 compileert API, web en de native alertbibliotheek zelf. Daardoor worden toekomstige
@@ -54,11 +70,11 @@ een andere naam op de ongewijzigde Daily-binaries.
 ## Drie herkenbare versies
 
 - **HA-wrapper**: de technische HA-basis, aanvankelijk 0.1.5.
-- **Personal**: de eigen uitbreidingsversie, aanvankelijk 0.1.0.
+- **Personal**: de eigen uitbreidingsversie, nu 0.2.0.
 - **Nocturne**: de goedgekeurde Daily-broncommit met datum/tijd.
 
 HA gebruikt voor deze aparte app de Personal-versie met leveringsnummer, zoals
-`0.1.0-1`. Een nieuwe Daily-/Personal-broncommit verhoogt alleen het leveringsnummer
+`0.2.0-1`. Een nieuwe Daily-/Personal-broncommit verhoogt alleen het leveringsnummer
 als de uitbreidingsversie gelijk blijft. Een wijziging in Personal verhoogt niet
 de pakketversie van Official of Latest.
 
@@ -71,7 +87,8 @@ en Daily-basis. Gezondheidsdata, OAuth-tokens en wachtwoorden horen nooit in Git
 1. De bronfork controleert dagelijks om 07:13 UTC de al goedgekeurde Daily-pin
    in de HA-repository. Hij volgt niet blind de allernieuwste upstream-main.
 2. Een normale merge behoudt persoonlijke commits. Conflicten stoppen de
-   synchronisatie. De bron-PR passeert metadata-/afstammingscontroles; dit is nog
+   synchronisatie. De bron-PR passeert metadata-/afstammingscontroles en de Personal
+   OAuth-, import-, medicatie- en rechtencontroles; dit is nog
    geen geslaagde runtimebouw of HA-publicatie.
 3. Om 07:43 UTC controleert de HA-repository de Personal-bron, legt commit en
    archiefchecksum vast en opent een uitsluitend Personal betreffend updatevoorstel.
@@ -82,6 +99,11 @@ en Daily-basis. Gezondheidsdata, OAuth-tokens en wachtwoorden horen nooit in Git
 5. Alleen na verplichte controles mag het updatevoorstel automatisch samenvoegen.
    Daarna kan HA de update aanbieden. Automatisch installeren vereist dat jij
    **Automatisch bijwerken** voor alleen Personal inschakelt.
+
+De containerproef controleert vanaf 0.2.0 ook de echte PostgreSQL-migraties,
+versleutelde clientinstellingen, afgeschermde Personal-routes, medicatie-invoer,
+wijzigconflicten, verwijderen en behoud na een herstart. De Google-antwoorden
+worden in aparte unit-tests nagebootst; CI logt niet in op Google.
 
 GitHub-planningen kunnen vertraagd zijn. Als Daily later klaar is dan deze
 controles, kan Personal een cyclus achterlopen. Een workflow kan ook handmatig
