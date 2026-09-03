@@ -63,7 +63,7 @@ Automatic app updates are optional per app in HA. Enable them only for **Nocturn
 
 - Ingress is a status/launcher only; login takes place in a separate HTTPS tab.
 - Gateway Basic authentication defaults to enabled. From wrapper 0.1.4, an existing fully configured owner account can set `gateway_auth: false` to remove only that browser popup. Trusted configured TLS and native Nocturne authentication are then checked before startup; Nocturne's own passkey stays required. First setup must use `true`. [Exact switch, test and rollback steps](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/GATEWAY.md).
-- External Nightscout clients/API tokens and connectors have **not** been validated through this gateway; incoming Authorization is stripped before reaching the backend.
+- Wrapper 0.1.6 forwards external OAuth Bearer tokens and routes authenticated v4 requests to the API in guarded native mode. Browser sessions keep their web bridge. The default Basic gate cannot be bypassed with a Bearer token. Legacy API-secret clients and real client consent/refresh still need separate validation. [OAuth gateway behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/GATEWAY.md#home-assistant-via-oauth-vanaf-wrapper-016).
 - No clinical reliability, automatic dosing, external data connectors or internet-facing deployment has been validated.
 - Never paste full logs, keys, recovery codes or health data into public issues. Report only a sanitized relevant excerpt with the app/Nocturne versions.
 

@@ -95,7 +95,7 @@ class SecurityTests(unittest.TestCase):
         text = settings.nginx_config(self.options, '/data/tls/test.crt', '/data/tls/test.key')
         for expected in ['auth_basic_user_file', 'access_log off;', 'user www-data;',
                          'X-Forwarded-Host $http_host', 'X-Forwarded-Proto https',
-                         'Authorization ""', 'listen 8448 ssl;', 'hubs/']:
+                         'Authorization $ha_oauth_authorization', 'listen 8448 ssl;', 'hubs/']:
             self.assertIn(expected, text)
         self.assertNotIn('listen 80;', text)
 

@@ -37,7 +37,7 @@ This is an app-store repository, **not a HACS integration**. HA ingress currentl
 
 ## How updates reach you
 
-Both apps use **one shared functional HA-wrapper version** (currently 0.1.5).
+Both apps use **one shared functional HA-wrapper version** (currently 0.1.6).
 Official pairs it with Nocturne 0.2.4; Latest pairs it with a pinned main snapshot.
 HA's technical package version adds a delivery counter, e.g. `0.1.5-1`.
 Daily upstream updates change that counter, not wrapper functionality.
