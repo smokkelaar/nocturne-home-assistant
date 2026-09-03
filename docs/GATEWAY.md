@@ -64,3 +64,23 @@ Start de app niet, of zie je een `GATEWAY_...`-fout in de app-log?
 De instelling wist of roteert niets: database, account, passkey, instantie- en databasesleutels en de oude gatewaycode blijven behouden. Verwijder `secrets.json` of de appgegevens niet om een toegangsprobleem op te lossen.
 
 [Terug naar installatie](INSTALLATIE.md) · [Security](../SECURITY.md) · [Testbereik](TESTING.md)
+
+## Home Assistant via OAuth vanaf wrapper 0.1.6
+
+In de hierboven beschreven native modus (`gateway_auth: false`) kan een externe
+OAuth-client zijn eigen Bearer-token meesturen. Wrapper 0.1.5 verwijderde dat
+token en stuurde v4-gegevensaanvragen naar de webinterface. Daardoor kon het
+toestemmingsscherm wel slagen, terwijl de HACS-integratie daarna HTTP 401 kreeg.
+
+Wrapper 0.1.6 stuurt zulke v4-aanvragen naar de API. Nocturne controleert daar
+nog steeds het token, de vervaldatum, de instantie en de verleende rechten.
+Browseraanvragen zonder Bearer-token blijven via de bestaande sessieverwerking
+lopen. De standaardmodus met extra Basic-popup blijft een afzonderlijke poort;
+die kan niet met een Bearer-token worden overgeslagen.
+
+Werk de bedoelde Nocturne-app bij en probeer de bestaande HA-koppeling opnieuw.
+Gebruik als Instance URL het HTTPS-adres van die Nocturne-app, inclusief haar
+poort; de OAuth-callback gebruikt het HTTPS-adres van Home Assistant zelf.
+Een HACS-client moet zelf de Authorization-header verzenden. Deze wrapper-update
+herstelt geen fouten in externe integratiecode. Andere legacy/API-secret-clients
+en echte passkey-/OAuth-aanmelding blijven afzonderlijke acceptatietests.

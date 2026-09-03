@@ -5,8 +5,8 @@ gedeeld versienummer**. Alleen de meegeleverde upstream-Nocturne-code verschilt:
 
 | Keuze in HA | Wrapperfunctionaliteit | Meegeleverde Nocturne |
 |---|---|---|
-| Nocturne Official Release | 0.1.5 | Officiële release 0.2.4 |
-| Nocturne Latest Release | 0.1.5 | Vastgezette daily/main-build, met commitcode en UTC-datum/tijd |
+| Nocturne Official Release | 0.1.6 | Officiële release 0.2.4 |
+| Nocturne Latest Release | 0.1.6 | Vastgezette daily/main-build, met commitcode en UTC-datum/tijd |
 
 De code voor opstarten, HTTPS, toegangscontrole, opslag en status is identiek.
 Accounts, gegevens en instellingen blijven afzonderlijk; beide apps hebben
@@ -21,7 +21,7 @@ build aan te bieden. Daarom bestaat dat uit wrapperversie plus leveringsnummer:
 - `0.1.4-2`: volgende upstream-build, nog steeds exact wrapper 0.1.4.
 - `0.1.5-1`: pas bij een wijziging aan onze eigen functionaliteit.
 
-De statuspagina toont **HA-wrapper 0.1.5** prominent. Het volledige HA-pakketnummer
+De statuspagina toont **HA-wrapper 0.1.6** prominent. Het volledige HA-pakketnummer
 staat onder **Technische pakketgegevens**. Official en Latest mogen verschillende
 leveringsnummers hebben zonder dat hun wrapperfunctionaliteit verschilt.
 De HA-appwinkel kan dit technische versienummer niet vervangen door twee losse velden.

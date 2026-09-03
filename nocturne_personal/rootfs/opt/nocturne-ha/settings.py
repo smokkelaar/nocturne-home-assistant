@@ -102,9 +102,13 @@ def nginx_config(options, cert_path, key_path):
     # sends a service credential or bypasses Nocturne's account authentication.
     gate = ('auth_basic "Nocturne lokale test - code staat in Home Assistant";\n'
             '    auth_basic_user_file /run/nocturne/gateway.htpasswd;')
+    oauth_rule = ''
     if not options.get('gateway_auth', True):
         gate = ('auth_basic off;\n'
                 f'    if ($host != "{options["hostname"]}") {{ return 421; }}')
+        # Forward only caller-supplied Bearer credentials in guarded native mode.
+        # Nocturne still validates their signature, expiry, tenant and scopes.
+        oauth_rule = '"~*^Bearer [A-Za-z0-9._~+/-]+=*$" $http_authorization;'
     namespace = options['cookie_namespace']
     if namespace not in ('NocturnePersonal_',):
         raise ValueError('Ongeldige cookieruimte')
@@ -120,6 +124,14 @@ http {{
   access_log off;
   client_max_body_size 20m;
   map $http_upgrade $connection_upgrade {{ default upgrade; '' close; }}
+  map $http_authorization $ha_oauth_authorization {{
+    default "";
+    {oauth_rule}
+  }}
+  map $ha_oauth_authorization $ha_api_backend {{
+    "" http://127.0.0.1:8000;
+    default http://127.0.0.1:8080;
+  }}
   server {{
     set $ha_cookie_namespace "{namespace}";
     listen 8448 ssl;
@@ -136,7 +148,7 @@ http {{
     # Strip untrusted headers used by Nocturne service-to-service authentication.
     proxy_set_header X-Instance-Key "";
     proxy_set_header X-Instance-Service "";
-    proxy_set_header Authorization "";
+    proxy_set_header Authorization $ha_oauth_authorization;
     proxy_set_header Cookie $ha_upstream_cookie;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection $connection_upgrade;
@@ -150,6 +162,12 @@ http {{
     location ~ ^/(api/auth/(oidc|platform-access)(/|$)|api/oauth(/|$)|\\.well-known/|hubs/) {{
       js_header_filter ha_cookies.responseCookies;
       proxy_pass http://127.0.0.1:8080;
+    }}
+    # Browser requests need the web session bridge; OAuth clients call the API.
+    # A variable upstream without a URI preserves the original path and query.
+    location ~ ^/api/v4(/|$) {{
+      js_header_filter ha_cookies.responseCookies;
+      proxy_pass $ha_api_backend;
     }}
     location / {{
       js_header_filter ha_cookies.responseCookies;

@@ -15,12 +15,15 @@ try:
     run.verify_native_auth(options)  # Real upstream status + authorization, no mocks.
     assert run.web_response_reachable(options)
 
-    def probe(path, expected, host=None, body=None):
+    def probe(path, expected, host=None, body=None, authorization=None):
         connection = http.client.HTTPSConnection(
             '127.0.0.1', 8448, timeout=3,
             context=ssl._create_unverified_context())  # Only the disposable CI certificate.
         try:
-            connection.request('GET', path, headers={'Host': host or options['authority']})
+            headers = {'Host': host or options['authority']}
+            if authorization is not None:
+                headers['Authorization'] = authorization
+            connection.request('GET', path, headers=headers)
             response = connection.getresponse()
             assert response.status == expected
             assert not response.getheader('WWW-Authenticate', '').startswith('Basic')
@@ -33,6 +36,8 @@ try:
     probe('/health', 200, body=b'ok')
     phase = 'CONFIGURED_DATA_DENIAL'
     probe('/api/v4/ChartData/dashboard', 401)
+    phase = 'INVALID_BEARER_DENIAL'
+    probe('/api/v4/glucose/sensor?limit=1', 401, authorization='Bearer invalid-fixture-token')
     phase = 'CONFIGURED_HOST'
     probe('/health', 421, host='wrong.example.net')
     phase = 'CONFIGURED_DEV_BLOCK'

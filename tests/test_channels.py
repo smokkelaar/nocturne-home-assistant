@@ -92,7 +92,7 @@ class ChannelTests(unittest.TestCase):
                 nginx = settings.nginx_config(options, '/cert', '/key')
                 self.assertIn(f'set $ha_cookie_namespace "{namespace}";', nginx)
                 self.assertIn('proxy_set_header Cookie $ha_upstream_cookie;', nginx)
-                self.assertEqual(2, nginx.count('js_header_filter ha_cookies.responseCookies;'))
+                self.assertEqual(3, nginx.count('js_header_filter ha_cookies.responseCookies;'))
             options['cookie_namespace'] = 'invalid'
             with self.assertRaises(ValueError):
                 settings.nginx_config(options, '/cert', '/key')

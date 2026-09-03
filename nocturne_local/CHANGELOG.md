@@ -1,3 +1,9 @@
+## 0.1.6-1
+
+- Wrapper 0.1.6 forwards external OAuth Bearer tokens in guarded native mode and routes authenticated v4 requests directly to the API.
+- Browser session routing, TLS, tenant checks, Basic gateway mode, cookie isolation and internal-header filtering remain enforced.
+- Upstream pins, database schema, stored accounts and keys are unchanged. Existing Home Assistant OAuth clients can retry after updating this app.
+
 ## 0.1.5-1 — shared wrapper 0.1.5
 
 - Isolate session/setup cookies from Latest even when both use the same hostname.

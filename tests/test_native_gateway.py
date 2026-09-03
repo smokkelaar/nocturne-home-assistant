@@ -53,12 +53,29 @@ class NativeGatewayTests(unittest.TestCase):
         self.assertIn('auth_basic off;', config)
         self.assertNotIn('auth_basic_user_file', config)
         self.assertIn('if ($host != "nocturne.example.net") { return 421; }', config)
-        for header in ('Authorization', 'X-Instance-Key', 'X-Instance-Service'):
+        for header in ('X-Instance-Key', 'X-Instance-Service'):
             self.assertIn(f'proxy_set_header {header} "";', config)
+        self.assertIn('proxy_set_header Authorization $ha_oauth_authorization;', config)
+        self.assertIn('"~*^Bearer [A-Za-z0-9._~+/-]+=*$" $http_authorization;', config)
         self.assertIn('listen 8448 ssl;', config)
         self.assertIn('ssl_protocols TLSv1.2 TLSv1.3;', config)
         self.assertIn('location ^~ /api/v4/dev-only { return 404; }', config)
         self.assertNotIn('satisfy any', config)
+
+    def test_basic_mode_never_forwards_credentials_or_bypasses_its_prompt(self):
+        config = settings.nginx_config(settings.validate_options({}), 'cert', 'key')
+        bearer_map = config.split('map $http_authorization $ha_oauth_authorization {', 1)[1].split('}', 1)[0]
+        self.assertEqual('default "";', bearer_map.strip())
+        self.assertIn('auth_basic_user_file', config)
+        self.assertNotIn('satisfy any', config)
+
+    def test_v4_bearer_routes_to_api_while_browser_keeps_session_bridge(self):
+        config = settings.nginx_config(self.options, 'cert', 'key')
+        self.assertIn('"" http://127.0.0.1:8000;', config)
+        self.assertIn('default http://127.0.0.1:8080;', config)
+        self.assertIn('location ~ ^/api/v4(/|$)', config)
+        self.assertIn('proxy_pass $ha_api_backend;', config)
+        self.assertIn('location ^~ /api/v4/dev-only { return 404; }', config)
 
     def test_status_does_not_display_unused_gateway_secret(self):
         page = settings.status_page(self.options, {}, 'fictional-gateway-secret', False)
