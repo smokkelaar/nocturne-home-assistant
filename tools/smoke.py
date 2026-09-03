@@ -104,6 +104,7 @@ def main(image):
         wait_ready(identity)
         print('PASS: boot, API, authenticated setup, gateway rejection, ingress isolation')
         print(execute(identity, Path(__file__).with_name('native_gateway_probe.py').read_text()))
+        print(execute(identity, Path(__file__).with_name('oauth_gateway_probe.py').read_text()))
         print(execute(identity, Path(__file__).with_name('tls_probe.py').read_text()))
         execute(identity, PROBE)
         before = execute(identity, "import hashlib\nfrom pathlib import Path\nprint(hashlib.sha256(Path('/data/secrets.json').read_bytes()).hexdigest())")

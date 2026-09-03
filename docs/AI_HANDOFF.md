@@ -91,6 +91,18 @@ exception messages, cookies, response bodies or arbitrary request URLs.
   The reported live startup failure still needs an exact installed version/log
   and the user's post-update test; do not claim the code fix proves their HA works.
 
+## Wrapper 0.1.6 OAuth gateway
+
+Guarded native mode preserves caller-supplied Bearer credentials and sends v4
+requests carrying them directly to the API. Other requests keep the browser
+session bridge. Basic mode still strips every Authorization header; internal
+instance headers and dev/operator paths remain blocked in both modes.
+`oauth_gateway_probe.py` runs real nginx against disposable fake backends to
+verify routing, original URI/query, header filtering, cookie isolation and Basic
+rejection. `configured_native_probe.py` also requires the real configured API to
+reject an invalid Bearer token. Do not claim fake-token routing proves a real
+client grant or successful consent/refresh. All upstream pins remain unchanged.
+
 ## Working procedure
 
 1. Read the current GitHub Actions results, open issues and `git status`.
