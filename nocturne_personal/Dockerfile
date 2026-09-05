@@ -7,21 +7,28 @@ COPY --from=rust /usr/local/cargo/ /usr/local/cargo/
 COPY --from=rust /usr/local/rustup/ /usr/local/rustup/
 ENV CARGO_HOME=/usr/local/cargo RUSTUP_HOME=/usr/local/rustup PATH=/usr/local/cargo/bin:$PATH
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
+RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
+    && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@10.13.1
 ADD --checksum=sha256:45e65b1d030d314966cc09f9d2914e958c0bc2207ea2dc9d0371eb5543cb398a https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/0a3c3b128a3a76b79ee59b822c1fd3f8624fce7e /tmp/source.tar.gz
-RUN mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
+RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
+    && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
 WORKDIR /src/src/Web
-RUN pnpm install --frozen-lockfile && pnpm --filter @nocturne/bridge run build
+RUN printf '\n=== Nocturne build phase 3/7: install web dependencies and build bridge ===\n' \
+    && pnpm install --frozen-lockfile && pnpm --filter @nocturne/bridge run build
 WORKDIR /src
-RUN dotnet build src/API/Nocturne.API/Nocturne.API.csproj -c Release -p:UseSharedCompilation=false
-RUN cargo build --manifest-path crates/Cargo.toml --release --locked -p nocturne-alerts-ffi
-RUN dotnet publish src/API/Nocturne.API/Nocturne.API.csproj -c Release -r linux-x64 --self-contained false \
+RUN printf '\n=== Nocturne build phase 4/7: compile API ===\n' \
+    && dotnet build src/API/Nocturne.API/Nocturne.API.csproj -c Release -p:UseSharedCompilation=false
+RUN printf '\n=== Nocturne build phase 5/7: compile alert engine ===\n' \
+    && cargo build --manifest-path crates/Cargo.toml --release --locked -p nocturne-alerts-ffi
+RUN printf '\n=== Nocturne build phase 6/7: publish API ===\n' \
+    && dotnet publish src/API/Nocturne.API/Nocturne.API.csproj -c Release -r linux-x64 --self-contained false \
     -p:GenerateNSwagClient=false -p:UseSharedCompilation=false -o /out/api
 WORKDIR /src/src/Web
 ENV PUBLIC_API_URL=http://localhost:1612 PUBLIC_WEBSOCKET_RECONNECT_ATTEMPTS=5 PUBLIC_WEBSOCKET_RECONNECT_DELAY=1000
 ENV PUBLIC_WEBSOCKET_MAX_RECONNECT_DELAY=30000 PUBLIC_WEBSOCKET_PING_TIMEOUT=15000 PUBLIC_WEBSOCKET_PING_INTERVAL=20000
-RUN pnpm --filter @nocturne/bot run build && pnpm --filter @nocturne/app run build
+RUN printf '\n=== Nocturne build phase 7/7: build web application ===\n' \
+    && pnpm --filter @nocturne/bot run build && pnpm --filter @nocturne/app run build
 RUN mkdir -p /out/web/packages/app /out/web/packages/bridge \
     && cp package.json pnpm-lock.yaml pnpm-workspace.yaml /out/web/ \
     && cp packages/app/package.json packages/app/server.js packages/app/server-origin-warning.js /out/web/packages/app/ \
@@ -33,7 +40,7 @@ FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:cb1c77d17d6fcd2d09a61db77e6
 USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so
-ARG BUILD_VERSION=0.2.8-2
+ARG BUILD_VERSION=0.2.8-3
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Personal Release - Home Assistant app" \

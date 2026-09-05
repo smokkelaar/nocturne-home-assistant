@@ -102,14 +102,14 @@ def files(lock, delivery):
                   panel_title='Nocturne Personal', ports={'8448/tcp': 8450})
     config['options']['public_url'] = 'https://homeassistant.local:8450'
     stamp = datetime.fromisoformat(lock['upstream']['commit_at'].replace('Z', '+00:00')).strftime('%Y-%m-%d %H:%M UTC')
-    config['description'] = f"HA wrapper {wrapper} · Personal {lock['version']} · Daily {lock['upstream']['commit'][:7]} - {stamp}. Experimental."
+    config['description'] = f"HA wrapper {wrapper} · Personal {lock['version']} · Daily {lock['upstream']['commit'][:7]} - {stamp}. Experimental; not for clinical use. Local build: HA may show 0% until it finishes."
     generated['config.json'] = json.dumps(config, indent=2) + '\n'
     docs = (latest / 'DOCS.md').read_text(encoding='utf-8').replace('Nocturne Latest Release', 'Nocturne Personal Release').replace('8449', '8450')
     docs = docs.replace('the frequently updated upstream-`main` channel', 'the Personal source-fork channel following the approved Daily base')
     docs = docs.replace('Leave the Latest host port', 'Leave the Personal host port')
     docs = docs.replace('isolated from Official even', 'isolated from Official and Latest even')
-    features = f"Personal {lock['version']} adds Google Health (steps, heart rate, weight) and a separate medication log. Google requires your own OAuth client and consent; real account access must still be tested. No dosing advice or insulin/IOB changes. [Feature setup](https://github.com/smokkelaar/nocturne-personal/blob/personal/PERSONAL_USAGE.md)."
-    generated['DOCS.md'] = docs + '\nPersonal compiles API and web from its pinned fork source. Builds need more time and resources than Latest. ' + features + ' [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
+    features = f"Personal {lock['version']} adds Google Health (steps, heart rate and weight). Google requires your own OAuth client and consent; real account access must still be tested. No dosing advice or insulin/IOB changes. [Feature setup](https://github.com/smokkelaar/nocturne-personal/blob/personal/PERSONAL_USAGE.md)."
+    generated['DOCS.md'] = docs + '\nPersonal compiles API and web from its pinned fork source. Builds need more time and resources than Latest. Home Assistant Supervisor currently keeps the update dialog at 0% during this local Docker build; this does not mean the build is stuck. Follow the named `Nocturne build phase` entries in **Settings → System → Logs → Supervisor** for live detail. ' + features + ' [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
     generated['README.md'] = '# Nocturne Personal Release\n\nIndependent Personal fork on the tested Daily base. Default host port 8450, separate data and cookies.\n\n' + features + '\n\n[Installation and updates](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
     runtime = dict(app=wrapper, package=delivery, personal=lock['version'],
                    source_commit=lock['commit'], source_at=lock['commit_at'],
@@ -145,21 +145,28 @@ COPY --from=rust /usr/local/cargo/ /usr/local/cargo/
 COPY --from=rust /usr/local/rustup/ /usr/local/rustup/
 ENV CARGO_HOME=/usr/local/cargo RUSTUP_HOME=/usr/local/rustup PATH=/usr/local/cargo/bin:$PATH
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \\
+RUN printf '\\n=== Nocturne build phase 1/7: install build tools ===\\n' \\
+    && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \\
     && npm install -g pnpm@10.13.1
 ADD --checksum=sha256:{lock['archive_sha256']} {source_url(lock)} /tmp/source.tar.gz
-RUN mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
+RUN printf '\\n=== Nocturne build phase 2/7: verify and unpack source ===\\n' \\
+    && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
 WORKDIR /src/src/Web
-RUN pnpm install --frozen-lockfile && pnpm --filter @nocturne/bridge run build
+RUN printf '\\n=== Nocturne build phase 3/7: install web dependencies and build bridge ===\\n' \\
+    && pnpm install --frozen-lockfile && pnpm --filter @nocturne/bridge run build
 WORKDIR /src
-RUN dotnet build src/API/Nocturne.API/Nocturne.API.csproj -c Release -p:UseSharedCompilation=false
-RUN cargo build --manifest-path crates/Cargo.toml --release --locked -p nocturne-alerts-ffi
-RUN dotnet publish src/API/Nocturne.API/Nocturne.API.csproj -c Release -r linux-x64 --self-contained false \\
+RUN printf '\\n=== Nocturne build phase 4/7: compile API ===\\n' \\
+    && dotnet build src/API/Nocturne.API/Nocturne.API.csproj -c Release -p:UseSharedCompilation=false
+RUN printf '\\n=== Nocturne build phase 5/7: compile alert engine ===\\n' \\
+    && cargo build --manifest-path crates/Cargo.toml --release --locked -p nocturne-alerts-ffi
+RUN printf '\\n=== Nocturne build phase 6/7: publish API ===\\n' \\
+    && dotnet publish src/API/Nocturne.API/Nocturne.API.csproj -c Release -r linux-x64 --self-contained false \\
     -p:GenerateNSwagClient=false -p:UseSharedCompilation=false -o /out/api
 WORKDIR /src/src/Web
 ENV PUBLIC_API_URL=http://localhost:1612 PUBLIC_WEBSOCKET_RECONNECT_ATTEMPTS=5 PUBLIC_WEBSOCKET_RECONNECT_DELAY=1000
 ENV PUBLIC_WEBSOCKET_MAX_RECONNECT_DELAY=30000 PUBLIC_WEBSOCKET_PING_TIMEOUT=15000 PUBLIC_WEBSOCKET_PING_INTERVAL=20000
-RUN pnpm --filter @nocturne/bot run build && pnpm --filter @nocturne/app run build
+RUN printf '\\n=== Nocturne build phase 7/7: build web application ===\\n' \\
+    && pnpm --filter @nocturne/bot run build && pnpm --filter @nocturne/app run build
 RUN mkdir -p /out/web/packages/app /out/web/packages/bridge \\
     && cp package.json pnpm-lock.yaml pnpm-workspace.yaml /out/web/ \\
     && cp packages/app/package.json packages/app/server.js packages/app/server-origin-warning.js /out/web/packages/app/ \\
