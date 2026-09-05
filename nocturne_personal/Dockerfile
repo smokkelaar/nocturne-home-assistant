@@ -9,7 +9,7 @@ ENV CARGO_HOME=/usr/local/cargo RUSTUP_HOME=/usr/local/rustup PATH=/usr/local/ca
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@10.13.1
-ADD --checksum=sha256:732462191524ab375b22bc6680e90ec8273367dd688115dec8629ce312a388df https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/4d9b4c9e434b0951a01a2f5409503c03f838f0ec /tmp/source.tar.gz
+ADD --checksum=sha256:b6501633c29036be3bb715bb25af2140947f62e98c40641f20bbcbf5d3b82e29 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/5a041c0a3a4cac4278c794a8b685a40514dea0ac /tmp/source.tar.gz
 RUN mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
 WORKDIR /src/src/Web
 RUN pnpm install --frozen-lockfile && pnpm --filter @nocturne/bridge run build
@@ -29,11 +29,11 @@ RUN mkdir -p /out/web/packages/app /out/web/packages/bridge \
     && cp packages/bridge/package.json /out/web/packages/bridge/ \
     && cp -r packages/bridge/dist /out/web/packages/bridge/
 # Use the matching approved Daily runtime/OS; replace its application with our source build.
-FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:b3d8fb948065a13a02450087b352c0030b2dd747175764fbefb9ad4e11ffc160
+FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:cb1c77d17d6fcd2d09a61db77e6707e9e74011d977620af1e6e91c09b7ed3cb0
 USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so
-ARG BUILD_VERSION=0.2.6-1
+ARG BUILD_VERSION=0.2.7-1
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Personal Release - Home Assistant app" \
