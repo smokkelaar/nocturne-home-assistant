@@ -1,3 +1,13 @@
+# 0.2.9-1
+
+Personal 0.2.9; source `c58d1f5bd88ff0e7669b662b2f6d1abc8d1dc4cf`; Daily base `543bbff8552d69c2ec39e2e4585c9c839e420f5d`.
+
+- Four adjustable average-glucose color boundaries, with numeric inputs, unit conversion and remembered settings. Existing two-bound metric controls remain available.
+- Google Health under Server Connectors, with discovered data types, supported destinations, selected imports and a history start date.
+- Accurate Google Health import status, English diagnostics and extended historical pagination with runaway protection.
+- Obsolete Personal navigation and medication/GLP-1 interface removed.
+- Retains seven named local-build log phases; Home Assistant's native update percentage can still remain at 0% during the build.
+
 # 0.2.8-3
 
 The update dialog now explains Supervisor's 0% limitation, and the local build log reports seven named progress phases.
