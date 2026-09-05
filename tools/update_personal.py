@@ -102,13 +102,13 @@ def files(lock, delivery):
                   panel_title='Nocturne Personal', ports={'8448/tcp': 8450})
     config['options']['public_url'] = 'https://homeassistant.local:8450'
     stamp = datetime.fromisoformat(lock['upstream']['commit_at'].replace('Z', '+00:00')).strftime('%Y-%m-%d %H:%M UTC')
-    config['description'] = f"HA wrapper {wrapper} · Personal {lock['version']} · Daily {lock['upstream']['commit'][:7]} - {stamp}. Local build: HA may show 0% until it finishes."
+    config['description'] = f"HA wrapper {wrapper} · Personal {lock['version']} · Daily {lock['upstream']['commit'][:7]} - {stamp}. Experimental; not for clinical use. Local build: HA may show 0% until it finishes."
     generated['config.json'] = json.dumps(config, indent=2) + '\n'
     docs = (latest / 'DOCS.md').read_text(encoding='utf-8').replace('Nocturne Latest Release', 'Nocturne Personal Release').replace('8449', '8450')
     docs = docs.replace('the frequently updated upstream-`main` channel', 'the Personal source-fork channel following the approved Daily base')
     docs = docs.replace('Leave the Latest host port', 'Leave the Personal host port')
     docs = docs.replace('isolated from Official even', 'isolated from Official and Latest even')
-    features = f"Personal {lock['version']} adds Google Health (steps, heart rate, weight) and a separate medication log. Google requires your own OAuth client and consent; real account access must still be tested. No dosing advice or insulin/IOB changes. [Feature setup](https://github.com/smokkelaar/nocturne-personal/blob/personal/PERSONAL_USAGE.md)."
+    features = f"Personal {lock['version']} adds Google Health (steps, heart rate and weight). Google requires your own OAuth client and consent; real account access must still be tested. No dosing advice or insulin/IOB changes. [Feature setup](https://github.com/smokkelaar/nocturne-personal/blob/personal/PERSONAL_USAGE.md)."
     generated['DOCS.md'] = docs + '\nPersonal compiles API and web from its pinned fork source. Builds need more time and resources than Latest. Home Assistant Supervisor currently keeps the update dialog at 0% during this local Docker build; this does not mean the build is stuck. Follow the named `Nocturne build phase` entries in **Settings → System → Logs → Supervisor** for live detail. ' + features + ' [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
     generated['README.md'] = '# Nocturne Personal Release\n\nIndependent Personal fork on the tested Daily base. Default host port 8450, separate data and cookies.\n\n' + features + '\n\n[Installation and updates](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
     runtime = dict(app=wrapper, package=delivery, personal=lock['version'],

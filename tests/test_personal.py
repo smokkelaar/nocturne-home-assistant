@@ -25,6 +25,7 @@ class PersonalTests(unittest.TestCase):
         generated = updater.files(lock, '0.2.99-1')
         for path in ('DOCS.md', 'README.md'):
             self.assertIn(b'Personal 0.2.99 adds Google Health', generated[path])
+            self.assertNotIn(b'medication log', generated[path])
 
     def test_local_build_progress_is_explained_and_logged(self):
         generated = updater.files(self.lock, '0.2.8-3')
@@ -33,6 +34,7 @@ class PersonalTests(unittest.TestCase):
         docs = generated['DOCS.md'].decode()
 
         self.assertIn('HA may show 0% until it finishes', config['description'])
+        self.assertIn('Experimental; not for clinical use', config['description'])
         self.assertIn('keeps the update dialog at 0%', docs)
         for phase in range(1, 8):
             self.assertIn(f'Nocturne build phase {phase}/7:', dockerfile)
