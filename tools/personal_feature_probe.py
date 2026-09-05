@@ -49,16 +49,17 @@ def exercise(request, anonymous):
 
     for path in (GOOGLE, MEDICATIONS):
         expect_status(request(8450, path, opener=anonymous)[0], 401)
-    for path in ('/personal', '/personal/google', '/personal/medications'):
+    for path in ('/personal', '/settings/connectors/google-health', '/personal/medications'):
         expect_status(request(8450, path)[0], 200)
+    expect_status(request(8450, '/personal/google')[0], 308)
     status = call(GOOGLE)
     assert status['configured'] is False and status['connected'] is False
-    assert {c['dataType'] for c in status['capabilities'] if c['supported']} == {'steps', 'heart-rate', 'weight'}
+    assert {c['dataType'] for c in status['capabilities'] if c['supported']} == {'steps', 'heart-rate', 'weight', 'sleep'}
     options = dict(clientId='ci-fixture.apps.googleusercontent.com',
                    clientSecret='ci-not-a-real-google-secret',
                    callbackUrl='https://homeassistant.local:8450/personal/google/callback',
                    dataTypes=['steps', 'heart-rate', 'weight'], historyDays=7)
-    call(GOOGLE + '/options', 'PUT', {**options, 'dataTypes': ['sleep']}, 400)
+    call(GOOGLE + '/options', 'PUT', {**options, 'dataTypes': ['body-fat']}, 400)
     status = call(GOOGLE + '/options', 'PUT', options)
     assert status['configured'] and not status['connected']
     assert 'clientSecret' not in status and 'protectedSettings' not in status
