@@ -1,3 +1,7 @@
+# 0.2.8-3
+
+The update dialog now explains Supervisor's 0% limitation, and the local build log reports seven named progress phases.
+
 # 0.2.8-2
 
 Personal 0.2.8; source `0a3c3b128a3a76b79ee59b822c1fd3f8624fce7e`; Daily base `543bbff8552d69c2ec39e2e4585c9c839e420f5d`.
@@ -57,4 +61,3 @@ Personal 0.2.0; source `752ebf65017a41508b76346090778d8965c87f9a`; Daily base `3
 # 0.1.0-1
 
 Personal 0.1.0; source `fdf290aab0e5ab5eccedfb15026622a94a0f2d56`; Daily base `3b7514591f854f4794deeeb75d43e33d979d1ee4`.
-

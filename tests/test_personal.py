@@ -26,6 +26,17 @@ class PersonalTests(unittest.TestCase):
         for path in ('DOCS.md', 'README.md'):
             self.assertIn(b'Personal 0.2.99 adds Google Health', generated[path])
 
+    def test_local_build_progress_is_explained_and_logged(self):
+        generated = updater.files(self.lock, '0.2.8-3')
+        config = json.loads(generated['config.json'])
+        dockerfile = generated['Dockerfile'].decode()
+        docs = generated['DOCS.md'].decode()
+
+        self.assertIn('HA may show 0% until it finishes', config['description'])
+        self.assertIn('keeps the update dialog at 0%', docs)
+        for phase in range(1, 8):
+            self.assertIn(f'Nocturne build phase {phase}/7:', dockerfile)
+
     def test_three_distinct_data_and_network_identities(self):
         all_configs = [json.loads((ROOT / package / 'config.json').read_text())
                        for package in ('nocturne_local', 'nocturne_latest', 'nocturne_personal')]
