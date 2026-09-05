@@ -3,11 +3,9 @@
 Never follows the Google authorize URL, contacts Google or uses real health data.
 """
 import json
-import uuid
 from urllib.parse import parse_qs, urlsplit
 
 GOOGLE = '/api/v4/personal/google-health'
-MEDICATIONS = '/api/v4/personal/medications'
 
 
 class ProbeHttpError(AssertionError):
@@ -34,7 +32,7 @@ def complete_fixture_onboarding(request, anonymous):
     code, raw = request(8450, '/api/auth/passkey/status')
     expect_status(code, 200)
     assert json.loads(raw)['onboardingCompleted'] is False
-    expect_status(request(8450, '/personal')[0], 303)
+    expect_status(request(8450, '/settings/connectors/google-health')[0], 303)
     expect_status(request(8450, endpoint, 'POST')[0], 204)
     code, raw = request(8450, '/api/auth/passkey/status')
     expect_status(code, 200)
@@ -47,10 +45,11 @@ def exercise(request, anonymous):
         expect_status(code, expected)
         return json.loads(raw) if raw and expected == 200 else None
 
-    for path in (GOOGLE, MEDICATIONS):
-        expect_status(request(8450, path, opener=anonymous)[0], 401)
-    for path in ('/personal', '/settings/connectors/google-health', '/personal/medications'):
-        expect_status(request(8450, path)[0], 200)
+    expect_status(request(8450, GOOGLE, opener=anonymous)[0], 401)
+    expect_status(request(8450, '/settings/connectors/google-health')[0], 200)
+    expect_status(request(8450, '/personal')[0], 404)
+    expect_status(request(8450, '/personal/medications')[0], 404)
+    expect_status(request(8450, '/api/v4/personal/medications')[0], 404)
     expect_status(request(8450, '/personal/google')[0], 308)
     status = call(GOOGLE)
     assert status['configured'] is False and status['connected'] is False
@@ -76,45 +75,13 @@ def exercise(request, anonymous):
     call(GOOGLE + '/disconnect', 'POST')
     assert call(GOOGLE + '/readings?dataType=weight') == []
 
-    assert call(MEDICATIONS) == []
-    record_id = str(uuid.uuid4())
-    path = MEDICATIONS + '/' + record_id
-    entry = dict(name='CI fixture', ingredient='synthetic test only', amount=1.25,
-                 unit='mg', status='taken', route='subcutaneous', mills=1690000000123,
-                 utcOffsetMinutes=120, notes='Disposable test', revision=str(uuid.UUID(int=0)))
-    call(path, 'PUT', {**entry, 'amount': -1}, 400)
-    call(path, 'PUT', {**entry, 'unit': 'IU'}, 400)
-    call(path, 'PUT', {**entry, 'status': 'skipped'}, 400)
-    saved = call(path, 'PUT', entry)
-    assert saved['id'] == record_id and saved['amount'] == 1.25
-    call(path, 'PUT', entry, 409)
-    updated = call(path, 'PUT', {**entry, 'revision': saved['revision'], 'notes': 'Edited fixture'})
-    assert updated['revision'] != saved['revision']
-    call(path + '?revision=' + saved['revision'], 'DELETE', expected=409)
-    persisted = call(MEDICATIONS)
-    assert len(persisted) == 1
-    # PostgreSQL stores bookkeeping timestamps at microsecond precision, while
-    # the immediate .NET write response may still have 100 ns ticks. Clinical
-    # time (integer mills) and every user-entered field must match exactly.
-    assert all(persisted[0][key] == value for key, value in updated.items() if key != 'updatedAt')
-    assert persisted[0]['updatedAt']
-    return persisted[0]
+    return None
 
 
 def after_restart(request, record):
-    code, raw = request(8450, MEDICATIONS)
-    assert code == 200 and json.loads(raw) == [record]
     code, raw = request(8450, GOOGLE)
     status = json.loads(raw)
     assert code == 200 and status['configured'] and not status['connected']
-    path = MEDICATIONS + '/' + record['id']
-    skipped = {**record, 'status': 'skipped', 'amount': None}
-    code, raw = request(8450, path, 'PUT', body=skipped)
-    result = json.loads(raw)
-    assert code == 200 and result['status'] == 'skipped' and result.get('amount') is None
-    assert request(8450, path + '?revision=' + result['revision'], 'DELETE')[0] == 204
-    code, raw = request(8450, MEDICATIONS)
-    assert code == 200 and json.loads(raw) == []
 
 
 STORAGE_PROBE = '''
@@ -128,23 +95,23 @@ assert Path('/data/.disposable-ci').read_text() == identity
 assert not os.environ.get('SUPERVISOR_TOKEN')
 tenant = str(uuid.UUID(run.psql(database='nocturne', sql='SELECT id FROM tenants')))
 assert run.psql(database='nocturne', sql="SELECT count(*) FROM personal_google_connections WHERE protected_settings LIKE '%ci-not-a-real-google-secret%'") == '0'
-for table in ('personal_google_connections', 'personal_health_readings', 'personal_medications'):
+for table in ('personal_google_connections', 'personal_health_readings'):
     assert run.psql(database='nocturne', sql=f"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE relname='{table}'") == 't'
 run.psql(database='nocturne', sql=f"""
 BEGIN;
 SET LOCAL ROLE nocturne_app;
 SELECT set_config('app.current_tenant_id', '', true);
 DO $$ BEGIN
-  IF (SELECT count(*) FROM personal_medications) <> 0 THEN RAISE EXCEPTION 'tenant isolation failed'; END IF;
+  IF (SELECT count(*) FROM personal_google_connections) <> 0 THEN RAISE EXCEPTION 'tenant isolation failed'; END IF;
 END $$;
 SELECT set_config('app.current_tenant_id', '{tenant}', true);
 SELECT set_config('app.is_share', 'true', true);
 DO $$ BEGIN
-  IF (SELECT count(*) FROM personal_medications) <> 0 THEN RAISE EXCEPTION 'share isolation failed'; END IF;
+  IF (SELECT count(*) FROM personal_google_connections) <> 0 THEN RAISE EXCEPTION 'share isolation failed'; END IF;
 END $$;
 SELECT set_config('app.is_share', 'false', true);
 DO $$ BEGIN
-  IF (SELECT count(*) FROM personal_medications) <> 1 THEN RAISE EXCEPTION 'tenant visibility failed'; END IF;
+  IF (SELECT count(*) FROM personal_google_connections) <> 1 THEN RAISE EXCEPTION 'tenant visibility failed'; END IF;
 END $$;
 ROLLBACK;
 """)
