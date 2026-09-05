@@ -1,24 +1,75 @@
 # Nocturne Personal Release
 
-Een derde, onafhankelijke HA-app voor persoonlijke uitbreidingen. De bestaande
-**Nocturne Official Release** en **Nocturne Latest Release** behouden hun namen,
-instellingen, pakketversies, poorten en gegevens. Personal is geen migratie.
+Personal is an independent Home Assistant app that builds the Personal source fork
+on the approved Nocturne Daily base. It has its own database, configuration, sessions
+and backups. Installing or updating Personal does not migrate Official or Latest.
 
-| App | Standaardpoort | Inhoud |
+| App | Default host port | Source |
 | --- | --- | --- |
-| Official | 8448 | Officiële Nocturne-release |
-| Latest | 8449 | Goedgekeurde dagelijkse Nocturne-bronversie |
-| Personal | 8450 | Dezelfde Daily-basis, met de broncode uit de Personal-fork |
+| Official | 8448 | Official Nocturne release |
+| Latest | 8449 | Approved upstream Daily commit |
+| Personal | 8450 | Personal fork on the approved Daily base |
 
-## Installeren
+## Features in Personal 0.2.9
 
-1. Vernieuw de HA app-store bij de al toegevoegde repository
-   `https://github.com/smokkelaar/nocturne-home-assistant`.
-2. Installeer **Nocturne Personal Release**. Laat de andere apps geïnstalleerd.
-   Deze app bouwt ook Nocturne zelf uit broncode; dat kost meer tijd, geheugen en
-   tijdelijke opslag dan de twee bestaande pakketten. Wacht tot de bouw klaar is.
-3. Gebruik dezelfde geldige certificaatbestandsnamen als bij de andere apps,
-   maar stel voor Personal een eigen URL met poort **8450** in:
+### Google Health
+
+Open **Settings -> Connectors & Apps -> Server Connectors -> Google Health**.
+Create your own Google Cloud OAuth Web application client, enable the Google Health
+API, and register the callback URL shown in Nocturne. The HTTPS callback still ends
+in `/personal/google/callback`; existing Google Cloud registrations remain usable.
+
+Choose **Import data from**, save the settings and sign in to Google. Review the
+inventory of known data types before choosing **Save selection and import**. The
+table shows whether data was found, whether permission was granted, the Nocturne
+destination, and the saved import status. Unsupported types can be inspected but
+cannot be selected for import. Checking a box alone does not enable its import.
+
+| Google Health data | Nocturne destination |
+| --- | --- |
+| Steps | Existing step history |
+| Heart rate | Existing heart-rate history |
+| Weight | Existing body-weight history |
+| Sleep | Existing sleep sessions and stages |
+
+Nocturne follows result pages from the selected start date, with a 10,000-page safety
+limit per data type and operation. Exceeding it produces a technical error instead
+of silently reporting a complete import. Large histories take longer and require
+more resources. Automatic synchronization starts
+after the selection is confirmed, runs approximately every 15 minutes, and reconciles
+the configured date range. Use **Sync now** for a manual retry. Disconnect before
+editing the history start date or OAuth settings; imported records are preserved
+unless you explicitly delete the imported Google data.
+
+Errors retain a technical code and, where available, an HTTP status. Match the code
+and attempt time to the API server log. Google account access and available source
+data still require testing with your own account; automated tests do not sign in to
+Google. Keep client secrets and tokens out of issues, chats and Git.
+
+[Google Cloud and connector setup](https://github.com/smokkelaar/nocturne-personal/blob/personal/PERSONAL_USAGE.md).
+
+### Year overview color focus
+
+Open **Reports -> Year Overview** and select a metric. TDD, bolus, basal,
+carbohydrates and Time in Range have two adjustable color bounds. Values outside
+those bounds use the endpoint colors, increasing contrast within the selected range.
+
+Average glucose has four movable boundaries on its continuous color bar, plus
+numeric inputs in the selected mg/dL or mmol/L units. **Reset** restores the default
+glucose color scale. Settings are remembered per metric, user and tenant in the
+current browser. They change display colors only: glucose targets, Time in Range
+calculations and measured values are unchanged.
+
+Personal remains the HA app's name. There is no separate Personal menu or medication/
+GLP-1 feature in Nocturne; the connector and report use the normal application areas.
+
+## Install or update
+
+1. Refresh the Home Assistant app store for the repository
+   `https://github.com/smokkelaar/nocturne-home-assistant`, then install or update
+   **Nocturne Personal Release**.
+2. For a new installation, configure a certificate matching your own hostname and
+   use Personal's separate host port:
 
    ```yaml
    public_url: https://nocturne.example.net:8450
@@ -27,113 +78,69 @@ instellingen, pakketversies, poorten en gegevens. Personal is geen migratie.
    gateway_auth: true
    ```
 
-   Vervang de voorbeeldhostnaam door je eigen certificaatnaam. Er is geen nieuwe
-   router-portforward nodig voor lokaal gebruik. Publiceer geen database-, API-
-   of ingress-poorten. De containerpoort blijft `8448/tcp`, de hostpoort is 8450.
-4. Start uitsluitend Personal. Open zijn HA-webinterface en wacht op gereedheid.
-5. Open Nocturne vanuit die pagina. Gebruik zo nodig de gatewaycode van **Personal**.
-   Maak een eigen instantie, account/passkey en herstelcodes aan. Begin zonder
-   echte gezondheidsdata. Bestaande aanmeldingen worden niet geïmporteerd.
-6. Test aanmelden, afmelden, herladen en een herstart van uitsluitend Personal.
-   Controleer dat Official/Latest hun eigen aanmelding behouden.
+   The container port remains `8448/tcp`, mapped to host port 8450. Local access
+   does not require a new router port forward. Do not expose database, API or ingress
+   ports. See the [gateway instructions](GATEWAY.md) for initial access setup.
+3. Wait for the local build to finish, then start Personal and open its HA web
+   interface. For a new installation, create the instance and account there;
+   Official/Latest logins are not imported.
+4. Confirm sign-in, reload and restart work, then check the connector and report.
 
-De optie `gateway_auth: false` kan pas na de bestaande veilige eerste inrichting,
-net als bij de andere apps. [Gateway-instructies](GATEWAY.md).
+Personal compiles the API, web application and native alert library locally. This
+takes more time, memory and temporary storage than installing the other channels.
+Home Assistant Supervisor may keep **Installing (0%)** visible throughout this build.
+The wrapper cannot make that native percentage advance evenly.
 
-## Google Health en medicatie vanaf Personal 0.2.0
+Open **Settings -> System -> Logs -> Supervisor** and look for
+`Nocturne build phase X/7`: build tools, source unpacking, web dependencies and bridge,
+API compilation, alert engine, API publishing, and web application build. These are
+named build stages, not equal-duration percentage estimates; container assembly and
+installation can continue after phase 7.
 
-Log in als beheerder en kies **Personal** in het Nocturne-menu:
+## Versions and release checks
 
-| Onderdeel | Wat werkt in deze eerste uitbreiding |
-| --- | --- |
-| Google Health | Google-login, zelf stappen/hartslag/gewicht kiezen, import ongeveer elke 15 minuten, meetgeschiedenis, ontkoppelen en import wissen |
-| Medicatielogboek | Middel en werkzame stof, werkelijke hoeveelheid in mg/microgram, tijdstip, toegediend/overgeslagen, plaats en notities, wijzigen/verwijderen |
+The HA interface distinguishes the wrapper version, Personal feature version, and
+approved Nocturne Daily commit. HA packages add a delivery suffix, such as
+`0.2.9-1`. A new source commit with the same feature version increments that suffix.
+Official and Latest keep their own package versions.
 
-**[Stap-voor-stap functiehandleiding](https://github.com/smokkelaar/nocturne-personal/blob/personal/PERSONAL_USAGE.md)**
-met de eenmalige Google Cloud-clientinstellingen. Gebruik de callback-URL uit je
-eigen Personal-scherm; deel het client-secret niet in issues of chats.
+The source fork's `personal` branch and `.personal/version.json` identify the feature
+version and approved Daily base. The HA promotion records the exact source commit,
+archive SHA-256 and approved runtime image digests in `upstream-personal.json`.
+Both API and web are built from that pinned source; a release tag alone does not
+publish an HA update.
 
-De metingen staan in de eigen Personal-weergave, nog niet in alle bestaande
-Nocturne-rapporten. Niet-ondersteunde typen blijven zichtbaar maar niet selecteerbaar.
-Google Health is geen toegang op afstand tot de lokale Android Health Connect-database.
-Echte Google-toestemming en bronbeschikbaarheid vragen nog een proef met jouw account.
+Source synchronization checks the approved Daily base at 07:13 UTC, and HA promotion
+runs at 07:43 UTC. Both workflows can also be started manually; scheduled runs may
+be delayed. Conflicts stop source synchronization instead of discarding fork changes.
+Source tests cover Google Health behavior and browser interactions, but do not replace
+the HA build checks.
 
-Het medicatielogboek is geschikt om bijvoorbeeld Mounjaro te noteren, niet om de
-dosis of een opbouwschema te bepalen. Het verandert geen insuline-/IOB-berekeningen.
-Begin met een herkenbare testregistratie en controleer bewaren, wijzigen en wissen.
+The HA update proposal must pass **Unit tests** and **Container smoke test** before
+protected automatic merge. For Personal changes, validation builds the pinned source,
+checks application startup and features, tests cold restore and upgrade from the
+previous Personal package, and checks session isolation across the three apps. HA
+can offer the new version after the proposal is merged and the repository refreshed.
+Automatic installation requires enabling automatic updates for Personal in HA.
 
-Personal begint met dezelfde Nocturne-basis als de goedgekeurde Daily, maar
-compileert API, web en de native alertbibliotheek zelf. Daardoor worden toekomstige
-wijzigingen aan de Personal-broncode werkelijk meegenomen. Het is niet alleen
-een andere naam op de ongewijzigde Daily-binaries.
+## Isolation and recovery
 
-## Drie herkenbare versies
+Personal uses slug `nocturne_personal`, its own `/data`, encryption keys and
+`NocturnePersonal_` session cookies. Do not copy databases, passkeys or keys between
+the three apps. Make a cold backup of the correct app before updating; reverting
+the container alone does not undo a database migration.
 
-- **HA-wrapper**: de technische HA-basis, aanvankelijk 0.1.5.
-- **Personal**: de eigen uitbreidingsversie, nu 0.2.0.
-- **Nocturne**: de goedgekeurde Daily-broncommit met datum/tijd.
+Experimental; not for clinical use. CI does not verify a real HA installation,
+Google consent, passkey ceremony or medical accuracy.
 
-HA gebruikt voor deze aparte app de Personal-versie met leveringsnummer, zoals
-`0.2.0-1`. Een nieuwe Daily-/Personal-broncommit verhoogt alleen het leveringsnummer
-als de uitbreidingsversie gelijk blijft. Een wijziging in Personal verhoogt niet
-de pakketversie van Official of Latest.
+## Development
 
-## Automatisch bijblijven
+Application features belong in the source fork; HA packaging and its tests belong
+here. `python tools/update_personal.py --update` regenerates only
+`upstream-personal.json` and `nocturne_personal` from the selected source.
+`python tools/update_personal.py --check` verifies those generated files without
+network or live HA access. Update the generator before regenerating its files.
 
-Broncode: [smokkelaar/nocturne-personal](https://github.com/smokkelaar/nocturne-personal),
-standaardbranch `personal`. `.personal/version.json` vermeldt de uitbreidingsversie
-en Daily-basis. Gezondheidsdata, OAuth-tokens en wachtwoorden horen nooit in Git.
-
-1. De bronfork controleert dagelijks om 07:13 UTC de al goedgekeurde Daily-pin
-   in de HA-repository. Hij volgt niet blind de allernieuwste upstream-main.
-2. Een normale merge behoudt persoonlijke commits. Conflicten stoppen de
-   synchronisatie. De bron-PR passeert metadata-/afstammingscontroles en de Personal
-   OAuth-, import-, medicatie- en rechtencontroles; dit is nog
-   geen geslaagde runtimebouw of HA-publicatie.
-3. Om 07:43 UTC controleert de HA-repository de Personal-bron, legt commit en
-   archiefchecksum vast en opent een uitsluitend Personal betreffend updatevoorstel.
-4. De verplichte **Container smoke test** bouwt bij Personal-wijzigingen zowel
-   API als web uit dezelfde bron, test opstarten en voert een koude herstelproef
-   en, indien aanwezig, een vorige-Personal-upgrade uit. Bij de eerste versie is
-   alleen een herstelproef met dezelfde versie mogelijk.
-5. Alleen na verplichte controles mag het updatevoorstel automatisch samenvoegen.
-   Daarna kan HA de update aanbieden. Automatisch installeren vereist dat jij
-   **Automatisch bijwerken** voor alleen Personal inschakelt.
-
-De containerproef controleert vanaf 0.2.0 ook de echte PostgreSQL-migraties,
-versleutelde clientinstellingen, afgeschermde Personal-routes, medicatie-invoer,
-wijzigconflicten, verwijderen en behoud na een herstart. De Google-antwoorden
-worden in aparte unit-tests nagebootst; CI logt niet in op Google.
-
-GitHub-planningen kunnen vertraagd zijn. Als Daily later klaar is dan deze
-controles, kan Personal een cyclus achterlopen. Een workflow kan ook handmatig
-worden gestart. Geen nieuwe versie zonder nieuwe bron en geslaagde controles.
-
-Nocturne-bron en bouwafhankelijkheden zijn vastgezet. De app downloadt bij het
-starten geen veranderlijke broncode. De HA-host bouwt de container lokaal; deze
-repository publiceert geen nieuwe samengestelde Personal-binaries. De bestaande
-upstream-runtime vormt de OS/.NET-basis, niet de te gebruiken Personal-appcode.
-
-## Veiligheid en herstel
-
-- Eigen slug `nocturne_personal`, eigen `/data`, database, sleutels, opties en back-ups.
-- Eigen sessiecookies met `NocturnePersonal_`. Alleen een andere poort was daarvoor
-  niet voldoende; de Personal-gateway verwerkt de eigen cookienamen.
-- Kopieer geen database, passkeys of sleutels tussen de drie apps.
-- Een mislukte bouw verandert de aangeboden Personal-versie niet. Een eerdere
-  container terugplaatsen draait een databasemigratie niet vanzelf terug.
-- Maak vóór updates een koude back-up van de juiste app. Behandel Personal als
-  testomgeving, niet als basis voor medicatie, alarmen of automatische dosering.
-- Geautomatiseerde tests bewijzen geen echte passkey-ceremonie, HA-installatie,
-  medische juistheid of geschiktheid voor alle upstream-wijzigingen.
-
-## Ontwikkelen
-
-Productuitbreidingen komen in de bronfork. HA-verpakking en zijn tests blijven in
-de HA-repository. Houd wijzigingen klein en versieer uitbreidingen in
-`.personal/version.json`. De bestaande AGENTS.md-codeconventies blijven gelden.
-
-`tools/update_personal.py --update` schrijft uitsluitend `upstream-personal.json`
-en `nocturne_personal`. `--check` controleert de gegenereerde bestanden zonder
-netwerk of live HA-toegang. Wijzigingen aan het bron-/wrappercontract moeten
-expliciet worden beoordeeld; wijzig niet ongemerkt de twee bestaande pakketten.
+Dependencies and source are pinned. The app does not download changing application
+source when it starts. The HA host builds the combined container locally; this
+repository distributes the build recipe rather than combined Personal images.

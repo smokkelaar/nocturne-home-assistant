@@ -28,7 +28,7 @@ class PersonalTests(unittest.TestCase):
             self.assertNotIn(b'medication log', generated[path])
 
     def test_local_build_progress_is_explained_and_logged(self):
-        generated = updater.files(self.lock, '0.2.8-3')
+        generated = updater.files(self.lock, self.config['version'])
         config = json.loads(generated['config.json'])
         dockerfile = generated['Dockerfile'].decode()
         docs = generated['DOCS.md'].decode()
