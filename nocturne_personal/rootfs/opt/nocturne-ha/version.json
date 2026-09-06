@@ -1,11 +1,11 @@
 {
   "app": "0.1.6",
-  "package": "0.2.10-1",
-  "personal": "0.2.10",
-  "source_commit": "6411f3a7606349315ac7a541805e816a2796a4f7",
-  "source_at": "2026-09-06T13:32:33Z",
-  "nocturne": "main@543bbff",
-  "commit_at": "2026-09-05T10:07:26Z",
+  "package": "0.2.11-1",
+  "personal": "0.2.11",
+  "source_commit": "c1f3e955d1686e276ee99e00efb84d0c47521113",
+  "source_at": "2026-09-06T15:26:20Z",
+  "nocturne": "main@0164494",
+  "commit_at": "2026-09-06T10:42:14Z",
   "name": "Nocturne Personal Release",
   "default_public_url": "https://homeassistant.local:8450",
   "cookie_namespace": "NocturnePersonal_"
