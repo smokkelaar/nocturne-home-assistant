@@ -1,3 +1,11 @@
+# 0.3.0-1
+
+Preview of upstream PR nightscout/nocturne#1240; source `88cecca7862d9fafa2403b5542f10a50584ce4ef`; Daily base `01644942c08ef27b4915763560a58aa1905951fc`.
+
+- Uses the generic Google Health API, callback and database schema intended for new upstream installations.
+- Existing Personal Google Health configuration is not migrated; reconnect Google before testing.
+- Includes the configurable Year Overview color ranges from the upstream contribution.
+
 # 0.2.12-1
 
 Personal 0.2.12; source `6a7ef6c8600acf5864b7ff743060fa724ad9dd5e`; Daily base `01644942c08ef27b4915763560a58aa1905951fc`.
