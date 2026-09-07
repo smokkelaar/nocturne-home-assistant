@@ -1,9 +1,9 @@
 {
   "app": "0.1.6",
-  "package": "0.2.12-1",
-  "personal": "0.2.12",
-  "source_commit": "6a7ef6c8600acf5864b7ff743060fa724ad9dd5e",
-  "source_at": "2026-09-06T20:03:53Z",
+  "package": "0.3.0-1",
+  "personal": "0.3.0",
+  "source_commit": "88cecca7862d9fafa2403b5542f10a50584ce4ef",
+  "source_at": "2026-09-06T21:37:16Z",
   "nocturne": "main@0164494",
   "commit_at": "2026-09-06T10:42:14Z",
   "name": "Nocturne Personal Release",

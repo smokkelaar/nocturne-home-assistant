@@ -10,14 +10,21 @@ and backups. Installing or updating Personal does not migrate Official or Latest
 | Latest | 8449 | Approved upstream Daily commit |
 | Personal | 8450 | Personal fork on the approved Daily base |
 
-## Features in Personal 0.2.9
+## Features in Personal 0.3.0 preview
 
 ### Google Health
 
 Open **Settings -> Connectors & Apps -> Server Connectors -> Google Health**.
 Create your own Google Cloud OAuth Web application client, enable the Google Health
-API, and register the callback URL shown in Nocturne. The HTTPS callback still ends
-in `/personal/google/callback`; existing Google Cloud registrations remain usable.
+API, and register the callback URL shown in Nocturne. This upstream preview uses
+`/settings/connectors/google-health/callback`. Replace the former
+`/personal/google/callback` registration before reconnecting Google.
+
+Personal 0.3.0 is pinned to the clean source proposed in
+[nightscout/nocturne#1240](https://github.com/nightscout/nocturne/pull/1240). It uses
+the new `google_health_*` schema and does not migrate the connector configuration
+from Personal 0.2.12. Other Nocturne health history remains in place, but Google must
+be configured and authorized again for this preview.
 
 Choose **Import data from**, save the settings and sign in to Google. Review the
 inventory of known data types before choosing **Save selection and import**. The
@@ -101,7 +108,7 @@ installation can continue after phase 7.
 
 The HA interface distinguishes the wrapper version, Personal feature version, and
 approved Nocturne Daily commit. HA packages add a delivery suffix, such as
-`0.2.9-1`. A new source commit with the same feature version increments that suffix.
+`0.3.0-1`. A new source commit with the same feature version increments that suffix.
 Official and Latest keep their own package versions.
 
 The source fork's `personal` branch and `.personal/version.json` identify the feature
@@ -115,6 +122,10 @@ runs at 07:43 UTC. Both workflows can also be started manually; scheduled runs m
 be delayed. Conflicts stop source synchronization instead of discarding fork changes.
 Source tests cover Google Health behavior and browser interactions, but do not replace
 the HA build checks.
+
+The 0.3.0 preview is pinned directly because the upstream contribution branch
+intentionally contains no Personal release metadata. Normal Personal promotion remains
+driven by `.personal/version.json` after this preview is replaced or merged.
 
 The HA update proposal must pass **Unit tests** and **Container smoke test** before
 protected automatic merge. For Personal changes, validation builds the pinned source,
