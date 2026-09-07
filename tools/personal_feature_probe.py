@@ -94,24 +94,24 @@ assert re.fullmatch(r'nocturne-ci-[0-9a-f]{32}', identity)
 assert Path('/data/.disposable-ci').read_text() == identity
 assert not os.environ.get('SUPERVISOR_TOKEN')
 tenant = str(uuid.UUID(run.psql(database='nocturne', sql='SELECT id FROM tenants')))
-assert run.psql(database='nocturne', sql="SELECT count(*) FROM personal_google_connections WHERE protected_settings LIKE '%ci-not-a-real-google-secret%'") == '0'
-for table in ('personal_google_connections', 'personal_health_readings'):
+assert run.psql(database='nocturne', sql="SELECT count(*) FROM google_health_connections WHERE protected_settings LIKE '%ci-not-a-real-google-secret%'") == '0'
+for table in ('google_health_connections', 'google_health_readings'):
     assert run.psql(database='nocturne', sql=f"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE relname='{table}'") == 't'
 run.psql(database='nocturne', sql=f"""
 BEGIN;
 SET LOCAL ROLE nocturne_app;
 SELECT set_config('app.current_tenant_id', '', true);
 DO $$ BEGIN
-  IF (SELECT count(*) FROM personal_google_connections) <> 0 THEN RAISE EXCEPTION 'tenant isolation failed'; END IF;
+  IF (SELECT count(*) FROM google_health_connections) <> 0 THEN RAISE EXCEPTION 'tenant isolation failed'; END IF;
 END $$;
 SELECT set_config('app.current_tenant_id', '{tenant}', true);
 SELECT set_config('app.is_share', 'true', true);
 DO $$ BEGIN
-  IF (SELECT count(*) FROM personal_google_connections) <> 0 THEN RAISE EXCEPTION 'share isolation failed'; END IF;
+  IF (SELECT count(*) FROM google_health_connections) <> 0 THEN RAISE EXCEPTION 'share isolation failed'; END IF;
 END $$;
 SELECT set_config('app.is_share', 'false', true);
 DO $$ BEGIN
-  IF (SELECT count(*) FROM personal_google_connections) <> 1 THEN RAISE EXCEPTION 'tenant visibility failed'; END IF;
+  IF (SELECT count(*) FROM google_health_connections) <> 1 THEN RAISE EXCEPTION 'tenant visibility failed'; END IF;
 END $$;
 ROLLBACK;
 """)
