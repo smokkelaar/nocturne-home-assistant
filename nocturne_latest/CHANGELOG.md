@@ -1,3 +1,9 @@
+## 0.1.6-6
+
+- Update Nocturne Latest from `0164494` to [`ea695ba`](https://github.com/nightscout/nocturne/compare/01644942c08ef27b4915763560a58aa1905951fc...ea695ba37ea82feaec607ad1ab81ecf3113a2fd7).
+- Upstream paired-image build: https://github.com/nightscout/nocturne/actions/runs/34216675112
+- Automated container and previous-Latest upgrade tests are required before merge. Keep a cold backup; rollback after a development schema migration is not guaranteed.
+
 ## 0.1.6-5
 
 - Update Nocturne Latest from `543bbff` to [`0164494`](https://github.com/nightscout/nocturne/compare/543bbff8552d69c2ec39e2e4585c9c839e420f5d...01644942c08ef27b4915763560a58aa1905951fc).
