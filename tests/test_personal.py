@@ -24,7 +24,8 @@ class PersonalTests(unittest.TestCase):
         lock = {**self.lock, 'version': '0.2.99'}
         generated = updater.files(lock, '0.2.99-1')
         for path in ('DOCS.md', 'README.md'):
-            self.assertIn(b'Personal 0.2.99 adds Google Health', generated[path])
+            self.assertIn(b'Personal 0.2.99 previews the upstream Google Health connector', generated[path])
+            self.assertIn(b'disconnect and reconnect before testing', generated[path])
             self.assertNotIn(b'medication log', generated[path])
 
     def test_local_build_progress_is_explained_and_logged(self):
