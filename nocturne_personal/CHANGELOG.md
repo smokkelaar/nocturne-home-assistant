@@ -1,3 +1,11 @@
+# 0.3.1-1
+
+Private preview of the separated Google Health connector-framework work; source `26f945645379681c9911b6b2963fe35b6c8a79de`; Daily base `01644942c08ef27b4915763560a58aa1905951fc`.
+
+- Uses Nocturne's connector HTTP and token lifecycle infrastructure.
+- Does not include the Year Overview color controls; those are reviewed separately upstream.
+- Existing Personal Google Health configuration is not migrated; disconnect and reconnect before testing.
+
 # 0.3.0-1
 
 Preview of upstream PR nightscout/nocturne#1240; source `88cecca7862d9fafa2403b5542f10a50584ce4ef`; Daily base `01644942c08ef27b4915763560a58aa1905951fc`.
