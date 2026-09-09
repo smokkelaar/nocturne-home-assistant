@@ -1,3 +1,13 @@
+# 0.3.1-2
+
+Private Google Health cleanup preview; source `e56b74e2e48ddd1fad04d0cc909a65d80c5b49d4`; Daily base `01644942c08ef27b4915763560a58aa1905951fc`.
+
+- Removes the temporary Google Health connection and reading tables, entities and migration.
+- Stores configuration, secrets and health state only through the connector framework.
+- Imports directly into Nocturne step, heart-rate, weight and sleep histories.
+- Routes manual, queued and scheduled imports through the connector lifecycle.
+- Excludes the separate Year Overview color work and unrelated UI fixes.
+
 # 0.3.1-1
 
 Private preview of the separated Google Health connector-framework work; source `26f945645379681c9911b6b2963fe35b6c8a79de`; Daily base `01644942c08ef27b4915763560a58aa1905951fc`.
