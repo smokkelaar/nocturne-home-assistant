@@ -10,7 +10,7 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@10.13.1
-ADD --checksum=sha256:f6694e23cf9a6da719ab3691104fb3b3b85dc43b30c9d34b3c8110191595aa2b https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/e56b74e2e48ddd1fad04d0cc909a65d80c5b49d4 /tmp/source.tar.gz
+ADD --checksum=sha256:00d4abea584030cbf2cdbd116fed853a87bf2dd7753ecb5706bc955361bfbdcf https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/309c0b23e64c76d222a481919092c9ca3b24ad2a /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
 WORKDIR /src/src/Web
@@ -36,11 +36,11 @@ RUN mkdir -p /out/web/packages/app /out/web/packages/bridge \
     && cp packages/bridge/package.json /out/web/packages/bridge/ \
     && cp -r packages/bridge/dist /out/web/packages/bridge/
 # Use the matching approved Daily runtime/OS; replace its application with our source build.
-FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:4cc64581d452b359383a53bcf1d30ba0a29323814236f4a9c071cbbbc0ddc67b
+FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:c5d6ad98d9907fc06914f3b1c8a55c1f8cc92ca6003908756c3f0567f8d51320
 USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so
-ARG BUILD_VERSION=0.3.1-2
+ARG BUILD_VERSION=0.3.2-1
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Personal Release - Home Assistant app" \

@@ -1,3 +1,13 @@
+# 0.3.2-1
+
+Private Year Overview-only preview of nightscout/nocturne#1273; source `309c0b23e64c76d222a481919092c9ca3b24ad2a`; Daily runtime base `ea695ba37ea82feaec607ad1ab81ecf3113a2fd7`.
+
+- Adds remembered minimum and maximum color-focus ranges for Time in Range, bolus, basal, TDD and carbohydrates.
+- Adds four adjustable average-glucose color boundaries while preserving glucose target and Time in Range calculations.
+- Keeps the exceptionally-low heatmap stop black and the following low stop blue so adjacent ranges remain distinct.
+- Includes keyboard, pointer, touch, numeric-input, print and unavailable-storage behavior.
+- Does not include the separate Google Health connector contribution.
+
 # 0.3.1-2
 
 Private Google Health cleanup preview; source `e56b74e2e48ddd1fad04d0cc909a65d80c5b49d4`; Daily base `01644942c08ef27b4915763560a58aa1905951fc`.

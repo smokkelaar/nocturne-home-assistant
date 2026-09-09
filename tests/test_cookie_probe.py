@@ -9,6 +9,11 @@ from personal_feature_probe import complete_fixture_onboarding, expect_status
 
 
 class CookieProbeTests(unittest.TestCase):
+    def test_personal_preview_is_year_overview_only(self):
+        source = (Path(__file__).resolve().parents[1] / 'tools/personal_feature_probe.py').read_text()
+        self.assertIn('/reports/year-overview?isDefault=true', source)
+        self.assertNotIn('/api/v4/google-health', source)
+
     def test_fixture_completes_real_onboarding_only_after_authentication(self):
         from unittest.mock import Mock
         request = Mock(side_effect=[
