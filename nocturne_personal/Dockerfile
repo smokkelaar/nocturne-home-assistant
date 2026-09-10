@@ -10,7 +10,7 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@10.13.1
-ADD --checksum=sha256:00d4abea584030cbf2cdbd116fed853a87bf2dd7753ecb5706bc955361bfbdcf https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/309c0b23e64c76d222a481919092c9ca3b24ad2a /tmp/source.tar.gz
+ADD --checksum=sha256:b0ca35e746ccfb2fbc49050feac9756e8ca6cd5c29bbc203512eb902eadbc1f9 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/7d85408af96d32f9a5f462c62b69edfc104ace44 /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
 WORKDIR /src/src/Web
@@ -40,7 +40,7 @@ FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:c5d6ad98d9907fc06914f3b1c8a
 USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so
-ARG BUILD_VERSION=0.3.2-1
+ARG BUILD_VERSION=0.3.3-1
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Personal Release - Home Assistant app" \

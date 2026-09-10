@@ -1,3 +1,13 @@
+# 0.3.3-1
+
+Year Overview review fixes for nightscout/nocturne#1273; source `7d85408af96d32f9a5f462c62b69edfc104ace44`.
+
+- Saves color selections through the existing user-preferences backend and shared appearance.
+- Uses one accessible control for ranges and glucose color boundaries.
+- Transitions from 4 to 3 mmol/L and stays solid below 3: black in light mode, white in dark mode.
+- Prints on white report cards with the black endpoint and the active scale.
+- Fixes input types, metric switching and slider step performance.
+
 # 0.3.2-1
 
 Private Year Overview-only preview of nightscout/nocturne#1273; source `309c0b23e64c76d222a481919092c9ca3b24ad2a`; Daily runtime base `ea695ba37ea82feaec607ad1ab81ecf3113a2fd7`.
