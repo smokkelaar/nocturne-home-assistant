@@ -1,8 +1,8 @@
 {
   "name": "Nocturne Latest Release",
-  "version": "0.1.6-6",
+  "version": "0.1.6-7",
   "slug": "nocturne_latest",
-  "description": "HA wrapper 0.1.6 \u00b7 Nocturne main ea695ba - 2026-09-08 10:40 UTC. Highly experimental; not for clinical use.",
+  "description": "HA wrapper 0.1.6 \u00b7 Nocturne main d9e1430 - 2026-09-11 11:26 UTC. Highly experimental; not for clinical use.",
   "url": "https://github.com/smokkelaar/nocturne-home-assistant",
   "arch": [
     "amd64"
