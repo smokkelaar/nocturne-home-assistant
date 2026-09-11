@@ -1,8 +1,8 @@
 {
   "app": "0.1.6",
-  "package": "0.3.4-1",
+  "package": "0.3.4-2",
   "personal": "0.3.4",
-  "source_commit": "def76d46213e26cbe3e81a1885e922158d5fe651",
+  "source_commit": "bcf3a10cf499d41c6d5828cfda9a79c2127b4b4e",
   "source_at": "2026-09-11T00:00:00Z",
   "nocturne": "main@ea695ba",
   "commit_at": "2026-09-08T10:40:15Z",
