@@ -1,8 +1,8 @@
 {
   "name": "Nocturne Personal Release",
-  "version": "0.3.3-1",
+  "version": "0.3.4-1",
   "slug": "nocturne_personal",
-  "description": "HA wrapper 0.1.6 \u00b7 Personal 0.3.3 \u00b7 Daily ea695ba - 2026-09-08 10:40 UTC. Experimental; not for clinical use. Local build: HA may show 0% until it finishes.",
+  "description": "HA wrapper 0.1.6 \u00b7 Personal 0.3.4 \u00b7 Daily ea695ba - 2026-09-08 10:40 UTC. Experimental; not for clinical use. Local build: HA may show 0% until it finishes.",
   "url": "https://github.com/smokkelaar/nocturne-home-assistant",
   "arch": [
     "amd64"
