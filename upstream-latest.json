@@ -1,15 +1,15 @@
 {
   "channel": "main",
-  "commit": "d9e1430975c7a05967cba66374392f75f08c858f",
-  "workflow_run": 34594017929,
-  "commit_at": "2026-09-11T11:26:14Z",
-  "published_at": "2026-09-11T11:26:17Z",
+  "commit": "ea190a17635ff87969cb413634e8b01283598688",
+  "workflow_run": 34686441900,
+  "commit_at": "2026-09-12T09:39:51Z",
+  "published_at": "2026-09-12T09:39:54Z",
   "api": {
     "tag": "latest",
-    "digest": "sha256:507f3497203703382f204b1833ab4e6ac5540906042705b676b7a2984a95c6b9"
+    "digest": "sha256:7b95df1753abb0ff6eeb6a4ac718cd808ba35e7f1448cea77b6c0f8a665818c2"
   },
   "web": {
     "tag": "latest",
-    "digest": "sha256:5ec638cdefb06d56fc4d25c680772778e6d1defc0c6dc4e9993443b9f5dcd2f5"
+    "digest": "sha256:876179107bea38fe9ed4f35f2b774ebe86fb147eaf02383accf6e0f4476318b8"
   }
 }
