@@ -1,3 +1,12 @@
+# 0.3.10-1
+
+Personal 0.3.10; source `a5e575b6a72d0520e96d9d7192ec32abb17a8908`; Daily base `d9e1430975c7a05967cba66374392f75f08c858f`.
+
+- Fixes Google Health sync failing after successful data writes at `watermark_save` when a previous watermark exists.
+- Fixes the same invalid date-parser options when scheduled sync resumes from a saved watermark.
+- Tests repeat imports, UTC/offset normalization and preservation of newer watermarks during old backfills.
+- No Google reconnect or deletion of imported data is needed. Run Sync now after updating.
+
 # 0.3.9-1
 
 Personal 0.3.9; source `268393306c6d9f0ef2ec2157d4418da0bca2a448`; Daily base `d9e1430975c7a05967cba66374392f75f08c858f`.

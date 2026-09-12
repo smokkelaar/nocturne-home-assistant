@@ -10,7 +10,7 @@ and backups. Installing or updating Personal does not migrate Official or Latest
 | Latest | 8449 | Approved upstream Daily commit |
 | Personal | 8450 | Personal fork on the approved Daily base |
 
-## Features in Personal 0.3.9
+## Features in Personal 0.3.10
 
 ### Google Health
 
@@ -22,7 +22,7 @@ API, and register the callback URL shown in Nocturne. This upstream preview uses
 
 The current connector stores configuration through Nocturne's connector framework
 and writes directly to its native health histories. Older Personal previews used
-different connector configuration. Updating from 0.3.7 or 0.3.8 to 0.3.9 does not
+different connector configuration. Updating from 0.3.7, 0.3.8 or 0.3.9 to 0.3.10 does not
 require disconnecting Google or deleting imported data.
 
 Choose **Import data from**, save the settings and sign in to Google. Review the
@@ -79,6 +79,14 @@ to change an existing session's database primary key. This does not establish th
 cause of failures observed on earlier releases. API console logging remains enabled
 when OpenTelemetry is disabled by the HA wrapper. Automated browser and database
 tests do not establish that a real Google account import completes on HAOS.
+
+Version 0.3.10 fixes a failure identified in an actual import log: after native
+writes and reconciliation completed, parsing an existing `lastSyncedTo` watermark
+threw `ArgumentException` because incompatible `DateTimeStyles` flags were combined.
+The same parser also prevented scheduled imports from resuming. Both paths now
+normalize timestamps to UTC with compatible options. Regression tests cover repeat
+imports, UTC and offset timestamps, and older backfills preserving a newer watermark.
+No reconnect or deletion of imported data is required; use **Sync now** after updating.
 
 ### Year overview color focus
 
