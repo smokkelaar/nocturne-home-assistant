@@ -10,7 +10,7 @@ and backups. Installing or updating Personal does not migrate Official or Latest
 | Latest | 8449 | Approved upstream Daily commit |
 | Personal | 8450 | Personal fork on the approved Daily base |
 
-## Features in Personal 0.3.10
+## Features in Personal 0.3.11
 
 ### Google Health
 
@@ -22,7 +22,7 @@ API, and register the callback URL shown in Nocturne. This upstream preview uses
 
 The current connector stores configuration through Nocturne's connector framework
 and writes directly to its native health histories. Older Personal previews used
-different connector configuration. Updating from 0.3.7, 0.3.8 or 0.3.9 to 0.3.10 does not
+different connector configuration. Updating from 0.3.7 through 0.3.10 to 0.3.11 does not
 require disconnecting Google or deleting imported data.
 
 Choose **Import data from**, save the settings and sign in to Google. Review the
@@ -87,6 +87,19 @@ The same parser also prevented scheduled imports from resuming. Both paths now
 normalize timestamps to UTC with compatible options. Regression tests cover repeat
 imports, UTC and offset timestamps, and older backfills preserving a newer watermark.
 No reconnect or deletion of imported data is required; use **Sync now** after updating.
+
+Version 0.3.11 fixes `invalid_google_filter` for sleep. Google requires sleep
+queries to use `sleep.interval.end_time`, not the start time. Inventory, imports,
+local range checks and reconciliation now use the same end-time window: inclusive
+lower bound and exclusive upper bound. Nights that start before the range but end
+inside it are included with their stages intact. Other sources, tenants and sessions
+ending outside the window are preserved during reconciliation.
+
+After updating, open Google Health and click **Refresh inventory**, select
+**Sleep sessions and stages**, then **Save selection and import**. Keep your other
+desired data types selected. No Google reconnect or data deletion is needed. Tests
+cover the outgoing filters, pagination, date boundaries, repeated imports and
+relational reconciliation; a real Google sleep import still requires account access.
 
 ### Year overview color focus
 

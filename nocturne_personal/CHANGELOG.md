@@ -1,3 +1,12 @@
+# 0.3.11-1
+
+Personal 0.3.11; source `bccd0a87b015b9aafdbd5990996b11e348abd699`; Daily base `d9e1430975c7a05967cba66374392f75f08c858f`.
+
+- Fixes `invalid_google_filter` in sleep inventory and import by using Google's supported session end-time filter.
+- Uses matching end-time boundaries for local filtering and reconciliation, preserving overnight stages and sessions outside the requested window.
+- Adds regression coverage for pagination, boundary nights, repeated imports and source/tenant isolation.
+- After updating: Refresh inventory, select Sleep sessions and stages, then Save selection and import. No reconnect or data deletion is needed.
+
 # 0.3.10-1
 
 Personal 0.3.10; source `a5e575b6a72d0520e96d9d7192ec32abb17a8908`; Daily base `d9e1430975c7a05967cba66374392f75f08c858f`.
