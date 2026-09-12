@@ -10,7 +10,7 @@ and backups. Installing or updating Personal does not migrate Official or Latest
 | Latest | 8449 | Approved upstream Daily commit |
 | Personal | 8450 | Personal fork on the approved Daily base |
 
-## Features in Personal 0.3.0 preview
+## Features in Personal 0.3.9
 
 ### Google Health
 
@@ -20,11 +20,10 @@ API, and register the callback URL shown in Nocturne. This upstream preview uses
 `/settings/connectors/google-health/callback`. Replace the former
 `/personal/google/callback` registration before reconnecting Google.
 
-Personal 0.3.0 is pinned to the clean source proposed in
-[nightscout/nocturne#1240](https://github.com/nightscout/nocturne/pull/1240). It uses
-the new `google_health_*` schema and does not migrate the connector configuration
-from Personal 0.2.12. Other Nocturne health history remains in place, but Google must
-be configured and authorized again for this preview.
+The current connector stores configuration through Nocturne's connector framework
+and writes directly to its native health histories. Older Personal previews used
+different connector configuration. Updating from 0.3.7 or 0.3.8 to 0.3.9 does not
+require disconnecting Google or deleting imported data.
 
 Choose **Import data from**, save the settings and sign in to Google. Review the
 inventory of known data types before choosing **Save selection and import**. The
@@ -54,6 +53,32 @@ data still require testing with your own account; automated tests do not sign in
 Google. Keep client secrets and tokens out of issues, chats and Git.
 
 [Google Cloud and connector setup](https://github.com/smokkelaar/nocturne-personal/blob/personal/PERSONAL_USAGE.md).
+
+#### Import diagnostics
+
+On the Google Health settings page, open **Import diagnostics**. This is inside
+Nocturne, not in Home Assistant's Supervisor logs. The page refreshes status every
+two seconds while open, including after reopening during an import. Progress is
+based on data-type stages, not a record-count percentage or time estimate.
+
+The log records the run ID and source commit, requested ranges, page requests and
+responses, native write batches and durations, reconciliation, saved watermarks,
+and completion or failure. It shows processed record counts and the latest written
+record timestamp. These counts can include updates to existing records; they are
+not a count of net-new rows. A recent timestamp alone does not prove that all types
+or pages completed successfully.
+
+Use **Download diagnostics** to retain the JSON run log before restarting. The current run and
+up to four previous runs are held in bounded memory for up to 24 hours, with at most
+256 events per run; restart or cache eviction removes them. Diagnostics omit tokens,
+client secrets, raw provider responses and measurement values, but dates and counts
+are still sensitive. Review an export before sharing it.
+
+Version 0.3.9 also fixes a reproduced 0.3.8 sleep reimport regression that attempted
+to change an existing session's database primary key. This does not establish the
+cause of failures observed on earlier releases. API console logging remains enabled
+when OpenTelemetry is disabled by the HA wrapper. Automated browser and database
+tests do not establish that a real Google account import completes on HAOS.
 
 ### Year overview color focus
 
@@ -123,9 +148,8 @@ be delayed. Conflicts stop source synchronization instead of discarding fork cha
 Source tests cover Google Health behavior and browser interactions, but do not replace
 the HA build checks.
 
-The 0.3.0 preview is pinned directly because the upstream contribution branch
-intentionally contains no Personal release metadata. Normal Personal promotion remains
-driven by `.personal/version.json` after this preview is replaced or merged.
+Personal promotion is driven by `.personal/version.json` on the fork's `personal`
+branch, not by the upstream contribution branch alone.
 
 The HA update proposal must pass **Unit tests** and **Container smoke test** before
 protected automatic merge. For Personal changes, validation builds the pinned source,

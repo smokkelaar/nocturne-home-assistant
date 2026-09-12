@@ -1,3 +1,13 @@
+# 0.3.9-1
+
+Personal 0.3.9; source `268393306c6d9f0ef2ec2157d4418da0bca2a448`; Daily base `d9e1430975c7a05967cba66374392f75f08c858f`.
+
+- Refreshes Google Health sync progress every two seconds while its settings page is open.
+- Adds in-app Import diagnostics with bounded run history, native write counts, timestamps, structured errors and JSON export.
+- Fixes the reproduced 0.3.8 sleep-session primary-key regression during reimport.
+- Restores API console logging when OpenTelemetry is disabled in HA.
+- No reconnect or data deletion is required for this update. Real Google-account import success still requires runtime verification.
+
 # 0.3.8-1
 
 Personal 0.3.8; source `346cb775bb4bb577727aee42050b0a93cbe1ec0a`; Daily base `d9e1430975c7a05967cba66374392f75f08c858f`.
