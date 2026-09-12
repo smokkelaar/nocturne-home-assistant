@@ -92,10 +92,16 @@ class PersonalTests(unittest.TestCase):
         self.assertNotIn("ROOT / 'nocturne_local'", source)
         self.assertIn("directory = ROOT / 'nocturne_personal'", source)
         workflow = (ROOT / '.github/workflows/personal.yml').read_text()
+        # The auto-merged proposal may fold in a newer Daily alongside Personal,
+        # but must never silently carry the maintainer-reviewed Official channel.
         allowlist = workflow.split('add-paths:', 1)[1].split('body:', 1)[0]
-        self.assertNotIn('nocturne_latest', allowlist)
         self.assertNotIn('nocturne_local', allowlist)
         self.assertIn('upstream-personal.json', allowlist)
+        self.assertIn('nocturne_latest', allowlist)
+        official_allowlist = workflow.split('add-paths:')[2].split('body:', 1)[0]
+        self.assertIn('nocturne_local', official_allowlist)
+        self.assertIn('upstream.json', official_allowlist)
+        self.assertNotIn('gh pr merge', workflow.split('Official proposal', 1)[1])
 
     def test_transition_rejects_version_and_source_rollbacks(self):
         with self.assertRaises(ValueError):

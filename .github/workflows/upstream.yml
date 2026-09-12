@@ -6,7 +6,7 @@ permissions:
   contents: write
   pull-requests: write
 concurrency:
-  group: official-upstream-update
+  group: nocturne-channel-promotion
   cancel-in-progress: false
 jobs:
   update:

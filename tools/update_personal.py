@@ -1,6 +1,6 @@
 """Generate only Personal, compiling its exact fork source instead of upstream binaries."""
 import argparse
-from datetime import datetime
+from datetime import datetime, timedelta
 import hashlib
 import json
 import os
@@ -15,6 +15,11 @@ RUST = 'rust@sha256:4673f78db88b71f09d5451bbc404734807918161241215ba0a50bbbe9b44
 COMMON = ('build/check_web.mjs', 'build/prepare_web.py', 'build/check_cookies.conf',
           'rootfs/opt/nocturne-ha/bootstrap.sql', 'rootfs/opt/nocturne-ha/run.py',
           'rootfs/opt/nocturne-ha/tls.py', 'translations/nl.json', 'translations/en.json')
+MIN_AGE = timedelta(hours=1)
+
+
+class NotReady(ValueError):
+    """The newest Personal commit is not yet an hour ahead of the last promoted one."""
 
 
 def github(path, raw=False):
@@ -50,10 +55,16 @@ def source_url(lock):
     return f'https://codeload.github.com/{REPO}/tar.gz/{lock["commit"]}'
 
 
-def resolve():
+def resolve(previous=None):
     approved = json.loads((ROOT / 'upstream-latest.json').read_text())
     head = github('commits/personal')
     commit = head['sha']
+    commit_at = head['commit']['committer']['date']
+    if previous and previous['commit'] != commit:
+        age = (datetime.fromisoformat(commit_at.replace('Z', '+00:00'))
+               - datetime.fromisoformat(previous['commit_at'].replace('Z', '+00:00')))
+        if age < MIN_AGE:
+            raise NotReady('Newest Personal commit is not yet an hour past the last promoted version')
     meta = github(f'contents/.personal/version.json?ref={commit}', raw=True)
     if meta['base_commit'] != approved['commit']:
         raise ValueError('Personal has not yet merged the currently approved Daily base')
@@ -61,7 +72,7 @@ def resolve():
     if comparison['status'] not in ('ahead', 'identical') or comparison['merge_base_commit']['sha'] != approved['commit']:
         raise ValueError('Personal does not descend from the approved Daily commit')
     lock = dict(channel='personal', repository=REPO, version=meta['version'],
-                commit=commit, commit_at=head['commit']['committer']['date'], upstream=approved)
+                commit=commit, commit_at=commit_at, upstream=approved)
     digest = hashlib.sha256()
     total = 0
     with urllib.request.urlopen(source_url(lock), timeout=120) as response:
@@ -192,7 +203,7 @@ def check(lock=None):
 def update():
     lock_path = ROOT / 'upstream-personal.json'
     old = json.loads(lock_path.read_text()) if lock_path.exists() else None
-    lock = resolve()
+    lock = resolve(old)
     if old == lock:
         check(lock)
         print('No new Personal source; no package change.')
@@ -220,4 +231,7 @@ if __name__ == '__main__':
     parser.add_argument('--update', action='store_true')
     parser.add_argument('--check', action='store_true')
     args = parser.parse_args()
-    update() if args.update else check()
+    try:
+        update() if args.update else check()
+    except NotReady as error:
+        print('No promotable Personal source: ' + str(error))

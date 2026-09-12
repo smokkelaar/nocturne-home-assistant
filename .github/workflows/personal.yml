@@ -1,14 +1,14 @@
 name: Promote Personal daily
 on:
   schedule:
-    - cron: '43 7 * * *'
+    - cron: '0 * * * *'
   workflow_dispatch:
 permissions:
   contents: write
   pull-requests: write
   actions: write
 concurrency:
-  group: personal-package-promotion
+  group: nocturne-channel-promotion
   cancel-in-progress: false
 jobs:
   update:
@@ -22,10 +22,26 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
         with:
           python-version: '3.12'
+      - name: Opportunistically resolve a newer tested Daily snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/update_latest.py --update
+      - name: Opportunistically resolve a newer official Nocturne release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/update_upstream.py --update
       - name: Resolve exact Personal source following the approved Daily
         env:
           GH_TOKEN: ${{ github.token }}
         run: python tools/update_personal.py --update
+      - name: Detect Official release changes (kept out of the auto-merge proposal)
+        id: official
+        run: |
+          if git diff --quiet -- upstream.json nocturne_local; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+          fi
       - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1
         id: proposal
         with:
@@ -34,14 +50,18 @@ jobs:
           title: 'Update Nocturne Personal Release'
           commit-message: 'Prepare pinned Personal source build'
           add-paths: |
+            upstream-latest.json
+            nocturne_latest
             upstream-personal.json
             nocturne_personal
           body: |
             Personal-only source promotion, following the Daily base already accepted here.
             API and web are compiled from the same exact fork commit and archive checksum.
+            A newer tested Daily snapshot is folded in automatically when one became available
+            in the same run, so Personal is never blocked waiting for the separate daily job.
             This proposal is not a passing build: required Validate includes the
             Personal source build and upgrade before protected auto-merge.
-            Official/Latest packages, app settings and live data are untouched.
+            Official package, app settings and live data are untouched.
       - name: Dispatch all required checks before protected auto-merge
         if: steps.proposal.outputs.pull-request-number != ''
         env:
@@ -51,3 +71,28 @@ jobs:
         run: |
           gh workflow run validate.yml --ref "$BRANCH"
           gh pr merge "$PR" --auto --squash
+      - name: Open or refresh the manual-review Official release proposal
+        id: official-proposal
+        if: steps.official.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1
+        with:
+          token: ${{ github.token }}
+          branch: automation/nocturne-official
+          title: 'Update Nocturne Official Release'
+          commit-message: 'Update paired Nocturne release and HA app version'
+          add-paths: |
+            upstream.json
+            nocturne_local
+          body: |
+            A newer official Nocturne release became available while checking Personal.
+            API/web pins, source commit, HA app version, launcher metadata and changelog
+            are updated together. This channel carries real database migrations for Official
+            installs and is intentionally NOT auto-merged: review upstream release/migration
+            notes, approve required Validate checks, test an upgrade on a backed-up disposable
+            instance, then merge yourself. See docs/UPDATES.md.
+      - name: Dispatch required checks for the Official proposal (no auto-merge)
+        if: steps.official-proposal.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ steps.official-proposal.outputs.pull-request-branch }}
+        run: gh workflow run validate.yml --ref "$BRANCH"
