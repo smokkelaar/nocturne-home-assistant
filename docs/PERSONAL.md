@@ -54,26 +54,6 @@ Google. Keep client secrets and tokens out of issues, chats and Git.
 
 [Google Cloud and connector setup](https://github.com/smokkelaar/nocturne-personal/blob/review/google-health-final/docs/google-health.md).
 
-#### Import diagnostics
-
-On the Google Health settings page, open **Import diagnostics**. This is inside
-Nocturne, not in Home Assistant's Supervisor logs. The page refreshes status every
-two seconds while open, including after reopening during an import. Progress is
-based on data-type stages, not a record-count percentage or time estimate.
-
-The log records the run ID and source commit, requested ranges, page requests and
-responses, native write batches and durations, reconciliation, saved watermarks,
-and completion or failure. It shows processed record counts and the latest written
-record timestamp. These counts can include updates to existing records; they are
-not a count of net-new rows. A recent timestamp alone does not prove that all types
-or pages completed successfully.
-
-Use **Download diagnostics** to retain the JSON run log before restarting. The current run and
-up to four previous runs are held in bounded memory for up to 24 hours, with at most
-256 events per run; restart or cache eviction removes them. Diagnostics omit tokens,
-client secrets, raw provider responses and measurement values, but dates and counts
-are still sensitive. Review an export before sharing it.
-
 Version 0.3.9 also fixes a reproduced 0.3.8 sleep reimport regression that attempted
 to change an existing session's database primary key. This does not establish the
 cause of failures observed on earlier releases. API console logging remains enabled

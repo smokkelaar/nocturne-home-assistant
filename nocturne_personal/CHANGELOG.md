@@ -1,3 +1,10 @@
+# 0.3.11-3
+
+Personal 0.3.11; source `a17401128ff2a07559339424eee015b811960d96`; Daily base `d9e1430975c7a05967cba66374392f75f08c858f`.
+
+- Removes the Google Health import diagnostics history and JSON export after the connector's import, error and progress behavior was covered by automated tests.
+- Keeps import progress, technical error codes and server logs available while removing the extra in-memory event collection.
+
 # 0.3.11-2
 
 Personal 0.3.11; source `d0ca6753a8fa9fcded1f100c632749eb210bd84e`; Daily base `d9e1430975c7a05967cba66374392f75f08c858f`.
