@@ -5,7 +5,7 @@
 De Google-login en import van stappen, hartslag en gewicht zijn nu onderdeel van
 de Personal-broncode, met een eigen scherm, dataselectie, periodieke synchronisatie
 en versleutelde tokens. Daarnaast bestaat een zelfstandig medicatielogboek.
-[Installeren](PERSONAL.md) · [Google en medicatie instellen](https://github.com/smokkelaar/nocturne-personal/blob/personal/PERSONAL_USAGE.md).
+[Installeren](PERSONAL.md) · [Google Health instellen](https://github.com/smokkelaar/nocturne-personal/blob/review/google-health-final/docs/google-health.md).
 
 De gekozen implementatie is een **native Personal-module**, geen externe helper
 die brede Nocturne-schrijfpermissies nodig heeft. De API beheert eigen tenant-

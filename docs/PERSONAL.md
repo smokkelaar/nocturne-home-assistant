@@ -10,7 +10,7 @@ and backups. Installing or updating Personal does not migrate Official or Latest
 | Latest | 8449 | Approved upstream Daily commit |
 | Personal | 8450 | Personal fork on the approved Daily base |
 
-## Features in Personal 0.3.11
+## Features in Personal 0.3.11-2
 
 ### Google Health
 
@@ -52,7 +52,7 @@ and attempt time to the API server log. Google account access and available sour
 data still require testing with your own account; automated tests do not sign in to
 Google. Keep client secrets and tokens out of issues, chats and Git.
 
-[Google Cloud and connector setup](https://github.com/smokkelaar/nocturne-personal/blob/personal/PERSONAL_USAGE.md).
+[Google Cloud and connector setup](https://github.com/smokkelaar/nocturne-personal/blob/review/google-health-final/docs/google-health.md).
 
 #### Import diagnostics
 
@@ -100,21 +100,6 @@ After updating, open Google Health and click **Refresh inventory**, select
 desired data types selected. No Google reconnect or data deletion is needed. Tests
 cover the outgoing filters, pagination, date boundaries, repeated imports and
 relational reconciliation; a real Google sleep import still requires account access.
-
-### Year overview color focus
-
-Open **Reports -> Year Overview** and select a metric. TDD, bolus, basal,
-carbohydrates and Time in Range have two adjustable color bounds. Values outside
-those bounds use the endpoint colors, increasing contrast within the selected range.
-
-Average glucose has four movable boundaries on its continuous color bar, plus
-numeric inputs in the selected mg/dL or mmol/L units. **Reset** restores the default
-glucose color scale. Settings are remembered per metric, user and tenant in the
-current browser. They change display colors only: glucose targets, Time in Range
-calculations and measured values are unchanged.
-
-Personal remains the HA app's name. There is no separate Personal menu or medication/
-GLP-1 feature in Nocturne; the connector and report use the normal application areas.
 
 ## Install or update
 

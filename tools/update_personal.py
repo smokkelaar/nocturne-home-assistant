@@ -108,7 +108,7 @@ def files(lock, delivery):
     docs = docs.replace('the frequently updated upstream-`main` channel', 'the Personal source-fork channel following the approved Daily base')
     docs = docs.replace('Leave the Latest host port', 'Leave the Personal host port')
     docs = docs.replace('isolated from Official even', 'isolated from Official and Latest even')
-    features = f"Personal {lock['version']} includes Google Health imports and configurable Year Overview color ranges. Open Settings -> Connectors & Apps -> Server Connectors -> Google Health -> Import diagnostics for sync stages, processed counts, timestamps and a downloadable run log. Progress refreshes while the page is open; the percentage estimates data-type stages, not remaining time. Non-glucose report metrics have a remembered minimum and maximum focus range; average glucose keeps four adjustable boundaries. No dosing advice or insulin/IOB changes."
+    features = f"Personal {lock['version']} includes Google Health imports for steps, heart rate, weight and sleep. Open Settings -> Connectors & Apps -> Server Connectors -> Google Health -> Import diagnostics for sync stages, processed counts, timestamps and a downloadable run log. Progress refreshes while the page is open; the percentage estimates data-type stages, not remaining time. No dosing advice or insulin/IOB changes."
     generated['DOCS.md'] = docs + '\nPersonal compiles API and web from its pinned fork source. Builds need more time and resources than Latest. Home Assistant Supervisor currently keeps the update dialog at 0% during this local Docker build; this does not mean the build is stuck. Follow the named `Nocturne build phase` entries in **Settings → System → Logs → Supervisor** for live detail. ' + features + ' [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
     generated['README.md'] = '# Nocturne Personal Release\n\nIndependent Personal fork on the tested Daily base. Default host port 8450, separate data and cookies.\n\n' + features + '\n\n[Installation and updates](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
     runtime = dict(app=wrapper, package=delivery, personal=lock['version'],
@@ -131,6 +131,7 @@ def files(lock, delivery):
     original = (latest / 'Dockerfile').read_text(encoding='utf-8')
     node = next(line for line in original.splitlines() if line.startswith('FROM node:'))
     tail = original[original.index('USER root'):]
+    tail = tail.replace('npm install -g pnpm@10.13.1', 'npm install -g pnpm@11.5.0')
     tail = tail.replace('Nocturne Latest Release', 'Nocturne Personal Release')
     tail = re.sub(r'ARG BUILD_VERSION=\S+', 'ARG BUILD_VERSION=' + delivery, tail)
     tail = replace_once(tail, 'COPY --from=web /app/ /opt/nocturne-web/',
@@ -147,7 +148,7 @@ ENV CARGO_HOME=/usr/local/cargo RUSTUP_HOME=/usr/local/rustup PATH=/usr/local/ca
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\\n=== Nocturne build phase 1/7: install build tools ===\\n' \\
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \\
-    && npm install -g pnpm@10.13.1
+    && npm install -g pnpm@11.5.0
 ADD --checksum=sha256:{lock['archive_sha256']} {source_url(lock)} /tmp/source.tar.gz
 RUN printf '\\n=== Nocturne build phase 2/7: verify and unpack source ===\\n' \\
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src

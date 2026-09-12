@@ -22,7 +22,7 @@ delivery version (`<wrapper>-<counter>`). See [VERSIES](VERSIES.md).
 
 ## Personal 0.2.0 health and medication (2026-09-02)
 
-Read [GOOGLE_HEALTH](GOOGLE_HEALTH.md) and the source fork's PERSONAL_USAGE.md.
+Read [GOOGLE_HEALTH](GOOGLE_HEALTH.md) and the source fork's [Google Health guide](https://github.com/smokkelaar/nocturne-personal/blob/review/google-health-final/docs/google-health.md).
 Personal now contains native Google OAuth (state, PKCE, encrypted refresh tokens),
 read-only reconciled steps/heart-rate/weight imports and own history UI. No external
 helper or gateway Authorization relaxation was added. Other types are visible but

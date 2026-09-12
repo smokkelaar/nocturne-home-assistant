@@ -24,7 +24,7 @@ class PersonalTests(unittest.TestCase):
         lock = {**self.lock, 'version': '0.2.99'}
         generated = updater.files(lock, '0.2.99-1')
         for path in ('DOCS.md', 'README.md'):
-            self.assertIn(b'Personal 0.2.99 includes Google Health imports and configurable Year Overview color ranges', generated[path])
+            self.assertIn(b'Personal 0.2.99 includes Google Health imports for steps, heart rate, weight and sleep', generated[path])
             self.assertIn(b'Import diagnostics', generated[path])
             self.assertNotIn(b'does not include the separate Google Health contribution', generated[path])
             self.assertNotIn(b'medication log', generated[path])

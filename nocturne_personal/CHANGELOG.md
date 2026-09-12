@@ -1,3 +1,12 @@
+# 0.3.11-2
+
+Personal 0.3.11; source `d0ca6753a8fa9fcded1f100c632749eb210bd84e`; Daily base `d9e1430975c7a05967cba66374392f75f08c858f`.
+
+- Pins this Home Assistant candidate to the reviewed Google Health source branch after merging current upstream main.
+- Removes Personal-only workflows, metadata and unrelated Year Overview changes from the upstream review contribution.
+- Keeps Google record identities stable, retains current consent errors over historic successful runs, and uses pnpm 11.5.0 for the upstream web lockfile.
+- Test this update on a backed-up Personal instance before considering the upstream pull request.
+
 # 0.3.11-1
 
 Personal 0.3.11; source `bccd0a87b015b9aafdbd5990996b11e348abd699`; Daily base `d9e1430975c7a05967cba66374392f75f08c858f`.

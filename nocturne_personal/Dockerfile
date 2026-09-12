@@ -9,8 +9,8 @@ ENV CARGO_HOME=/usr/local/cargo RUSTUP_HOME=/usr/local/rustup PATH=/usr/local/ca
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
-    && npm install -g pnpm@10.13.1
-ADD --checksum=sha256:240dbd6a9d34a99db53fb419dd09a3e1152e3941b8c333a864e176e6ce04ff84 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/bccd0a87b015b9aafdbd5990996b11e348abd699 /tmp/source.tar.gz
+    && npm install -g pnpm@11.5.0
+ADD --checksum=sha256:032f1cba7ac142cd760e03d2024e7b8de05599e184aca99a182fb79539489d3e https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/d0ca6753a8fa9fcded1f100c632749eb210bd84e /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
 WORKDIR /src/src/Web
@@ -40,7 +40,7 @@ FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:507f3497203703382f204b1833a
 USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so
-ARG BUILD_VERSION=0.3.11-1
+ARG BUILD_VERSION=0.3.11-2
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Personal Release - Home Assistant app" \
@@ -69,7 +69,7 @@ COPY build/ /opt/nocturne-ha-build/
 WORKDIR /opt/nocturne-web
 RUN python3 /opt/nocturne-ha-build/prepare_web.py /opt/nocturne-web \
     && find . -type d -name node_modules -prune -exec rm -rf '{}' + \
-    && npm install -g pnpm@10.13.1 \
+    && npm install -g pnpm@11.5.0 \
     && pnpm install --prod --frozen-lockfile --filter @nocturne/app... \
     && chown -R nocturne-web:nocturne-web /opt/nocturne-web
 # Upstream enables a global virtual store. The guarded patch disables it so no
