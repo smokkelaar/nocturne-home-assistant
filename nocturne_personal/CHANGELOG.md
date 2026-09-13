@@ -1,3 +1,11 @@
+# 0.3.12-7
+
+Personal 0.3.12; source `2523ec0af703b6b3525df45f4ad7cdf5bcf5c8dc`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Fixed compact bar width (identical in default and advanced mode, without stretching).
+- Positioned all inputs cleanly underneath the slider bar.
+- Implemented 6 distinct UI design variants across metrics (Avg Glucose, TIR, Bolus, Basal, TDD, Carbs) for visual comparison.
+
 # 0.3.12-6
 
 Personal 0.3.12; source `02ea5800a1b8c70ad96b3e59139c71bce5bfb759`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
