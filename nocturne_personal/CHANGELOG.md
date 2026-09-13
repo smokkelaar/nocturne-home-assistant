@@ -1,3 +1,10 @@
+# 0.3.13-2
+
+Personal 0.3.13; source `86e4ff320083b98a82b5322b5da5e228dfb92ce9`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Adds mobile month quick-scroll pills (Jan–Dec) to instantly jump to any month.
+- Adds smooth horizontal drag and touch panning across the entire heatmap area.
+
 # 0.3.13-1
 
 Personal 0.3.13; source `f216ef6274985dbbdcb01f5a56df5cb1c6c042f3`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
