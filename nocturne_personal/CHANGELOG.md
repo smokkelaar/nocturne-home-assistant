@@ -1,3 +1,10 @@
+# 0.3.11-5
+
+Personal 0.3.11; source `1d295abe81ab0b3894d8eaa8ce26e95025498315`; Daily base `d9e1430975c7a05967cba66374392f75f08c858f`.
+
+- Keeps Google Health inventory categories open or closed as selected while the page refreshes import status.
+- Includes a browser regression test for category expansion state during two-second polling.
+
 # 0.3.11-4
 
 Personal 0.3.11; source `46496c3a10e25968fef880ba8ae6b23cbc599ac8`; Daily base `d9e1430975c7a05967cba66374392f75f08c858f`.
