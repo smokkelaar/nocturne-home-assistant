@@ -1,3 +1,9 @@
+# 0.3.12-8
+
+Personal 0.3.12; source `33a4a5ef979178527547c849f6be461af5636e21`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Fixes runtime error `metricKey is not defined` when enabling Advanced settings.
+
 # 0.3.12-7
 
 Personal 0.3.12; source `2523ec0af703b6b3525df45f4ad7cdf5bcf5c8dc`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
