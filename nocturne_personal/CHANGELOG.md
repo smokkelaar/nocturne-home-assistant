@@ -1,3 +1,14 @@
+# 0.3.12-1
+
+Personal 0.3.12; source `c4103ba07365947d65adb410bba2c405c8a45287`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Includes Google Health PR review follow-up `22e4a759f`: omitted OAuth scopes now match the actual authorization request; explicit partial consent remains authoritative.
+- A configured but disconnected Google Health source remains visible as Offline. The overview no longer shows a blank source card after filtering Google entries.
+- Database recovery policy: only when the initial staging migration is not registered, pre-existing Google reconciliation staging tables are transactionally replaced with a warning. Only temporary import administration is discarded; native health histories and connector settings/credentials are unchanged. Unexpected external dependencies stop and roll back recovery instead of being removed. Normal upgrades with registered migrations do not reset staging.
+- Verified locally with 28 Google Health API tests, 59 connector tests, 6 real PostgreSQL tests, 11 Chromium source/overview tests and API/client generation. Live Google-account acceptance of this delivery still requires manual testing.
+- Back up before updating, then check **Refresh inventory**, save the desired selection and run **Sync now**. Confirm steps, heart rate, weight and sleep remain present and continue updating. No disconnect, purge or reset is needed. If you deliberately test disconnect/reconnect, imported data should remain and the source should show Offline until reconnected.
+- Uses delivery `0.3.12-1` rather than `0.3.11-10`; app identity, approved Daily base and wrapper version remain unchanged.
+
 # 0.3.11-9
 
 Personal 0.3.11; source `9e03adcce0dee3bc69b666df3b2b181676b1a854`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
