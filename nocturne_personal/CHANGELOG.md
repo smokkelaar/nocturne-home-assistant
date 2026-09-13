@@ -1,3 +1,12 @@
+# 0.3.11-4
+
+Personal 0.3.11; source `46496c3a10e25968fef880ba8ae6b23cbc599ac8`; Daily base `d9e1430975c7a05967cba66374392f75f08c858f`.
+
+- Includes the latest Nightscout PR review fixes for Google Health.
+- Prevents a queued manual import from being dropped when scheduled progress reporting runs at the same time.
+- Also includes the purge watermark reset, partial-consent checkpoint protection, preview-timeout handling, and restored upstream logging configuration.
+- Use this delivery for practical Home Assistant testing of the current PR candidate.
+
 # 0.3.11-3
 
 Personal 0.3.11; source `a17401128ff2a07559339424eee015b811960d96`; Daily base `d9e1430975c7a05967cba66374392f75f08c858f`.
