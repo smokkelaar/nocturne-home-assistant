@@ -1,3 +1,9 @@
+# 0.3.12-9
+
+Personal 0.3.12; source `46419ef2b405d39777184c5f14ea428fcb7a5736`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Fixes runtime error `activeTab is not defined` on the Basal metric tab.
+
 # 0.3.12-8
 
 Personal 0.3.12; source `33a4a5ef979178527547c849f6be461af5636e21`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
