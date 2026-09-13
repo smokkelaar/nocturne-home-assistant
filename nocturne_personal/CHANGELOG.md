@@ -1,3 +1,10 @@
+# 0.3.12-6
+
+Personal 0.3.12; source `02ea5800a1b8c70ad96b3e59139c71bce5bfb759`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Responsive side-by-side layout: on wide screens/containers, inputs and controls sit beside the slider to save vertical space.
+- Per-metric color palettes: color choices for TIR, Bolus, Basal, TDD, and Carbs are now saved independently per metric.
+
 # 0.3.12-5
 
 Personal 0.3.12; source `04cda4238a244519b668271a0110d2b3d3d93325`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
