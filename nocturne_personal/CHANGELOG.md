@@ -1,3 +1,13 @@
+# 0.3.12-5
+
+Personal 0.3.12; source `04cda4238a244519b668271a0110d2b3d3d93325`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Adds an "Advanced settings" toggle to show or hide custom focus lines and color thresholds.
+- When toggled off, display defaults are used; custom values are remembered when toggled back on.
+- Adds custom out-of-band transparency percentage input (0–100%, default 90%).
+- Adds alternative color palette presets for non-glucose metrics (Cool Blue/Hot Red, Teal/Amber, Indigo/Rose, etc.).
+- All strings in English for localization support.
+
 # 0.3.12-4
 
 Personal 0.3.12; source `006bfccb7971f3f01120393304339d44a2b9d949`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
