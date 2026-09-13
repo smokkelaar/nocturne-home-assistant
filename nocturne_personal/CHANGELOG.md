@@ -1,3 +1,13 @@
+# 0.3.11-9
+
+Personal 0.3.11; source `9e03adcce0dee3bc69b666df3b2b181676b1a854`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Saving Google Health import settings no longer clears an existing operational sync error or marks a failed connector healthy.
+- Refresh inventory now recovers once from a rejected access token, saves rotated credentials, and retries the inventory. Reconnection is requested only when the renewed token is also rejected or the refresh session is revoked.
+- Temporary Google failures and cancellation preserve the connection. No import, reconciliation, database schema or account-binding changes are required for this update.
+- Verified with 26 Google Health API regression tests, including both reproduced review findings and recovery/error paths.
+- After backing up and updating Personal, use **Refresh inventory**, save your desired selection, then **Sync now**. Confirm counts and imported history remain correct. A pre-existing sync error should remain after saving settings and clear only after a successful connection or sync. Do not revoke credentials or delete data to induce a failure; rejected-token cases are covered by automated tests.
+
 # 0.3.11-8
 
 Personal 0.3.11; source `b2a875e3a64dcf595a844d415116c373be2d4590`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
