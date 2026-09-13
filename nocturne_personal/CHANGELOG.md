@@ -1,3 +1,10 @@
+# 0.3.12-2
+
+Personal 0.3.12; source `d2c03ffde8ec90afef1f62c9d516ec4e4d085b02`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Restores the original Year Overview heatmap implementation by reverting upstream PR #1315 (`17128d045`).
+- Maintains all Daily base features and Google Health connector improvements.
+
 # 0.3.12-1
 
 Personal 0.3.12; source `c4103ba07365947d65adb410bba2c405c8a45287`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
