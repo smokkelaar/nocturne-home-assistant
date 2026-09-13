@@ -1,3 +1,10 @@
+# 0.3.12-3
+
+Personal 0.3.12; source `e697ad656d02743f95bef0292cf484951020704c`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Adds movable focus lines with 90% out-of-band transparency across all Year Overview metrics (Avg Glucose, TIR, Bolus, Basal, TDD, Carbs).
+- Allows adjusting line values via input fields; on Avg Glucose, lines slide freely across the entire range independently of the 4 color threshold dots.
+
 # 0.3.12-2
 
 Personal 0.3.12; source `d2c03ffde8ec90afef1f62c9d516ec4e4d085b02`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
