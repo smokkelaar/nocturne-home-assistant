@@ -1,3 +1,10 @@
+# 0.3.13-1
+
+Personal 0.3.13; source `f216ef6274985dbbdcb01f5a56df5cb1c6c042f3`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Makes the Year Overview scale and focus box floating in the top right corner so it follows as you scroll through all years.
+- Adds a minimize button to collapse the box into a single compact pill button.
+
 # 0.3.12-9
 
 Personal 0.3.12; source `46419ef2b405d39777184c5f14ea428fcb7a5736`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
