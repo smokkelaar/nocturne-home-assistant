@@ -1,3 +1,10 @@
+# 0.3.12-4
+
+Personal 0.3.12; source `006bfccb7971f3f01120393304339d44a2b9d949`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Separates color scaling bullets from 90% out-of-band transparency focus lines on all Year Overview metrics.
+- All pages now have both the color scale adjustment and the freely movable focus lines with input fields.
+
 # 0.3.12-3
 
 Personal 0.3.12; source `e697ad656d02743f95bef0292cf484951020704c`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
