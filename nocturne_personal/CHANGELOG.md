@@ -1,3 +1,13 @@
+# 0.3.11-8
+
+Personal 0.3.11; source `b2a875e3a64dcf595a844d415116c373be2d4590`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Repairs Google Health staging migration discovery, which could leave imports failing with `internal_sync` even when inventory found data.
+- Preserves history for empty or invalid result pages, batches staged identifiers, and adds tenant isolation and abandoned-run cleanup.
+- Reloads saved credentials after waiting for another sync and restores the explicit-purge watermark reset.
+- Verified with connector/API tests and real PostgreSQL reconciliation tests. Live Google account imports still need operator testing.
+- After backing up and updating Personal, use Google Health **Sync now**. Do not disconnect, purge imported data, or reset the app to apply this fix.
+
 # 0.3.11-7
 
 Personal 0.3.11; source `5607320166f272261756aa3a919122272216c0ed`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
