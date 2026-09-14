@@ -1,3 +1,12 @@
+# 0.3.13-9
+
+Personal 0.3.13; source `3ea1b10a641e848eaf150a90af644bb37849a524`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Fixes the "Reset" buttons losing their descriptive accessible name (screen readers again announce, e.g., "Reset TDD color range to automatic").
+- Fixes non-glucose color slider accessible names reading "Min color color value" instead of "minimum color value".
+- Fixes the default (non-Advanced) scale label for non-glucose metrics using an inconsistent lowercase transform.
+- Strict review pass for upstream publication: reconfirmed prior code-review feedback (SyncedPref-based storage, dark-mode heatmap colors, consolidated slider component, no new svelte-check diagnostics) is still satisfied.
+
 # 0.3.13-8
 
 Personal 0.3.13; source `97407a921f02b4806fc5297f6ee3c5c8321a414e`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
