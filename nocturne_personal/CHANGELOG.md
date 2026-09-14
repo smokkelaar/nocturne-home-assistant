@@ -1,3 +1,13 @@
+# 0.3.13-10
+
+Personal 0.3.13; source `e3817dc4d2ce5fd9e5cdf58b92bfd1722b77cf82`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Removes the redundant "Reset focus window" button (the main Reset already covers it).
+- Fixes the Dim % input snapping back to its old value while typing, so it can't be cleared to type a new number; it now shows an invalid message like the other fields instead.
+- Adds the same color palette choices (Theme, Blue/Orange, Viridis, Cividis) to Average Glucose as the other metrics.
+- Renames the average glucose boundary controls from "Very low/Low/High/Very high" to neutral "Point 1-4" labels with a color swatch, so changing them isn't mistaken for changing glucose targets.
+- Adds an Invert control to reverse the direction of any metric's color scale, including Average Glucose.
+
 # 0.3.13-9
 
 Personal 0.3.13; source `3ea1b10a641e848eaf150a90af644bb37849a524`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
