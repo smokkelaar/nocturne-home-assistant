@@ -1,3 +1,9 @@
+# 0.3.14-2
+
+Personal 0.3.14; source `a034d6889ca286966b8643afa97db2197742f786`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Fixes Average Glucose showing 4 confusing color points (Point 2/3 did nothing meaningful) when a custom palette (Blue/Orange, Viridis, Cividis) is selected. Now shows just Low/High, matching the other metrics; the Theme palette still shows all 4 points since its color bands are real.
+
 # 0.3.14-1
 
 Personal 0.3.14; source `ed81d59ecf5fc04b8c50da4c3ff4172ba7339a11`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
