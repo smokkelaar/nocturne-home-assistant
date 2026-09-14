@@ -1,3 +1,11 @@
+# 0.3.14-5
+
+Personal 0.3.14; source `1deeb6494d51bddc88441fe4a1648bec8c3b910c`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Fixes the custom palettes only blending between 2 colors, losing every colormap's real in-between hues (e.g. Viridis' purple→blue→green→yellow). Every palette now uses its full multi-stop spectrum.
+- Fixes the Theme swatch preview showing whichever palette was currently active instead of Theme's own fixed colors.
+- Makes each palette preview swatch show its full spectrum too, so similar-looking palettes (Inferno vs Magma, Mako vs Rocket) are easier to tell apart before picking one.
+
 # 0.3.14-4
 
 Personal 0.3.14; source `1ff0982a3a153c74848db09c93501f068cb9129c`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
