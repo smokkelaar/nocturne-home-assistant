@@ -1,3 +1,9 @@
+# 0.3.14-1
+
+Personal 0.3.14; source `ed81d59ecf5fc04b8c50da4c3ff4172ba7339a11`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Version bump only (0.3.13 → 0.3.14) so Home Assistant shows this as an update; no functional changes since 0.3.13-10. Replaces the earlier 3.14.0-1 build, which used the wrong version scheme.
+
 # 0.3.13-10
 
 Personal 0.3.13; source `e3817dc4d2ce5fd9e5cdf58b92bfd1722b77cf82`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
