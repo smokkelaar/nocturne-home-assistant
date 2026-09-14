@@ -1,3 +1,10 @@
+# 0.3.13-4
+
+Personal 0.3.13; source `967bb0c055715615c49b99933b57617a97999a1e`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Fixes the HA install failure caused by an extra closing tag in the Year Overview floating controls panel.
+- Verified with full local API/client generation plus bridge, bot and app production web builds using the HA Docker Node memory setting.
+
 # 0.3.13-3
 
 Personal 0.3.13; source `3fa9bb08c0457ba77c89a4e26480107670020139`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
