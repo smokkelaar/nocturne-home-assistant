@@ -1,3 +1,13 @@
+# 0.3.13-5
+
+Personal 0.3.13; source `9e25fbf584ac8c03cb14c6f7331d82845f638b00`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Reuses the preferred Time in Range control layout for Bolus, Basal, TDD and Carbs.
+- Shows color palette choices as larger round swatches instead of small text-heavy buttons.
+- Reduces palette presets to Theme plus four contrast options: Blue/Orange, Viridis, Cividis and Blue-Green-Yellow-Red.
+- Color choices remain saved per metric, so changing TDD does not change Bolus, Basal, TIR or Carbs.
+- Verified with the Docker-style production web build using the HA Node memory setting.
+
 # 0.3.13-4
 
 Personal 0.3.13; source `967bb0c055715615c49b99933b57617a97999a1e`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
