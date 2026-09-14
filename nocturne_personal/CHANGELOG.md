@@ -1,3 +1,11 @@
+# 0.3.14-4
+
+Personal 0.3.14; source `1ff0982a3a153c74848db09c93501f068cb9129c`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Moves the Dim % input into the Focus Window card, since dimming only affects cells outside that window.
+- Reset now also turns Invert back off, instead of leaving it on.
+- Replaces Blue/Orange with the full set of perceptually-uniform colormap palettes (Viridis, Plasma, Inferno, Magma, Cividis, Turbo, Mako, Rocket), for 9 choices total alongside Theme.
+
 # 0.3.14-3
 
 Personal 0.3.14; source `6081ab100de24d1793e6583a7b648a426db8c18b`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
