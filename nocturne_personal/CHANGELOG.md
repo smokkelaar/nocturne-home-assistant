@@ -1,3 +1,11 @@
+# 0.3.13-3
+
+Personal 0.3.13; source `3fa9bb08c0457ba77c89a4e26480107670020139`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Replaces the minimize behavior with a `Float` / `Dock` toggle: inline above the graphs by default, or fixed in the top-right corner while scrolling.
+- Keeps the scale panel at the same compact width in both modes.
+- Widens the mobile heatmap canvas so the year can scroll past September through the final months.
+
 # 0.3.13-2
 
 Personal 0.3.13; source `86e4ff320083b98a82b5322b5da5e228dfb92ce9`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
