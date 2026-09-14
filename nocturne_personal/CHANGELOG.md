@@ -1,3 +1,14 @@
+# 0.3.13-8
+
+Personal 0.3.13; source `97407a921f02b4806fc5297f6ee3c5c8321a414e`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Fixes the focus-window slider grabbing the color-range handle even when the two are far apart.
+- Removes the Blue/Green/Yellow/Red multicolor palette option.
+- Renames the "Auto" button to "Reset".
+- Fixes the average glucose focus window always excluding the highest values, even at maximum.
+- Aligns the average glucose control layout with the other metrics' card style.
+- Fixes the average glucose default (non-Advanced) scale showing mg/dL numbers mislabeled with the mmol/L unit.
+
 # 0.3.13-7
 
 Personal 0.3.13; source `cb14cf97b7edaab935bab0867bf7b1a398d242d1`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
