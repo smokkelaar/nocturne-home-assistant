@@ -1,3 +1,10 @@
+# 0.3.13-7
+
+Personal 0.3.13; source `cb14cf97b7edaab935bab0867bf7b1a398d242d1`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Fixes the Year Overview runtime error `cellSize is not defined` caused by the extra mobile swipe-area rectangle.
+- Keeps the wider horizontally scrollable heatmap behavior from 0.3.13-6.
+
 # 0.3.13-6
 
 Personal 0.3.13; source `ecf1d759ea464a8bcb8e7ec9cb47d225b0582937`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
