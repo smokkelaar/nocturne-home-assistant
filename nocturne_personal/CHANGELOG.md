@@ -1,3 +1,13 @@
+# 0.3.13-6
+
+Personal 0.3.13; source `ecf1d759ea464a8bcb8e7ec9cb47d225b0582937`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Puts color-range handles above focus-window handles, so overlapping handles grab the color range first.
+- Makes the Blue / Green / Yellow / Red palette actually use all four colors for the scale and cells.
+- Removes the month jump buttons above each year now that horizontal scrolling is improved.
+- Adds a larger transparent swipe area below week numbers for easier mobile horizontal scrolling.
+- Verified with the Docker-style production web build using the HA Node memory setting.
+
 # 0.3.13-5
 
 Personal 0.3.13; source `9e25fbf584ac8c03cb14c6f7331d82845f638b00`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
