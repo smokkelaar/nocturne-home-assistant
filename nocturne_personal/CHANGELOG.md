@@ -1,3 +1,11 @@
+# 0.3.14-3
+
+Personal 0.3.14; source `6081ab100de24d1793e6583a7b648a426db8c18b`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
+- Fixes the custom Avg Glucose palette's High point showing the wrong color; Low/High now mark the true color endpoints instead of a position inside the fixed 2.2-19.4 scale.
+- Hides the 2 extra (non-adjustable) slider dots on the bar when a custom palette is active, matching the Low/High inputs below it.
+- Keeps the Theme ramp (Red → Yellow → Green → Blue → White/Black) fixed; Invert now only affects a selected custom palette, not Theme.
+
 # 0.3.14-2
 
 Personal 0.3.14; source `a034d6889ca286966b8643afa97db2197742f786`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
