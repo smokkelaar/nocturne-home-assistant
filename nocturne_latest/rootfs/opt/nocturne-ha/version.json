@@ -1,8 +1,8 @@
 {
   "app": "0.1.6",
-  "package": "0.1.6-8",
-  "nocturne": "main@3e30bf5",
-  "commit_at": "2026-09-13T07:10:06Z",
+  "package": "0.1.6-9",
+  "nocturne": "main@6599da2",
+  "commit_at": "2026-09-15T23:44:58Z",
   "name": "Nocturne Latest Release",
   "default_public_url": "https://homeassistant.local:8449",
   "cookie_namespace": "NocturneLatest_"
