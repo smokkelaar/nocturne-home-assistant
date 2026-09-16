@@ -63,6 +63,8 @@ class PersonalTests(unittest.TestCase):
         self.assertEqual('https://homeassistant.local:8451', test_runtime['default_public_url'])
         test_settings = (ROOT / 'nocturne_test_a/rootfs/opt/nocturne-ha/settings.py').read_text()
         self.assertIn("('NocturneTestA_',)", test_settings)
+        test_cookies = (ROOT / 'nocturne_test_a/rootfs/opt/nocturne-ha/cookies.mjs').read_text()
+        self.assertIn("'NocturneTestA_'", test_cookies)
 
     def test_personal_source_replaces_both_api_and_web(self):
         recipe = (self.directory / 'Dockerfile').read_text()

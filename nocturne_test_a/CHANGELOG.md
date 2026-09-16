@@ -1,3 +1,7 @@
+# 0.3.25-3
+
+Allow the isolated Test A cookie namespace through the HTTPS gateway.
+
 # 0.3.25-2
 
 Test A uses host port 8451.

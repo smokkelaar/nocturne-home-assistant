@@ -1,6 +1,6 @@
 {
   "name": "Nocturne Test A",
-  "version": "0.3.25-2",
+  "version": "0.3.25-3",
   "slug": "nocturne_test_a",
   "description": "HA wrapper 0.1.7 \u00b7 Personal 0.3.25 \u00b7 Daily 3e30bf5 - 2026-09-13 07:10 UTC. Temporary isolated test instance; not for clinical use.",
   "url": "https://github.com/smokkelaar/nocturne-home-assistant",
