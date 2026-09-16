@@ -1,7 +1,7 @@
-## 0.1.6-9
+## 0.1.7-1
 
-- Temporary upstream-only test build from `nightscout/nocturne` commit [`6599da2`](https://github.com/nightscout/nocturne/commit/6599da23b741e870db1d333976975da1ee43708b).
-- Uses fork-published immutable API and web images built from the same commit. This is not an officially promoted Daily release.
+- Restore the Latest channel to the existing approved Daily snapshot `3e30bf5`.
+- The temporary upstream-only test build is retired; use Nocturne Personal and Test A for API development.
 
 ## 0.1.6-8
 

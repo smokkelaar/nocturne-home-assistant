@@ -1,0 +1,23 @@
+{
+  "configuration": {
+    "public_url": {
+      "name": "Fixed HTTPS address for this Nocturne",
+      "description": "Use the certificate hostname and configured host port, not an IP address or /setup path. Do not casually change the hostname after registering passkeys."
+    },
+    "certificate": {
+      "name": "Certificate filename",
+      "description": "Filename in /ssl, for example fullchain.pem. Also specify the private key. Both empty creates only a temporary startup-test certificate."
+    },
+    "private_key": {
+      "name": "Private key filename",
+      "description": "Filename in /ssl, for example privkey.pem. Never paste key contents here. It must match the certificate."
+    },
+    "gateway_auth": {
+      "name": "Extra username/password popup",
+      "description": "On: extra code from the HA status page, required for first owner setup. Off: go directly to Nocturne passkey login, only after completed owner setup with configured trusted certificates. Nocturne authentication stays enabled. Save and restart only this app."
+    }
+  },
+  "network": {
+    "8448/tcp": "Nocturne HTTPS: host port must match the fixed HTTPS address. Router port forwarding is not needed."
+  }
+}

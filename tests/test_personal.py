@@ -43,14 +43,25 @@ class PersonalTests(unittest.TestCase):
 
     def test_three_distinct_data_and_network_identities(self):
         all_configs = [json.loads((ROOT / package / 'config.json').read_text())
-                       for package in ('nocturne_local', 'nocturne_latest', 'nocturne_personal')]
-        self.assertEqual(3, len({entry['slug'] for entry in all_configs}))
-        self.assertEqual([8448, 8449, 8450], [entry['ports']['8448/tcp'] for entry in all_configs])
+                   for package in ('nocturne_local', 'nocturne_latest', 'nocturne_personal', 'nocturne_test_a')]
+        self.assertEqual(4, len({entry['slug'] for entry in all_configs}))
+        self.assertEqual([8448, 8449, 8450, 4851], [entry['ports']['8448/tcp'] for entry in all_configs])
         self.assertEqual('Nocturne Personal Release', self.config['name'])
         self.assertEqual('nocturne_personal', self.config['slug'])
         self.assertTrue(self.config['options']['gateway_auth'])
         self.assertEqual('cold', self.config['backup'])
         self.assertNotIn('host_network', self.config)
+
+    def test_test_a_uses_the_personal_source_with_a_distinct_runtime_identity(self):
+        test_a = json.loads((ROOT / 'nocturne_test_a/config.json').read_text())
+        test_runtime = json.loads((ROOT / 'nocturne_test_a/rootfs/opt/nocturne-ha/version.json').read_text())
+        self.assertEqual(self.config['version'], test_a['version'])
+        self.assertEqual(self.config['version'], test_runtime['package'])
+        self.assertEqual('Nocturne Test A', test_a['name'])
+        self.assertEqual('NocturneTestA_', test_runtime['cookie_namespace'])
+        self.assertEqual('https://homeassistant.local:4851', test_runtime['default_public_url'])
+        test_settings = (ROOT / 'nocturne_test_a/rootfs/opt/nocturne-ha/settings.py').read_text()
+        self.assertIn("('NocturneTestA_',)", test_settings)
 
     def test_personal_source_replaces_both_api_and_web(self):
         recipe = (self.directory / 'Dockerfile').read_text()

@@ -1,0 +1,23 @@
+{
+  "configuration": {
+    "public_url": {
+      "name": "Vast HTTPS-adres van deze Nocturne",
+      "description": "Gebruik de domeinnaam van je certificaat en de ingestelde hostpoort. Geen IP-adres of /setup-pad. Wijzig de domeinnaam niet zomaar na het aanmaken van passkeys."
+    },
+    "certificate": {
+      "name": "Certificaatbestand",
+      "description": "Bestandsnaam in /ssl, bijvoorbeeld fullchain.pem. Vul ook de privésleutel in. Beide leeg is alleen een tijdelijk opstarttestcertificaat."
+    },
+    "private_key": {
+      "name": "Privésleutelbestand",
+      "description": "Bestandsnaam in /ssl, bijvoorbeeld privkey.pem. Plak hier nooit de sleutelinhoud. Het bestand moet bij het certificaat horen."
+    },
+    "gateway_auth": {
+      "name": "Extra gebruikersnaam/wachtwoord-popup",
+      "description": "Aan: extra toegangscode via de HA-statuspagina; nodig voor eerste accountaanmaak. Uit: rechtstreeks naar Nocturne-passkey, alleen na afgeronde accountaanmaak en met ingestelde vertrouwde certificaten. Nocturne-authenticatie blijft aan. Opslaan en alleen deze app herstarten."
+    }
+  },
+  "network": {
+    "8448/tcp": "Nocturne HTTPS: hostpoort moet overeenkomen met het vaste HTTPS-adres. Geen router-portforwarding nodig."
+  }
+}
