@@ -1,6 +1,6 @@
 # Nocturne Test A — installation and operation
 
-> This is an isolated Personal test app following the approved Daily base. It is a separate HA app with its own data and default host port **4851**. Never copy `/data`, accounts or keys between it and Personal.
+> This is an isolated Personal test app following the approved Daily base. It is a separate HA app with its own data and default host port **8451**. Never copy `/data`, accounts or keys between it and Personal.
 
 > **Nederlands, met afbeeldingen en exacte stappen:** [Volledige visuele installatiehandleiding](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md), van repository toevoegen tot dashboard en herstarttest. [Domein, certificaat en lokale DNS](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/HTTPS-EN-DNS.md) is apart uitgewerkt. These absolute links also work from Home Assistant's Documentation tab.
 

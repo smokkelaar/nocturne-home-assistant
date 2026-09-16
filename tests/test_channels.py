@@ -34,8 +34,8 @@ class ChannelTests(unittest.TestCase):
     def test_test_a_is_a_distinct_personal_store_entry(self):
         self.assertEqual('Nocturne Test A', self.test_a['name'])
         self.assertEqual('nocturne_test_a', self.test_a['slug'])
-        self.assertEqual({'8448/tcp': 4851}, self.test_a['ports'])
-        self.assertTrue(self.test_a['options']['public_url'].endswith(':4851'))
+        self.assertEqual({'8448/tcp': 8451}, self.test_a['ports'])
+        self.assertTrue(self.test_a['options']['public_url'].endswith(':8451'))
         self.assertNotEqual(self.test_a['slug'], 'nocturne_personal')
 
     def test_both_channels_have_one_shared_functional_wrapper_version(self):
@@ -75,7 +75,7 @@ class ChannelTests(unittest.TestCase):
     def test_each_status_page_names_its_channel(self):
         for package, name, port in [('nocturne_local', 'Nocturne Official Release', 8448),
                                     ('nocturne_latest', 'Nocturne Latest Release', 8449),
-                                    ('nocturne_test_a', 'Nocturne Test A', 4851)]:
+                                    ('nocturne_test_a', 'Nocturne Test A', 8451)]:
             settings = load_settings(package)
             options = settings.validate_options({})
             self.assertEqual(f'https://homeassistant.local:{port}', options['public_url'])
@@ -93,7 +93,7 @@ class ChannelTests(unittest.TestCase):
                                     ('nocturne_latest', 'NocturneLatest_'),
                                     ('nocturne_test_a', 'NocturneTestA_')]:
             settings = load_settings(package)
-            for port in (8448, 8449, 4851):
+            for port in (8448, 8449, 8451):
                 options = settings.validate_options({
                     'public_url': f'https://example.net:{port}',
                     'cookie_namespace': 'attacker_',

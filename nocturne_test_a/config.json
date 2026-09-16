@@ -1,6 +1,6 @@
 {
   "name": "Nocturne Test A",
-  "version": "0.3.25-1",
+  "version": "0.3.25-2",
   "slug": "nocturne_test_a",
   "description": "HA wrapper 0.1.7 \u00b7 Personal 0.3.25 \u00b7 Daily 3e30bf5 - 2026-09-13 07:10 UTC. Temporary isolated test instance; not for clinical use.",
   "url": "https://github.com/smokkelaar/nocturne-home-assistant",
@@ -17,7 +17,7 @@
   "panel_title": "Nocturne Test A",
   "panel_admin": true,
   "ports": {
-    "8448/tcp": 4851
+    "8448/tcp": 8451
   },
   "ports_description": {
     "8448/tcp": "Nocturne HTTPS - alleen lokaal gebruiken; extra toegangscode staat in de HA-webinterface"
@@ -30,7 +30,7 @@
   ],
   "backup": "cold",
   "options": {
-    "public_url": "https://homeassistant.local:4851",
+    "public_url": "https://homeassistant.local:8451",
     "certificate": "",
     "private_key": "",
     "gateway_auth": true
