@@ -1,3 +1,7 @@
+# 0.3.24-1
+
+Personal 0.3.24; source `4635241949b599a8f9788a5b0fcf95e3c6233cfd`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
+
 # 0.3.23-1
 
 Personal 0.3.23; source `e001e386d2cee62f160848cd17ee891e98056892`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
