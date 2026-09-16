@@ -1,3 +1,8 @@
+## 0.1.6-9
+
+- Temporary upstream-only test build from `nightscout/nocturne` commit [`6599da2`](https://github.com/nightscout/nocturne/commit/6599da23b741e870db1d333976975da1ee43708b).
+- Uses fork-published immutable API and web images built from the same commit. This is not an officially promoted Daily release.
+
 ## 0.1.6-8
 
 - Update Nocturne Latest from `d9e1430` to [`3e30bf5`](https://github.com/nightscout/nocturne/compare/d9e1430975c7a05967cba66374392f75f08c858f...3e30bf504a7d04cb49178edd6e67fc561b58b035).
