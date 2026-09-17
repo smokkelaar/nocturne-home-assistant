@@ -43,9 +43,9 @@ class PersonalTests(unittest.TestCase):
 
     def test_three_distinct_data_and_network_identities(self):
         all_configs = [json.loads((ROOT / package / 'config.json').read_text())
-                   for package in ('nocturne_local', 'nocturne_latest', 'nocturne_personal', 'nocturne_test_a')]
-        self.assertEqual(4, len({entry['slug'] for entry in all_configs}))
-        self.assertEqual([8448, 8449, 8450, 8451], [entry['ports']['8448/tcp'] for entry in all_configs])
+                   for package in ('nocturne_local', 'nocturne_latest', 'nocturne_personal', 'nocturne_test_a', 'nocturne_test_b')]
+        self.assertEqual(5, len({entry['slug'] for entry in all_configs}))
+        self.assertEqual([8448, 8449, 8450, 8451, 8452], [entry['ports']['8448/tcp'] for entry in all_configs])
         self.assertEqual('Nocturne Personal Release', self.config['name'])
         self.assertEqual('nocturne_personal', self.config['slug'])
         self.assertTrue(self.config['options']['gateway_auth'])
@@ -65,6 +65,23 @@ class PersonalTests(unittest.TestCase):
         self.assertIn("('NocturneTestA_',)", test_settings)
         test_cookies = (ROOT / 'nocturne_test_a/rootfs/opt/nocturne-ha/cookies.mjs').read_text()
         self.assertIn("'NocturneTestA_'", test_cookies)
+
+    def test_test_b_uses_the_personal_source_with_a_distinct_runtime_identity(self):
+        test_b = json.loads((ROOT / 'nocturne_test_b/config.json').read_text())
+        test_runtime = json.loads((ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/version.json').read_text())
+        self.assertNotEqual(self.config['version'], test_b['version'])
+        self.assertTrue(test_b['version'].startswith('0.3.25-'))
+        self.assertEqual(test_b['version'], test_runtime['package'])
+        self.assertEqual('Nocturne Test B', test_b['name'])
+        self.assertEqual('NocturneTestB_', test_runtime['cookie_namespace'])
+        self.assertEqual('https://homeassistant.local:8452', test_runtime['default_public_url'])
+        self.assertEqual('22e4a759fb4b176b2aba2fdc7ccf68cbe52b94c7', test_runtime['source_commit'])
+        test_settings = (ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/settings.py').read_text()
+        self.assertIn("('NocturneTestB_',)", test_settings)
+        test_cookies = (ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/cookies.mjs').read_text()
+        self.assertIn("'NocturneTestB_'", test_cookies)
+        self.assertNotEqual(test_b['ports']['8448/tcp'],
+                             json.loads((ROOT / 'nocturne_test_a/config.json').read_text())['ports']['8448/tcp'])
 
     def test_personal_source_replaces_both_api_and_web(self):
         recipe = (self.directory / 'Dockerfile').read_text()

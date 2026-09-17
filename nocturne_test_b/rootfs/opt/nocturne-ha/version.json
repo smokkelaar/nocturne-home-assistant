@@ -1,0 +1,12 @@
+{
+  "app": "0.1.7",
+  "package": "0.3.25-b1",
+  "personal": "0.3.25",
+  "source_commit": "22e4a759fb4b176b2aba2fdc7ccf68cbe52b94c7",
+  "source_at": "2026-09-13T14:01:02Z",
+  "nocturne": "main@3e30bf5",
+  "commit_at": "2026-09-13T07:10:06Z",
+  "name": "Nocturne Test B",
+  "default_public_url": "https://homeassistant.local:8452",
+  "cookie_namespace": "NocturneTestB_"
+}
