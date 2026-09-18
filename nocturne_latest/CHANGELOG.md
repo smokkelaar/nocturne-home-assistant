@@ -1,3 +1,9 @@
+## 0.1.7-2
+
+- Update Nocturne Latest from `3e30bf5` to [`761d988`](https://github.com/nightscout/nocturne/compare/3e30bf504a7d04cb49178edd6e67fc561b58b035...761d98876e93c13b557c5f89260701398718aff7).
+- Upstream paired-image build: https://github.com/nightscout/nocturne/actions/runs/35212943354
+- Automated container and previous-Latest upgrade tests are required before merge. Keep a cold backup; rollback after a development schema migration is not guaranteed.
+
 ## 0.1.7-1
 
 - Restore the Latest channel to the existing approved Daily snapshot `3e30bf5`.

@@ -1,7 +1,7 @@
 {
   "app": "0.1.7",
-  "package": "0.1.7-1",
-  "nocturne": "0.2.6",
+  "package": "0.1.7-2",
+  "nocturne": "0.2.7",
   "name": "Nocturne Official Release",
   "default_public_url": "https://homeassistant.local:8448",
   "cookie_namespace": "NocturneOfficial_"

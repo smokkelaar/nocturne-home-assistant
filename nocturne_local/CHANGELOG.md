@@ -1,3 +1,9 @@
+## 0.1.7-2
+
+- Update paired Nocturne API/web to 0.2.7.
+- [Upstream release](https://github.com/nightscout/nocturne/releases/tag/v0.2.7).
+- Maintainer review and backup required before installation; database migrations may occur.
+
 ## 0.1.6-2
 
 - Update paired Nocturne API/web to 0.2.6.
