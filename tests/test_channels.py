@@ -21,6 +21,7 @@ class ChannelTests(unittest.TestCase):
         self.latest = json.loads((ROOT / 'nocturne_latest/config.json').read_text())
         self.test_a = json.loads((ROOT / 'nocturne_test_a/config.json').read_text())
         self.test_b = json.loads((ROOT / 'nocturne_test_b/config.json').read_text())
+        self.test_c = json.loads((ROOT / 'nocturne_test_c/config.json').read_text())
 
     def test_two_distinct_store_entries_and_data_identities(self):
         self.assertEqual('Nocturne Official Release', self.official['name'])
@@ -46,6 +47,14 @@ class ChannelTests(unittest.TestCase):
         self.assertTrue(self.test_b['options']['public_url'].endswith(':8452'))
         self.assertNotEqual(self.test_b['slug'], 'nocturne_test_a')
         self.assertNotEqual(self.test_b['ports'], self.test_a['ports'])
+
+    def test_test_c_is_a_distinct_personal_store_entry(self):
+        self.assertEqual('Nocturne Test C', self.test_c['name'])
+        self.assertEqual('nocturne_test_c', self.test_c['slug'])
+        self.assertEqual({'8448/tcp': 8453}, self.test_c['ports'])
+        self.assertTrue(self.test_c['options']['public_url'].endswith(':8453'))
+        self.assertNotEqual(self.test_c['slug'], self.test_b['slug'])
+        self.assertNotEqual(self.test_c['ports'], self.test_b['ports'])
 
     def test_both_channels_have_one_shared_functional_wrapper_version(self):
         wrapper = json.loads((ROOT / 'wrapper.json').read_text())['version']
@@ -85,7 +94,8 @@ class ChannelTests(unittest.TestCase):
         for package, name, port in [('nocturne_local', 'Nocturne Official Release', 8448),
                                     ('nocturne_latest', 'Nocturne Latest Release', 8449),
                                     ('nocturne_test_a', 'Nocturne Test A', 8451),
-                                    ('nocturne_test_b', 'Nocturne Test B', 8452)]:
+                                    ('nocturne_test_b', 'Nocturne Test B', 8452),
+                                    ('nocturne_test_c', 'Nocturne Test C', 8453)]:
             settings = load_settings(package)
             options = settings.validate_options({})
             self.assertEqual(f'https://homeassistant.local:{port}', options['public_url'])
@@ -102,9 +112,10 @@ class ChannelTests(unittest.TestCase):
         for package, namespace in [('nocturne_local', 'NocturneOfficial_'),
                                     ('nocturne_latest', 'NocturneLatest_'),
                                     ('nocturne_test_a', 'NocturneTestA_'),
-                                    ('nocturne_test_b', 'NocturneTestB_')]:
+                                    ('nocturne_test_b', 'NocturneTestB_'),
+                                    ('nocturne_test_c', 'NocturneTestC_')]:
             settings = load_settings(package)
-            for port in (8448, 8449, 8451, 8452):
+            for port in (8448, 8449, 8451, 8452, 8453):
                 options = settings.validate_options({
                     'public_url': f'https://example.net:{port}',
                     'cookie_namespace': 'attacker_',
