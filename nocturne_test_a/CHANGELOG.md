@@ -1,3 +1,7 @@
+# 0.3.25-4
+
+Klikbare broninformatie, expliciet testdoel en actuele systeemresources op de Home Assistant-statuspagina.
+
 # 0.3.25-3
 
 Allow the isolated Test A cookie namespace through the HTTPS gateway.

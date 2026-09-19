@@ -4,7 +4,6 @@ import ipaddress
 import json
 import re
 import secrets
-from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -176,21 +175,31 @@ http {{
 '''
 
 
-def status_page(options, statuses, gateway_password, test_certificate, checks=None):
+def status_page(options, statuses, gateway_password, test_certificate, checks=None, resources=None):
     esc = html.escape
     versions = json.loads(Path(__file__).with_name('version.json').read_text())
     app_name = versions.get('name', 'Nocturne')
-    snapshot = ''
-    if versions.get('commit_at'):
-        stamp = datetime.fromisoformat(versions['commit_at'].replace('Z', '+00:00'))
-        stamp = stamp.astimezone(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
-        snapshot = f'<p>Upstream main-commit: {esc(stamp)} (vastgezette code, geen live status van main).</p>'
+    repository = versions.get('repository', 'nightscout/nocturne')
+    repository_url = f'https://github.com/{repository}'
+    source_commit = versions.get('source_commit', '')
+    source_url = f'{repository_url}/commit/{source_commit}' if source_commit else repository_url
+    base_commit = versions.get('base_commit', source_commit)
+    base_url = versions.get('base_url') or (
+        f'https://github.com/nightscout/nocturne/commit/{base_commit}' if base_commit else repository_url)
+    release_url = versions.get('release_url', base_url)
+    purpose_url = versions.get('purpose_url', source_url)
+    test_url = versions.get('test_url', purpose_url)
+    version_rows = f'''<dl class="versions">
+<dt>Softwarebasis</dt><dd><a href="{esc(base_url, quote=True)}" target="_blank" rel="noopener noreferrer">{esc(versions.get('base', versions['nocturne']))}</a></dd>
+<dt>Release</dt><dd><a href="{esc(release_url, quote=True)}" target="_blank" rel="noopener noreferrer">{esc(versions.get('release', versions['nocturne']))}</a></dd>
+<dt>Exacte broncommit</dt><dd><a href="{esc(source_url, quote=True)}" target="_blank" rel="noopener noreferrer"><code>{esc(source_commit or 'niet vastgelegd')}</code></a></dd>
+<dt>HA-wrapper</dt><dd><a aria-label="HA-wrapper {esc(versions['app'], quote=True)}" href="https://github.com/smokkelaar/nocturne-home-assistant" target="_blank" rel="noopener noreferrer">{esc(versions['app'])}</a> <span class="muted">(HA-pakket {esc(versions['package'])})</span></dd>
+</dl>'''
     rows = ''.join(f'<li><strong>{esc(name)}</strong>: {esc(state)}</li>' for name, state in statuses.items())
     check_rows = ''.join(f'<li><strong>{esc(name)}</strong>: {esc(state)}</li>'
                          for name, state in (checks or {'Controles': 'nog niet uitgevoerd'}).items())
-    certificate_text = ('Zelfondertekend testcertificaat: nog niet geschikt voor echte medische '
-                        'gegevens. Vertrouwd HTTPS/passkey-inloggen moet apart worden getest.'
-                        if test_certificate else 'Eigen certificaat ingesteld. Controleer de geldigheid in de browser.')
+    resource_rows = ''.join(f'<dt>{esc(name)}</dt><dd>{esc(value)}</dd>'
+                            for name, value in (resources or {'Metingen': 'worden verzameld'}).items())
     gateway_section = f'''<details><summary>Toegangscode voor deze lokale test tonen</summary>
 <p>Gebruiker: <code>nocturne</code><br>Wachtwoord: <code>{esc(gateway_password)}</code></p>
 <p>Dit is de extra beveiliging van de app, niet je Nocturne-account. Deel deze code niet.</p></details>'''
@@ -204,35 +213,25 @@ def status_page(options, statuses, gateway_password, test_certificate, checks=No
 <title>{esc(app_name)}</title>
 <style>body{{font:16px system-ui;max-width:760px;margin:32px auto;padding:20px;background:#101724;color:#e5edf7}}
 a{{color:#80d5fc}}li{{margin:10px 0}}section{{background:#1d293c;padding:20px;border-radius:12px;margin:20px 0}}
-code{{overflow-wrap:anywhere}}button{{padding:10px;cursor:pointer}}.warning{{color:#ffd291}}</style>
-<h1>{esc(app_name)}</h1><p><strong>HA-wrapper {esc(versions['app'])}</strong> · Nocturne {esc(versions['nocturne'])}</p>
-{snapshot}
-<details><summary>Technische pakketgegevens</summary>
-<p>HA-pakket {esc(versions['package'])} · amd64. Het getal na het streepje is de pakketbuild,
-niet een andere wrapperfunctionaliteit. Official en Latest gebruiken dezelfde wrapperversie.</p></details>
+code{{overflow-wrap:anywhere}}button{{padding:10px;cursor:pointer}}dt{{font-weight:700;margin-top:10px}}
+dd{{margin:2px 0 0}}.muted{{color:#aebdce}}</style>
+<h1>{esc(app_name)}</h1>
+<section><h2>Versie en herkomst</h2>{version_rows}
+<h3>Doel van deze versie</h3><p><a href="{esc(purpose_url, quote=True)}" target="_blank" rel="noopener noreferrer">{esc(versions.get('purpose', 'Nocturne lokaal beschikbaar maken via Home Assistant.'))}</a></p>
+<h3>Te controleren</h3><p><a href="{esc(test_url, quote=True)}" target="_blank" rel="noopener noreferrer">{esc(versions.get('test_plan', 'Start, bereikbaarheid en basiswerking van deze vastgezette versie controleren.'))}</a></p></section>
 <section><h2>Werkelijke dienststatus</h2><ul>{rows}</ul>
 <button onclick="location.reload()">Status vernieuwen</button></section>
+<section><h2>Systeemresources</h2><dl>{resource_rows}</dl>
+<p class="muted">CPU is het verbruik van de hele app-container. Appopslag is de persistente data;
+de Docker-imagegrootte is alleen buiten de app via Home Assistant Supervisor zichtbaar.</p></section>
 <section><h2>Nocturne openen</h2>
 <p><a href="{esc(open_url, quote=True)}" target="_blank" rel="noopener noreferrer">Open Nocturne</a></p>
 <p>Deze HA-pagina toont alleen de technische status; het is niet het Nocturne-dashboard.</p>
 {gateway_section}
-<p>Sessiecookies zijn per kanaal gescheiden. Na de eerste update naar wrapper 0.1.5
-eenmalig opnieuw inloggen; bestaande accounts en passkeys blijven behouden.</p>
-<p class="warning">{esc(certificate_text)}</p></section>
+<p>Sessiecookies zijn per kanaal gescheiden.</p></section>
 <section><h2>Installatiecontrole</h2>
-<p><strong>Publiek adres:</strong> <code>{esc(options['public_url'])}</code> — URL-syntax gecontroleerd.</p>
 <h3>Door de app gecontroleerd</h3><ul>{check_rows}</ul>
-<p>Bij een fout blijft het laatst geladen certificaat in gebruik. De geldigheidsduur daarvan loopt wel door.
-De app vraagt geen nieuwe certificaten aan; bijvoorbeeld DuckDNS blijft daarvoor verantwoordelijk.</p>
-<h3>Nog op jouw browser te controleren</h3>
-<ol><li>Open Nocturne via precies het publieke adres hierboven, niet via het IP-adres.</li>
-<li>Controleer dat de browser het certificaat vertrouwt, zonder waarschuwing.</li>
-<li>Controleer accountaanmaak/passkey-login en bewaar de herstelcodes veilig.</li>
-<li>Test opnieuw op een tweede apparaat en na een geplande app-herstart.</li></ol>
-<p>Deze browsercontroles zijn <strong>niet automatisch uitgevoerd</strong>.
-De server kan jouw DNS-route, certificaatvertrouwen of passkeyvoorziening niet bewijzen.</p>
-<p><a href="https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md" target="_blank" rel="noopener noreferrer">Visuele installatiehandleiding</a> ·
-<a href="https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/CERTIFICATEN.md" target="_blank" rel="noopener noreferrer">Certificaatcontrole en foutcodes</a></p></section>
+</section>
 <p>Test eerst alleen starten en het installatiescherm. Geen CGM/pomp koppelen, geen behandelgegevens invoeren.
 Geen internetpoorten openzetten. Deze experimentele app is geen HACS-integratie en geen medisch hulpmiddel.</p>
 <p><a href="https://github.com/smokkelaar/nocturne-home-assistant" target="_blank" rel="noopener noreferrer">Broncode, documentatie en bijdragen</a></p>

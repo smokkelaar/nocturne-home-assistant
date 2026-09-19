@@ -100,10 +100,17 @@ class SecurityTests(unittest.TestCase):
         self.assertNotIn('listen 80;', text)
 
     def test_status_page_escapes_text(self):
-        page = settings.status_page(self.options, {'API': '<script>bad</script>'}, 'abc', True)
+        page = settings.status_page(self.options, {'API': '<script>bad</script>'}, 'abc', True,
+                                    resources={'Geheugen': '<script>also bad</script>'})
         self.assertNotIn('<script>', page)
         self.assertIn('&lt;script&gt;', page)
-        self.assertIn('Zelfondertekend', page)
+        self.assertNotIn('passkey-inloggen moet apart worden getest', page)
+        self.assertIn('<h2>Systeemresources</h2>', page)
+
+    def test_resource_byte_format(self):
+        self.assertEqual('0.0 B', runtime.format_bytes(0))
+        self.assertEqual('1.5 KiB', runtime.format_bytes(1536))
+        self.assertEqual('niet beschikbaar', runtime.format_bytes(None))
 
     def handler(self, peer):
         handler_type = runtime.make_handler(runtime.Supervisor(), self.options, self.passwords, True)

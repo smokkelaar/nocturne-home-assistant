@@ -102,6 +102,36 @@ class ChannelTests(unittest.TestCase):
             page = settings.status_page(options, {}, '', True)
             self.assertIn('<h1>' + name + '</h1>', page)
 
+    def test_status_page_links_version_provenance(self):
+        page = load_settings('nocturne_latest').status_page(
+            load_settings('nocturne_latest').validate_options({}), {}, '', False)
+        self.assertIn('<h2>Versie en herkomst</h2>', page)
+        self.assertIn('Softwarebasis', page)
+        self.assertIn('Exacte broncommit', page)
+        self.assertIn('https://github.com/nightscout/nocturne', page)
+        self.assertIn('Doel van deze versie', page)
+        self.assertIn('Te controleren', page)
+
+    def test_every_channel_exposes_complete_clickable_provenance(self):
+        packages = ('nocturne_local', 'nocturne_latest', 'nocturne_personal',
+                    'nocturne_test_a', 'nocturne_test_b', 'nocturne_test_c')
+        for package in packages:
+            with self.subTest(package=package):
+                runtime_path = ROOT / package / 'rootfs/opt/nocturne-ha/version.json'
+                versions = json.loads(runtime_path.read_text())
+                for key in ('repository', 'source_commit', 'base', 'base_commit', 'release',
+                            'release_url', 'purpose', 'purpose_url', 'test_plan', 'test_url'):
+                    self.assertTrue(versions.get(key), f'{package} mist {key}')
+                settings = load_settings(package)
+                page = settings.status_page(settings.validate_options({}), {}, '', False)
+                self.assertIn(f"https://github.com/{versions['repository']}/commit/{versions['source_commit']}", page)
+                self.assertIn(versions['release_url'], page)
+                self.assertIn(versions['purpose_url'], page)
+                self.assertIn(versions['test_url'], page)
+                self.assertIn(versions['purpose'], page)
+                self.assertIn(versions['test_plan'], page)
+                self.assertIn('<h2>Systeemresources</h2>', page)
+
     def test_latest_never_inherits_official_identity_or_default_port(self):
         serialized = json.dumps(self.latest)
         self.assertNotIn('"slug": "nocturne_local"', serialized)

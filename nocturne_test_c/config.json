@@ -1,8 +1,8 @@
 {
   "name": "Nocturne Test C",
-  "version": "0.3.25-c1",
+  "version": "0.3.25-c2",
   "slug": "nocturne_test_c",
-  "description": "HA wrapper 0.1.7 \u00b7 Personal 0.3.25 \u00b7 eHbA1c tooltip fix 9b3a097 - 2026-09-18 21:40 UTC. Temporary isolated test instance for issue #1360; not for clinical use.",
+  "description": "HA wrapper 0.1.8 \u00b7 Personal 0.3.25 \u00b7 eHbA1c tooltip fix 9b3a097 - 2026-09-18 21:40 UTC. Temporary isolated test instance for issue #1360; not for clinical use.",
   "url": "https://github.com/smokkelaar/nocturne-home-assistant",
   "arch": [
     "amd64"
