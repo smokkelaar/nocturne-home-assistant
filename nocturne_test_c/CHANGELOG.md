@@ -1,3 +1,7 @@
+# 0.3.25-c13
+
+De eHbA1c-lijn blijft visueel doorlopen over lab-only datums; de tooltip blijft die datum als alleen labresultaat tonen. Broncommit `dbc4154d0ec1a761ea898e01f49112be2dc351dc`.
+
 # 0.3.25-c12
 
 Meerdere labresultaten op dezelfde dag worden nu allemaal als eigen rij met eigen waarde in de tooltip getoond. Broncommit `0d6ccb0fc0f78cb8871e2bcea77542ef3a0e2ef4`.
