@@ -1,3 +1,7 @@
+# 0.3.25-c12
+
+Meerdere labresultaten op dezelfde dag worden nu allemaal als eigen rij met eigen waarde in de tooltip getoond. Broncommit `0d6ccb0fc0f78cb8871e2bcea77542ef3a0e2ef4`.
+
 # 0.3.25-c11
 
 Robuuste PR #1361-fix: lab-only datums worden opgenomen in het tooltip x-domein zonder een valse eHbA1c-waarde te tekenen. Broncommit `681631d445efc7e344fd253227fe0be590dfcce3`.
