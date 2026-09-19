@@ -1,3 +1,7 @@
+# 0.3.25-c8
+
+Testbuild van PR #1361 voor de laatste controle van issue #1360. Broncommit `79016d9e15bd35cab48e7412018d037c9fe01211`.
+
 # 0.3.25-c7
 
 Lijn- en marker-hover koppelen labresultaten nu op kalenderdag, zodat beide routes dezelfde gecombineerde tooltip tonen. Broncommit `dfeb70646f8c052b5c83d0c63e2078adadcb48dc`.
