@@ -112,16 +112,22 @@ def files(lock, delivery):
     generated['DOCS.md'] = docs + '\nPersonal compiles API and web from its pinned fork source. Builds need more time and resources than Latest. Home Assistant Supervisor currently keeps the update dialog at 0% during this local Docker build; this does not mean the build is stuck. Follow the named `Nocturne build phase` entries in **Settings → System → Logs → Supervisor** for live detail. ' + features + ' [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
     generated['README.md'] = '# Nocturne Personal Release\n\nIndependent Personal fork on the tested Daily base. Default host port 8450, separate data and cookies.\n\n' + features + '\n\n[Installation and updates](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
     runtime = dict(app=wrapper, package=delivery, personal=lock['version'],
+                   repository=lock['repository'],
                    source_commit=lock['commit'], source_at=lock['commit_at'],
                    nocturne='main@' + lock['upstream']['commit'][:7],
-                   commit_at=lock['upstream']['commit_at'], name=config['name'],
+                   commit_at=lock['upstream']['commit_at'], base='Nocturne main',
+                   base_commit=lock['upstream']['commit'], release=f"Personal {lock['version']}",
+                   release_url=f"https://github.com/{lock['repository']}/tree/{lock['commit']}",
+                   purpose='Persoonlijke uitbreidingen op de goedgekeurde Nocturne main-basis gebruiken.',
+                   purpose_url=f"https://github.com/{lock['repository']}/commit/{lock['commit']}",
+                   test_plan='Google Health-import voor stappen, hartslag, gewicht en slaap controleren, zonder wijzigingen aan doseringslogica.',
+                   test_url='https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md',
+                   name=config['name'],
                    default_public_url=config['options']['public_url'], cookie_namespace='NocturnePersonal_')
     generated['rootfs/opt/nocturne-ha/version.json'] = json.dumps(runtime, indent=2) + '\n'
     settings = (latest / 'rootfs/opt/nocturne-ha/settings.py').read_text(encoding='utf-8')
     settings = settings.replace("('NocturneOfficial_', 'NocturneLatest_')",
                                 "('NocturnePersonal_',)")
-    settings = replace_once(settings, "    rows = ''.join(",
-        "    snapshot += f'<p>Personal {esc(versions[\"personal\"])} · bron {esc(versions[\"source_commit\"][:12])}</p>'\n    rows = ''.join(")
     settings = replace_once(settings, "    return api, web", "    versions = json.loads(Path(__file__).with_name('version.json').read_text())\n    api.update(GIT_COMMIT=versions['source_commit'], BUILD_DATE=versions['source_at'])\n    return api, web")
     generated['rootfs/opt/nocturne-ha/settings.py'] = settings
     cookies = (latest / 'rootfs/opt/nocturne-ha/cookies.mjs').read_text(encoding='utf-8')

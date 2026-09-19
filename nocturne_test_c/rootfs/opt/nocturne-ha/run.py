@@ -9,6 +9,7 @@ import http.client
 import json
 import os
 import signal
+import shutil
 import socket
 import subprocess
 import threading
@@ -25,6 +26,88 @@ DATA = Path('/data')
 RUNTIME = Path('/run/nocturne')
 PG_BIN = '/usr/lib/postgresql/17/bin/'
 BASE = Path(__file__).parent
+
+
+def format_bytes(value):
+    if value is None:
+        return 'niet beschikbaar'
+    amount = float(value)
+    for unit in ('B', 'KiB', 'MiB', 'GiB', 'TiB'):
+        if amount < 1024 or unit == 'TiB':
+            return f'{amount:.1f} {unit}'
+        amount /= 1024
+
+
+def directory_size(path):
+    total = 0
+    for root, _, files in os.walk(path):
+        for name in files:
+            try:
+                total += (Path(root) / name).stat().st_size
+            except OSError:
+                pass
+    return total
+
+
+def cgroup_number(*paths):
+    for path in paths:
+        try:
+            value = Path(path).read_text().strip()
+            return None if value == 'max' else int(value)
+        except (OSError, ValueError):
+            pass
+    return None
+
+
+class ResourceMonitor:
+    def __init__(self):
+        self.values = {'Metingen': 'worden verzameld'}
+        self.lock = threading.Lock()
+        self.previous_cpu = None
+        self.previous_at = None
+
+    def cpu_usage(self):
+        try:
+            fields = dict(line.split() for line in Path('/sys/fs/cgroup/cpu.stat').read_text().splitlines())
+            return int(fields['usage_usec']) * 1000
+        except (OSError, KeyError, ValueError):
+            return cgroup_number('/sys/fs/cgroup/cpu/cpuacct.usage')
+
+    def collect(self):
+        now = time.monotonic()
+        cpu = self.cpu_usage()
+        cpu_percent = None
+        if cpu is not None and self.previous_cpu is not None:
+            cpu_percent = max(0, cpu - self.previous_cpu) / ((now - self.previous_at) * 1_000_000_000) * 100
+        self.previous_cpu, self.previous_at = cpu, now
+        memory = cgroup_number('/sys/fs/cgroup/memory.current',
+                               '/sys/fs/cgroup/memory/memory.usage_in_bytes')
+        memory_limit = cgroup_number('/sys/fs/cgroup/memory.max',
+                                     '/sys/fs/cgroup/memory/memory.limit_in_bytes')
+        disk = shutil.disk_usage(DATA)
+        try:
+            database = int(psql("SELECT pg_database_size('nocturne')"))
+        except (OSError, RuntimeError, ValueError, subprocess.SubprocessError):
+            database = None
+        values = {
+            'Processor': 'meting wordt opgebouwd' if cpu_percent is None else f'{cpu_percent:.1f}% van 1 CPU-kern',
+            'Geheugen': format_bytes(memory) + (f' van {format_bytes(memory_limit)}' if memory_limit else ''),
+            'Persistente appopslag': format_bytes(directory_size(DATA)),
+            'Database': format_bytes(database),
+            'Vrije schijfruimte': format_bytes(disk.free),
+            'Docker-image': 'niet beschikbaar binnen de app',
+        }
+        with self.lock:
+            self.values = values
+
+    def snapshot(self):
+        with self.lock:
+            return dict(self.values)
+
+    def run(self, stop):
+        while not stop.is_set():
+            self.collect()
+            stop.wait(15)
 
 
 def log(message):
@@ -211,6 +294,7 @@ class Supervisor:
         self.checks = {'Installatiecontrole': 'nog niet uitgevoerd'}
         self.status = {'PostgreSQL': 'nog niet gestart', 'Nocturne API': 'nog niet gestart',
                        'Nocturne Web': 'nog niet gestart', 'HTTPS': 'nog niet gestart'}
+        self.resources = ResourceMonitor()
 
     def start(self, name, command, *, user=None, env=None, cwd=None):
         kwargs = as_user(user) if user else {}
@@ -269,7 +353,7 @@ def make_handler(supervisor, options, passwords, test_certificate):
                 self.send_error(404)
                 return
             body = status_page(options, supervisor.status, passwords['gateway'], test_certificate,
-                               supervisor.checks).encode()
+                               supervisor.checks, supervisor.resources.snapshot()).encode()
             self.send_response(200)
             self.send_header('Content-Type', 'text/html; charset=utf-8')
             self.send_header('Cache-Control', 'no-store')
@@ -349,6 +433,7 @@ def main():
             [PG_BIN + 'pg_isready', '-h', '127.0.0.1', '-U', 'postgres'],
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0, 60)
         bootstrap_database(passwords)
+        threading.Thread(target=supervisor.resources.run, args=(supervisor.stop,), daemon=True).start()
         api_env, web_env = service_environments(options, passwords, os.environ.get('TZ', 'Europe/Amsterdam'))
         supervisor.start('Nocturne API', ['dotnet', '/app/Nocturne.API.dll'],
                          user='app', env=api_env, cwd='/app')

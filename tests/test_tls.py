@@ -181,10 +181,10 @@ class ReloadTests(unittest.TestCase):
             process.send_signal.assert_called_once()
             self.assertEqual(b'new', conf.read_bytes())
 
-    def test_browser_checks_remain_explicitly_unverified_and_escaped(self):
+    def test_runtime_checks_are_escaped_without_browser_setup_guidance(self):
         page = settings.status_page(settings.validate_options({}), {}, '', False, {'Certificate': '<script>bad</script>'})
-        self.assertIn('niet automatisch uitgevoerd', page)
-        self.assertIn('DNS-route', page)
+        self.assertNotIn('niet automatisch uitgevoerd', page)
+        self.assertNotIn('DNS-route', page)
         self.assertNotIn('<script>', page)
         self.assertIn('&lt;script&gt;', page)
 

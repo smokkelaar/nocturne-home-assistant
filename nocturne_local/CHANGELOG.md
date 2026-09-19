@@ -1,3 +1,8 @@
+## 0.1.8-1
+
+- Toon bovenaan klikbare release-, base- en broncommitinformatie met het doel van het kanaal.
+- Toon CPU, geheugen, persistente opslag, vrije schijfruimte en PostgreSQL-databasegrootte.
+
 ## 0.1.7-2
 
 - Update paired Nocturne API/web to 0.2.7.
