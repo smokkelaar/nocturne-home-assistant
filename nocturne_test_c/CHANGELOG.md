@@ -1,3 +1,7 @@
+# 0.3.25-c4
+
+Labmarker vangt geen muis meer af bij benadering van boven; eHbA1c en labresultaat staan uitgelijnd in dezelfde tooltipweergave. Broncommit `ca3b0fb54d2b93132cadc329e00a245306c5d866`.
+
 # 0.3.25-c3
 
 Tooltipfix gepubliceerd: datum zonder tijd, eHbA1c en labresultaat samen zichtbaar, labnotitie in de popup en geen dubbele rechter SVG-tooltip. Broncommit `851ef00fb2a75725798f0c80a742c7c79d551e74`.
