@@ -1,3 +1,7 @@
+# 0.3.25-c6
+
+De eHbA1c-tooltip gebruikt nu altijd de canonieke waarde van de geselecteerde datum. De verticale muispositie kan dezelfde dag niet meer verschillende eHbA1c-waarden tonen. Broncommit `e237d1530621671aa81198dbe0835fce938d6b8a`.
+
 # 0.3.25-c4
 
 Labmarker vangt geen muis meer af bij benadering van boven; eHbA1c en labresultaat staan uitgelijnd in dezelfde tooltipweergave. Broncommit `ca3b0fb54d2b93132cadc329e00a245306c5d866`.
