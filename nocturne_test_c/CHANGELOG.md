@@ -1,3 +1,7 @@
+# 0.3.25-c7
+
+Lijn- en marker-hover koppelen labresultaten nu op kalenderdag, zodat beide routes dezelfde gecombineerde tooltip tonen. Broncommit `dfeb70646f8c052b5c83d0c63e2078adadcb48dc`.
+
 # 0.3.25-c6
 
 De eHbA1c-tooltip gebruikt nu altijd de canonieke waarde van de geselecteerde datum. De verticale muispositie kan dezelfde dag niet meer verschillende eHbA1c-waarden tonen. Broncommit `e237d1530621671aa81198dbe0835fce938d6b8a`.
