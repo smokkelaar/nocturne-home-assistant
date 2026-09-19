@@ -1,3 +1,7 @@
+# 0.3.25-c11
+
+Robuuste PR #1361-fix: lab-only datums worden opgenomen in het tooltip x-domein zonder een valse eHbA1c-waarde te tekenen. Broncommit `681631d445efc7e344fd253227fe0be590dfcce3`.
+
 # 0.3.25-c10
 
 Documentatie en statusmetadata gecorrigeerd: Test C is Nocturne Daily/main met PR #1361, niet de Personal 0.3.25 Google Health-build.
