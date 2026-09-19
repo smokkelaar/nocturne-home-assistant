@@ -92,7 +92,7 @@ class PersonalTests(unittest.TestCase):
         self.assertEqual('Nocturne Test C', test_c['name'])
         self.assertEqual('NocturneTestC_', test_runtime['cookie_namespace'])
         self.assertEqual('https://homeassistant.local:8453', test_runtime['default_public_url'])
-        self.assertEqual('eab66c16bad758a7201641c877ed06672b76eb22', test_runtime['source_commit'])
+        self.assertEqual('0c88e489780bcbc482efd708f4d24a5436a6db05', test_runtime['source_commit'])
         test_settings = (ROOT / 'nocturne_test_c/rootfs/opt/nocturne-ha/settings.py').read_text()
         self.assertIn("('NocturneTestC_',)", test_settings)
         test_cookies = (ROOT / 'nocturne_test_c/rootfs/opt/nocturne-ha/cookies.mjs').read_text()

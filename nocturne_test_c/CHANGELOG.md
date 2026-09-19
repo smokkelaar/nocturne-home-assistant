@@ -1,3 +1,7 @@
+# 0.3.25-c16
+
+Zoomselecties worden nu gevalideerd en begrensd, zodat een ongeldige selectie de eHbA1c-grafiek niet meer leeg maakt. Broncommit `0c88e489780bcbc482efd708f4d24a5436a6db05`.
+
 # 0.3.25-c15
 
 Svelte-buildfout in c14 opgelost: de LineChart-opening wordt correct gesloten vóór de zoom-snippets. Broncommit `eab66c16bad758a7201641c877ed06672b76eb22`.
