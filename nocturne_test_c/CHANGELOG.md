@@ -1,3 +1,7 @@
+# 0.3.25-c14
+
+Tijdsrange-zoom toegevoegd aan de eHbA1c-grafiek met bestaande Nocturne brush-interactie en resetknop. Broncommit `c6f9cd0cf3eaf1ced7f1fcf9c8dd0cc28ec87cc4`.
+
 # 0.3.25-c13
 
 De eHbA1c-lijn blijft visueel doorlopen over lab-only datums; de tooltip blijft die datum als alleen labresultaat tonen. Broncommit `dbc4154d0ec1a761ea898e01f49112be2dc351dc`.
