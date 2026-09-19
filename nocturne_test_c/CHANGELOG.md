@@ -1,3 +1,7 @@
+# 0.3.25-c15
+
+Svelte-buildfout in c14 opgelost: de LineChart-opening wordt correct gesloten vóór de zoom-snippets. Broncommit `eab66c16bad758a7201641c877ed06672b76eb22`.
+
 # 0.3.25-c14
 
 Tijdsrange-zoom toegevoegd aan de eHbA1c-grafiek met bestaande Nocturne brush-interactie en resetknop. Broncommit `c6f9cd0cf3eaf1ced7f1fcf9c8dd0cc28ec87cc4`.
