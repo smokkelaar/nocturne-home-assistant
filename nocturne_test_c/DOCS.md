@@ -1,6 +1,6 @@
 # Nocturne Test C — installation and operation
 
-> This is an isolated Personal test app pinned to the issue #1360 eHbA1c tooltip fix for manual verification. It is a separate HA app with its own data and default host port **8453**. Never copy `/data`, accounts or keys between it and Personal.
+> This is an isolated Nocturne Daily/main test app with the PR #1361 eHbA1c tooltip fix for manual verification. It is a separate HA app with its own data and default host port **8453**. Never copy `/data`, accounts or keys between test instances.
 
 > **Nederlands, met afbeeldingen en exacte stappen:** [Volledige visuele installatiehandleiding](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md), van repository toevoegen tot dashboard en herstarttest. [Domein, certificaat en lokale DNS](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/HTTPS-EN-DNS.md) is apart uitgewerkt. These absolute links also work from Home Assistant's Documentation tab.
 
@@ -67,4 +67,4 @@ Automatic app updates are optional per app in HA. Keep automatic updates off for
 - No clinical reliability, automatic dosing, external data connectors or internet-facing deployment has been validated.
 - Never paste full logs, keys, recovery codes or health data into public issues. Report only a sanitized relevant excerpt with the app/Nocturne versions.
 
-Personal compiles API and web from its pinned fork source. Builds need more time and resources than Latest. Home Assistant Supervisor currently keeps the update dialog at 0% during this local Docker build; this does not mean the build is stuck. Follow the named `Nocturne build phase` entries in **Settings → System → Logs → Supervisor** for live detail. Personal 0.3.25 includes Google Health imports for steps, heart rate, weight and sleep. Progress refreshes while the connector page is open; the percentage estimates data-type stages, not remaining time. No dosing advice or insulin/IOB changes. [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).
+This build uses the approved Nocturne Daily/main runtime basis and compiles the API and web application from the PR #1361 source overlay. Builds need more time and resources than Latest. Home Assistant Supervisor currently keeps the update dialog at 0% during this local Docker build; this does not mean the build is stuck. Follow the named `Nocturne build phase` entries in **Settings → System → Logs → Supervisor** for live detail. No Personal/Google Health extensions are included. No dosing advice or insulin/IOB changes. [Update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/UPDATES.md).

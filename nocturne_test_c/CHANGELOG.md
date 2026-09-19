@@ -1,3 +1,7 @@
+# 0.3.25-c10
+
+Documentatie en statusmetadata gecorrigeerd: Test C is Nocturne Daily/main met PR #1361, niet de Personal 0.3.25 Google Health-build.
+
 # 0.3.25-c9
 
 Laatste geldige controle: officiële Daily/main-runtimebasis met de broncode van PR #1361 erbovenop. Broncommit `79016d9e15bd35cab48e7412018d037c9fe01211`.
