@@ -1,3 +1,7 @@
+# 0.3.25-c3
+
+Tooltipfix gepubliceerd: datum zonder tijd, eHbA1c en labresultaat samen zichtbaar, labnotitie in de popup en geen dubbele rechter SVG-tooltip. Broncommit `851ef00fb2a75725798f0c80a742c7c79d551e74`.
+
 # 0.3.25-c2
 
 Klikbare broninformatie voor issue #1360, het testscenario en actuele systeemresources op de Home Assistant-statuspagina.
