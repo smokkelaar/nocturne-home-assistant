@@ -1,3 +1,7 @@
+# 0.3.25-c17
+
+Zoomfunctie verwijderd uit Test C; de eHbA1c-grafiek gebruikt weer de stabiele oorspronkelijke rendering. Zoom wordt later in een aparte PR opgepakt. Broncommit `796fbb9e7e46a6da136aa706c7057bd689b7d903`.
+
 # 0.3.25-c16
 
 Zoomselecties worden nu gevalideerd en begrensd, zodat een ongeldige selectie de eHbA1c-grafiek niet meer leeg maakt. Broncommit `0c88e489780bcbc482efd708f4d24a5436a6db05`.
