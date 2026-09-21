@@ -1,3 +1,7 @@
+# 0.3.25-c18
+
+Test C volgt nu actuele Nocturne main (`87090087e`) met uitsluitend de Google Health-connector uit PR #1293 (`418d810a2`).
+
 # 0.3.25-c17
 
 Zoomfunctie verwijderd uit Test C; de eHbA1c-grafiek gebruikt weer de stabiele oorspronkelijke rendering. Zoom wordt later in een aparte PR opgepakt. Broncommit `796fbb9e7e46a6da136aa706c7057bd689b7d903`.
