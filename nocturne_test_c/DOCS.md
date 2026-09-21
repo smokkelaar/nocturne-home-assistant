@@ -1,6 +1,6 @@
 # Nocturne Test C — installation and operation
 
-> This is an isolated Nocturne Daily/main test app with the PR #1361 eHbA1c tooltip fix for manual verification. It is a separate HA app with its own data and default host port **8453**. Never copy `/data`, accounts or keys between test instances.
+> This is an isolated Nocturne main test app with the PR #1293 Google Health connector for manual verification. It is a separate HA app with its own data and default host port **8453**. Never copy `/data`, accounts or keys between test instances.
 
 > **Nederlands, met afbeeldingen en exacte stappen:** [Volledige visuele installatiehandleiding](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md), van repository toevoegen tot dashboard en herstarttest. [Domein, certificaat en lokale DNS](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/HTTPS-EN-DNS.md) is apart uitgewerkt. These absolute links also work from Home Assistant's Documentation tab.
 
@@ -57,7 +57,7 @@ CI now rehearses a full cold-data copy, restore into a different disposable volu
 
 Do not assume downgrading an image reverses a database migration. Restoring a coordinated pre-upgrade database/key backup may be required. PostgreSQL major upgrades are explicitly refused; there is no automatic database reset.
 
-Automatic app updates are optional per app in HA. Keep automatic updates off for **Nocturne Test C**: it is pinned to a specific fix commit for manual verification and must not silently track a moving branch. Keep Official's switch off too. See the repository's `docs/UPDATES.md` for both update processes.
+Automatic app updates are optional per app in HA. Keep automatic updates off for **Nocturne Test C**: it is pinned to PR #1293 at a specific commit for manual verification and must not silently track a moving branch. Keep Official's switch off too. See the repository's `docs/UPDATES.md` for both update processes.
 
 ## Known boundaries
 
@@ -67,4 +67,4 @@ Automatic app updates are optional per app in HA. Keep automatic updates off for
 - No clinical reliability, automatic dosing, external data connectors or internet-facing deployment has been validated.
 - Never paste full logs, keys, recovery codes or health data into public issues. Report only a sanitized relevant excerpt with the app/Nocturne versions.
 
-This build uses the approved Nocturne Daily/main runtime basis and compiles the API and web application from the PR #1361 source overlay. Builds need more time and resources than Latest. Home Assistant Supervisor currently keeps the update dialog at 0% during this local Docker build; this does not mean the build is stuck. Follow the named `Nocturne build phase` entries in **Settings → System → Logs → Supervisor** for live detail. No Personal/Google Health extensions are included. No dosing advice or insulin/IOB changes. [Update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/UPDATES.md).
+This build uses the approved Nocturne runtime basis and compiles the API and web application from the PR #1293 source overlay. Builds need more time and resources than Latest. Home Assistant Supervisor currently keeps the update dialog at 0% during this local Docker build; this does not mean the build is stuck. Follow the named `Nocturne build phase` entries in **Settings → System → Logs → Supervisor** for live detail. Configure a Google OAuth web client, connect, refresh the inventory, select only supported types and use **Sync now**. It imports read-only steps, heart rate, weight and sleep without dosing advice or insulin/IOB changes. [Update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/UPDATES.md).
