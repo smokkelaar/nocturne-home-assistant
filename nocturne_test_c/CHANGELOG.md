@@ -1,3 +1,7 @@
+# 0.3.25-c19
+
+Persoonlijke pre-PR testbuild: Google Health hartslagdata wordt per UTC-minuut samengevoegd tot één gemiddelde voór opslag, en de import haalt voortaan één kalenderdag per keer op (vandaag eerst, dan stap voor stap terug), zodat een grote historische import niet meer op de 3-minuten synctimeout loopt. Broncommit `150df457a`, nog niet naar PR #1293 gestuurd.
+
 # 0.3.25-c18
 
 Test C volgt nu actuele Nocturne main (`87090087e`) met uitsluitend de Google Health-connector uit PR #1293 (`418d810a2`).
