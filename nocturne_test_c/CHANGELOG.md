@@ -1,6 +1,10 @@
+# 0.3.25-c20
+
+Google Health vernieuwt nu bij iedere sync eerst vandaag en importeert daarna één oudere kalendermaand. Een mislukte of te grote maand wordt voor de volgende poging automatisch gehalveerd tot uiteindelijk minimaal één dag. Het connectoroverzicht toont blijvend tot welke datum de historische import is gevorderd. Broncommit `7428f5f6b`, nog niet naar PR #1293 gestuurd.
+
 # 0.3.25-c19
 
-Persoonlijke pre-PR testbuild: Google Health hartslagdata wordt per UTC-minuut samengevoegd tot één gemiddelde voór opslag, en de import haalt voortaan één kalenderdag per keer op (vandaag eerst, dan stap voor stap terug), zodat een grote historische import niet meer op de 3-minuten synctimeout loopt. Broncommit `150df457a`, nog niet naar PR #1293 gestuurd.
+Persoonlijke pre-PR testbuild: Google Health hartslagdata wordt per UTC-minuut samengevoegd tot één gemiddelde vóór opslag, en de import haalt voortaan één kalenderdag per keer op (vandaag eerst, dan stap voor stap terug), zodat een grote historische import niet meer op de 3-minuten synctimeout loopt. Broncommit `150df457a`, nog niet naar PR #1293 gestuurd.
 
 # 0.3.25-c18
 
@@ -35,6 +39,8 @@ Meerdere labresultaten op dezelfde dag worden nu allemaal als eigen rij met eige
 Robuuste PR #1361-fix: lab-only datums worden opgenomen in het tooltip x-domein zonder een valse eHbA1c-waarde te tekenen. Broncommit `681631d445efc7e344fd253227fe0be590dfcce3`.
 
 # 0.3.25-c10
+
+Google Health vernieuwt nu bij iedere sync eerst vandaag en importeert daarna één oudere kalendermaand. Een mislukte of te grote maand wordt voor de volgende poging automatisch gehalveerd tot uiteindelijk minimaal één dag. Het connectoroverzicht toont blijvend tot welke datum de historische import is gevorderd. Broncommit `7428f5f6b`, nog niet naar PR #1293 gestuurd.
 
 Documentatie en statusmetadata gecorrigeerd: Test C is Nocturne Daily/main met PR #1361, niet de Personal 0.3.25 Google Health-build.
 
