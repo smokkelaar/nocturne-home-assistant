@@ -1,3 +1,7 @@
+# 0.3.25-c22
+
+Corrigeert de koppeling voor de rode **Data verwijderen**-knop in Google Health. Deze actie wist nu daadwerkelijk de historische-importcursor en de melding dat de geschiedenis compleet is. Broncommit `03462fb`.
+
 # 0.3.25-c21
 
 Bij **Data verwijderen** voor Google Health worden nu ook de opgeslagen historische-importcursor en de melding dat de geschiedenis compleet is gewist. De volgende bewust gestarte import kan dezelfde periode daardoor opnieuw ophalen. Broncommit `ce86fd447`.
