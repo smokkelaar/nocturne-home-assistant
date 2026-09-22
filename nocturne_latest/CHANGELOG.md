@@ -1,3 +1,9 @@
+## 0.1.8-2
+
+- Update Nocturne Latest from `761d988` to [`bfb0786`](https://github.com/nightscout/nocturne/compare/761d98876e93c13b557c5f89260701398718aff7...bfb0786c56b285457add9280b656b5ab9b369b8b).
+- Upstream paired-image build: https://github.com/nightscout/nocturne/actions/runs/35722109791
+- Automated container and previous-Latest upgrade tests are required before merge. Keep a cold backup; rollback after a development schema migration is not guaranteed.
+
 ## 0.1.8-1
 
 - Toon bovenaan klikbare release-, base- en broncommitinformatie met het doel van het kanaal.
