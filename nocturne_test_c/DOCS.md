@@ -1,6 +1,7 @@
 # Nocturne Test C — installation and operation
 
 > This is an isolated Nocturne main test app with a personal pre-PR branch of the Google Health connector (heart-rate per-minute aggregation, day-chunked backfill) for manual verification before it is sent to PR #1293. It is a separate HA app with its own data and default host port **8453**. Never copy `/data`, accounts or keys between test instances.
+> This is an isolated Nocturne main test app with a personal pre-PR branch of the Google Health connector (heart-rate per-minute aggregation, monthly backfill with adaptive retries) for manual verification before it is sent to PR #1293. It is a separate HA app with its own data and default host port **8453**. Never copy `/data`, accounts or keys between test instances.
 
 > **Nederlands, met afbeeldingen en exacte stappen:** [Volledige visuele installatiehandleiding](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md), van repository toevoegen tot dashboard en herstarttest. [Domein, certificaat en lokale DNS](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/HTTPS-EN-DNS.md) is apart uitgewerkt. These absolute links also work from Home Assistant's Documentation tab.
 

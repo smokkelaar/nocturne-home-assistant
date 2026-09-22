@@ -1,8 +1,8 @@
 {
   "name": "Nocturne Test C",
-  "version": "0.3.25-c19",
+  "version": "0.3.25-c20",
   "slug": "nocturne_test_c",
-  "description": "HA wrapper 0.1.8 \u00b7 Nocturne main 8709008 + PR #1293 Google Health 150df45 (heart-rate per-minute aggregation, day-chunked backfill) - 2026-09-21 UTC. Personal pre-PR test build; not for clinical use.",
+  "description": "HA wrapper 0.1.8 \u00b7 Nocturne main 8709008 + PR #1293 Google Health 7428f5f (heart-rate per-minute aggregation, monthly backfill with adaptive retries) - 2026-09-22 UTC. Personal pre-PR test build; not for clinical use.",
   "url": "https://github.com/smokkelaar/nocturne-home-assistant",
   "arch": [
     "amd64"
