@@ -1,3 +1,7 @@
+# 0.3.25-c23
+
+De rode **Delete imported Google Health data**-knop na Disconnect wist nu ook de Google Health-backfillcursor en de voltooidmelding. Broncommit `0b42fca`.
+
 # 0.3.25-c22
 
 Corrigeert de koppeling voor de rode **Data verwijderen**-knop in Google Health. Deze actie wist nu daadwerkelijk de historische-importcursor en de melding dat de geschiedenis compleet is. Broncommit `03462fb`.
