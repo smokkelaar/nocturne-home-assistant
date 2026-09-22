@@ -1,3 +1,7 @@
+# 0.3.25-c21
+
+Bij **Data verwijderen** voor Google Health worden nu ook de opgeslagen historische-importcursor en de melding dat de geschiedenis compleet is gewist. De volgende bewust gestarte import kan dezelfde periode daardoor opnieuw ophalen. Broncommit `ce86fd447`.
+
 # 0.3.25-c20
 
 Google Health vernieuwt nu bij iedere sync eerst vandaag en importeert daarna één oudere kalendermaand. Een mislukte of te grote maand wordt voor de volgende poging automatisch gehalveerd tot uiteindelijk minimaal één dag. Het connectoroverzicht toont blijvend tot welke datum de historische import is gevorderd. Broncommit `7428f5f6b`, nog niet naar PR #1293 gestuurd.
