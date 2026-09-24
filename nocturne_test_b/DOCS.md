@@ -1,6 +1,6 @@
 # Nocturne Test B — installation and operation
 
-> This is an isolated Personal test app pinned to PR #1293 (Google Health connector) for manual verification. It is a separate HA app with its own data and default host port **8452**. Never copy `/data`, accounts or keys between it and Personal.
+> This is an isolated Nocturne test app pinned to PR #1361, including the merge that resolves its conflict with upstream main. It is a separate HA app with its own data and default host port **8452**. Never copy `/data`, accounts or keys between it and other instances.
 
 > **Nederlands, met afbeeldingen en exacte stappen:** [Volledige visuele installatiehandleiding](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md), van repository toevoegen tot dashboard en herstarttest. [Domein, certificaat en lokale DNS](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/HTTPS-EN-DNS.md) is apart uitgewerkt. These absolute links also work from Home Assistant's Documentation tab.
 
@@ -31,7 +31,7 @@ No router port-forwarding is required or recommended for this test. A publicly r
 
    `example.net` is documentation-only. Put the real certificate and private key in HA's `/ssl` directory. Options accept filenames directly inside that directory, not `/ssl/...` paths. This app mounts `/ssl` read-only. Never publish those files.
 
-4. Leave the Test B host port at `8450` (container port `8448/tcp`), or ensure the externally configured port matches `public_url`. Do not expose API, PostgreSQL or ingress ports.
+4. Leave the Test B host port at `8452` (container port `8448/tcp`), or ensure the externally configured port matches `public_url`. Do not expose API, PostgreSQL or ingress ports.
 5. Start the app and open **Web interface**. Wait for PostgreSQL, API, web and HTTPS readiness. “Listening” is not proof of a successful account login.
 6. Open the Nocturne link. By default, if the browser asks for HTTP Basic credentials, use username `nocturne` and the random gateway code shown in the protected HA page. This is **not** your HA login or your Nocturne account password.
 7. Complete Nocturne's own setup and create a passkey. Skip Nightscout/data connections in this initial test.
@@ -67,4 +67,4 @@ Automatic app updates are optional per app in HA. Keep automatic updates off for
 - No clinical reliability, automatic dosing, external data connectors or internet-facing deployment has been validated.
 - Never paste full logs, keys, recovery codes or health data into public issues. Report only a sanitized relevant excerpt with the app/Nocturne versions.
 
-Personal compiles API and web from its pinned fork source. Builds need more time and resources than Latest. Home Assistant Supervisor currently keeps the update dialog at 0% during this local Docker build; this does not mean the build is stuck. Follow the named `Nocturne build phase` entries in **Settings → System → Logs → Supervisor** for live detail. Personal 0.3.25 includes Google Health imports for steps, heart rate, weight and sleep. Progress refreshes while the connector page is open; the percentage estimates data-type stages, not remaining time. No dosing advice or insulin/IOB changes. [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).
+Test B compiles API and web from the exact PR #1361 source archive and a digest-pinned upstream runtime base. Builds need more time and resources than Latest. Home Assistant Supervisor may keep the update dialog at 0% during this local Docker build; follow the named `Nocturne build phase` entries in **Settings → System → Logs → Supervisor** for live detail. The package update keeps the Test B slug, host port, HA options, data directory and cookie namespace; no reset/reinstall step is required. The test is not for clinical use. [PR #1361](https://github.com/nightscout/nocturne/pull/1361).

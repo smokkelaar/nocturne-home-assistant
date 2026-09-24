@@ -1,3 +1,7 @@
+# 0.3.25-b3
+
+Pinned Test B to PR #1361 merge commit `dacd76c`, including the resolved upstream `main` conflict. The HA app identity, options, port, data mount, and cookie namespace are unchanged.
+
 # 0.3.25-b2
 
 Klikbare broninformatie voor PR #1293, het testscenario en actuele systeemresources op de Home Assistant-statuspagina.
