@@ -66,7 +66,7 @@ class PersonalTests(unittest.TestCase):
         test_cookies = (ROOT / 'nocturne_test_a/rootfs/opt/nocturne-ha/cookies.mjs').read_text()
         self.assertIn("'NocturneTestA_'", test_cookies)
 
-    def test_test_b_uses_the_personal_source_with_a_distinct_runtime_identity(self):
+    def test_test_b_pins_pr_1361_with_a_distinct_runtime_identity(self):
         test_b = json.loads((ROOT / 'nocturne_test_b/config.json').read_text())
         test_runtime = json.loads((ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/version.json').read_text())
         self.assertNotEqual(self.config['version'], test_b['version'])
@@ -75,7 +75,9 @@ class PersonalTests(unittest.TestCase):
         self.assertEqual('Nocturne Test B', test_b['name'])
         self.assertEqual('NocturneTestB_', test_runtime['cookie_namespace'])
         self.assertEqual('https://homeassistant.local:8452', test_runtime['default_public_url'])
-        self.assertEqual('22e4a759fb4b176b2aba2fdc7ccf68cbe52b94c7', test_runtime['source_commit'])
+        self.assertEqual('dacd76cf9a8824e1433835881fbf2406bb3b4293', test_runtime['source_commit'])
+        self.assertEqual('https://github.com/nightscout/nocturne/pull/1361', test_runtime['test_url'])
+        self.assertIn('PR #1361', test_b['description'])
         test_settings = (ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/settings.py').read_text()
         self.assertIn("('NocturneTestB_',)", test_settings)
         test_cookies = (ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/cookies.mjs').read_text()
