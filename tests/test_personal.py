@@ -75,12 +75,12 @@ class PersonalTests(unittest.TestCase):
         self.assertEqual('Nocturne Test B', test_b['name'])
         self.assertEqual('NocturneTestB_', test_runtime['cookie_namespace'])
         self.assertEqual('https://homeassistant.local:8452', test_runtime['default_public_url'])
-        self.assertEqual('0.3.25-b4', test_b['version'])
-        self.assertEqual('7dfdd53a9cb711bf6873c6ce693833c4430a058c', test_runtime['source_commit'])
+        self.assertEqual('0.3.25-b5', test_b['version'])
+        self.assertEqual('2b480c63fdc2d1b411a6325f54aef1da8880bcd4', test_runtime['source_commit'])
         test_b_recipe = (ROOT / 'nocturne_test_b/Dockerfile').read_text()
         self.assertIn(
-            'ADD --checksum=sha256:32cfe4671e2f00abe4bfda4a8f40ae25a4ee0f1250414bb0020d701b1c612144 '
-            'https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/7dfdd53a9cb711bf6873c6ce693833c4430a058c',
+            'ADD --checksum=sha256:0dd32bcb2da8e1b1e263b49d474fa189c62b912249bd04697dfea3544a2b4642 '
+            'https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/2b480c63fdc2d1b411a6325f54aef1da8880bcd4',
             test_b_recipe,
         )
         self.assertIn(f'ARG BUILD_VERSION={test_b["version"]}', test_b_recipe)
