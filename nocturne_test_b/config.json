@@ -1,8 +1,8 @@
 {
   "name": "Nocturne Test B",
-  "version": "0.3.25-b3",
+  "version": "0.3.25-b4",
   "slug": "nocturne_test_b",
-  "description": "HA wrapper 0.1.8 \u00b7 PR #1361 @ dacd76c (merged with main 98b8d47). Test the eHbA1c lab-result chart tooltips and report metadata; not for clinical use.",
+  "description": "HA wrapper 0.1.8 \u00b7 PR #1361 @ 7dfdd53. Test lab-result tooltips and verify pre-history lab dates do not extend the eHbA1c line; not for clinical use.",
   "url": "https://github.com/smokkelaar/nocturne-home-assistant",
   "arch": [
     "amd64"

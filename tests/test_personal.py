@@ -75,7 +75,15 @@ class PersonalTests(unittest.TestCase):
         self.assertEqual('Nocturne Test B', test_b['name'])
         self.assertEqual('NocturneTestB_', test_runtime['cookie_namespace'])
         self.assertEqual('https://homeassistant.local:8452', test_runtime['default_public_url'])
-        self.assertEqual('dacd76cf9a8824e1433835881fbf2406bb3b4293', test_runtime['source_commit'])
+        self.assertEqual('0.3.25-b4', test_b['version'])
+        self.assertEqual('7dfdd53a9cb711bf6873c6ce693833c4430a058c', test_runtime['source_commit'])
+        test_b_recipe = (ROOT / 'nocturne_test_b/Dockerfile').read_text()
+        self.assertIn(
+            'ADD --checksum=sha256:32cfe4671e2f00abe4bfda4a8f40ae25a4ee0f1250414bb0020d701b1c612144 '
+            'https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/7dfdd53a9cb711bf6873c6ce693833c4430a058c',
+            test_b_recipe,
+        )
+        self.assertIn(f'ARG BUILD_VERSION={test_b["version"]}', test_b_recipe)
         self.assertEqual('https://github.com/nightscout/nocturne/pull/1361', test_runtime['test_url'])
         self.assertIn('PR #1361', test_b['description'])
         test_settings = (ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/settings.py').read_text()
