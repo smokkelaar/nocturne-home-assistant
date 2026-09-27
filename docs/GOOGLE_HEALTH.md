@@ -1,11 +1,24 @@
 # Google Health / Health Connect naar Nocturne
 
-## Gebouwd in Personal 0.2.0
+## Actuele ontwikkelomgeving
+
+Test C (poort 8453) blijft de afzonderlijke Google Health-ontwikkelomgeving.
+De bron is de branch
+[`smokkelaar/google-health-heart-rate-aggregation-and-backfill`](https://github.com/smokkelaar/nocturne-personal/tree/smokkelaar/google-health-heart-rate-aggregation-and-backfill),
+met de nieuwste goedgekeurde Nightscout main-basis ingemerged. Het exacte
+broncommit en de archive-checksum staan in `upstream-google-health.json`.
+Test C behoudt zijn eigen installatie, configuratie, database en cookies.
+
+Personal (8450) en Test A (8451) gebruiken dezelfde Personal-bron. Latest
+(8449) en Test B (8452) gebruiken dezelfde vastgezette upstream main-images.
+Official (8448) volgt de officiële release en wordt hierbij niet gewijzigd.
+
+## Google Health in Personal
 
 De Google-login en import van stappen, hartslag en gewicht zijn nu onderdeel van
 de Personal-broncode, met een eigen scherm, dataselectie, periodieke synchronisatie
 en versleutelde tokens. Daarnaast bestaat een zelfstandig medicatielogboek.
-[Installeren](PERSONAL.md) · [Google Health instellen](https://github.com/smokkelaar/nocturne-personal/blob/review/google-health-final/docs/google-health.md).
+[Installeren](PERSONAL.md) · [Google Health instellen](https://github.com/smokkelaar/nocturne-personal/blob/smokkelaar/google-health-heart-rate-aggregation-and-backfill/docs/google-health.md).
 
 De gekozen implementatie is een **native Personal-module**, geen externe helper
 die brede Nocturne-schrijfpermissies nodig heeft. De API beheert eigen tenant-

@@ -109,7 +109,13 @@ def successful_build(commit):
         build = [job for job in jobs if job.get('name') == 'build-and-push']
         if len(build) == 1 and build[0].get('conclusion') == 'success':
             return run
-    raise NotReady('Current main has no successful build-and-push job yet')
+        # Upstream split API/web publishing; both publishers and manifest verification
+        # must succeed in this same run before their images can be promoted together.
+        required = ('dotnet-images', 'web-image', 'report')
+        if all(len(matches := [job for job in jobs if job.get('name') == name]) == 1
+               and matches[0].get('conclusion') == 'success' for name in required):
+            return run
+    raise NotReady('Current main has no successful paired-image publishing run yet')
 
 
 def resolve_candidate(current):

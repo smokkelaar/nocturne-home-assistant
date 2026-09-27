@@ -1,3 +1,11 @@
+# 0.3.25-c24
+
+Google Health-ontwikkelbranch bijgewerkt met upstream main `8635bd5`.
+Eigen migratie-IDs blijven behouden in het nieuwe migratieproject.
+Connector-resetqueries zijn expliciet beperkt tot de huidige tenant.
+Google Health-scherm en tests aangepast aan de nieuwe UI-componenten en API-types.
+Deze pakketupdate wist geen gegevens en behoudt de Test C-identiteit en opties.
+
 # 0.3.25-c23
 
 De rode **Delete imported Google Health data**-knop na Disconnect wist nu ook de Google Health-backfillcursor en de voltooidmelding. Broncommit `0b42fca`.

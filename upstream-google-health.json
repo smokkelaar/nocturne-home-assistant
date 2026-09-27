@@ -1,0 +1,9 @@
+{
+  "channel": "google-health",
+  "repository": "smokkelaar/nocturne-personal",
+  "branch": "smokkelaar/google-health-heart-rate-aggregation-and-backfill",
+  "commit": "9b801fc76bd36270a1bcdd2caecf5864ee23e6c2",
+  "commit_at": "2026-09-27T14:56:02Z",
+  "archive_sha256": "78a59fc7ceefbf55cb9be3097d052415dc7450757230f01fb6bd63bdfea1f146",
+  "base_commit": "8635bd530e6f8b792c3f2442cd3198ec7104fa96"
+}

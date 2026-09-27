@@ -134,6 +134,24 @@ class LatestUpdateTests(unittest.TestCase):
         with patch.object(updater, 'fetch', side_effect=responses):
             self.assertEqual(selected, updater.resolve_image('api', commit)['digest'])
 
+    def test_split_publish_requires_both_images_and_manifest_report(self):
+        commit = 'a' * 40
+        runs = {'workflow_runs': [{'id': 8, 'head_sha': commit, 'status': 'completed'}]}
+        jobs = [{'name': name, 'conclusion': 'success'}
+                for name in ('dotnet-images', 'web-image', 'report')]
+        with patch.object(updater, 'github', side_effect=[runs, {'jobs': jobs}]):
+            self.assertEqual(8, updater.successful_build(commit)['id'])
+        for index in range(3):
+            for status in ('failure', 'skipped', None):
+                incomplete = copy.deepcopy(jobs)
+                incomplete[index]['conclusion'] = status
+                with patch.object(updater, 'github', side_effect=[runs, {'jobs': incomplete}]):
+                    with self.assertRaises(updater.NotReady):
+                        updater.successful_build(commit)
+            with patch.object(updater, 'github', side_effect=[runs, {'jobs': jobs[:index] + jobs[index + 1:]}]):
+                with self.assertRaises(updater.NotReady):
+                    updater.successful_build(commit)
+
 
 if __name__ == '__main__':
     unittest.main()
