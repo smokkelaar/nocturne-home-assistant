@@ -9,6 +9,7 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 import update_personal as updater
+import update_test_channels
 
 
 class PersonalTests(unittest.TestCase):
@@ -19,6 +20,10 @@ class PersonalTests(unittest.TestCase):
 
     def test_generated_package_matches_exact_source_and_recipe(self):
         updater.check()
+
+    def test_generated_test_channels_match_their_pins(self):
+        for path, expected in update_test_channels.files().items():
+            self.assertEqual(expected, (ROOT / path).read_bytes(), path)
 
     def test_generated_feature_docs_follow_extension_version(self):
         lock = {**self.lock, 'version': '0.2.99'}
@@ -56,7 +61,11 @@ class PersonalTests(unittest.TestCase):
         test_a = json.loads((ROOT / 'nocturne_test_a/config.json').read_text())
         test_runtime = json.loads((ROOT / 'nocturne_test_a/rootfs/opt/nocturne-ha/version.json').read_text())
         self.assertNotEqual(self.config['version'], test_a['version'])
-        self.assertTrue(test_a['version'].startswith('0.3.25-'))
+        self.assertTrue(test_a['version'].startswith(self.lock['version'] + '-'))
+        self.assertEqual(self.lock['commit'], test_runtime['source_commit'])
+        test_recipe = (ROOT / 'nocturne_test_a/Dockerfile').read_text()
+        self.assertIn('--checksum=sha256:' + self.lock['archive_sha256'], test_recipe)
+        self.assertIn(self.lock['commit'], test_recipe)
         self.assertEqual(test_a['version'], test_runtime['package'])
         self.assertEqual('Nocturne Test A', test_a['name'])
         self.assertEqual('NocturneTestA_', test_runtime['cookie_namespace'])
@@ -66,7 +75,7 @@ class PersonalTests(unittest.TestCase):
         test_cookies = (ROOT / 'nocturne_test_a/rootfs/opt/nocturne-ha/cookies.mjs').read_text()
         self.assertIn("'NocturneTestA_'", test_cookies)
 
-    def test_test_b_pins_pr_1361_with_a_distinct_runtime_identity(self):
+    def test_test_b_pins_latest_with_a_distinct_runtime_identity(self):
         test_b = json.loads((ROOT / 'nocturne_test_b/config.json').read_text())
         test_runtime = json.loads((ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/version.json').read_text())
         self.assertNotEqual(self.config['version'], test_b['version'])
@@ -75,17 +84,15 @@ class PersonalTests(unittest.TestCase):
         self.assertEqual('Nocturne Test B', test_b['name'])
         self.assertEqual('NocturneTestB_', test_runtime['cookie_namespace'])
         self.assertEqual('https://homeassistant.local:8452', test_runtime['default_public_url'])
-        self.assertEqual('0.3.25-b5', test_b['version'])
-        self.assertEqual('2b480c63fdc2d1b411a6325f54aef1da8880bcd4', test_runtime['source_commit'])
+        latest = json.loads((ROOT / 'upstream-latest.json').read_text())
+        self.assertEqual(latest['commit'], test_runtime['source_commit'])
+        self.assertEqual('nightscout/nocturne', test_runtime['repository'])
         test_b_recipe = (ROOT / 'nocturne_test_b/Dockerfile').read_text()
-        self.assertIn(
-            'ADD --checksum=sha256:0dd32bcb2da8e1b1e263b49d474fa189c62b912249bd04697dfea3544a2b4642 '
-            'https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/2b480c63fdc2d1b411a6325f54aef1da8880bcd4',
-            test_b_recipe,
-        )
+        for kind in ('api', 'web'):
+            self.assertIn(f'FROM ghcr.io/nightscout/nocturne/nocturne-{kind}@{latest[kind]["digest"]}', test_b_recipe)
+        self.assertNotIn('codeload.github.com', test_b_recipe)
         self.assertIn(f'ARG BUILD_VERSION={test_b["version"]}', test_b_recipe)
-        self.assertEqual('https://github.com/nightscout/nocturne/pull/1361', test_runtime['test_url'])
-        self.assertIn('PR #1361', test_b['description'])
+        self.assertIn('Latest', test_b['description'])
         test_settings = (ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/settings.py').read_text()
         self.assertIn("('NocturneTestB_',)", test_settings)
         test_cookies = (ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/cookies.mjs').read_text()
@@ -102,7 +109,12 @@ class PersonalTests(unittest.TestCase):
         self.assertEqual('Nocturne Test C', test_c['name'])
         self.assertEqual('NocturneTestC_', test_runtime['cookie_namespace'])
         self.assertEqual('https://homeassistant.local:8453', test_runtime['default_public_url'])
-        self.assertEqual('0b42fcac79758250cc8974b5a6696f54186fd521', test_runtime['source_commit'])
+        google = json.loads((ROOT / 'upstream-google-health.json').read_text())
+        self.assertEqual(google['commit'], test_runtime['source_commit'])
+        self.assertEqual(self.lock['upstream']['commit'], test_runtime['base_commit'])
+        test_recipe = (ROOT / 'nocturne_test_c/Dockerfile').read_text()
+        self.assertIn(google['commit'], test_recipe)
+        self.assertIn('--checksum=sha256:' + google['archive_sha256'], test_recipe)
         test_settings = (ROOT / 'nocturne_test_c/rootfs/opt/nocturne-ha/settings.py').read_text()
         self.assertIn("('NocturneTestC_',)", test_settings)
         test_cookies = (ROOT / 'nocturne_test_c/rootfs/opt/nocturne-ha/cookies.mjs').read_text()

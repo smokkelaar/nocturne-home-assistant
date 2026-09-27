@@ -29,8 +29,22 @@ jobs:
       - run: node --test tests/test_personal_cookies.mjs
       - run: python tools/update_upstream.py --check
       - run: python tools/update_latest.py --check
+      - run: python tools/update_test_channels.py --check
+  google-health:
+    name: Test C container smoke test
+    needs: unit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Compile and smoke-test the Google Health development source
+        run: |
+          docker build --platform linux/amd64 --tag nocturne-test-c:ci nocturne_test_c
+          python3 tools/smoke.py --image nocturne-test-c:ci
   container:
-    name: Container smoke test
+    name: Core container smoke tests
     needs: unit
     runs-on: ubuntu-24.04
     timeout-minutes: 95
@@ -73,6 +87,10 @@ jobs:
         run: |
           docker build --platform linux/amd64 --tag nocturne-latest:ci nocturne_latest
           python3 tools/smoke.py --image nocturne-latest:ci
+      - name: Build and smoke-test Test B runtime identity
+        run: |
+          docker build --platform linux/amd64 --tag nocturne-test-b:ci nocturne_test_b
+          python3 tools/smoke.py --image nocturne-test-b:ci
       - name: Check out immutable Official baseline release 0.1.2
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -98,3 +116,16 @@ jobs:
       - name: Three real instances share a browser without sharing credentials
         if: steps.personal.outputs.changed == 'true'
         run: python3 tools/cookie_smoke.py --official nocturne-official:ci --latest nocturne-latest:ci --personal nocturne-personal:ci
+  container-gate:
+    name: Container smoke test
+    needs: [unit, google-health, container]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Require every container check before promotion
+        env:
+          UNIT_RESULT: ${{ needs.unit.result }}
+          GOOGLE_RESULT: ${{ needs.google-health.result }}
+          CORE_RESULT: ${{ needs.container.result }}
+        run: test "$UNIT_RESULT" = success && test "$GOOGLE_RESULT" = success && test "$CORE_RESULT" = success

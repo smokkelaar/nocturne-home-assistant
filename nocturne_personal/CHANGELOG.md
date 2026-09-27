@@ -1,3 +1,7 @@
+# 0.3.26-1
+
+Personal 0.3.26; source `376c8a4b38f52b0cb015cf26a1135086dc5f227a`; Daily base `8635bd530e6f8b792c3f2442cd3198ec7104fa96`.
+
 # 0.3.25-2
 
 Klikbare base-, release- en broncommitinformatie, expliciet testdoel en actuele systeemresources op de Home Assistant-statuspagina.

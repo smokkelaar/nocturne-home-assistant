@@ -1,3 +1,8 @@
+## 0.3.25-b6
+
+- Zelfde API- en web-image-digests als Latest 0.1.8-3, main `8635bd530e6f8b792c3f2442cd3198ec7104fa96`.
+- Geen wijziging van poort, opslag, accounts of connectorinstellingen.
+
 # 0.3.25-b5
 
 Restores the missing eHbA1c and lab-result labels in production tooltips. PR #1361 commit `2b480c6` includes both labels in all 11 supported language catalogs, with English as the source language. A regression test reproduces production translation and verifies every language in CI. The earlier line-boundary fix remains included.

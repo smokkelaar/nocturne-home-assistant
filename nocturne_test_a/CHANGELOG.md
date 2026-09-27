@@ -1,3 +1,9 @@
+# 0.3.26-a1
+
+Dezelfde bron als Personal 0.3.26, met upstream main `8635bd5` ingemerged.
+Eigen eHbA1c-vergelijkingen, jaaroverzicht en Google Health blijven behouden.
+De Test A-identiteit, poort, opties en gegevens blijven ongewijzigd.
+
 # 0.3.25-4
 
 Klikbare broninformatie, expliciet testdoel en actuele systeemresources op de Home Assistant-statuspagina.

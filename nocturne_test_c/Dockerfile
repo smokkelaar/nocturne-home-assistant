@@ -1,4 +1,4 @@
-# Both API and web are compiled from the checksum-verified PR #1361 source overlay.
+# Both API and web are compiled from the same checksum-verified Google Health source.
 FROM node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d AS node
 FROM rust@sha256:4673f78db88b71f09d5451bbc404734807918161241215ba0a50bbbe9b448117 AS rust
 FROM mcr.microsoft.com/dotnet/sdk@sha256:0e53453ccfc8ff2d51319fe80c678971c6d0f8008dff3565fa88e15840b69854 AS source
@@ -10,7 +10,7 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@11.5.0
-ADD --checksum=sha256:7ea3dadfa247da845676611de91813f8e273f0b37e7b58e4e41eab046c0f4730 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/0b42fcac79758250cc8974b5a6696f54186fd521 /tmp/source.tar.gz
+ADD --checksum=sha256:78a59fc7ceefbf55cb9be3097d052415dc7450757230f01fb6bd63bdfea1f146 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/9b801fc76bd36270a1bcdd2caecf5864ee23e6c2 /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
 WORKDIR /src/src/Web
@@ -36,14 +36,14 @@ RUN mkdir -p /out/web/packages/app /out/web/packages/bridge \
     && cp packages/bridge/package.json /out/web/packages/bridge/ \
     && cp -r packages/bridge/dist /out/web/packages/bridge/
 # Use the matching approved Daily runtime/OS; replace its application with our source build.
-FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:a9774381e4b820034958da87d772bc0470efa1ff1c959b72a24303e5bb8fb9c2
+FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:92cb1eadc462fac72cf7816d66bd546290cc270446d2f11d943f4934f6769c8e
 USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so
-ARG BUILD_VERSION=0.3.25-c23
+ARG BUILD_VERSION=0.3.25-c24
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
-    org.opencontainers.image.title="Nocturne Test C - Home Assistant app" \
+      org.opencontainers.image.title="Nocturne Test C - Home Assistant app" \
       org.opencontainers.image.source="https://github.com/smokkelaar/nocturne-home-assistant" \
       org.opencontainers.image.licenses="AGPL-3.0-only"
 
