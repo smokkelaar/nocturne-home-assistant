@@ -9,6 +9,32 @@ met de nieuwste goedgekeurde Nightscout main-basis ingemerged. Het exacte
 broncommit en de archive-checksum staan in `upstream-google-health.json`.
 Test C behoudt zijn eigen installatie, configuratie, database en cookies.
 
+## Test checklist voor Personal 0.3.26-2 / Test A 0.3.26-a2
+
+Voer deze controles eerst uit op Test A (8451) en daarna, als de uitkomst goed
+is, op Personal (8450):
+
+1. Open **Settings → Connectors → Google Health** en wissel minstens tussen
+   English en Nederlands. Controleer dat koppen, OAuth-uitleg, datatypen,
+   voortgang, foutmeldingen, **Import recovery** en de knop **Open connector
+   reset** zichtbaar zijn.
+2. Verbind een testaccount, scan de beschikbare typen en vink alleen typen aan
+   die Google werkelijk toont. Controleer stappen, hartslag, gewicht en slaap
+   afzonderlijk; een leeg type mag geen nulmetingen maken.
+3. Start een historische import, laat de pagina open en controleer de
+   datatypen-/paginavoortgang. Herhaal daarna dezelfde import en controleer dat
+   er geen dubbele Nocturne-metingen ontstaan.
+4. Simuleer een afgebroken import of gebruik een testdatering. Open als
+   platformbeheerder **Administration → Reset Connector Cursors**, kies de
+   connector en datum, start de achtergrondtaak en controleer voortgang en
+   annuleren. Bestaande metingen mogen niet verdwijnen.
+5. Controleer op de eHbA1c-pagina dat **eHbA1c**, **Lab results** en de uitleg
+   over de labdriehoek zichtbaar blijven; een labresultaat mag de berekende
+   lijn niet aanpassen.
+6. Controleer dat Test B (8452) op dezelfde Latest-main blijft en dat Test C
+   (8453) zijn eigen Google Health-branch, data en cookies behoudt. Official
+   (8448) en Latest (8449) worden door deze update niet gewijzigd.
+
 Personal (8450) en Test A (8451) gebruiken dezelfde Personal-bron. Latest
 (8449) en Test B (8452) gebruiken dezelfde vastgezette upstream main-images.
 Official (8448) volgt de officiële release en wordt hierbij niet gewijzigd.

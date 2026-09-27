@@ -1,3 +1,9 @@
+# 0.3.26-a2
+
+Same Personal source as 8450, including the restored Google Health/eHbA1c
+translations and shared connector-cursor recovery link. Test A data, port and
+cookie namespace remain isolated.
+
 # 0.3.26-a1
 
 Dezelfde bron als Personal 0.3.26, met upstream main `8635bd5` ingemerged.
