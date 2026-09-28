@@ -1,3 +1,19 @@
+## 0.3.25-b10
+
+Test B now builds Google Health PR #1293 source commit `213ed1b`, with the
+checksum-verified archive pinned in `upstream-google-health-pr1293.json`.
+
+- The Google Health settings page now uses the server capability catalogue as
+  the source of truth for categories. Vitals (heart rate) and Body measurement
+  (weight) remain visible when a slow or partial inventory preview omits them,
+  and those rows are clearly labelled **Not scanned** until the scan returns.
+- The previous b9 preview-gate timeout and `already_running` coordination fix
+  remain included, so a busy historical import cannot leave the inventory
+  spinner running indefinitely.
+
+The Test B identity, port 8452, data directory, account, connector settings
+and cookie namespace are unchanged. No data is deleted or reset by this update.
+
 ## 0.3.25-b9
 
 Test B now builds Google Health PR #1293 source commit `2d8f267`, with the
