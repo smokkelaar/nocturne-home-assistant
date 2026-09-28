@@ -1,3 +1,14 @@
+## 0.3.25-b15
+
+Test B now builds Google Health PR #1293 source commit
+`7aa241d14a4cff5fcc04d11c15b83d61ae3e3e4f`, with the checksum-verified archive pinned in
+`upstream-google-health-pr1293.json`.
+
+- Keep Google Health category identifiers locale-neutral so Body measurement/weight remains visible in translated locales.
+
+The Test B identity, port 8452, data directory, account, connector settings
+and cookie namespace are unchanged. No data is deleted or reset by this update.
+
 ## 0.3.25-b13
 
 Test B now builds Google Health PR #1293 source commit
