@@ -31,6 +31,7 @@ RUN printf '\n=== Nocturne build phase 7/7: build web application ===\n' \
     && pnpm --filter @nocturne/bot run build && pnpm --filter @nocturne/app run build
 RUN mkdir -p /out/web/packages/app /out/web/packages/bridge \
     && cp package.json pnpm-lock.yaml pnpm-workspace.yaml /out/web/ \
+    && cp -r patches /out/web/ \
     && cp packages/app/package.json packages/app/server.js packages/app/server-origin-warning.js /out/web/packages/app/ \
     && cp -r packages/app/build /out/web/packages/app/ \
     && cp packages/bridge/package.json /out/web/packages/bridge/ \
