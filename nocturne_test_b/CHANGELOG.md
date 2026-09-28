@@ -1,3 +1,47 @@
+## 0.3.25-b11
+
+Test B now builds Google Health PR #1293 source commit `db80b8c`, with the
+checksum-verified archive pinned in `upstream-google-health-pr1293.json`.
+
+- The catalog fallback now satisfies the generated API types by ignoring
+  malformed capability entries without a data type; valid Vitals and Body
+  measurement entries remain visible during partial inventory previews.
+- All b10 category-visibility and b9 preview-coordination fixes remain included.
+
+The Test B identity, port 8452, data directory, account, connector settings
+and cookie namespace are unchanged. No data is deleted or reset by this update.
+
+## 0.3.25-b10
+
+Test B now builds Google Health PR #1293 source commit `213ed1b`, with the
+checksum-verified archive pinned in `upstream-google-health-pr1293.json`.
+
+- The Google Health settings page now uses the server capability catalogue as
+  the source of truth for categories. Vitals (heart rate) and Body measurement
+  (weight) remain visible when a slow or partial inventory preview omits them,
+  and those rows are clearly labelled **Not scanned** until the scan returns.
+- The previous b9 preview-gate timeout and `already_running` coordination fix
+  remain included, so a busy historical import cannot leave the inventory
+  spinner running indefinitely.
+
+The Test B identity, port 8452, data directory, account, connector settings
+and cookie namespace are unchanged. No data is deleted or reset by this update.
+
+## 0.3.25-b9
+
+Test B now builds Google Health PR #1293 source commit `2d8f267`, with the
+checksum-verified archive pinned in `upstream-google-health-pr1293.json`.
+
+- The inventory preview now gives an active import a five-second coordination
+  window. If the tenant slot is still occupied, the page explains that an
+  import is running instead of leaving the inventory spinner indefinitely.
+- The server-side guard and the UI both recognise the sanitised
+  `already_running` coordination code without exposing provider or connector
+  internals. No second import is started and no existing data is changed.
+
+The Test B identity, port 8452, data directory, account, connector settings
+and cookie namespace are unchanged. No data is deleted or reset by this update.
+
 ## 0.3.25-b8
 
 Test B now builds Google Health PR #1293 source commit `2087a3f`, with the
