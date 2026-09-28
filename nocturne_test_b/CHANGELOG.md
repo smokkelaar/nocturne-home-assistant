@@ -1,6 +1,6 @@
 ## 0.3.25-b7
 
-Test B now builds the Google Health-only PR #1293 source at commit `314bfef`, merged with Nightscout `main` at `de6b030`. The Test B identity, port 8452, data mount, options, and cookie namespace are unchanged; Personal and Test A are not changed.
+Test B now builds the Google Health-only PR #1293 source at commit `bc10407`, merged with Nightscout `main` at `de6b030`. The Test B identity, port 8452, data mount, options, and cookie namespace are unchanged; Personal and Test A are not changed.
 
 ## 0.3.25-b6
 
