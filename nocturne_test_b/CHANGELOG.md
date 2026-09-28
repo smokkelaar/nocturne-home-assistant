@@ -1,7 +1,7 @@
-## 0.3.25-b14
+## 0.3.25-b15
 
 Test B now builds Google Health PR #1293 source commit
-`7b13d0f9d34eee11bd8cf5903c40643cf546dccb`, with the checksum-verified archive pinned in
+`7aa241d14a4cff5fcc04d11c15b83d61ae3e3e4f`, with the checksum-verified archive pinned in
 `upstream-google-health-pr1293.json`.
 
 - Keep Google Health category identifiers locale-neutral so Body measurement/weight remains visible in translated locales.
