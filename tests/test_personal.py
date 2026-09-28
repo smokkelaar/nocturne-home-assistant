@@ -75,7 +75,7 @@ class PersonalTests(unittest.TestCase):
         test_cookies = (ROOT / 'nocturne_test_a/rootfs/opt/nocturne-ha/cookies.mjs').read_text()
         self.assertIn("'NocturneTestA_'", test_cookies)
 
-    def test_test_b_pins_latest_with_a_distinct_runtime_identity(self):
+    def test_test_b_pins_google_health_pr1293_with_a_distinct_runtime_identity(self):
         test_b = json.loads((ROOT / 'nocturne_test_b/config.json').read_text())
         test_runtime = json.loads((ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/version.json').read_text())
         self.assertNotEqual(self.config['version'], test_b['version'])
@@ -84,15 +84,17 @@ class PersonalTests(unittest.TestCase):
         self.assertEqual('Nocturne Test B', test_b['name'])
         self.assertEqual('NocturneTestB_', test_runtime['cookie_namespace'])
         self.assertEqual('https://homeassistant.local:8452', test_runtime['default_public_url'])
-        latest = json.loads((ROOT / 'upstream-latest.json').read_text())
-        self.assertEqual(latest['commit'], test_runtime['source_commit'])
-        self.assertEqual('nightscout/nocturne', test_runtime['repository'])
+        pr = json.loads((ROOT / 'upstream-google-health-pr1293.json').read_text())
+        self.assertEqual(pr['commit'], test_runtime['source_commit'])
+        self.assertEqual(pr['base_commit'], test_runtime['base_commit'])
+        self.assertEqual(pr['repository'], test_runtime['repository'])
+        self.assertEqual(pr['pull_request_url'], test_runtime['release_url'])
         test_b_recipe = (ROOT / 'nocturne_test_b/Dockerfile').read_text()
-        for kind in ('api', 'web'):
-            self.assertIn(f'FROM ghcr.io/nightscout/nocturne/nocturne-{kind}@{latest[kind]["digest"]}', test_b_recipe)
-        self.assertNotIn('codeload.github.com', test_b_recipe)
+        self.assertIn(pr['commit'], test_b_recipe)
+        self.assertIn('--checksum=sha256:' + pr['archive_sha256'], test_b_recipe)
+        self.assertIn('codeload.github.com', test_b_recipe)
         self.assertIn(f'ARG BUILD_VERSION={test_b["version"]}', test_b_recipe)
-        self.assertIn('Latest', test_b['description'])
+        self.assertIn('Google Health PR #1293', test_b['description'])
         test_settings = (ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/settings.py').read_text()
         self.assertIn("('NocturneTestB_',)", test_settings)
         test_cookies = (ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/cookies.mjs').read_text()

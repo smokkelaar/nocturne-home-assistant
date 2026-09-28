@@ -1,10 +1,46 @@
-# API and frontend are paired by upstream-latest.json and pinned by OCI digest.
-FROM ghcr.io/nightscout/nocturne/nocturne-web@sha256:1e998d9f8b058b62dd1698373adbe17b312e00a986a8f45f9fd8874f0f76c23e AS web
+# Both API and web are compiled from the same checksum-verified Google Health source.
 FROM node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d AS node
+FROM rust@sha256:4673f78db88b71f09d5451bbc404734807918161241215ba0a50bbbe9b448117 AS rust
+FROM mcr.microsoft.com/dotnet/sdk@sha256:0e53453ccfc8ff2d51319fe80c678971c6d0f8008dff3565fa88e15840b69854 AS source
+COPY --from=node /usr/local/ /usr/local/
+COPY --from=rust /usr/local/cargo/ /usr/local/cargo/
+COPY --from=rust /usr/local/rustup/ /usr/local/rustup/
+ENV CARGO_HOME=/usr/local/cargo RUSTUP_HOME=/usr/local/rustup PATH=/usr/local/cargo/bin:$PATH
+ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
+RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
+    && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
+    && npm install -g pnpm@11.5.0
+ADD --checksum=sha256:69b5c1a79fceaed3a9a75eaab8920e09a0657842b75255c36564fa967cf31fc8 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/314bfef6ca3c990b5e09504b7d6dc3bd4e8953dc /tmp/source.tar.gz
+RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
+    && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
+WORKDIR /src/src/Web
+RUN printf '\n=== Nocturne build phase 3/7: install web dependencies and build bridge ===\n' \
+    && pnpm install --frozen-lockfile && pnpm --filter @nocturne/bridge run build
+WORKDIR /src
+RUN printf '\n=== Nocturne build phase 4/7: compile API ===\n' \
+    && dotnet build src/API/Nocturne.API/Nocturne.API.csproj -c Release -p:UseSharedCompilation=false
+RUN printf '\n=== Nocturne build phase 5/7: compile alert engine ===\n' \
+    && cargo build --manifest-path crates/Cargo.toml --release --locked -p nocturne-alerts-ffi
+RUN printf '\n=== Nocturne build phase 6/7: publish API ===\n' \
+    && dotnet publish src/API/Nocturne.API/Nocturne.API.csproj -c Release -r linux-x64 --self-contained false \
+    -p:GenerateNSwagClient=false -p:UseSharedCompilation=false -o /out/api
+WORKDIR /src/src/Web
+ENV PUBLIC_API_URL=http://localhost:1612 PUBLIC_WEBSOCKET_RECONNECT_ATTEMPTS=5 PUBLIC_WEBSOCKET_RECONNECT_DELAY=1000
+ENV PUBLIC_WEBSOCKET_MAX_RECONNECT_DELAY=30000 PUBLIC_WEBSOCKET_PING_TIMEOUT=15000 PUBLIC_WEBSOCKET_PING_INTERVAL=20000
+RUN printf '\n=== Nocturne build phase 7/7: build web application ===\n' \
+    && pnpm --filter @nocturne/bot run build && pnpm --filter @nocturne/app run build
+RUN mkdir -p /out/web/packages/app /out/web/packages/bridge \
+    && cp package.json pnpm-lock.yaml pnpm-workspace.yaml /out/web/ \
+    && cp packages/app/package.json packages/app/server.js packages/app/server-origin-warning.js /out/web/packages/app/ \
+    && cp -r packages/app/build /out/web/packages/app/ \
+    && cp packages/bridge/package.json /out/web/packages/bridge/ \
+    && cp -r packages/bridge/dist /out/web/packages/bridge/
+# Use the matching approved Daily runtime/OS; replace its application with our source build.
 FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:92cb1eadc462fac72cf7816d66bd546290cc270446d2f11d943f4934f6769c8e
-
 USER root
-ARG BUILD_VERSION=0.3.25-b6
+COPY --from=source /out/api/ /app/
+COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so
+ARG BUILD_VERSION=0.3.25-b7
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Test B - Home Assistant app" \
@@ -28,12 +64,12 @@ RUN printf '#!/bin/sh\nexit 101\n' > /usr/sbin/policy-rc.d \
 
 # Copy built SvelteKit output; reinstall only production dependencies for glibc.
 # This does not recompile the frontend or the .NET application on the HA host.
-COPY --from=web /app/ /opt/nocturne-web/
+COPY --from=source /out/web/ /opt/nocturne-web/
 COPY build/ /opt/nocturne-ha-build/
 WORKDIR /opt/nocturne-web
 RUN python3 /opt/nocturne-ha-build/prepare_web.py /opt/nocturne-web \
     && find . -type d -name node_modules -prune -exec rm -rf '{}' + \
-    && npm install -g pnpm@10.13.1 \
+    && npm install -g pnpm@11.5.0 \
     && pnpm install --prod --frozen-lockfile --filter @nocturne/app... \
     && chown -R nocturne-web:nocturne-web /opt/nocturne-web
 # Upstream enables a global virtual store. The guarded patch disables it so no
