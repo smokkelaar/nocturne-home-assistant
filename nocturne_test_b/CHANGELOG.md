@@ -1,3 +1,18 @@
+## 0.3.25-b9
+
+Test B now builds Google Health PR #1293 source commit `2d8f267`, with the
+checksum-verified archive pinned in `upstream-google-health-pr1293.json`.
+
+- The inventory preview now gives an active import a five-second coordination
+  window. If the tenant slot is still occupied, the page explains that an
+  import is running instead of leaving the inventory spinner indefinitely.
+- The server-side guard and the UI both recognise the sanitised
+  `already_running` coordination code without exposing provider or connector
+  internals. No second import is started and no existing data is changed.
+
+The Test B identity, port 8452, data directory, account, connector settings
+and cookie namespace are unchanged. No data is deleted or reset by this update.
+
 ## 0.3.25-b8
 
 Test B now builds Google Health PR #1293 source commit `2087a3f`, with the
