@@ -1,3 +1,18 @@
+## 0.3.25-b12
+
+Test B now builds the follow-up Google Health PR #1293 source commit
+`817df386`, with the checksum-verified archive pinned in
+`upstream-google-health-pr1293.json`.
+
+- Google Health categories now remain visible while an inventory preview is
+  still running or temporarily unavailable. Vitals (heart rate) and Body
+  measurement (weight) show their server catalog rows as **Not scanned**
+  instead of disappearing.
+- Added a browser regression test for an `already_running` inventory scan.
+
+The Test B identity, port 8452, data directory, account, connector settings
+and cookie namespace are unchanged. No data is deleted or reset by this update.
+
 ## 0.3.25-b11
 
 Test B now builds Google Health PR #1293 source commit `db80b8c`, with the
