@@ -1,3 +1,19 @@
+## 0.3.25-b13
+
+Test B now builds Google Health PR #1293 source commit
+`bca63aa39`, with the checksum-verified archive pinned in
+`upstream-google-health-pr1293.json`.
+
+- Fixed a Dutch (and other translated-locale) rendering bug that hid the
+  **Vitals** and **Body measurement** categories. The API uses stable English
+  category keys while the UI labels are translated; the page now compares the
+  stable keys and only translates the displayed label.
+- Existing catalog fallback behavior remains: heart rate and weight rows stay
+  visible as **Not scanned** while inventory is unavailable.
+
+The Test B identity, port 8452, data directory, account, connector settings
+and cookie namespace are unchanged. No data is deleted or reset by this update.
+
 ## 0.3.25-b12
 
 Test B now builds the follow-up Google Health PR #1293 source commit
