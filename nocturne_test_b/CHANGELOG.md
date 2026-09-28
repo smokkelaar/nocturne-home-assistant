@@ -1,3 +1,16 @@
+## 0.3.25-b11
+
+Test B now builds Google Health PR #1293 source commit `db80b8c`, with the
+checksum-verified archive pinned in `upstream-google-health-pr1293.json`.
+
+- The catalog fallback now satisfies the generated API types by ignoring
+  malformed capability entries without a data type; valid Vitals and Body
+  measurement entries remain visible during partial inventory previews.
+- All b10 category-visibility and b9 preview-coordination fixes remain included.
+
+The Test B identity, port 8452, data directory, account, connector settings
+and cookie namespace are unchanged. No data is deleted or reset by this update.
+
 ## 0.3.25-b10
 
 Test B now builds Google Health PR #1293 source commit `213ed1b`, with the
