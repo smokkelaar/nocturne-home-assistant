@@ -1,6 +1,6 @@
 # Nocturne Test B — installation and operation
 
-> This is an isolated Nocturne test app pinned to Google Health PR #1293, source commit `db80b8c`, including the merge with the current upstream `main`. It is a separate HA app with its own data and default host port **8452**. Never copy `/data`, accounts or keys between it and other instances.
+> This is an isolated Nocturne test app pinned to Google Health PR #1293, source commit `817df386`, including the merge with the current upstream `main`. It is a separate HA app with its own data and default host port **8452**. Never copy `/data`, accounts or keys between it and other instances.
 
 > **Nederlands, met afbeeldingen en exacte stappen:** [Volledige visuele installatiehandleiding](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md), van repository toevoegen tot dashboard en herstarttest. [Domein, certificaat en lokale DNS](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/HTTPS-EN-DNS.md) is apart uitgewerkt. These absolute links also work from Home Assistant's Documentation tab.
 
