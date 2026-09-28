@@ -1,3 +1,21 @@
+## 0.3.25-b8
+
+Test B now builds Google Health PR #1293 source commit `2087a3f`, with the
+checksum-verified archive pinned in `upstream-google-health-pr1293.json`.
+
+- A scheduled import and a user-triggered **Sync now** request share one tenant
+  slot. If the slot is already occupied, the UI keeps polling the existing run
+  instead of showing a provider failure or overwriting the connector health
+  state with a stale “already running” error.
+- Heart-rate points used by the actogram are averaged to one UTC-minute point
+  in PostgreSQL before the report response is serialized. Raw rows are kept
+  unchanged for health history and day views; this reduces report payload and
+  chart work for dense wearable data on both heart-rate and steps pages.
+- “Google Health” stays as the product name in every supported locale.
+
+The Test B identity, port 8452, data directory, account, connector settings
+and cookie namespace are unchanged. No data is deleted or reset by this update.
+
 ## 0.3.25-b7
 
 Test B now builds the Google Health-only PR #1293 source at commit `bc10407`, merged with Nightscout `main` at `de6b030`. The Test B identity, port 8452, data mount, options, and cookie namespace are unchanged; Personal and Test A are not changed.

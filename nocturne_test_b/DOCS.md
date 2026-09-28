@@ -1,6 +1,6 @@
 # Nocturne Test B — installation and operation
 
-> This is an isolated Nocturne test app pinned to Google Health PR #1293, source commit `bc10407`, including the merge with the current upstream `main`. It is a separate HA app with its own data and default host port **8452**. Never copy `/data`, accounts or keys between it and other instances.
+> This is an isolated Nocturne test app pinned to Google Health PR #1293, source commit `2087a3f`, including the merge with the current upstream `main`. It is a separate HA app with its own data and default host port **8452**. Never copy `/data`, accounts or keys between it and other instances.
 
 > **Nederlands, met afbeeldingen en exacte stappen:** [Volledige visuele installatiehandleiding](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md), van repository toevoegen tot dashboard en herstarttest. [Domein, certificaat en lokale DNS](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/HTTPS-EN-DNS.md) is apart uitgewerkt. These absolute links also work from Home Assistant's Documentation tab.
 
@@ -42,6 +42,18 @@ No router port-forwarding is required or recommended for this test. A publicly r
 After the initial account setup, open **Settings → Connectors → Google Health**. Configure the Google OAuth client and callback URL used by the test environment, select the data types to import, and authorize the connection. Start with a short `Import from` date so the first run is easy to inspect; then test a longer historical range in pages.
 
 For recovery testing, interrupt or let a test import fail, use the connector-cursor reset action for a selected date/data type, and run the import again. Verify that a retry does not duplicate steps, heart-rate, body-weight or sleep records. Existing Test B data is not part of the PR validation contract; do not copy data from Personal or Test A.
+
+The scheduled connector job and **Sync now** use the same tenant-wide run slot. If
+the scheduled job starts first, **Sync now** reports that an import is already
+running and keeps checking the server-owned progress instead of starting a
+second import. This is expected coordination, not a Google account failure.
+
+For dense heart-rate data, the actogram report uses one PostgreSQL-computed
+average per UTC minute. This is only a report presentation optimisation: raw
+heart-rate rows remain available to the health history and day-level views.
+When validating responsiveness, measure the heart-rate and steps report after
+the first load and after a reload; inspect the browser network timing and
+confirm that the page remains usable while a Google Health import is running.
 
 Changing options requires restarting the app. There is no need to restart all of HA for ordinary app option changes.
 
