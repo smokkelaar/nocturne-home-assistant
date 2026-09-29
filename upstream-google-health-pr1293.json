@@ -4,7 +4,7 @@
   "pull_request": 1293,
   "commit": "2aab8c0052442110044826d547a40fa35350d3df",
   "commit_at": "2026-09-29T13:19:13Z",
-  "archive_sha256": "ff48d32e9fd8df0bd6d9280caff9a0613fd559b9a500ed355dd1cb640b5923e4",
+  "archive_sha256": "e1d8babc3b2ec93f5cfa279daf99be93037aee0facc32d2f01553f8721f357d5",
   "base_commit": "de6b03067dfe2a26c8858a8edf8245d00f06d7ba",
   "base_commit_at": "2026-09-28T07:28:26Z",
   "pull_request_url": "https://github.com/nightscout/nocturne/pull/1293"
