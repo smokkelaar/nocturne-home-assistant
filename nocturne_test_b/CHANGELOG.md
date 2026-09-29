@@ -1,3 +1,15 @@
+## 0.3.25-b16
+
+Test B now builds Google Health PR #1293 source commit `4554bd6e1`.
+
+- Nocturne Remote now reports the concrete transport cause when Personal cannot be reached (for
+  example a TLS, DNS or connection failure), instead of hiding it behind a generic fetch error.
+- Added a regression test for a transport failure. Google Health behavior and the Test B data store
+  are unchanged; no data is deleted or reset.
+
+The Test B identity, port 8452, data directory, account, connector settings and cookie namespace
+are unchanged.
+
 ## 0.3.25-b15
 
 Test B now builds Google Health PR #1293 source commit
