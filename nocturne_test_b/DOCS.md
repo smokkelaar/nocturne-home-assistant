@@ -1,6 +1,6 @@
 # Nocturne Test B — installation and operation
 
-> This is an isolated Nocturne test app pinned to Google Health PR #1293, source commit `7aa241d1`, including the merge with the current upstream `main`. It is a separate HA app with its own data and default host port **8452**. Never copy `/data`, accounts or keys between it and other instances.
+> This is an isolated Nocturne test app pinned to Google Health PR #1293, source commit `5d97387b`, including the merge with the current upstream `main`. It is a separate HA app with its own data and default host port **8452**. Never copy `/data`, accounts or keys between it and other instances.
 
 > **Nederlands, met afbeeldingen en exacte stappen:** [Volledige visuele installatiehandleiding](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md), van repository toevoegen tot dashboard en herstarttest. [Domein, certificaat en lokale DNS](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/HTTPS-EN-DNS.md) is apart uitgewerkt. These absolute links also work from Home Assistant's Documentation tab.
 
@@ -85,4 +85,4 @@ Automatic app updates are optional per app in HA. Keep automatic updates off for
 - No clinical reliability, automatic dosing, external data connectors or internet-facing deployment has been validated.
 - Never paste full logs, keys, recovery codes or health data into public issues. Report only a sanitized relevant excerpt with the app/Nocturne versions.
 
-Test B builds the exact PR #1293 source commit `7aa241d1` inside the wrapper so it can be tested before that PR is merged or released. The package update keeps the Test B slug, host port, HA options, data directory and cookie namespace; no data is copied from another channel and no live HA installation is changed by this repository update. This test instance is not for clinical use.
+Test B builds the exact PR #1293 source commit `5d97387b` inside the wrapper so it can be tested before that PR is merged or released. The package update keeps the Test B slug, host port, HA options, data directory and cookie namespace; no data is copied from another channel and no live HA installation is changed by this repository update. This test instance is not for clinical use.
