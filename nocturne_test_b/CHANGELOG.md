@@ -1,3 +1,17 @@
+## 0.3.25-b17
+
+Test B now builds Google Health PR #1293 source commit
+`5d97387bbaf2b0ff9456fc47f80c22c65a980b27`.
+
+- Nocturne Remote now keeps JSON parsing and other response-processing causes in the connector
+  status instead of replacing them with only “see preceding connector logs”. This makes a partial
+  crawl actionable while preserving already imported records.
+- Added a regression assertion for an unparseable remote page. Transport failures remain visible as
+  before.
+
+The Test B identity, port 8452, data directory, account, connector settings and cookie namespace
+are unchanged. No data is deleted or reset by this update.
+
 ## 0.3.25-b16
 
 Test B now builds Google Health PR #1293 source commit `4554bd6e1`.
