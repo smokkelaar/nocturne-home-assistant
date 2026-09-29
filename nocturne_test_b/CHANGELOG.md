@@ -1,3 +1,14 @@
+## 0.3.25-b23
+
+Test B now builds Google Health PR #1293 source commit
+`8d7f70dd73d738b0bdda8c86616a34ad4b0c8a80`.
+
+- Restored the historical-import progress sentence in all supported translation catalogs.
+- Preserved the inline completion/progress placeholder used by the Svelte translation runtime,
+  so the page now shows the date through which history was synchronized and whether the requested
+  history is complete.
+- No connector data, accounts, settings, or Test B storage is reset by this update.
+
 ## 0.3.25-b17
 
 Test B now builds Google Health PR #1293 source commit
