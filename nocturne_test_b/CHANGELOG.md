@@ -1,3 +1,18 @@
+## 0.3.25-b24
+
+Test B builds the latest fully CI-validated Google Health PR #1293 source commit
+`d28ced806e146804b355bc7a63130ce8a78f2e3e`.
+
+- Preserves Nocturne and Google Health product names across translation catalogs.
+- Uses existing native health tables; adds no Google Health database migrations or staging tables.
+- Bounds reconciliation memory and splits oversized synchronization windows, preserving existing
+  data and retry cursors on failure or empty results.
+- Restores the explicit shared PostgreSQL test fixture required by the upstream test suite.
+- Keeps the Test B identity, port 8452, data directory, accounts, connector settings, and cookie namespace.
+  This update does not reset or delete stored data. Existing experimental staging tables, if present
+  in an older test installation, are left untouched and are no longer used.
+- Personal, Test A, Test C, Latest, and Official are unchanged.
+
 ## 0.3.25-b23
 
 Test B now builds Google Health PR #1293 source commit
