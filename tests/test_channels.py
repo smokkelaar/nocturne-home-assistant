@@ -40,6 +40,16 @@ class ChannelTests(unittest.TestCase):
         self.assertTrue(self.test_a['options']['public_url'].endswith(':8451'))
         self.assertNotEqual(self.test_a['slug'], 'nocturne_personal')
 
+    def test_test_a_api_logging_is_enabled_without_remote_telemetry(self):
+        settings = load_settings('nocturne_test_a')
+        passwords = {name: 'test-value' for name in settings.SECRET_FIELDS}
+        api, web = settings.service_environments(settings.validate_options({}), passwords)
+        self.assertEqual('false', api['OTEL_SDK_DISABLED'])
+        self.assertEqual('', api['OTEL_EXPORTER_OTLP_ENDPOINT'])
+        self.assertEqual('Warning', api['Logging__LogLevel__Default'])
+        self.assertEqual('true', web['OTEL_SDK_DISABLED'])
+        self.assertEqual('', web['OTEL_EXPORTER_OTLP_ENDPOINT'])
+
     def test_test_b_is_a_distinct_personal_store_entry(self):
         self.assertEqual('Nocturne Test B', self.test_b['name'])
         self.assertEqual('nocturne_test_b', self.test_b['slug'])

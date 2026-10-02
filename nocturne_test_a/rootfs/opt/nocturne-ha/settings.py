@@ -82,7 +82,8 @@ def service_environments(options, passwords, timezone='Europe/Amsterdam'):
     api = dict(common, HOME='/home/app', DOTNET_ENVIRONMENT='Production',
                ASPNETCORE_ENVIRONMENT='Production', ASPNETCORE_URLS='http://127.0.0.1:8080',
                ASPNETCORE_FORWARDEDHEADERS_ENABLED='true', DemoService__Enabled='false',
-               WEB_URL='http://127.0.0.1:8000', Logging__LogLevel__Default='Warning')
+               WEB_URL='http://127.0.0.1:8000', Logging__LogLevel__Default='Warning',
+               OTEL_SDK_DISABLED='false')
     for name, role in [('nocturne-postgres', 'app'), ('nocturne-postgres-migrator', 'migrator')]:
         api[f'ConnectionStrings__{name}'] = (
             f'Host=127.0.0.1;Port=5432;Database=nocturne;Username=nocturne_{role};Password={passwords[role]}')

@@ -1,3 +1,10 @@
+# 0.3.26-a4
+
+Enable the API's OpenTelemetry SDK so warnings and exceptions reach the shared
+Home Assistant app log. Remote OTLP export remains unconfigured and web telemetry
+stays disabled. Keep PR commit `7652d85`, port 8451, settings, keys and storage.
+This diagnostic update does not fix the Google Health save error itself.
+
 # 0.3.26-a3
 
 Build API and web from Google Health PR #1293, commit `7652d85`, on main
