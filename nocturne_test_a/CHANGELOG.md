@@ -1,3 +1,15 @@
+# 0.3.26-a6
+
+Pin Google Health PR #1293 commit `7c05a8183` after all 21 PR checks passed
+and the balanced Copilot review reported no code findings. Copilot still
+recommends final human review of the health-data and security-sensitive paths.
+
+Include the PostgreSQL credential fix, refreshed OAuth session caching,
+permission-gated overview queries, strict UTC duration parsing, rejection of
+overlapping sleep stages, and queued-import cancellation on disconnect/purge.
+Retain API diagnostics, port 8451, settings, keys and private storage.
+Separate NocturneRemote foreign-key errors are not fixed by this release.
+
 # 0.3.26-a5
 
 Pin Google Health PR #1293 commit `7bf77f155`. Preserve PostgreSQL credentials
