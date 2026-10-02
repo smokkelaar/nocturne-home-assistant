@@ -184,7 +184,7 @@ Zie je **nog niet gestart**, **STARTFOUT** of **gestopt**? Lees de foutmelding; 
 > [!TIP]
 > **Bewust anonieme toegang of publieke deel-links?** Vanaf wrapper **0.1.10** is **Gatewaycontrole bewust overslaan** (`skip_gateway_check`) beschikbaar in alle zes varianten. Standaard uit; alleen actief met `gateway_auth: false`. Nocturne bepaalt nog steeds de rechten en TLS blijft vereist. Zie [instellen, bestaande Test A-configuraties en terugzetten](GATEWAY.md#bewust-overslaan-vanaf-wrapper-0110). Na opslaan moet je de bedoelde app herstarten.
 
-> **Bestaat je eigenaar/passkey al?** Vanaf wrapper 0.1.4 kun je na een back-up alleen deze extra popup uitschakelen met `gateway_auth: false`. Nocturne's eigen passkey blijft verplicht en de app controleert dit vóór de HTTPS-poort opent. Doe dit niet tijdens de eerste setup. Volg de [exacte omschakel-, test- en herstelstappen](GATEWAY.md).
+> **Bestaat je eigenaar/passkey al?** Vanaf wrapper 0.1.4 kun je na een back-up alleen deze extra popup uitschakelen met `gateway_auth: false`. Met `skip_gateway_check: false` blijft Nocturne's eigen aanmelding verplicht en controleert de wrapper dit vóór de HTTPS-poort opent. Doe dit niet tijdens de eerste setup. Volg de [exacte omschakel-, test- en herstelstappen](GATEWAY.md).
 
 ## Stap 7: instantie en passkey-account maken
 
