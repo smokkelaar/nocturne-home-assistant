@@ -14,7 +14,11 @@
     },
     "gateway_auth": {
       "name": "Extra gebruikersnaam/wachtwoord-popup",
-      "description": "Aan: extra toegangscode via de HA-statuspagina; nodig voor eerste accountaanmaak. Uit: rechtstreeks naar Nocturne-passkey, alleen na afgeronde accountaanmaak en met ingestelde vertrouwde certificaten. Nocturne-authenticatie blijft aan. Opslaan en alleen deze app herstarten."
+      "description": "Aan: extra toegangscode via de HA-statuspagina. Uit: geen extra popup; Nocturne bepaalt de toegang. Vertrouwde certificaten blijven vereist. Standaard controleert verify_native_auth eerst dat de instantie private is. Opslaan en alleen deze app herstarten."
+    },
+    "verify_native_auth": {
+      "name": "Controle op private Nocturne-instantie",
+      "description": "Standaard aan: bij gateway_auth uit moet Nocturne anonieme toegang weigeren. Expliciet uit: sla die opstartcontrole over, bijvoorbeeld voor publieke deel-links. Dit maakt Nocturne niet private; de eigen rechten en publieke toegang blijven gelden. TLS en Nocturne-autorisatie worden niet uitgeschakeld."
     }
   },
   "network": {

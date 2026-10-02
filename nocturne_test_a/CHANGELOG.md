@@ -1,7 +1,19 @@
-## 0.3.26-a7
+## 0.3.26-a8
 
-- Preserve the configured external HTTPS port in BASE_DOMAIN for API and web URL generation.
-- Retain the reviewed Test A source from delivery a6 and keep internal listeners and host checks unchanged.
+- Use shared wrapper 0.1.9 while retaining the Test A port and gateway-option fixes from a7.
+- Publish the common external-port fix for every other channel in the same delivery.
+
+# 0.3.26-a7
+
+Preserve the public_url port in BASE_DOMAIN for both API and web. Generated
+share, invite and public-origin links now use the configured authority instead
+of assuming HTTPS port 443. Allow only the apex and token.share hosts through
+the native gateway; share hosts still require matching DNS and TLS certificates.
+
+Add verify_native_auth, enabled by default. Explicitly disabling it skips the
+private-instance startup guard so public sharing can coexist with gateway_auth
+disabled. This does not disable Nocturne authorization or the TLS requirements.
+Keep reviewed PR source `7c05a8183`, logging, port 8451, settings, keys and storage.
 
 # 0.3.26-a6
 

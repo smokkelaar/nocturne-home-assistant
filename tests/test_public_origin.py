@@ -50,9 +50,15 @@ class PublicOriginTests(unittest.TestCase):
             config = settings.nginx_config(options, 'cert', 'key')
             with self.subTest(package=package):
                 self.assertEqual('mynocturne.duckdns.org', options['hostname'])
-                self.assertIn('server_name mynocturne.duckdns.org;', config)
+                if package == 'nocturne_test_a':
+                    self.assertIn('server_name mynocturne.duckdns.org *.share.mynocturne.duckdns.org;', config)
+                    self.assertIn('"mynocturne.duckdns.org" 1;', config)
+                    self.assertIn('~^[a-z0-9]+\\.share\\.mynocturne\\.duckdns\\.org$ 1;', config)
+                    self.assertIn('if ($ha_allowed_host = 0) { return 421; }', config)
+                else:
+                    self.assertIn('server_name mynocturne.duckdns.org;', config)
+                    self.assertIn('if ($host != "mynocturne.duckdns.org") { return 421; }', config)
                 self.assertNotIn('server_name mynocturne.duckdns.org:8451;', config)
-                self.assertIn('if ($host != "mynocturne.duckdns.org") { return 421; }', config)
                 self.assertIn('listen 8448 ssl;', config)
                 self.assertIn('X-Forwarded-Host $http_host', config)
 

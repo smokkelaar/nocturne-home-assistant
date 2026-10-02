@@ -236,11 +236,13 @@ def web_response_reachable(options):
 
 
 def verify_native_auth(options):
-    """Refuse to remove the outer gate until configured Nocturne enforces login.
+    """Verify private access unless the operator explicitly opts out.
 
     No session, instance key or health data is read. The bounded status document
     is inspected in memory only; the protected probe's response body is ignored.
     """
+    if not options.get('verify_native_auth', True):
+        return
     headers = {'Host': options['authority'], 'X-Forwarded-Host': options['authority'],
                'X-Forwarded-Proto': 'https'}
     connection = http.client.HTTPConnection('127.0.0.1', 8080, timeout=3)
@@ -440,9 +442,13 @@ def main():
         supervisor.wait_for('Nocturne API', lambda: api_reachable(options['hostname']), 300)
         if not options['gateway_auth']:
             verify_native_auth(options)
-            auth_check = 'Private Nocturne-instantie bevestigd; anonieme gegevensaanvraag geweigerd (401), geen extra gatewaycode'
+            auth_check = (
+                'Private Nocturne-instantie bevestigd; anonieme gegevensaanvraag geweigerd (401), geen extra gatewaycode'
+                if options['verify_native_auth'] else
+                'Extra gatewaycode uit; private-instantiecontrole expliciet overgeslagen; Nocturne-toegangsregels blijven gelden'
+            )
             supervisor.checks['Toegangscontrole'] = auth_check
-            log('Geen extra gateway-pop-up; verplichte Nocturne-aanmelding en API-toegangsweigering bevestigd')
+            log(auth_check)
         supervisor.start('Nocturne Web', ['node', 'server.js'], user='nocturne-web',
                          env=web_env, cwd='/opt/nocturne-web/packages/app')
         supervisor.wait_for('Nocturne Web', lambda: web_response_reachable(options), 120)

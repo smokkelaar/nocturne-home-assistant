@@ -14,7 +14,11 @@
     },
     "gateway_auth": {
       "name": "Extra username/password popup",
-      "description": "On: extra code from the HA status page, required for first owner setup. Off: go directly to Nocturne passkey login, only after completed owner setup with configured trusted certificates. Nocturne authentication stays enabled. Save and restart only this app."
+      "description": "On: extra code from the HA status page. Off: no extra popup; Nocturne controls access. Trusted certificates remain required. By default verify_native_auth first checks that the instance is private. Save and restart only this app."
+    },
+    "verify_native_auth": {
+      "name": "Verify private Nocturne instance",
+      "description": "On by default: with gateway_auth off, Nocturne must deny anonymous access. Explicitly off: skip this startup check, for example for public share links. This does not make Nocturne private; its own permissions and public access still apply. TLS and Nocturne authorization are not disabled."
     }
   },
   "network": {
