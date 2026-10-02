@@ -14,7 +14,11 @@
     },
     "gateway_auth": {
       "name": "Extra username/password popup",
-      "description": "On: extra code from the HA status page, required for first owner setup. Off: go directly to Nocturne passkey login, only after completed owner setup with configured trusted certificates. Nocturne authentication stays enabled. Save and restart only this app."
+      "description": "On: extra popup with username nocturne and the code from the HA status page. Off: Nocturne controls access; configured trusted TLS remains required. The wrapper checks private authentication unless you explicitly skip that check. Save and restart this app."
+    },
+    "skip_gateway_check": {
+      "name": "Consciously skip gateway check",
+      "description": "Default off. Only effective with gateway_auth off. Skips only the wrapper authentication check; Nocturne access/share permissions still decide who can read or write. TLS and hostname checks remain active. Does not enable anonymous access itself. Save and restart this app."
     }
   },
   "network": {

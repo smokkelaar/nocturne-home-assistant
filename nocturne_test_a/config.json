@@ -1,8 +1,8 @@
 {
   "name": "Nocturne Test A",
-  "version": "0.3.26-a8",
+  "version": "0.3.26-a9",
   "slug": "nocturne_test_a",
-  "description": "HA wrapper 0.1.9 \u00b7 Google Health PR #1293 7c05a81 \u00b7 main 637eab7. Isolated test instance; not for clinical use.",
+  "description": "HA wrapper 0.1.10 \u00b7 Google Health PR #1293 7c05a81 \u00b7 main 637eab7. Isolated test instance; not for clinical use.",
   "url": "https://github.com/smokkelaar/nocturne-home-assistant",
   "arch": [
     "amd64"
@@ -34,13 +34,13 @@
     "certificate": "",
     "private_key": "",
     "gateway_auth": true,
-    "verify_native_auth": true
+    "skip_gateway_check": false
   },
   "schema": {
     "public_url": "url",
     "certificate": "str",
     "private_key": "str",
     "gateway_auth": "bool",
-    "verify_native_auth": "bool"
+    "skip_gateway_check": "bool"
   }
 }

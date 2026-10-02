@@ -1,4 +1,6 @@
-# Extra gebruikersnaam/wachtwoord-popup uitschakelen
+# Extra gatewaycode en de controle daarop instellen
+
+Deze instellingen zijn beschikbaar in **alle zes varianten**: Official, Latest, Personal en Test A/B/C.
 
 Wrapper **0.1.4** herstelt de optie om bij een **bestaande, volledig ingerichte Nocturne-instantie** de extra HTTP Basic-popup te verwijderen. Je blijft daarna aanmelden met je eigen Nocturne-passkey; Nocturne-authenticatie wordt niet uitgeschakeld.
 
@@ -9,6 +11,25 @@ stoppen vóór het openen van de webinterface. De nieuwe controle vereist een
 geladen, niet-demo-instantie met `anonymousReadAccess: false` én een echte
 anonieme gegevensaanvraag die met HTTP `401` wordt geweigerd. Er worden geen
 account- of servicesleutels aan de test toegevoegd en geen gegevensinhoud gelezen.
+
+## Bewust overslaan vanaf wrapper 0.1.10
+
+Wil je Nocturne zelf laten bepalen wanneer anoniem lezen of een publieke deel-link is toegestaan? Zet in de configuratie van de bedoelde app **Extra gebruikersnaam/wachtwoord-popup** uit en **Gatewaycontrole bewust overslaan** aan. Behoud je andere instellingen:
+
+```yaml
+gateway_auth: false
+skip_gateway_check: true
+```
+
+**Opslaan en alleen deze app herstarten.** Je moet beide bij elkaar passende certificaatbestanden blijven instellen. De statuspagina en het app-log tonen prominent `GATEWAY_SKIPPED`. De knop **Open Nocturne** opent het basisadres, zodat de hulp niet vooraf een aanmelding afdwingt.
+
+Dit slaat alleen de private-instantiecontrole van de wrapper over. Het schakelt geen Nocturne-rechten, accounts of passkeys uit en geeft zelf geen anonieme lees- of schrijfrechten. Stel de bedoelde toegangs- en deelrechten in Nocturne zelf in. TLS-, certificaat-, domein- en headercontroles blijven actief. De ondersteunde deeladressen hangen ook af van de Nocturne-versie en de hostroutering van het gekozen kanaal.
+
+`skip_gateway_check` staat standaard **uit**. Met `gateway_auth: true` wordt de skip-optie genegeerd: de extra gatewaycode blijft vereist. Zet `skip_gateway_check: false` en herstart om de private controle te herstellen.
+
+**Bestaande Test A-configuraties:** de oude zichtbare `verify_native_auth`-optie is vervangen door dezelfde `skip_gateway_check`-optie als in alle andere varianten. Gebruikte je `verify_native_auth: false`? Zet na de update in **Configuratie** `skip_gateway_check: true`, verwijder de oude `verify_native_auth`-regel uit de YAML, sla op en herstart. Een nieuw standaardveld van Supervisor kan anders de private controle weer inschakelen. Gebruik `skip_gateway_check: false` om de controle te herstellen. Er is nog maar één zichtbare schakelaar. Oude ruwe opties worden alleen intern gelezen wanneer het nieuwe veld ontbreekt; een expliciet nieuw veld heeft altijd voorrang.
+
+De omschakelstappen hieronder beschrijven de standaardmodus **met** private controle.
 
 ## Voorwaarden
 
@@ -22,15 +43,16 @@ Een nieuwe lege instantie moet eerst met `gateway_auth: true` worden ingericht. 
 ## Omschakelen in Home Assistant
 
 1. Werk de repository-app bij naar wrapper **0.1.4** (HA-pakket **0.1.4-1** of hoger) en controleer dat de bestaande instantie nog normaal opent.
-2. Open **Instellingen → Apps → Nocturne Official Release / Nocturne Latest Release → Configuratie**. Kies de bedoelde instantie.
+2. Open **Instellingen → Apps → de bedoelde Nocturne-variant → Configuratie**. Kies de bedoelde instantie.
 3. Zet **Ongebruikte optionele configuratieopties tonen** aan als `gateway_auth` niet zichtbaar is.
-4. Zet alleen **Extra gebruikersnaam/wachtwoord-popup** (`gateway_auth`) uit. Laat `public_url`, `certificate`, `private_key` en de hostpoort ongewijzigd.
+4. Zet **Extra gebruikersnaam/wachtwoord-popup** (`gateway_auth`) uit en laat `skip_gateway_check` uit. Laat `public_url`, `certificate`, `private_key` en de hostpoort ongewijzigd.
 5. Klik **Opslaan** en herstart alleen de Nocturne-app.
 
 In de YAML-editor is de relevante extra regel:
 
 ```yaml
 gateway_auth: false
+skip_gateway_check: false
 ```
 
 Na een geslaagde start toont de HA-statuspagina geen gatewaycode meer. **Open Nocturne** gaat rechtstreeks naar Nocturne's eigen aanmeldpagina. Een browser die de oude Basic-popup heeft onthouden kan een oude tab cachen; sluit die tab en open opnieuw via de HA-statuspagina.

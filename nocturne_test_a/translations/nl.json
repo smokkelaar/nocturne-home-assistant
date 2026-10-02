@@ -14,11 +14,11 @@
     },
     "gateway_auth": {
       "name": "Extra gebruikersnaam/wachtwoord-popup",
-      "description": "Aan: extra toegangscode via de HA-statuspagina. Uit: geen extra popup; Nocturne bepaalt de toegang. Vertrouwde certificaten blijven vereist. Standaard controleert verify_native_auth eerst dat de instantie private is. Opslaan en alleen deze app herstarten."
+      "description": "Aan: extra popup met gebruikersnaam nocturne en de code uit de HA-statuspagina. Uit: Nocturne bepaalt de toegang; ingestelde vertrouwde TLS blijft vereist. De wrapper controleert private aanmelding tenzij je die controle bewust overslaat. Opslaan en deze app herstarten."
     },
-    "verify_native_auth": {
-      "name": "Controle op private Nocturne-instantie",
-      "description": "Standaard aan: bij gateway_auth uit moet Nocturne anonieme toegang weigeren. Expliciet uit: sla die opstartcontrole over, bijvoorbeeld voor publieke deel-links. Dit maakt Nocturne niet private; de eigen rechten en publieke toegang blijven gelden. TLS en Nocturne-autorisatie worden niet uitgeschakeld."
+    "skip_gateway_check": {
+      "name": "Gatewaycontrole bewust overslaan",
+      "description": "Standaard uit. Alleen actief met gateway_auth uit. Slaat alleen de aanmeldcontrole van de wrapper over; Nocturne-toegangs- en deelinstellingen bepalen wie mag lezen of schrijven. TLS en domeincontrole blijven actief. Schakelt zelf geen anonieme toegang in. Opslaan en deze app herstarten."
     }
   },
   "network": {

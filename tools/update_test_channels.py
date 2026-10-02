@@ -42,6 +42,11 @@ def files():
     for letter, port, source in (("a", 8451, test_a), ("b", 8452, pr1293), ("c", 8453, google)):
         package = "nocturne_test_" + letter
         config = read(package + "/config.json")
+        # One visible schema for every variant; the old Test A flag is read-only migration input.
+        config["options"].pop("verify_native_auth", None)
+        config["schema"].pop("verify_native_auth", None)
+        config["options"]["skip_gateway_check"] = False
+        config["schema"]["skip_gateway_check"] = "bool"
         version = config["version"]
         name = "Nocturne Test " + letter.upper()
         if letter in ("a", "b"):

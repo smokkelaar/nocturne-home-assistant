@@ -110,6 +110,8 @@ def render(root, lock, app_version):
     wrapper = wrapper_version(root)
     config = json.loads((root / 'nocturne_local/config.json').read_text(encoding='utf-8'))
     config['version'] = app_version
+    config['options']['skip_gateway_check'] = False
+    config['schema']['skip_gateway_check'] = 'bool'
     config['description'] = (f"HA wrapper {wrapper} · Official Nocturne {lock['version']} with PostgreSQL. "
                              'Experimental; not for clinical use.')
     dockerfile = (root / 'nocturne_local/Dockerfile').read_text(encoding='utf-8')

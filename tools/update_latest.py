@@ -151,6 +151,8 @@ def render(root, lock, app_version):
     wrapper = wrapper_version(root)
     config = json.loads((root / 'nocturne_latest/config.json').read_text(encoding='utf-8'))
     config['version'] = app_version
+    config['options']['skip_gateway_check'] = False
+    config['schema']['skip_gateway_check'] = 'bool'
     commit_at = datetime.fromisoformat(lock['commit_at'].replace('Z', '+00:00'))
     commit_at = commit_at.astimezone(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
     config['description'] = (f"HA wrapper {wrapper} · Nocturne main {lock['commit'][:7]} - {commit_at}. "

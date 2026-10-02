@@ -1,3 +1,9 @@
+## 0.3.25-c26
+
+- Shared wrapper 0.1.10: explicit `skip_gateway_check`, default false, only effective with `gateway_auth: false`.
+- Keep Nocturne permissions, TLS, hostname checks, existing data and keys unchanged; display skipped checks prominently.
+- Test A now uses the same visible settings. Existing `verify_native_auth: false`: set `skip_gateway_check: true` in app Configuration, remove the old YAML key, save and restart. The canonical option takes precedence; its new default may restore the private check until migrated.
+
 ## 0.3.25-c25
 
 - Preserve the configured external HTTPS port in BASE_DOMAIN for API and web URL generation.
