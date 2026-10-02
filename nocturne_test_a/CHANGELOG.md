@@ -1,7 +1,19 @@
-## 0.3.26-a6
+## 0.3.26-a7
 
 - Preserve the configured external HTTPS port in BASE_DOMAIN for API and web URL generation.
-- Keep internal listeners, hostname checks, data and upstream source pins unchanged.
+- Retain the reviewed Test A source from delivery a6 and keep internal listeners and host checks unchanged.
+
+# 0.3.26-a6
+
+Pin Google Health PR #1293 commit `7c05a8183` after all 21 PR checks passed
+and the balanced Copilot review reported no code findings. Copilot still
+recommends final human review of the health-data and security-sensitive paths.
+
+Include the PostgreSQL credential fix, refreshed OAuth session caching,
+permission-gated overview queries, strict UTC duration parsing, rejection of
+overlapping sleep stages, and queued-import cancellation on disconnect/purge.
+Retain API diagnostics, port 8451, settings, keys and private storage.
+Separate NocturneRemote foreign-key errors are not fixed by this release.
 
 # 0.3.26-a5
 
@@ -97,7 +109,7 @@ Personal 0.3.15; source `4b3c29b2057f37921647e2b2119cb1250e7580fc`; Daily base `
 
 Personal 0.3.14; source `1deeb6494d51bddc88441fe4a1648bec8c3b910c`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
 
-- Fixes the custom palettes only blending between 2 colors, losing every colormap's real in-between hues (e.g. Viridis' purple→blue→green→yellow). Every palette now uses its full multi-stop spectrum.
+- Fixes the custom palettes only blending between 2 colors, losing every colormap's real in-between hues (e.g. Viridis' purpleâ†’blueâ†’greenâ†’yellow). Every palette now uses its full multi-stop spectrum.
 - Fixes the Theme swatch preview showing whichever palette was currently active instead of Theme's own fixed colors.
 - Makes each palette preview swatch show its full spectrum too, so similar-looking palettes (Inferno vs Magma, Mako vs Rocket) are easier to tell apart before picking one.
 
@@ -115,7 +127,7 @@ Personal 0.3.14; source `6081ab100de24d1793e6583a7b648a426db8c18b`; Daily base `
 
 - Fixes the custom Avg Glucose palette's High point showing the wrong color; Low/High now mark the true color endpoints instead of a position inside the fixed 2.2-19.4 scale.
 - Hides the 2 extra (non-adjustable) slider dots on the bar when a custom palette is active, matching the Low/High inputs below it.
-- Keeps the Theme ramp (Red → Yellow → Green → Blue → White/Black) fixed; Invert now only affects a selected custom palette, not Theme.
+- Keeps the Theme ramp (Red â†’ Yellow â†’ Green â†’ Blue â†’ White/Black) fixed; Invert now only affects a selected custom palette, not Theme.
 
 # 0.3.14-2
 
@@ -127,7 +139,7 @@ Personal 0.3.14; source `a034d6889ca286966b8643afa97db2197742f786`; Daily base `
 
 Personal 0.3.14; source `ed81d59ecf5fc04b8c50da4c3ff4172ba7339a11`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
 
-- Version bump only (0.3.13 → 0.3.14) so Home Assistant shows this as an update; no functional changes since 0.3.13-10. Replaces the earlier 3.14.0-1 build, which used the wrong version scheme.
+- Version bump only (0.3.13 â†’ 0.3.14) so Home Assistant shows this as an update; no functional changes since 0.3.13-10. Replaces the earlier 3.14.0-1 build, which used the wrong version scheme.
 
 # 0.3.13-10
 
@@ -205,7 +217,7 @@ Personal 0.3.13; source `3fa9bb08c0457ba77c89a4e26480107670020139`; Daily base `
 
 Personal 0.3.13; source `86e4ff320083b98a82b5322b5da5e228dfb92ce9`; Daily base `3e30bf504a7d04cb49178edd6e67fc561b58b035`.
 
-- Adds mobile month quick-scroll pills (Jan–Dec) to instantly jump to any month.
+- Adds mobile month quick-scroll pills (Janâ€“Dec) to instantly jump to any month.
 - Adds smooth horizontal drag and touch panning across the entire heatmap area.
 
 # 0.3.13-1
@@ -248,7 +260,7 @@ Personal 0.3.12; source `04cda4238a244519b668271a0110d2b3d3d93325`; Daily base `
 
 - Adds an "Advanced settings" toggle to show or hide custom focus lines and color thresholds.
 - When toggled off, display defaults are used; custom values are remembered when toggled back on.
-- Adds custom out-of-band transparency percentage input (0–100%, default 90%).
+- Adds custom out-of-band transparency percentage input (0â€“100%, default 90%).
 - Adds alternative color palette presets for non-glucose metrics (Cool Blue/Hot Red, Teal/Amber, Indigo/Rose, etc.).
 - All strings in English for localization support.
 

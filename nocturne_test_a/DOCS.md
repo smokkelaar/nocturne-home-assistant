@@ -1,6 +1,18 @@
 # Nocturne Test A — installation and operation
 
-> This is an isolated build of [Nocturne PR #1293](https://github.com/nightscout/nocturne/pull/1293). It is a separate HA app with its own data and default host port **8451**. Version **0.3.26-a5** pins PR commit `7bf77f155`; source and checksum are recorded in `upstream-test-a.json`.
+> This is an isolated build of [Nocturne PR #1293](https://github.com/nightscout/nocturne/pull/1293). It is a separate HA app with its own data and default host port **8451**. Version **0.3.26-a6** pins PR commit `7c05a8183`; source and checksum are recorded in `upstream-test-a.json`.
+
+## Reviewed PR snapshot
+
+All 21 PR checks passed for this source. The [balanced Copilot review](https://github.com/nightscout/nocturne/pull/1293#pullrequestreview-5395843188)
+reported no code findings, while recommending final human review of the
+cross-cutting security and health-data paths. This is not live-account or
+clinical acceptance.
+
+The update retains the database credential fix and diagnostics, and adds the
+OAuth token-cache, overview authorization, UTC duration, sleep-stage overlap
+and disconnect/purge queue-cancellation fixes. Port, settings, keys and
+private storage remain unchanged.
 
 ## Diagnostic API logs
 
