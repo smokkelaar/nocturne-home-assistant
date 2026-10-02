@@ -80,6 +80,7 @@ def load_secrets(data_dir):
 
 
 def service_environments(options, passwords, timezone='Europe/Amsterdam'):
+    # BASE_DOMAIN is a public authority for generated URLs; host checks use hostname.
     common = {'PATH': '/usr/local/bin:/usr/bin:/bin', 'TZ': timezone,
               'BASE_DOMAIN': options['authority'], 'INSTANCE_KEY': passwords['instance'],
               'OTEL_EXPORTER_OTLP_ENDPOINT': '', 'OTEL_SDK_DISABLED': 'true'}

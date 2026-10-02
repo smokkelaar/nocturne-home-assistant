@@ -1,3 +1,8 @@
+## 0.1.9-1
+
+- Preserve the configured external HTTPS port in BASE_DOMAIN for API and web URL generation.
+- Keep internal listeners, hostname checks, data and upstream source pins unchanged.
+
 ## 0.1.8-1
 
 - Toon bovenaan klikbare release-, base- en broncommitinformatie met het doel van het kanaal.

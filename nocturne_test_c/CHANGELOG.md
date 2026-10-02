@@ -1,3 +1,8 @@
+## 0.3.25-c25
+
+- Preserve the configured external HTTPS port in BASE_DOMAIN for API and web URL generation.
+- Keep internal listeners, hostname checks, data and upstream source pins unchanged.
+
 # 0.3.25-c24
 
 Google Health-ontwikkelbranch bijgewerkt met upstream main `8635bd5`.

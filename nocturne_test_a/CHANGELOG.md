@@ -1,3 +1,8 @@
+## 0.3.26-a8
+
+- Use shared wrapper 0.1.9 while retaining the Test A port and gateway-option fixes from a7.
+- Publish the common external-port fix for every other channel in the same delivery.
+
 # 0.3.26-a7
 
 Preserve the public_url port in BASE_DOMAIN for both API and web. Generated

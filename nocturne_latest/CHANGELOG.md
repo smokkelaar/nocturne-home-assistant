@@ -1,3 +1,8 @@
+## 0.1.9-1
+
+- Preserve the configured external HTTPS port in BASE_DOMAIN for API and web URL generation.
+- Keep internal listeners, hostname checks, data and upstream source pins unchanged.
+
 ## 0.1.8-3
 
 - Update Nocturne Latest from `f6ad715` to [`8635bd5`](https://github.com/nightscout/nocturne/compare/f6ad71512eafb966426125193935bcd713fbd751...8635bd530e6f8b792c3f2442cd3198ec7104fa96).
