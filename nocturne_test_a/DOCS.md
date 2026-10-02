@@ -1,8 +1,12 @@
 # Nocturne Test A — installation and operation
 
-> This is an isolated build of [Nocturne PR #1293](https://github.com/nightscout/nocturne/pull/1293). It is a separate HA app with its own data and default host port **8451**. Version **0.3.26-a4** pins PR commit `7652d85`; source and checksum are recorded in `upstream-test-a.json`.
+> This is an isolated build of [Nocturne PR #1293](https://github.com/nightscout/nocturne/pull/1293). It is a separate HA app with its own data and default host port **8451**. Version **0.3.26-a5** pins PR commit `7bf77f155`; source and checksum are recorded in `upstream-test-a.json`.
 
 ## Diagnostic API logs
+
+Version 0.3.26-a5 fixes the missing-password failure in Google Health's dedicated
+PostgreSQL lock/listener sessions. Settings, keys and storage remain unchanged.
+Separate NocturneRemote foreign-key errors still require independent diagnosis.
 
 Version 0.3.26-a4 enables API warning/error logging in the shared Home Assistant
 app log. Remote OTLP export remains unconfigured and web telemetry stays disabled.

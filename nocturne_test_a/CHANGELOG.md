@@ -1,3 +1,11 @@
+# 0.3.26-a5
+
+Pin Google Health PR #1293 commit `7bf77f155`. Preserve PostgreSQL credentials
+when creating dedicated coordinator lock and notification sessions, fixing the
+missing-password failure before saving Google Health settings. API diagnostics
+remain enabled. Keep port 8451, settings, keys and private storage.
+The separate NocturneRemote foreign-key failures are not fixed by this update.
+
 # 0.3.26-a4
 
 Enable the API's OpenTelemetry SDK so warnings and exceptions reach the shared
