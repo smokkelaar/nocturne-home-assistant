@@ -24,14 +24,14 @@ No router port-forwarding is required or recommended for this test. A publicly r
 3. Configure the following options with **your own** hostname/certificate filenames:
 
    ```yaml
-   public_url: https://nocturne.example.net:8450
+   public_url: https://nocturne.example.net:8451
    certificate: fullchain.pem
    private_key: privkey.pem
    ```
 
    `example.net` is documentation-only. Put the real certificate and private key in HA's `/ssl` directory. Options accept filenames directly inside that directory, not `/ssl/...` paths. This app mounts `/ssl` read-only. Never publish those files.
 
-4. Leave the Personal host port at `8450` (container port `8448/tcp`), or ensure the externally configured port matches `public_url`. Do not expose API, PostgreSQL or ingress ports.
+4. Leave the Test A host port at `8451` (container port `8448/tcp`), or ensure the externally configured port matches `public_url`. Do not expose API, PostgreSQL or ingress ports.
 5. Start the app and open **Web interface**. Wait for PostgreSQL, API, web and HTTPS readiness. “Listening” is not proof of a successful account login.
 6. Open the Nocturne link. By default, if the browser asks for HTTP Basic credentials, use username `nocturne` and the random gateway code shown in the protected HA page. This is **not** your HA login or your Nocturne account password.
 7. Complete Nocturne's own setup and create a passkey. Skip Nightscout/data connections in this initial test.
