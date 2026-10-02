@@ -1,6 +1,6 @@
 {
-  "app": "0.1.8",
-  "package": "0.1.8-1",
+  "app": "0.1.9",
+  "package": "0.1.9-1",
   "nocturne": "0.2.7",
   "repository": "nightscout/nocturne",
   "source_commit": "d9e1430975c7a05967cba66374392f75f08c858f",
@@ -10,7 +10,7 @@
   "release_url": "https://github.com/nightscout/nocturne/releases/tag/v0.2.7",
   "purpose": "De stabiele, officieel gepubliceerde Nocturne-release gebruiken.",
   "purpose_url": "https://github.com/nightscout/nocturne/releases/tag/v0.2.7",
-  "test_plan": "Reguliere werking, upgrades en databasemigraties van de officiële release controleren.",
+  "test_plan": "Reguliere werking, upgrades en databasemigraties van de offici\u00eble release controleren.",
   "test_url": "https://github.com/nightscout/nocturne/releases/tag/v0.2.7",
   "name": "Nocturne Official Release",
   "default_public_url": "https://homeassistant.local:8448",

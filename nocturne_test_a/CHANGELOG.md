@@ -1,3 +1,8 @@
+## 0.3.26-a6
+
+- Preserve the configured external HTTPS port in BASE_DOMAIN for API and web URL generation.
+- Keep internal listeners, hostname checks, data and upstream source pins unchanged.
+
 # 0.3.26-a5
 
 Pin Google Health PR #1293 commit `7bf77f155`. Preserve PostgreSQL credentials

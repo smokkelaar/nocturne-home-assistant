@@ -1,3 +1,8 @@
+## 0.3.26-3
+
+- Preserve the configured external HTTPS port in BASE_DOMAIN for API and web URL generation.
+- Keep internal listeners, hostname checks, data and upstream source pins unchanged.
+
 # 0.3.26-2
 
 Personal 0.3.26; source `6f112069122e1ded12ddac7eee7e6cbd2dcd01dc`; Daily base `8635bd530e6f8b792c3f2442cd3198ec7104fa96`.
