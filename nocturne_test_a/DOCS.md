@@ -1,6 +1,31 @@
 # Nocturne Test A — installation and operation
 
-> This is an isolated build of [Nocturne PR #1293](https://github.com/nightscout/nocturne/pull/1293). It is a separate HA app with its own data and default host port **8451**. Version **0.3.26-a6** pins PR commit `7c05a8183`; source and checksum are recorded in `upstream-test-a.json`.
+> This is an isolated build of [Nocturne PR #1293](https://github.com/nightscout/nocturne/pull/1293). It is a separate HA app with its own data and default host port **8451**. Version **0.3.26-a7** pins PR commit `7c05a8183`; source and checksum are recorded in `upstream-test-a.json`.
+
+## Public ports and native access
+
+Test A passes the full public_url authority to BASE_DOMAIN. For
+`https://nocturne.example.net:8451`, a generated link uses
+`https://<token>.share.nocturne.example.net:8451`. Existing tokens do not need
+rotation: copy or reveal the link again after restarting the updated app.
+
+Share hostnames also need DNS pointing to this HA host and a trusted certificate
+covering `*.share.nocturne.example.net`. A certificate covering only the apex,
+or only `*.nocturne.example.net`, does not cover these two-level share names.
+The wrapper does not create those DNS records or certificates.
+
+To deliberately use public sharing without an additional gateway popup:
+
+```yaml
+gateway_auth: false
+verify_native_auth: false
+```
+
+Save and restart only Test A. This skips the wrapper's private-instance check,
+not Nocturne's authentication or permission checks. Trusted configured TLS
+certificates are still required. Public access remains governed by Nocturne's
+sharing scopes; this configuration does not promise mandatory login for all
+data. Keep verify_native_auth enabled unless you deliberately accept that mode.
 
 ## Reviewed PR snapshot
 

@@ -1,5 +1,6 @@
 """The Official and Latest apps must remain selectable and isolated."""
 import importlib.util
+import ast
 import json
 from pathlib import Path
 import unittest
@@ -49,6 +50,73 @@ class ChannelTests(unittest.TestCase):
         self.assertEqual('Warning', api['Logging__LogLevel__Default'])
         self.assertEqual('true', web['OTEL_SDK_DISABLED'])
         self.assertEqual('', web['OTEL_EXPORTER_OTLP_ENDPOINT'])
+
+    def test_test_a_public_authority_keeps_the_share_link_port(self):
+        settings = load_settings('nocturne_test_a')
+        passwords = {name: 'test-value' for name in settings.SECRET_FIELDS}
+        for url, authority in (
+            ('https://example.test:8451', 'example.test:8451'),
+            ('https://example.test', 'example.test'),
+        ):
+            with self.subTest(url=url):
+                options = settings.validate_options({'public_url': url})
+                api, web = settings.service_environments(options, passwords)
+                self.assertEqual(authority, api['BASE_DOMAIN'])
+                self.assertEqual(authority, web['BASE_DOMAIN'])
+                self.assertEqual('example.test', options['hostname'])
+
+    def test_test_a_auth_verification_is_explicit_and_defaults_on(self):
+        settings = load_settings('nocturne_test_a')
+        self.assertTrue(settings.validate_options({})['verify_native_auth'])
+        self.assertTrue(self.test_a['options']['verify_native_auth'])
+        self.assertEqual('bool', self.test_a['schema']['verify_native_auth'])
+        for language in ('nl', 'en'):
+            translation = json.loads((ROOT / 'nocturne_test_a/translations' / (language + '.json')).read_text(encoding='utf-8'))
+            self.assertEqual(set(self.test_a['schema']), set(translation['configuration']))
+        options = settings.validate_options({
+            'public_url': 'https://example.test:8451',
+            'certificate': 'fullchain.pem', 'private_key': 'privkey.pem',
+            'gateway_auth': False, 'verify_native_auth': False,
+        })
+        self.assertFalse(options['verify_native_auth'])
+        nginx = settings.nginx_config(options, '/cert', '/key')
+        self.assertIn('if ($ha_allowed_host = 0) { return 421; }', nginx)
+        self.assertIn('~^[a-z0-9]+\\.share\\.example\\.test$ 1;', nginx)
+        self.assertIn('server_name example.test *.share.example.test;', nginx)
+        self.assertNotIn('auth_basic_user_file', nginx)
+        self.assertIn('proxy_set_header X-Instance-Key "";', nginx)
+        self.assertIn('proxy_set_header X-Instance-Service "";', nginx)
+        status = settings.status_page(options, {}, 'synthetic-gateway-secret', False)
+        self.assertIn('private-instantiecontrole uitgeschakeld', status)
+        self.assertNotIn('Nocturne-aanmelding blijft verplicht', status)
+        self.assertNotIn('synthetic-gateway-secret', status)
+        for value in ('false', 0, 1, None, {}, []):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                settings.validate_options({'verify_native_auth': value})
+        with self.assertRaisesRegex(ValueError, 'GATEWAY_TLS'):
+            settings.validate_options({'gateway_auth': False, 'verify_native_auth': False})
+
+    def test_test_a_explicit_verification_skip_does_not_call_the_api(self):
+        import http.client
+        from unittest.mock import MagicMock, patch
+        tree = ast.parse((ROOT / 'nocturne_test_a/rootfs/opt/nocturne-ha/run.py').read_text())
+        guard = next(node for node in tree.body if isinstance(node, ast.FunctionDef)
+                     and node.name == 'verify_native_auth')
+        namespace = {'http': type('Http', (), {'client': http.client}), 'json': json}
+        exec(compile(ast.Module(body=[guard], type_ignores=[]), '<test-a-guard>', 'exec'), namespace)
+        with patch.object(http.client, 'HTTPConnection') as connection:
+            namespace['verify_native_auth']({'verify_native_auth': False})
+            connection.assert_not_called()
+        response = MagicMock()
+        response.status = 200
+        response.read.return_value = json.dumps({
+            'status': 'ok', 'runtimeState': 'loaded', 'anonymousReadAccess': True,
+        }).encode()
+        with patch.object(http.client, 'HTTPConnection') as connection:
+            connection.return_value.getresponse.return_value = response
+            with self.assertRaisesRegex(ValueError, 'GATEWAY_AUTH'):
+                namespace['verify_native_auth']({'authority': 'example.test:8451'})
+            connection.assert_called_once()
 
     def test_test_b_is_a_distinct_personal_store_entry(self):
         self.assertEqual('Nocturne Test B', self.test_b['name'])

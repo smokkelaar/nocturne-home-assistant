@@ -46,10 +46,14 @@ def validate_options(options):
     gateway_auth = options.get('gateway_auth', True)
     if type(gateway_auth) is not bool:
         raise ValueError('gateway_auth moet true of false zijn')
+    verify_native_auth = options.get('verify_native_auth', True)
+    if type(verify_native_auth) is not bool:
+        raise ValueError('verify_native_auth moet true of false zijn')
     if not gateway_auth and not cert:
         raise ValueError('GATEWAY_TLS: zonder extra gatewaycode zijn eigen certificate/private_key-bestanden vereist')
     return dict(public_url=public_url, hostname=hostname, authority=parsed.netloc.lower(),
                 certificate=cert, private_key=key, gateway_auth=gateway_auth,
+                verify_native_auth=verify_native_auth,
                 cookie_namespace=cookie_namespace)
 
 
@@ -77,7 +81,7 @@ def load_secrets(data_dir):
 
 def service_environments(options, passwords, timezone='Europe/Amsterdam'):
     common = {'PATH': '/usr/local/bin:/usr/bin:/bin', 'TZ': timezone,
-              'BASE_DOMAIN': options['hostname'], 'INSTANCE_KEY': passwords['instance'],
+              'BASE_DOMAIN': options['authority'], 'INSTANCE_KEY': passwords['instance'],
               'OTEL_EXPORTER_OTLP_ENDPOINT': '', 'OTEL_SDK_DISABLED': 'true'}
     api = dict(common, HOME='/home/app', DOTNET_ENVIRONMENT='Production',
                ASPNETCORE_ENVIRONMENT='Production', ASPNETCORE_URLS='http://127.0.0.1:8080',
@@ -98,14 +102,13 @@ def service_environments(options, passwords, timezone='Europe/Amsterdam'):
 
 
 def nginx_config(options, cert_path, key_path):
-    # Native mode is opt-in and is verified before nginx starts. Neither mode
-    # sends a service credential or bypasses Nocturne's account authentication.
+    # Neither mode sends a service credential or bypasses Nocturne authorization.
     gate = ('auth_basic "Nocturne lokale test - code staat in Home Assistant";\n'
             '    auth_basic_user_file /run/nocturne/gateway.htpasswd;')
     oauth_rule = ''
     if not options.get('gateway_auth', True):
         gate = ('auth_basic off;\n'
-                f'    if ($host != "{options["hostname"]}") {{ return 421; }}')
+                '    if ($ha_allowed_host = 0) { return 421; }')
         # Forward only caller-supplied Bearer credentials in guarded native mode.
         # Nocturne still validates their signature, expiry, tenant and scopes.
         oauth_rule = '"~*^Bearer [A-Za-z0-9._~+/-]+=*$" $http_authorization;'
@@ -121,6 +124,11 @@ events {{ worker_connections 256; }}
 http {{
   js_import ha_cookies from /opt/nocturne-ha/cookies.mjs;
   js_set $ha_upstream_cookie ha_cookies.requestCookies;
+    map $host $ha_allowed_host {{
+        default 0;
+        "{options['hostname']}" 1;
+        ~^[a-z0-9]+\\.share\\.{re.escape(options['hostname'])}$ 1;
+    }}
   access_log off;
   client_max_body_size 20m;
   map $http_upgrade $connection_upgrade {{ default upgrade; '' close; }}
@@ -135,7 +143,7 @@ http {{
   server {{
     set $ha_cookie_namespace "{namespace}";
     listen 8448 ssl;
-    server_name {options['hostname']};
+    server_name {options['hostname']} *.share.{options['hostname']};
     ssl_certificate {cert_path};
     ssl_certificate_key {key_path};
     ssl_protocols TLSv1.2 TLSv1.3;
@@ -210,6 +218,9 @@ def status_page(options, statuses, gateway_password, test_certificate, checks=No
         gateway_section = ('<p><strong>Geen extra gatewaycode nodig.</strong> '
                            'Log rechtstreeks in met je Nocturne-account/passkey. '
                            'Nocturne-aanmelding blijft verplicht.</p>')
+        if not options.get('verify_native_auth', True):
+            gateway_section = ('<p><strong>Geen extra gatewaycode; private-instantiecontrole uitgeschakeld.</strong> '
+                               'Nocturne bepaalt de toegang. Publieke deel-links kunnen zonder aanmelding lezen.</p>')
     open_url = options['public_url'] + ('' if options.get('gateway_auth', True) else '/auth/login')
     return f'''<!doctype html><html lang="nl"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
