@@ -1,3 +1,10 @@
+# 0.3.26-a3
+
+Build API and web from Google Health PR #1293, commit `7652d85`, on main
+`637eab7`. Pin the source archive by SHA-256 independently of Test B.
+Keep the Test A slug, port 8451, configuration, cookies and private storage.
+Personal-only extensions are not part of this PR source.
+
 # 0.3.26-a2
 
 Same Personal source as 8450, including the restored Google Health/eHbA1c

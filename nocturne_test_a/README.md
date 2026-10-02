@@ -1,7 +1,7 @@
 # Nocturne Test A
 
-Isolated copy of the Personal fork on the tested Daily base. Default host port 8451, separate data and cookies.
+Pinned build of [Nocturne PR #1293](https://github.com/nightscout/nocturne/pull/1293), with API and web compiled from the same checksum-verified source. Default host port 8451, separate data and cookies.
 
-Personal 0.3.26 includes Google Health imports for steps, heart rate, weight and sleep. Progress refreshes while the connector page is open; the percentage estimates data-type stages, not remaining time. No dosing advice or insulin/IOB changes.
+Version 0.3.26-a3 uses PR commit `7652d85` on main `637eab7`. Test A retains its app identity, settings and storage. This PR build replaces the Personal source and does not include Personal-only extensions.
 
 [Installation and updates](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).

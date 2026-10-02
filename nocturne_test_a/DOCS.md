@@ -1,6 +1,6 @@
 # Nocturne Test A — installation and operation
 
-> This is an isolated Personal test app following the approved Daily base. It is a separate HA app with its own data and default host port **8451**. Never copy `/data`, accounts or keys between it and Personal.
+> This is an isolated build of [Nocturne PR #1293](https://github.com/nightscout/nocturne/pull/1293). It is a separate HA app with its own data and default host port **8451**. Version **0.3.26-a3** pins PR commit `7652d85`; source and checksum are recorded in `upstream-test-a.json`.
 
 > **Nederlands, met afbeeldingen en exacte stappen:** [Volledige visuele installatiehandleiding](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md), van repository toevoegen tot dashboard en herstarttest. [Domein, certificaat en lokale DNS](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/HTTPS-EN-DNS.md) is apart uitgewerkt. These absolute links also work from Home Assistant's Documentation tab.
 
@@ -20,7 +20,7 @@ No router port-forwarding is required or recommended for this test. A publicly r
 ## Fresh installation
 
 1. Add `https://github.com/smokkelaar/nocturne-home-assistant` in the HA app store repository settings.
-2. Install **Nocturne Personal Release**. This channel has no prebuilt wrapper image: Supervisor builds it from its Dockerfile. Wait for that job to finish; repeatedly clicking install/update can produce “Another job is running”.
+2. Install or update **Nocturne Test A**. This channel has no prebuilt wrapper image: Supervisor builds it from its Dockerfile. Wait for that job to finish; repeatedly clicking install/update can produce “Another job is running”.
 3. Configure the following options with **your own** hostname/certificate filenames:
 
    ```yaml
@@ -57,7 +57,7 @@ CI now rehearses a full cold-data copy, restore into a different disposable volu
 
 Do not assume downgrading an image reverses a database migration. Restoring a coordinated pre-upgrade database/key backup may be required. PostgreSQL major upgrades are explicitly refused; there is no automatic database reset.
 
-Automatic app updates are optional per app in HA. Enable them only for **Nocturne Personal Release** if its data is replaceable and you deliberately accept daily tested development snapshots. Keep Official's switch off. See the repository's `docs/UPDATES.md` for both update processes.
+Automatic app updates are optional per app in HA. Test A updates are published manually when a new PR snapshot is pinned. Keep Official's switch off. See the repository's `docs/UPDATES.md` for both update processes.
 
 ## Known boundaries
 
@@ -67,4 +67,4 @@ Automatic app updates are optional per app in HA. Enable them only for **Nocturn
 - No clinical reliability, automatic dosing, external data connectors or internet-facing deployment has been validated.
 - Never paste full logs, keys, recovery codes or health data into public issues. Report only a sanitized relevant excerpt with the app/Nocturne versions.
 
-Personal compiles API and web from its pinned fork source. Builds need more time and resources than Latest. Home Assistant Supervisor currently keeps the update dialog at 0% during this local Docker build; this does not mean the build is stuck. Follow the named `Nocturne build phase` entries in **Settings → System → Logs → Supervisor** for live detail. Personal 0.3.26 includes Google Health imports for steps, heart rate, weight and sleep. Progress refreshes while the connector page is open; the percentage estimates data-type stages, not remaining time. No dosing advice or insulin/IOB changes. [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).
+Test A compiles API and web from its pinned PR source. Builds need more time and resources than Latest. Home Assistant Supervisor currently keeps the update dialog at 0% during this local Docker build; this does not mean the build is stuck. Follow the named `Nocturne build phase` entries in **Settings → System → Logs → Supervisor** for live detail. PR #1293 includes Google Health imports for steps, heart rate, weight and sleep. Progress refreshes while the connector page is open; the percentage estimates data-type stages, not remaining time. No dosing advice or insulin/IOB changes. [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).

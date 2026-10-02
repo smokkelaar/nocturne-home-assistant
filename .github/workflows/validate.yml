@@ -30,6 +30,19 @@ jobs:
       - run: python tools/update_upstream.py --check
       - run: python tools/update_latest.py --check
       - run: python tools/update_test_channels.py --check
+  test-a:
+    name: Test A container smoke test
+    needs: unit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Compile and smoke-test the pinned PR on Test A
+        run: |
+          docker build --platform linux/amd64 --tag nocturne-test-a:ci nocturne_test_a
+          python3 tools/smoke.py --image nocturne-test-a:ci
   google-health:
     name: Test C container smoke test
     needs: unit

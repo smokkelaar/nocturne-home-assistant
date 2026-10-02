@@ -33,7 +33,7 @@ class ChannelTests(unittest.TestCase):
         self.assertEqual({'8448/tcp': 8449}, self.latest['ports'])
         self.assertNotEqual(self.official['options']['public_url'], self.latest['options']['public_url'])
 
-    def test_test_a_is_a_distinct_personal_store_entry(self):
+    def test_test_a_is_a_distinct_pr_store_entry(self):
         self.assertEqual('Nocturne Test A', self.test_a['name'])
         self.assertEqual('nocturne_test_a', self.test_a['slug'])
         self.assertEqual({'8448/tcp': 8451}, self.test_a['ports'])

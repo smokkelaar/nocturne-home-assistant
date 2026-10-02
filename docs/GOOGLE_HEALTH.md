@@ -2,6 +2,12 @@
 
 ## Actuele ontwikkelomgeving
 
+Test A (poort 8451), versie **0.3.26-a3**, bouwt nu PR #1293 op exact commit
+`7652d85` met main-basis `637eab7`. `upstream-test-a.json` bevat de bronpin
+en checksum. De app-identiteit, opties en private opslag blijven behouden.
+Test B behoudt zijn afzonderlijke, oudere PR-pin. Personal blijft op zijn eigen
+bron; de Personal-uitbreidingen zijn geen onderdeel van deze Test A-build.
+
 Test C (poort 8453) blijft de afzonderlijke Google Health-ontwikkelomgeving.
 De bron is de branch
 [`smokkelaar/google-health-heart-rate-aggregation-and-backfill`](https://github.com/smokkelaar/nocturne-personal/tree/smokkelaar/google-health-heart-rate-aggregation-and-backfill),
@@ -9,7 +15,7 @@ met de nieuwste goedgekeurde Nightscout main-basis ingemerged. Het exacte
 broncommit en de archive-checksum staan in `upstream-google-health.json`.
 Test C behoudt zijn eigen installatie, configuratie, database en cookies.
 
-## Test checklist voor Personal 0.3.26-2 / Test A 0.3.26-a2
+## Eerdere test checklist voor Personal 0.3.26-2 / Test A 0.3.26-a2
 
 Voer deze controles eerst uit op Test A (8451) en daarna, als de uitkomst goed
 is, op Personal (8450):
@@ -35,8 +41,9 @@ is, op Personal (8450):
    (8453) zijn eigen Google Health-branch, data en cookies behoudt. Official
    (8448) en Latest (8449) worden door deze update niet gewijzigd.
 
-Personal (8450) en Test A (8451) gebruiken dezelfde Personal-bron. Latest
-(8449) en Test B (8452) gebruiken dezelfde vastgezette upstream main-images.
+Deze eerdere checklist beschrijft Test A vóór 0.3.26-a3, toen die dezelfde
+Personal-bron als poort 8450 gebruikte. Test A en B gebruiken nu afzonderlijk
+vastgezette PR-bronnen; Latest (8449) gebruikt vastgezette upstream main-images.
 Official (8448) volgt de officiële release en wordt hierbij niet gewijzigd.
 
 ## Google Health in Personal
