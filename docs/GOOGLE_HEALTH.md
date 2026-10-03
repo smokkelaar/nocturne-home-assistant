@@ -3,7 +3,7 @@
 ## Actuele ontwikkelomgeving
 
 Test A (poort 8451), versie **0.3.26-a10**, bouwt nu PR #1293 op exact commit
-`b8afd32c6` met main-basis `d21c2fb81`. `upstream-test-a.json` bevat de bronpin
+`0c5ad902a` met main-basis `d21c2fb81`. `upstream-test-a.json` bevat de bronpin
 en checksum. De app-identiteit, opties en private opslag blijven behouden.
 Test B test nu de A1c-voorkeuren uit [PR #1977](https://github.com/nightscout/nocturne/pull/1977) op actuele main, zonder de Google Health PR-wijzigingen. Personal blijft op zijn eigen
 bron; de Personal-uitbreidingen zijn geen onderdeel van deze Test A-build.
@@ -11,8 +11,13 @@ bron; de Personal-uitbreidingen zijn geen onderdeel van deze Test A-build.
 Deze versie lost de mergeconflicten met main op en verwerkt de reviewfix voor
 tijdelijke Google-fouten tijdens het koppelen. Slaapimports behouden bestaande
 ID's en aanmaakdatums, met de nieuwe bescherming tegen dubbele imports en het
-opnieuw importeren van handmatig verwijderde sessies. Main voegt databasekolommen
-en niet-unieke indexen toe zonder bestaande gegevens te verwijderen. Maak een
+opnieuw importeren van handmatig verwijderde sessies.
+De writer slaat handmatig verwijderde slaaprecords over en gaat verder met de
+import. Slaaprecords die bij Google verdwenen zijn, krijgen een systeemverwijdering
+en kunnen later terugkomen bij herimport. Expliciet wissen (purge) blijft definitief.
+
+Main voegt databasekolommen en niet-unieke indexen toe zonder bestaande gegevens
+te verwijderen. Maak een
 back-up en hertest recente en historische imports, slaapfasen, herimport zonder
 duplicaten, verwijderen gevolgd door synchroniseren en opnieuw verbinden/herstarten.
 De bronreviews staan op [PR #1293](https://github.com/nightscout/nocturne/pull/1293)

@@ -1,6 +1,6 @@
 # Nocturne Test A — installation and operation
 
-> This is an isolated build of [Nocturne PR #1293](https://github.com/nightscout/nocturne/pull/1293). It is a separate HA app with its own data and default host port **8451**. Version **0.3.26-a10** pins PR commit `b8afd32c6` on main `d21c2fb81`; source and checksum are recorded in `upstream-test-a.json`.
+> This is an isolated build of [Nocturne PR #1293](https://github.com/nightscout/nocturne/pull/1293). It is a separate HA app with its own data and default host port **8451**. Version **0.3.26-a10** pins PR commit `0c5ad902a` on main `d21c2fb81`; source and checksum are recorded in `upstream-test-a.json`.
 
 ## Public ports and native access
 
@@ -51,6 +51,11 @@ continuation after restart. A manually deleted sleep session should remain
 deleted after synchronization. Also verify disconnect/reconnect with a real
 Google account. The sleep merge preserves existing IDs and creation times
 while retaining main's locks and deletion protection.
+
+The Google Health writer skips manually deleted sleep sessions and continues
+the import. Provider-missing sessions become system soft-deletions, which a
+later reimport can restore. Explicit purge still permanently removes Google's
+records and reserved import keys.
 
 ## Diagnostic API logs
 
