@@ -1,3 +1,9 @@
+## 0.3.25-b28
+
+- Restore A1c preference labels, explanations and report navigation in all 11 supported languages.
+- Preserve the scientific names and units in both dropdowns, including their persisted values; estimated values keep their e prefix.
+- Include production catalog and locale render regression checks from Nocturne PR #1977.
+
 ## 0.3.25-b27
 
 - Replace the Google Health PR #1293 test build with current Nocturne main plus A1c preferences [PR #1977](https://github.com/nightscout/nocturne/pull/1977).
