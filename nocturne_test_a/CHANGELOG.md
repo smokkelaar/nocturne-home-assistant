@@ -1,3 +1,10 @@
+## 0.3.26-a11
+
+- Pin reviewed Google Health PR #1293 source `23e8afa65` on main `d21c2fb81`.
+- Honor open-ended repair requests from the caller's start date through now; filtered data-type runs leave shared synchronization progress unchanged until every enabled type is covered.
+- Add automatic end-to-end coverage for mocked Google OAuth/PKCE, HTTPS callbacks, token refresh, paginated imports, repeat imports, deletion protection and disconnect. Test mocking is absent from the HA configuration.
+- Keep shared wrapper 0.1.10, Test A identity, options, cookies and storage.
+
 ## 0.3.26-a10
 
 - Pin Google Health PR #1293 commit `ed84340a4`, merged with main `d21c2fb81`.
