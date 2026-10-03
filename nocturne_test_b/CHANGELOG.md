@@ -1,3 +1,9 @@
+## 0.3.25-b27
+
+- Replace the Google Health PR #1293 test build with current Nocturne main plus A1c preferences [PR #1977](https://github.com/nightscout/nocturne/pull/1977).
+- Configure A1c/HbA1c naming and %/mmol/mol units in Settings → Appearance → Units & Formats; estimated values keep the eA1c/eHbA1c prefix, lab measurements remain A1c/HbA1c, and GMI remains separate.
+- Preserve the Test B identity, port 8452, existing data, options and cookie namespace. Pin API and web to one checksum-verified source archive.
+
 ## 0.3.25-b26
 
 - Shared wrapper 0.1.10: explicit `skip_gateway_check`, default false, only effective with `gateway_auth: false`.
