@@ -135,6 +135,25 @@ def main(image):
             if before != after:
                 raise RuntimeError('Secrets changed in native mode')
         print('PASS: configured native startup and second restart; no Basic prompt; anonymous data 401; stable keys')
+        # Toggle only the wrapper check in this same disposable configured volume.
+        # The real API must still deny data, and nginx must still reject wrong hosts.
+        for skip in (True, False):
+            execute(identity, "import json\nfrom pathlib import Path\n"
+                    "path = Path('/data/options.json')\noptions = json.loads(path.read_text())\n"
+                    f"options['skip_gateway_check'] = {skip!r}\npath.write_text(json.dumps(options))")
+            docker('stop', '-t', '100', identity)
+            if docker('inspect', '--format', '{{.State.ExitCode}}', identity) != '0':
+                raise RuntimeError('Gateway-check toggle did not stop cleanly')
+            docker('start', identity)
+            wait_ready(identity, native_probe)
+            started = docker('inspect', '--format', '{{.State.StartedAt}}', identity)
+            if ('GATEWAY_SKIPPED' in docker('logs', '--since', started, identity)) != skip:
+                raise RuntimeError('Gateway-check status does not match explicit opt-in')
+            after = execute(identity, "import hashlib\nfrom pathlib import Path\nprint(hashlib.sha256(Path('/data/secrets.json').read_bytes()).hexdigest())")
+            if before != after:
+                raise RuntimeError('Secrets changed while toggling gateway check')
+            execute(identity, "import sys\nsys.path.insert(0, '/opt/nocturne-ha')\nimport run\nassert run.psql(database='nocturne', sql='SELECT id FROM public.ha_wrapper_smoke') == '42'")
+        print('PASS: explicit bypass and restored guard restart; upstream data denial, host checks and state preserved')
     finally:
         # These exact UUID names were created above, never accepted from user input.
         docker('rm', '-f', identity, check=False)

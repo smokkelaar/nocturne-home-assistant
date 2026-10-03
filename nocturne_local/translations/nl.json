@@ -14,7 +14,11 @@
     },
     "gateway_auth": {
       "name": "Extra gebruikersnaam/wachtwoord-popup",
-      "description": "Aan: extra toegangscode via de HA-statuspagina; nodig voor eerste accountaanmaak. Uit: rechtstreeks naar Nocturne-passkey, alleen na afgeronde accountaanmaak en met ingestelde vertrouwde certificaten. Nocturne-authenticatie blijft aan. Opslaan en alleen deze app herstarten."
+      "description": "Aan: extra popup met gebruikersnaam nocturne en de code uit de HA-statuspagina. Uit: Nocturne bepaalt de toegang; ingestelde vertrouwde TLS blijft vereist. De wrapper controleert private aanmelding tenzij je die controle bewust overslaat. Opslaan en deze app herstarten."
+    },
+    "skip_gateway_check": {
+      "name": "Gatewaycontrole bewust overslaan",
+      "description": "Standaard uit. Alleen actief met gateway_auth uit. Slaat alleen de aanmeldcontrole van de wrapper over; Nocturne-toegangs- en deelinstellingen bepalen wie mag lezen of schrijven. TLS en domeincontrole blijven actief. Schakelt zelf geen anonieme toegang in. Opslaan en deze app herstarten."
     }
   },
   "network": {

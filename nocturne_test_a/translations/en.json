@@ -14,11 +14,11 @@
     },
     "gateway_auth": {
       "name": "Extra username/password popup",
-      "description": "On: extra code from the HA status page. Off: no extra popup; Nocturne controls access. Trusted certificates remain required. By default verify_native_auth first checks that the instance is private. Save and restart only this app."
+      "description": "On: extra popup with username nocturne and the code from the HA status page. Off: Nocturne controls access; configured trusted TLS remains required. The wrapper checks private authentication unless you explicitly skip that check. Save and restart this app."
     },
-    "verify_native_auth": {
-      "name": "Verify private Nocturne instance",
-      "description": "On by default: with gateway_auth off, Nocturne must deny anonymous access. Explicitly off: skip this startup check, for example for public share links. This does not make Nocturne private; its own permissions and public access still apply. TLS and Nocturne authorization are not disabled."
+    "skip_gateway_check": {
+      "name": "Consciously skip gateway check",
+      "description": "Default off. Only effective with gateway_auth off. Skips only the wrapper authentication check; Nocturne access/share permissions still decide who can read or write. TLS and hostname checks remain active. Does not enable anonymous access itself. Save and restart this app."
     }
   },
   "network": {

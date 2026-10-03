@@ -113,7 +113,7 @@ client grant or successful consent/refresh. All upstream pins remain unchanged.
 ## Non-negotiable boundaries
 
 - Do not read/upload private databases, credentials, account recovery material or raw health data for public debugging.
-- Do not expose ports publicly or weaken TLS/passkey validation to make setup appear to work. `gateway_auth: false` is a supported guarded mode from 0.1.2, not permission to remove its startup checks or make it the implicit default.
+- Do not expose ports publicly or weaken TLS/passkey validation to make setup appear to work. `gateway_auth: false` is a supported guarded mode from 0.1.2. From 0.1.10, only an explicit `skip_gateway_check: true` (or old Test A options when no canonical field is present) may skip its wrapper auth probe. Never make bypass the implicit default or relax TLS/host/Nocturne authorization checks.
 - Never regenerate instance/database keys or initialize over existing data. Preserve database and matching keys together.
 - Do not uninstall a local prototype as a shortcut to subscribing it to this repository. Repository app identity differs; migration is not automated.
 - A passing container boot/restart test is not an upgrade, passkey, connector or clinical validation.
@@ -151,5 +151,5 @@ The initial wrapper uses Dutch runtime messages. Preserve tested behavior while 
 ## 0.1.2 handoff
 
 - Web readiness now requests exact `/health` instead of `/`; this prevents the wrapper's five-second probe from rendering the dashboard and creating anonymous chart `401` log noise. Do not fall back to `/`.
-- `gateway_auth` defaults to `true`. Explicit `false` requires configured TLS and read-only startup verification that native authentication is mandatory, the instance is loaded/non-demo and anonymous chart access returns `401`. Keep the canonical-host nginx guard and stripped credential headers.
+- `gateway_auth` defaults to `true`. Explicit `false` requires configured TLS and read-only startup verification that native authentication is mandatory, the instance is loaded/non-demo and anonymous chart access returns `401`. Keep the canonical-host nginx guard and stripped credential headers. From 0.1.10 the default-off `skip_gateway_check` may skip this wrapper verification only with `gateway_auth: false`; keep Test A on the shared visible schema and document legacy-option migration and show `GATEWAY_SKIPPED`.
 - Native-mode container CI uses an empty fixture and therefore cannot validate a real account/passkey. A user must verify existing passkey login, logout/login and app restart after a backup. Do not describe that as automated evidence.

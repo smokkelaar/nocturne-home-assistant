@@ -46,14 +46,21 @@ def validate_options(options):
     gateway_auth = options.get('gateway_auth', True)
     if type(gateway_auth) is not bool:
         raise ValueError('gateway_auth moet true of false zijn')
-    verify_native_auth = options.get('verify_native_auth', True)
-    if type(verify_native_auth) is not bool:
-        raise ValueError('verify_native_auth moet true of false zijn')
+    # Read old Test A options only when the canonical option is absent.
+    # Supervisor may supply the new default: migrate old opt-outs in app Configuration.
+    skip_gateway_check = options.get('skip_gateway_check', False)
+    if 'skip_gateway_check' not in options and 'verify_native_auth' in options:
+        legacy = options['verify_native_auth']
+        if type(legacy) is not bool:
+            raise ValueError('verify_native_auth moet true of false zijn')
+        skip_gateway_check = not legacy
+    if type(skip_gateway_check) is not bool:
+        raise ValueError('skip_gateway_check moet true of false zijn')
     if not gateway_auth and not cert:
         raise ValueError('GATEWAY_TLS: zonder extra gatewaycode zijn eigen certificate/private_key-bestanden vereist')
     return dict(public_url=public_url, hostname=hostname, authority=parsed.netloc.lower(),
                 certificate=cert, private_key=key, gateway_auth=gateway_auth,
-                verify_native_auth=verify_native_auth,
+                skip_gateway_check=skip_gateway_check,
                 cookie_namespace=cookie_namespace)
 
 
@@ -215,14 +222,18 @@ def status_page(options, statuses, gateway_password, test_certificate, checks=No
     gateway_section = f'''<details><summary>Toegangscode voor deze lokale test tonen</summary>
 <p>Gebruiker: <code>nocturne</code><br>Wachtwoord: <code>{esc(gateway_password)}</code></p>
 <p>Dit is de extra beveiliging van de app, niet je Nocturne-account. Deel deze code niet.</p></details>'''
+    skipped = not options.get('gateway_auth', True) and options.get('skip_gateway_check', False)
     if not options.get('gateway_auth', True):
         gateway_section = ('<p><strong>Geen extra gatewaycode nodig.</strong> '
                            'Log rechtstreeks in met je Nocturne-account/passkey. '
                            'Nocturne-aanmelding blijft verplicht.</p>')
-        if not options.get('verify_native_auth', True):
-            gateway_section = ('<p><strong>Geen extra gatewaycode; private-instantiecontrole uitgeschakeld.</strong> '
-                               'Nocturne bepaalt de toegang. Publieke deel-links kunnen zonder aanmelding lezen.</p>')
-    open_url = options['public_url'] + ('' if options.get('gateway_auth', True) else '/auth/login')
+        if skipped:
+            gateway_section = ('<p role="alert"><strong>GATEWAY_SKIPPED: Gatewaycontrole bewust overgeslagen; '
+                               'private-instantiecontrole uitgeschakeld.</strong> '
+                               'Nocturne bepaalt de toegang via zijn eigen toegangs- en deelinstellingen. '
+                               'Dit geeft zelf geen anonieme lees- of schrijfrechten. '
+                               'TLS en domeincontrole blijven actief.</p>')
+    open_url = options['public_url'] + ('' if options.get('gateway_auth', True) or skipped else '/auth/login')
     return f'''<!doctype html><html lang="nl"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(app_name)}</title>

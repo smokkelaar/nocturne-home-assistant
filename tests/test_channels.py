@@ -65,11 +65,12 @@ class ChannelTests(unittest.TestCase):
                 self.assertEqual(authority, web['BASE_DOMAIN'])
                 self.assertEqual('example.test', options['hostname'])
 
-    def test_test_a_auth_verification_is_explicit_and_defaults_on(self):
+    def test_test_a_uses_shared_gateway_schema_and_reads_legacy_options(self):
         settings = load_settings('nocturne_test_a')
-        self.assertTrue(settings.validate_options({})['verify_native_auth'])
-        self.assertTrue(self.test_a['options']['verify_native_auth'])
-        self.assertEqual('bool', self.test_a['schema']['verify_native_auth'])
+        self.assertFalse(settings.validate_options({})['skip_gateway_check'])
+        self.assertEqual(self.latest['schema'], self.test_a['schema'])
+        self.assertNotIn('verify_native_auth', self.test_a['options'])
+        self.assertNotIn('verify_native_auth', self.test_a['schema'])
         for language in ('nl', 'en'):
             translation = json.loads((ROOT / 'nocturne_test_a/translations' / (language + '.json')).read_text(encoding='utf-8'))
             self.assertEqual(set(self.test_a['schema']), set(translation['configuration']))
@@ -78,7 +79,8 @@ class ChannelTests(unittest.TestCase):
             'certificate': 'fullchain.pem', 'private_key': 'privkey.pem',
             'gateway_auth': False, 'verify_native_auth': False,
         })
-        self.assertFalse(options['verify_native_auth'])
+        self.assertTrue(options['skip_gateway_check'])
+        self.assertNotIn('verify_native_auth', options)
         nginx = settings.nginx_config(options, '/cert', '/key')
         self.assertIn('if ($ha_allowed_host = 0) { return 421; }', nginx)
         self.assertIn('~^[a-z0-9]+\\.share\\.example\\.test$ 1;', nginx)
@@ -105,7 +107,7 @@ class ChannelTests(unittest.TestCase):
         namespace = {'http': type('Http', (), {'client': http.client}), 'json': json}
         exec(compile(ast.Module(body=[guard], type_ignores=[]), '<test-a-guard>', 'exec'), namespace)
         with patch.object(http.client, 'HTTPConnection') as connection:
-            namespace['verify_native_auth']({'verify_native_auth': False})
+            namespace['verify_native_auth']({'skip_gateway_check': True})
             connection.assert_not_called()
         response = MagicMock()
         response.status = 200

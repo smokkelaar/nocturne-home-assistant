@@ -31,6 +31,9 @@ try:
     else:
         raise AssertionError('Native mode accepted a fresh instance without an owner account')
 
+    phase = 'EXPLICIT_SKIP'
+    run.verify_native_auth({**options, 'skip_gateway_check': True})
+
 # Read only this fixture's nginx paths, never publish certificates or logs.
     phase = 'READ_FIXTURE'
     existing = Path('/run/nocturne/nginx.conf').read_text()
