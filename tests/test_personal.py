@@ -80,7 +80,16 @@ class PersonalTests(unittest.TestCase):
         test_cookies = (ROOT / 'nocturne_test_a/rootfs/opt/nocturne-ha/cookies.mjs').read_text()
         self.assertIn("'NocturneTestA_'", test_cookies)
 
-    def test_test_b_pins_google_health_pr1293_with_a_distinct_runtime_identity(self):
+    def test_test_b_rejects_invalid_provenance(self):
+        source = json.loads((ROOT / 'upstream-test-b.json').read_text())
+        for field, value in [('repository', 'untrusted/repo'), ('commit', 'main'),
+                             ('base_commit', 'moving-branch'), ('archive_sha256', 'bad'),
+                             ('pull_request', True), ('pull_request_url', 'https://example.com'),
+                             ('commit_at', '2026-10-03')]:
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                update_test_channels.validate_test_b_source({**source, field: value})
+
+    def test_test_b_pins_a1c_fix_with_a_distinct_runtime_identity(self):
         test_b = json.loads((ROOT / 'nocturne_test_b/config.json').read_text())
         test_runtime = json.loads((ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/version.json').read_text())
         self.assertNotEqual(self.config['version'], test_b['version'])
@@ -89,7 +98,7 @@ class PersonalTests(unittest.TestCase):
         self.assertEqual('Nocturne Test B', test_b['name'])
         self.assertEqual('NocturneTestB_', test_runtime['cookie_namespace'])
         self.assertEqual('https://homeassistant.local:8452', test_runtime['default_public_url'])
-        pr = json.loads((ROOT / 'upstream-google-health-pr1293.json').read_text())
+        pr = json.loads((ROOT / 'upstream-test-b.json').read_text())
         self.assertEqual(pr['commit'], test_runtime['source_commit'])
         self.assertEqual(pr['base_commit'], test_runtime['base_commit'])
         self.assertEqual(pr['repository'], test_runtime['repository'])
@@ -99,7 +108,9 @@ class PersonalTests(unittest.TestCase):
         self.assertIn('--checksum=sha256:' + pr['archive_sha256'], test_b_recipe)
         self.assertIn('codeload.github.com', test_b_recipe)
         self.assertIn(f'ARG BUILD_VERSION={test_b["version"]}', test_b_recipe)
-        self.assertIn('Google Health PR #1293', test_b['description'])
+        self.assertIn('A1c preferences PR #1977', test_b['description'])
+        self.assertNotIn('Google Health', test_runtime['purpose'])
+        self.assertNotIn('Google Health', test_b['description'])
         test_settings = (ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/settings.py').read_text()
         self.assertIn("('NocturneTestB_',)", test_settings)
         test_cookies = (ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/cookies.mjs').read_text()
