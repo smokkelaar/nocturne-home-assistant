@@ -1,6 +1,6 @@
 # Nocturne Test A — installation and operation
 
-> This is an isolated build of [Nocturne PR #1293](https://github.com/nightscout/nocturne/pull/1293). It is a separate HA app with its own data and default host port **8451**. Version **0.3.26-a7** pins PR commit `7c05a8183`; source and checksum are recorded in `upstream-test-a.json`.
+> This is an isolated build of [Nocturne PR #1293](https://github.com/nightscout/nocturne/pull/1293). It is a separate HA app with its own data and default host port **8451**. Version **0.3.26-a10** pins PR commit `ed84340a4` on main `d21c2fb81`; source and checksum are recorded in `upstream-test-a.json`.
 
 ## Public ports and native access
 
@@ -18,26 +18,44 @@ To deliberately use public sharing without an additional gateway popup:
 
 ```yaml
 gateway_auth: false
-verify_native_auth: false
+skip_gateway_check: true
 ```
 
 Save and restart only Test A. This skips the wrapper's private-instance check,
 not Nocturne's authentication or permission checks. Trusted configured TLS
 certificates are still required. Public access remains governed by Nocturne's
 sharing scopes; this configuration does not promise mandatory login for all
-data. Keep verify_native_auth enabled unless you deliberately accept that mode.
+data. Leave `skip_gateway_check` false unless you deliberately accept that mode.
+The old `verify_native_auth: false` option should be removed when migrating to
+the canonical `skip_gateway_check: true` setting; the canonical option takes precedence.
 
-## Reviewed PR snapshot
+## Source snapshot and retesting
 
-All 21 PR checks passed for this source. The [balanced Copilot review](https://github.com/nightscout/nocturne/pull/1293#pullrequestreview-5395843188)
-reported no code findings, while recommending final human review of the
-cross-cutting security and health-data paths. This is not live-account or
-clinical acceptance.
+Current source review and automated check results are available on
+[PR #1293](https://github.com/nightscout/nocturne/pull/1293). The delivery's
+container build and startup checks are on
+[HA PR #95](https://github.com/smokkelaar/nocturne-home-assistant/pull/95).
+Automated checks do not validate your Google account's consent or real data.
 
 The update retains the database credential fix and diagnostics, and adds the
 OAuth token-cache, overview authorization, UTC duration, sleep-stage overlap
 and disconnect/purge queue-cancellation fixes. Port, settings, keys and
-private storage remain unchanged.
+private storage remain unchanged. It also resolves the merge with current main
+and fixes temporary Google account-identity errors being shown as reconnection failures.
+
+Main adds sleep deletion columns, nullable heart-rate/step types and non-unique
+original-ID indexes. These migrations do not remove existing records. Back up
+before upgrading, then check recent synchronization and historical imports,
+repeated sleep imports without duplicates, replacement of sleep stages and
+continuation after restart. A manually deleted sleep session should remain
+deleted after synchronization. Also verify disconnect/reconnect with a real
+Google account. The sleep merge preserves existing IDs and creation times
+while retaining main's locks and deletion protection.
+
+The Google Health writer skips manually deleted sleep sessions and continues
+the import. Provider-missing sessions become system soft-deletions, which a
+later reimport can restore. Explicit purge still permanently removes Google's
+records and reserved import keys.
 
 ## Diagnostic API logs
 
