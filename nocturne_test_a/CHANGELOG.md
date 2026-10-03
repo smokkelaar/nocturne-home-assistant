@@ -1,6 +1,6 @@
 ## 0.3.26-a11
 
-- Pin reviewed Google Health PR #1293 source `8c79c7ff3` on main `d21c2fb81`.
+- Pin reviewed Google Health PR #1293 source `b43ea574d` on main `d21c2fb81`.
 - Honor open-ended repair requests from the caller's start date through now; filtered data-type runs leave shared synchronization progress unchanged until every enabled type is covered.
 - Add automatic end-to-end coverage for mocked Google OAuth/PKCE, HTTPS callbacks, token refresh, paginated imports, repeat imports, deletion protection, disconnect and reauthorization without duplicates. Test mocking is absent from the HA configuration.
 - Translate data-type labels and unavailability reasons in all eleven languages; allow the default seven-day history without requiring an import date.
