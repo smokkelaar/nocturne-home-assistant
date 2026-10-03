@@ -1,3 +1,9 @@
+## 0.3.25-b29
+
+- Apply the chosen A1c/HbA1c name to settings labels and unit explanations in all 11 supported languages.
+- Omit the estimated A1c target in the executive summary when the backend cannot supply it for a range with insufficient readings.
+- Include browser regressions for missing targets and both display units from Nocturne PR #1977.
+
 ## 0.3.25-b28
 
 - Restore A1c preference labels, explanations and report navigation in all 11 supported languages.
