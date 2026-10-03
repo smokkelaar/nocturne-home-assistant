@@ -1,3 +1,7 @@
 # Nocturne Test B
 
-Geïsoleerde Test B-build van Google Health PR #1293: source commit `8d7f70dd73d738b0bdda8c86616a34ad4b0c8a80`, gemerged met Nightscout `main` `de6b03067dfe2a26c8858a8edf8245d00f06d7ba`, pakket 0.3.25-b23, poort 8452. De app-identiteit, configuratie, data-directory en cookies blijven geïsoleerd van Personal, Test A en Latest. Deze build bevat de vertaalcatalogusfix voor de historische Google Health-importvoortgang; bestaande data en connectorinstellingen worden niet verwijderd of gereset.
+Pakket **0.3.25-b27** bouwt actuele Nocturne main met alleen de A1c-voorkeurenfix uit [PR #1977](https://github.com/nightscout/nocturne/pull/1977). De exacte bron en checksum staan in `upstream-test-b.json`.
+
+Kies A1c/HbA1c en %/mmol/mol op één plek: **Settings → Appearance → Units & Formats**. Geschatte waarden blijven eA1c/eHbA1c; labmetingen blijven A1c/HbA1c. GMI blijft een aparte maat. [Installatie en teststappen](DOCS.md).
+
+Test B behoudt zijn slug, poort 8452, opties, data en cookie-namespace. De eerdere Google Health PR #1293-build wordt vervangen.

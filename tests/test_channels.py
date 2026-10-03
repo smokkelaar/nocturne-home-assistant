@@ -2,6 +2,7 @@
 import importlib.util
 import ast
 import json
+import html
 from pathlib import Path
 import unittest
 
@@ -209,7 +210,7 @@ class ChannelTests(unittest.TestCase):
                 self.assertIn(versions['purpose_url'], page)
                 self.assertIn(versions['test_url'], page)
                 self.assertIn(versions['purpose'], page)
-                self.assertIn(versions['test_plan'], page)
+                self.assertIn(html.escape(versions['test_plan']), page)
                 self.assertIn('<h2>Systeemresources</h2>', page)
 
     def test_latest_never_inherits_official_identity_or_default_port(self):

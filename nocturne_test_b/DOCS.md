@@ -1,6 +1,6 @@
 # Nocturne Test B — installation and operation
 
-> This is an isolated Nocturne test app pinned to Google Health PR #1293, source commit `5d97387b`, including the merge with the current upstream `main`. It is a separate HA app with its own data and default host port **8452**. Never copy `/data`, accounts or keys between it and other instances.
+> This is an isolated Nocturne test app pinned to A1c preferences PR #1977, based on upstream `main` `320a885`. It is a separate HA app with its own data and default host port **8452**. Never copy `/data`, accounts or keys between it and other instances.
 
 > **Nederlands, met afbeeldingen en exacte stappen:** [Volledige visuele installatiehandleiding](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md), van repository toevoegen tot dashboard en herstarttest. [Domein, certificaat en lokale DNS](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/HTTPS-EN-DNS.md) is apart uitgewerkt. These absolute links also work from Home Assistant's Documentation tab.
 
@@ -37,25 +37,13 @@ No router port-forwarding is required or recommended for this test. A publicly r
 7. Complete Nocturne's own setup and create a passkey. Skip Nightscout/data connections in this initial test.
 8. Verify dashboard access, sign out/in, then restart **only this app** and verify it opens without repeating setup.
 
-## Google Health test path
+## A1c preferences test path
 
-After the initial account setup, open **Settings → Connectors → Google Health**. Configure the Google OAuth client and callback URL used by the test environment, select the data types to import, and authorize the connection. Start with a short `Import from` date so the first run is easy to inspect; then test a longer historical range in pages.
+Open **Settings → Appearance → Units & Formats**. Choose A1c or HbA1c independently of % (NGSP) or mmol/mol (IFCC). Check that estimated values keep their **eA1c/eHbA1c** prefix, lab measurements use **A1c/HbA1c**, and GMI remains a separate metric. The old report-local unit selector should be absent.
 
-For recovery testing, interrupt or let a test import fail, use the connector-cursor reset action for a selected date/data type, and run the import again. Verify that a retry does not duplicate steps, heart-rate, body-weight or sleep records. Existing Test B data is not part of the PR validation contract; do not copy data from Personal or Test A.
+Check the reports, navigation, chart legends/tooltips and printed reports in both units. Enter a lab result in the selected unit and verify its value after changing units. Reload and use another device to verify saved preferences. Existing lab results remain stored as percent and are displayed using the same backend conversion.
 
-The scheduled connector job and **Sync now** use the same tenant-wide run slot. If
-the scheduled job starts first, **Sync now** reports that an import is already
-running and keeps checking the server-owned progress instead of starting a
-second import. This is expected coordination, not a Google account failure.
-
-For dense heart-rate data, the actogram report uses one PostgreSQL-computed
-average per UTC minute. This is only a report presentation optimisation: raw
-heart-rate rows remain available to the health history and day-level views.
-When validating responsiveness, measure the heart-rate and steps report after
-the first load and after a reload; inspect the browser network timing and
-confirm that the page remains usable while a Google Health import is running.
-
-Changing options requires restarting the app. There is no need to restart all of HA for ordinary app option changes.
+This replaces the Google Health PR #1293 test source with current Nocturne main plus the A1c fix. The old Google Health change is not included in this build. Existing Test B storage and options are retained; no data is copied from another instance.
 
 ## Test certificate vs trusted HTTPS
 
@@ -85,6 +73,6 @@ Automatic app updates are optional per app in HA. Keep automatic updates off for
 - No clinical reliability, automatic dosing, external data connectors or internet-facing deployment has been validated.
 - Never paste full logs, keys, recovery codes or health data into public issues. Report only a sanitized relevant excerpt with the app/Nocturne versions.
 
-Test B builds the exact PR #1293 source commit `5d97387b` inside the wrapper so it can be tested before that PR is merged or released. The package update keeps the Test B slug, host port, HA options, data directory and cookie namespace; no data is copied from another channel and no live HA installation is changed by this repository update. This test instance is not for clinical use.
+Test B builds the exact A1c preferences PR #1977 source pinned in `upstream-test-b.json` inside the wrapper so it can be tested before that PR is merged or released. The package update keeps the Test B slug, host port, HA options, data directory and cookie namespace; no data is copied from another channel and no live HA installation is changed by this repository update. This test instance is not for clinical use.
 
 From wrapper **0.1.10**, all six variants offer **Consciously skip gateway check** (`skip_gateway_check`, default false). Only effective with `gateway_auth: false`; save and restart this app. It skips only the wrapper authentication probe; Nocturne access/share permissions and TLS/host checks still apply. The helper prominently shows `GATEWAY_SKIPPED`. Test A now uses the same visible settings: migrate old `verify_native_auth: false` to `skip_gateway_check: true`, remove the old YAML key, save and restart. The canonical option takes precedence; restore the guard with `skip_gateway_check: false`. [Configuration and rollback](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/GATEWAY.md).
