@@ -1,10 +1,11 @@
 ## 0.3.26-a10
 
-- Pin Google Health PR #1293 commit `0c5ad902a`, merged with main `d21c2fb81`.
+- Pin Google Health PR #1293 commit `61ee1e3fb`, merged with main `d21c2fb81`.
 - Resolve sleep persistence conflicts by retaining existing IDs and creation times alongside main's import locks, tombstone protection and source-key conflict handling.
 - Retain Google Health and new main translation messages in all eleven languages.
 - Fix the new review finding: temporary Google account-identity failures report retryable rate-limit/unavailability errors instead of requiring reconnection.
 - Align the Google Health writer with main's sleep deletion protection: skip manually deleted sessions without aborting the import and soft-delete provider-missing sessions as system deletions.
+- Use a single clock snapshot for live synchronization bounds at UTC midnight and translate connector-reset failures on the frontend in all eleven supported languages.
 - Include main's additive sleep deletion, heart-rate/step type and original-ID index migrations. Back up and retest Google Health synchronization, repeat sleep imports, deletion protection and reconnect/restart behavior.
 - Keep shared wrapper 0.1.10, Test A identity, port 8451, options, cookies and storage.
 
