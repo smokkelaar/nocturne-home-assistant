@@ -1,3 +1,11 @@
+## 0.3.26-a10
+
+- Pin Google Health PR #1293 commit `48659d877`, merged with main `d21c2fb81`.
+- Resolve sleep persistence conflicts by retaining existing IDs and creation times alongside main's import locks, tombstone protection and source-key conflict handling.
+- Retain Google Health and new main translation messages in all eleven languages.
+- Include main's additive sleep deletion, heart-rate/step type and original-ID index migrations. Back up and retest Google Health synchronization, repeat sleep imports, deletion protection and reconnect/restart behavior.
+- Keep shared wrapper 0.1.10, Test A identity, port 8451, options, cookies and storage.
+
 ## 0.3.26-a9
 
 - Shared wrapper 0.1.10: explicit `skip_gateway_check`, default false, only effective with `gateway_auth: false`.
