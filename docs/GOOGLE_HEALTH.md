@@ -2,8 +2,8 @@
 
 ## Actuele ontwikkelomgeving
 
-Test A (poort 8451), versie **0.3.26-a11**, bouwt nu PR #1293 op exact commit
-`d905c28bf` met main-basis `d21c2fb81`. `upstream-test-a.json` bevat de bronpin
+Test A (poort 8451), versie **0.3.26-a12**, bouwt nu PR #1293 op exact commit
+`2f6556cc3` met main-basis `d21c2fb81`. `upstream-test-a.json` bevat de bronpin
 en checksum. De app-identiteit, opties en private opslag blijven behouden.
 Test B test nu de A1c-voorkeuren uit [PR #1977](https://github.com/nightscout/nocturne/pull/1977) op actuele main, zonder de Google Health PR-wijzigingen. Personal blijft op zijn eigen
 bron; de Personal-uitbreidingen zijn geen onderdeel van deze Test A-build.
