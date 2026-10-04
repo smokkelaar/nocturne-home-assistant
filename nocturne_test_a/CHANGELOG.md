@@ -1,3 +1,13 @@
+## 0.3.26-a11
+
+- Pin reviewed Google Health PR #1293 source `d905c28bf` on main `d21c2fb81`.
+- Honor open-ended repair requests from the caller's start date through now; filtered data-type runs leave shared synchronization progress unchanged until every enabled type is covered.
+- Add automatic end-to-end coverage for mocked Google OAuth/PKCE, HTTPS callbacks, token refresh, paginated imports, repeat imports, deletion protection, disconnect and reauthorization without duplicates. Test mocking is absent from the HA configuration.
+- Translate data-type labels and unavailability reasons in all eleven languages; allow the default seven-day history without requiring an import date.
+- Invalidate pending OAuth flows and cached tokens before purging a disconnected account; restore complete sync-toggle test coverage for all four Google Health types.
+- Preserve the generic Google Health source while specialized status loads or fails; show loading/unavailable states instead of a false unconfigured state.
+- Keep shared wrapper 0.1.10, Test A identity, options, cookies and storage.
+
 ## 0.3.26-a10
 
 - Pin Google Health PR #1293 commit `ed84340a4`, merged with main `d21c2fb81`.
