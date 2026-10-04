@@ -1,6 +1,6 @@
 ## 0.3.26-a12
 
-- Pin Google Health PR #1293 source `e720408f2` on main `d21c2fb81`.
+- Pin Google Health PR #1293 source `5125e08e1` on main `d21c2fb81`.
 - Load inventory only on request. Disconnect interrupts scans/imports, disables the local session before bounded Google revocation and keeps its progress across refreshes and API replicas.
 - Add a delayed-vendor browser e2e regression for one-click disconnect, F5 during revocation, no automatic scans and preserved health records; translate feedback in all eleven languages.
 - Keep shared wrapper 0.1.10, Test A identity, options, cookies and storage.

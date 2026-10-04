@@ -1,6 +1,6 @@
 # Nocturne Test A — installation and operation
 
-> This is an isolated build of [Nocturne PR #1293](https://github.com/nightscout/nocturne/pull/1293). It is a separate HA app with its own data and default host port **8451**. Version **0.3.26-a12** pins PR commit `e720408f2` on main `d21c2fb81`; source and checksum are recorded in `upstream-test-a.json`.
+> This is an isolated build of [Nocturne PR #1293](https://github.com/nightscout/nocturne/pull/1293). It is a separate HA app with its own data and default host port **8451**. Version **0.3.26-a12** pins PR commit `5125e08e1` on main `d21c2fb81`; source and checksum are recorded in `upstream-test-a.json`.
 
 ## Public ports and native access
 
