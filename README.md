@@ -2,7 +2,7 @@
 
 This is **smokkelaar's personal development and testing repository**. Its builds are primarily used by smokkelaar to test changes, investigate problems and try ideas before suitable changes are carried over to [nocturne-home-assistant-upstream](https://github.com/smokkelaar/nocturne-home-assistant-upstream).
 
-For the **Stable and Main distribution with prebuilt images**, use [nocturne-home-assistant-upstream](https://github.com/smokkelaar/nocturne-home-assistant-upstream). Test channels and Personal extensions in this repository may contain unfinished or unmerged changes; passing automated checks do not mean those changes have been accepted upstream.
+For the **Stable and Main distribution with prebuilt images**, use [nocturne-home-assistant-upstream](https://github.com/smokkelaar/nocturne-home-assistant-upstream). Test channels and Personal extensions in this repository may contain unfinished or unmerged changes; passing automated checks does not mean those changes have been accepted upstream.
 
 [![Validate](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/validate.yml/badge.svg)](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/validate.yml)
 [![Official release check](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/upstream.yml/badge.svg)](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/upstream.yml)
