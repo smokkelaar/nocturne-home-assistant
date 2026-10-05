@@ -41,6 +41,7 @@ if hasattr(settings, 'api_build_metadata'):  # Old restore baselines predate thi
     with urllib.request.urlopen(request, timeout=10) as response:
         status = json.loads(response.read(65536))
     assert status['head'] == metadata['source_commit']
+    assert status['build'] == settings.api_build_metadata(metadata)['BUILD_DATE']
     from datetime import datetime
     build = datetime.fromisoformat(status['build'].replace('Z', '+00:00'))
     assert build.tzinfo is not None
