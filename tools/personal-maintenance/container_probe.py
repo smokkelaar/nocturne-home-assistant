@@ -55,6 +55,14 @@ for _ in range(20):
     time.sleep(0.5)
     status, page = request('/maintenance/', AUTH, '172.30.32.2')
 assert b'gestopt' in page  # invalid public_url killed Nocturne, not maintenance
+# Relative redirects retain HA's /api/hassio_ingress/<token>/ browser prefix.
+connection = http.client.HTTPConnection('127.0.0.1', 8099, timeout=5,
+                                      source_address=('172.30.32.2', 0))
+connection.request('GET', '/', headers={'Host': 'ha.example.test'})
+response = connection.getresponse()
+assert response.status == 302 and response.getheader('Location') == 'maintenance/'
+response.read()
+connection.close()
 config = Path('/run/nocturne-maintenance/nginx.conf').read_text()
 terminal = config.split('location /maintenance/terminal/')[1].split('/ {')[0]
 path = '/maintenance/terminal/' + terminal + '/'

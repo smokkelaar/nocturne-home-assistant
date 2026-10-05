@@ -67,7 +67,10 @@ http {{
     location / {{
       proxy_pass http://127.0.0.1:8100;
       proxy_intercept_errors on;
-      error_page 502 503 504 =302 /maintenance/;
+      error_page 502 503 504 = @maintenance_fallback;
+    }}
+    location @maintenance_fallback {{
+      return 302 maintenance/;
     }}
   }}
 }}
