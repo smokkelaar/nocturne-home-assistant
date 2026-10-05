@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import re
 import urllib.request
+import personal_maintenance
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO = 'smokkelaar/nocturne-personal'
@@ -90,7 +91,7 @@ def validate_transition(old, new):
             raise ValueError('Personal source must preserve the previously published source history')
 
 
-def files(lock, delivery):
+def files(lock, delivery, maintenance=True):
     validate(lock)
     latest = ROOT / 'nocturne_latest'
     wrapper = json.loads((ROOT / 'wrapper.json').read_text())['version']
@@ -184,6 +185,8 @@ RUN mkdir -p /out/web/packages/app /out/web/packages/bridge \\
 # Use the matching approved Daily runtime/OS; replace its application with our source build.
 FROM ghcr.io/nightscout/nocturne/nocturne-api@{lock['upstream']['api']['digest']}
 {tail}'''
+    if maintenance:
+        generated = personal_maintenance.apply(generated)
     return {key: value if isinstance(value, bytes) else value.encode() for key, value in generated.items()}
 
 

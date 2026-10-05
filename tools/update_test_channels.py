@@ -45,7 +45,7 @@ def files():
     validate_test_b_source(test_b)
     google_lock = {**personal, "commit": google["commit"],
                    "commit_at": google["commit_at"], "archive_sha256": google["archive_sha256"]}
-    google_files = update_personal.files(google_lock, personal["version"] + "-1")
+    google_files = update_personal.files(google_lock, personal["version"] + "-1", maintenance=False)
     generated = {}
     for letter, port, source in (("a", 8451, test_a), ("b", 8452, test_b), ("c", 8453, google)):
         package = "nocturne_test_" + letter
@@ -67,7 +67,7 @@ def files():
                            "archive_sha256": source["archive_sha256"],
                            "upstream": {**latest, "commit": source["base_commit"],
                                         "commit_at": source["base_commit_at"]}}
-            recipe = update_personal.files(source_lock, personal["version"] + "-1")["Dockerfile"].decode()
+            recipe = update_personal.files(source_lock, personal["version"] + "-1", maintenance=False)["Dockerfile"].decode()
         elif letter == "c":
             recipe = google_files["Dockerfile"].decode()
         else:
