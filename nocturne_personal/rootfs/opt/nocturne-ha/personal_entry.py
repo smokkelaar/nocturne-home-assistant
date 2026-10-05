@@ -108,6 +108,8 @@ Hiermee vind je ook een vergeten gebruikersnaam. Maak eerst een HA-back-up en ki
 <p><code>nocturne-ha owner-recovery issue --tenant TENANT_ID --subject SUBJECT_ID --backup-confirmed --write</code></p>
 <p>Deze opdracht voegt een nieuwe eenmalige herstelcode toe. Gebruik die met de getoonde gebruikersnaam op het hersteladres;
 registreer daar een nieuwe passkey. Er is geen oude Nocturne-login of oude herstelcode nodig.
+Ben je ook de tweefactor-authenticator kwijt, voeg dan bewust <code>--reset-totp</code> toe;
+dat verwijdert TOTP voor dit account. Stel het na herstel opnieuw in.
 Toegang tot HA of de lokale containerconsole blijft vereist. PostgreSQL moet draaien;
 herstel een ongeldige domeinconfiguratie eerst via HA en herstart de app.</p>
 <p>De wizard zelf wijzigt geen instellingen, verbruikt geen herstelcodes en reset geen accounts.

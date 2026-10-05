@@ -19,7 +19,9 @@ RECEIPTS = Path('/data/maintenance')
 
 OWNER_QUERY = """
 SELECT DISTINCT s.id AS subject_id, s.username, s.name,
-       t.id AS tenant_id, t.slug AS tenant_slug, t.display_name AS tenant_name
+       t.id AS tenant_id, t.slug AS tenant_slug, t.display_name AS tenant_name,
+       (SELECT count(*) FROM totp_credentials c WHERE c.subject_id = s.id) AS totp_count,
+       (SELECT count(*) FROM passkey_credentials c WHERE c.subject_id = s.id) AS passkey_count
 FROM subjects s
 JOIN tenant_members m ON m.subject_id = s.id
 JOIN tenants t ON t.id = m.tenant_id
@@ -74,7 +76,7 @@ def write_receipt(receipt):
     return path
 
 
-def issue(tenant, subject, write=False, backup_confirmed=False, username=None):
+def issue(tenant, subject, write=False, backup_confirmed=False, username=None, reset_totp=False):
     if not write or not backup_confirmed:
         raise ValueError('Maak eerst een HA-back-up; bevestig met --backup-confirmed --write')
     tenant, subject = str(uuid.UUID(tenant)), str(uuid.UUID(subject))
@@ -101,8 +103,10 @@ AND NOT EXISTS (SELECT 1 FROM subjects WHERE username = '{username}');"""
     code_id = str(uuid.uuid4())
     receipt = {'code_id': code_id, 'subject_id': subject, 'tenant_id': tenant,
                'issued_at': datetime.now(timezone.utc).isoformat(), 'username': username,
-               'previous_username': current, 'backup_confirmed': True}
+               'previous_username': current, 'backup_confirmed': True, 'reset_totp': reset_totp}
     path = write_receipt(receipt)
+    reset = (f"DELETE FROM totp_credentials WHERE subject_id = '{subject}' "
+             f"AND EXISTS (SELECT 1 FROM recovery_codes WHERE id = '{code_id}');") if reset_totp else ''
     # All interpolated values are canonical UUIDs or generated hash alphabet.
     # Lock the authority rows and re-check eligibility in the transaction.
     result = database(f"""
@@ -115,6 +119,7 @@ WITH eligible AS ({OWNER_QUERY} AND t.id = '{tenant}' AND s.id = '{subject}' AND
 INSERT INTO recovery_codes (id, subject_id, code_hash, used_at, invalidated_at, created_at)
 SELECT '{code_id}', subject_id, '{hashed}', NULL, NULL, now() FROM eligible
 RETURNING id;
+{reset}
 COMMIT;
 """)
     if code_id not in result.splitlines():
@@ -122,7 +127,8 @@ COMMIT;
     return {**receipt, 'code': code, 'receipt': str(path),
             'next': 'Gebruik gebruikersnaam en code op /auth/recovery van het geldige HTTPS-domein. '
                     'Registreer een nieuwe passkey en meld opnieuw aan. De code is eenmalig; '
-                    'hij verloopt niet automatisch. Trek een ongebruikte code in met owner-recovery revoke.'}
+                    'hij verloopt niet automatisch. Trek een ongebruikte code in met owner-recovery revoke. '
+                    'Stel na herstel opnieuw tweefactorauthenticatie in als die is gereset.'}
 
 
 def revoke(code_id, write=False):

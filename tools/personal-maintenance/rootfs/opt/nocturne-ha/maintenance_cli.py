@@ -116,6 +116,7 @@ def main(argv=None):
     issue.add_argument('--tenant', required=True)
     issue.add_argument('--subject', required=True)
     issue.add_argument('--username', help='Alleen voor een eigenaar zonder gebruikersnaam: wijs een nieuwe naam toe')
+    issue.add_argument('--reset-totp', action='store_true', help='Ook authenticatorcodes kwijt: verwijder TOTP van dit account; stel het na herstel opnieuw in')
     issue.add_argument('--write', action='store_true')
     issue.add_argument('--backup-confirmed', action='store_true')
     revoke = actions.add_parser('revoke', help='Trek een ongebruikte wrapper-herstelcode in')
@@ -138,7 +139,7 @@ def main(argv=None):
             if args.action == 'list':
                 result = owner_recovery.owners()
             elif args.action == 'issue':
-                result = owner_recovery.issue(args.tenant, args.subject, args.write, args.backup_confirmed, args.username)
+                result = owner_recovery.issue(args.tenant, args.subject, args.write, args.backup_confirmed, args.username, args.reset_totp)
             else:
                 result = owner_recovery.revoke(args.code_id, args.write)
             print(json.dumps(result, indent=2, ensure_ascii=False))

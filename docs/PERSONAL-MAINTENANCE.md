@@ -102,6 +102,10 @@ an existing Nocturne login, passkey, recovery code or remembered username:
 
    If an OIDC-only owner has no username, also supply `--username recovery-owner`
    to assign one to that existing account. Existing usernames are not changed.
+   If the second-factor authenticator is also lost, explicitly add `--reset-totp`.
+   This removes TOTP only from the selected account, which may belong to multiple
+   tenants. Reconfigure two-factor authentication after recovery. Without this flag,
+   existing TOTP remains active and a replacement passkey still requires that factor.
 5. The CLI prints the username, new recovery code and code ID once. Open
    `https://YOUR-WORKING-DOMAIN/auth/recovery`, enter username/code, register a
    replacement passkey, then sign in with it. This restores access to the existing
@@ -119,7 +123,8 @@ nocturne-ha owner-recovery revoke --code-id CODE_ID --write
 ```
 
 The command rejects inactive, system, demo and non-owner accounts. It never
-changes owner roles, existing passkeys or existing recovery codes. The database
+changes owner roles, existing passkeys or existing recovery codes. TOTP is removed
+only with the explicit `--reset-totp` option. The database
 mutation is transactional and rechecks eligibility. Only the currently pinned
 Personal Nocturne source is supported: an unreviewed source change disables this
 command rather than guessing a new schema/hash format. Generic CLI API access

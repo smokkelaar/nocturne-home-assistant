@@ -53,7 +53,7 @@ class OwnerRecoveryTests(unittest.TestCase):
             self.assertIn('BEGIN;', sql)
             self.assertIn('INSERT INTO recovery_codes', sql)
             self.assertNotIn('DELETE', sql)
-            self.assertNotIn('passkey_credentials', sql)
+            self.assertNotRegex(sql, r'(INSERT INTO|UPDATE|DELETE FROM) passkey_credentials')
             self.assertNotIn(result['code'], sql)
 
     def test_receipt_failure_prevents_database_mutation(self):
@@ -62,6 +62,16 @@ class OwnerRecoveryTests(unittest.TestCase):
              patch.object(recovery, 'database') as db, self.assertRaises(OSError):
             recovery.issue(TENANT, SUBJECT, True, True)
         db.assert_not_called()
+
+    def test_totp_reset_is_explicit_and_limited_to_selected_account(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(recovery, 'RECEIPTS', Path(directory)), \
+             patch.object(recovery, 'owners', return_value=[OWNER]), \
+             patch.object(recovery, 'database', side_effect=lambda sql: next(Path(directory).glob('*.json')).stem.rsplit('owner-recovery-', 1)[1]) as db:
+            result = recovery.issue(TENANT, SUBJECT, True, True, reset_totp=True)
+            sql = db.call_args.args[0]
+            self.assertIn("DELETE FROM totp_credentials WHERE subject_id = '" + SUBJECT + "'", sql)
+            self.assertIn("WHERE id = '" + result['code_id'] + "'", sql)
+            self.assertTrue(json.loads(Path(result['receipt']).read_text())['reset_totp'])
 
     def test_oidc_owner_without_username_requires_explicit_safe_name(self):
         owner = {**OWNER, 'username': None}
