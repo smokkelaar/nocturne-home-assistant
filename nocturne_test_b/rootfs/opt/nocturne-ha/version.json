@@ -1,12 +1,12 @@
 {
   "app": "0.1.10",
-  "package": "0.3.25-b29",
-  "nocturne": "main@320a885 + PR #1977",
+  "package": "0.3.25-b30",
+  "nocturne": "main@b515516 + PR #1977",
   "repository": "smokkelaar/nocturne-personal",
-  "source_commit": "a2d34d1a4df5436716816843714530af253215cf",
-  "commit_at": "2026-10-03T11:59:38Z",
+  "source_commit": "bf5c517e3fe8922dbf036071421991bcbb0f5ecd",
+  "commit_at": "2026-10-05T00:37:57Z",
   "base": "Nocturne main + PR #1977",
-  "base_commit": "320a885078c87f06c5d126686f6e1891452ad6a2",
+  "base_commit": "b515516d40f11c11ca7f45cba027083cbd2e2ca0",
   "release": "A1c preferences PR #1977",
   "release_url": "https://github.com/nightscout/nocturne/pull/1977",
   "purpose": "Globale A1c/HbA1c-naam en %/mmol/mol-weergave testen; schattingen behouden de e-prefix.",
@@ -16,5 +16,5 @@
   "name": "Nocturne Test B",
   "default_public_url": "https://homeassistant.local:8452",
   "cookie_namespace": "NocturneTestB_",
-  "source_at": "2026-10-03T16:24:44Z"
+  "source_at": "2026-10-05T06:10:34Z"
 }

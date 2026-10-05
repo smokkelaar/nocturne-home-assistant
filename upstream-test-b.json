@@ -2,10 +2,10 @@
   "channel": "test-pr",
   "repository": "smokkelaar/nocturne-personal",
   "pull_request": 1977,
-  "commit": "a2d34d1a4df5436716816843714530af253215cf",
-  "commit_at": "2026-10-03T16:24:44Z",
-  "archive_sha256": "945f1c4e476850d7a1f32651ad39fcfa1bfb2b2ad4f65922ba419e5e6a64689c",
-  "base_commit": "320a885078c87f06c5d126686f6e1891452ad6a2",
-  "base_commit_at": "2026-10-03T11:59:38Z",
+  "commit": "bf5c517e3fe8922dbf036071421991bcbb0f5ecd",
+  "commit_at": "2026-10-05T06:10:34Z",
+  "archive_sha256": "0eded296ea7cb731c8833633a550556e26b3219b0b34f7d8d89f4def9fa9bac1",
+  "base_commit": "b515516d40f11c11ca7f45cba027083cbd2e2ca0",
+  "base_commit_at": "2026-10-05T00:37:57Z",
   "pull_request_url": "https://github.com/nightscout/nocturne/pull/1977"
 }
