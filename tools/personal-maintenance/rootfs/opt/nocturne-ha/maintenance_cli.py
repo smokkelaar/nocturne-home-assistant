@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Personal-only local management client. Never edits accounts or the database."""
+"""Personal-only local management client with explicit HA-admin owner recovery."""
 import argparse
 import hashlib
 import http.client
 import json
 from pathlib import Path
 import socket
+import subprocess
 import sys
 from urllib.parse import urlsplit
 
@@ -72,8 +73,8 @@ def recovery_plan(raw=None, public_url=None):
                 'Controleer DNS en browservertrouwen voor het nieuwe HTTPS-adres; herstart de app.',
                 'Open het hersteladres buiten HA Ingress en gebruik een ongebruikte Nocturne-herstelcode.',
                 'Registreer in de browser een nieuwe passkey; test daarna opnieuw aanmelden.',
-                'Zonder herstelcode: gebruik een reeds gekoppelde inlogprovider of een bevoegde eigenaar. '
-                'Deze wrapper maakt geen eigenaarlogin en reset geen accounts.'
+                'Alle Nocturne-inloggegevens kwijt: gebruik nocturne-ha owner-recovery list in de HA-terminal; '
+                'kies de bestaande eigenaar en maak na een back-up met owner-recovery issue een nieuwe code.'
             ]}
 
 
@@ -108,6 +109,18 @@ def main(argv=None):
     commands.add_parser('status', help='Zelfde technische diagnose als doctor')
     recover = commands.add_parser('recover', help='Herstelplan zonder codes te verbruiken of accounts te wijzigen')
     recover.add_argument('--url', help='Nieuw HTTPS-adres om een herstelplan voor te maken')
+    owner = commands.add_parser('owner-recovery', help='Lokale HA-beheerder: herstellen zonder bestaande Nocturne-login')
+    actions = owner.add_subparsers(dest='action', required=True)
+    actions.add_parser('list', help='Vind bestaande eigenaars, gebruikersnamen en tenants')
+    issue = actions.add_parser('issue', help='Voeg een nieuwe eenmalige herstelcode toe')
+    issue.add_argument('--tenant', required=True)
+    issue.add_argument('--subject', required=True)
+    issue.add_argument('--username', help='Alleen voor een eigenaar zonder gebruikersnaam: wijs een nieuwe naam toe')
+    issue.add_argument('--write', action='store_true')
+    issue.add_argument('--backup-confirmed', action='store_true')
+    revoke = actions.add_parser('revoke', help='Trek een ongebruikte wrapper-herstelcode in')
+    revoke.add_argument('--code-id', required=True)
+    revoke.add_argument('--write', action='store_true')
     api = commands.add_parser('api', help='Algemene lokale API-client voor bestaande en toekomstige endpoints')
     api.add_argument('path')
     api.add_argument('--method', choices=['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], default='GET')
@@ -120,6 +133,15 @@ def main(argv=None):
             print(json.dumps(doctor(), indent=2, ensure_ascii=False))
         elif args.command == 'recover':
             print(json.dumps(recovery_plan(public_url=args.url), indent=2, ensure_ascii=False))
+        elif args.command == 'owner-recovery':
+            import owner_recovery
+            if args.action == 'list':
+                result = owner_recovery.owners()
+            elif args.action == 'issue':
+                result = owner_recovery.issue(args.tenant, args.subject, args.write, args.backup_confirmed, args.username)
+            else:
+                result = owner_recovery.revoke(args.code_id, args.write)
+            print(json.dumps(result, indent=2, ensure_ascii=False))
         else:
             if args.method != 'GET' and not args.write:
                 parser.error('Een muterende aanvraag vereist --write')
@@ -131,7 +153,7 @@ def main(argv=None):
                 json.loads(body)
             return api_request(args.path, args.method, body, args.service)
         return 0
-    except (ValueError, OSError, KeyError, http.client.HTTPException):
+    except (ValueError, OSError, KeyError, RuntimeError, subprocess.SubprocessError, http.client.HTTPException):
         print('Onderhoudsopdracht mislukt; controleer configuratie en dienststatus. Geen geheimen gelogd.', file=sys.stderr)
         return 1
 

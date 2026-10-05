@@ -45,5 +45,5 @@ def apply(generated):
     runtime = once(runtime, "supervisor.checks, supervisor.resources.snapshot()).encode()",
                    "supervisor.checks, supervisor.resources.snapshot()).encode()\n            if os.environ.get('NOCTURNE_PERSONAL_STATUS_PORT') == '8100':\n                body = body.replace(b'</html>', b'<p><a href=\"maintenance/\">Personal onderhoud: CLI, terminal en herstelwizard</a></p></html>')")
     generated['rootfs/opt/nocturne-ha/run.py'] = runtime
-    generated['DOCS.md'] += '\n## Experimental Personal maintenance\n\nOpt-in CLI, ingress terminal and guided recovery. See [Personal maintenance test guide](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL-MAINTENANCE.md). Disabled by default; requires its own maintenance password. No Nocturne source or database changes.\n'
+    generated['DOCS.md'] += '\n## Experimental Personal maintenance\n\nOpt-in CLI, ingress terminal and guided recovery, including local HA-admin recovery when all Nocturne login details are lost. See [Personal maintenance test guide](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL-MAINTENANCE.md). Disabled by default; requires its own maintenance password. No Nocturne source or schema changes; explicit owner recovery adds a native recovery-code hash.\n'
     return generated

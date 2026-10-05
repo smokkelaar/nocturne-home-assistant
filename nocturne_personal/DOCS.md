@@ -73,4 +73,4 @@ Personal compiles API and web from its pinned fork source. Builds need more time
 
 ## Experimental Personal maintenance
 
-Opt-in CLI, ingress terminal and guided recovery. See [Personal maintenance test guide](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL-MAINTENANCE.md). Disabled by default; requires its own maintenance password. No Nocturne source or database changes.
+Opt-in CLI, ingress terminal and guided recovery, including local HA-admin recovery when all Nocturne login details are lost. See [Personal maintenance test guide](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL-MAINTENANCE.md). Disabled by default; requires its own maintenance password. No Nocturne source or schema changes; explicit owner recovery adds a native recovery-code hash.

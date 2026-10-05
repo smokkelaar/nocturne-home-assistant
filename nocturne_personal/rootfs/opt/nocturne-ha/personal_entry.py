@@ -102,7 +102,15 @@ Maak eerst een HA-back-up. Geen toegang tot de Docker-host of andere apps.</p></
 <section><h2>3 · Herstelwizard</h2><p>Nocturne-proces: {html.escape(state())}</p><dl>{report_html}</dl>
 <form method="get"><label>Gewenst HTTPS-adres <input name="url" type="url" required value="{html.escape(target or raw.get('public_url', ''), quote=True)}"></label>
 <button>Herstelplan controleren</button></form><ol>{steps}</ol>{link}
-<p>Deze wizard wijzigt geen instellingen, verbruikt geen herstelcodes en reset geen accounts.
+<h3>Alle Nocturne-inloggegevens kwijt?</h3>
+<p>Open de onderhoudsterminal en voer <code>nocturne-ha owner-recovery list</code> uit.
+Hiermee vind je ook een vergeten gebruikersnaam. Maak eerst een HA-back-up en kies de juiste tenant en bestaande eigenaar.</p>
+<p><code>nocturne-ha owner-recovery issue --tenant TENANT_ID --subject SUBJECT_ID --backup-confirmed --write</code></p>
+<p>Deze opdracht voegt een nieuwe eenmalige herstelcode toe. Gebruik die met de getoonde gebruikersnaam op het hersteladres;
+registreer daar een nieuwe passkey. Er is geen oude Nocturne-login of oude herstelcode nodig.
+Toegang tot HA of de lokale containerconsole blijft vereist. PostgreSQL moet draaien;
+herstel een ongeldige domeinconfiguratie eerst via HA en herstart de app.</p>
+<p>De wizard zelf wijzigt geen instellingen, verbruikt geen herstelcodes en reset geen accounts.
 Passkeyregistratie gebeurt op het geldige Nocturne-domein, niet in HA Ingress.</p></section></html>'''
 
 

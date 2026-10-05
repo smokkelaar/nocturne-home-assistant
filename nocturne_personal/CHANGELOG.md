@@ -1,4 +1,12 @@
-# 0.3.26-5
+# 0.3.26-6
+
+Recover the existing owner through local HA administration even when all Nocturne
+logins and recovery codes are lost. List owners/usernames, add one native single-use
+recovery code explicitly, then register a replacement passkey on the working HTTPS
+domain. Supports assigning a username to an existing OIDC-only owner. No Nocturne
+source or schema changes; existing roles, passkeys and data are preserved.
+
+## 0.3.26-5
 
 Personal-only opt-in maintenance: local CLI, HA ingress ttyd terminal and guided
 domain/passkey recovery. Independent password; available when Nocturne startup

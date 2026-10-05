@@ -1,8 +1,9 @@
 # Personal maintenance experiment: CLI, terminal and guided recovery
 
 Only **Nocturne Personal Release** includes this opt-in experiment. Official,
-Latest, Stable, Main and Test A/B/C are unchanged. No Nocturne source, database,
-passkeys or stored instance credentials are modified by installing it.
+Latest, Stable, Main and Test A/B/C are unchanged. No Nocturne source, schema,
+passkeys or stored instance credentials are modified by installing it. The explicit
+owner-recovery command does add a recovery-code hash to the existing database.
 
 ## Enable and compare
 
@@ -37,6 +38,8 @@ nocturne-ha recover
 nocturne-ha recover --url https://new.example.net:8450
 nocturne-ha api /api/v4/status
 nocturne-ha api --help
+nocturne-ha owner-recovery list
+nocturne-ha owner-recovery --help
 ```
 
 `doctor` checks wrapper options, DNS, the configured certificate/key and local
@@ -51,8 +54,8 @@ promise authorization for every endpoint. Mutating requests require `--write`;
 JSON comes from `--body-file filename` or `--body-file -` (stdin), keeping
 secrets out of argv. API output may contain private data: do not publish it.
 New compatible API endpoints are usable without adding a wrapper command.
-No authentication bypass, database SQL reset or development-only endpoint is
-enabled.
+No public authentication bypass or development-only endpoint is enabled. The
+separate local owner-recovery command below uses HA administrator authority.
 
 ## 2. Terminal
 
@@ -76,10 +79,55 @@ configuration screen, so Supervisor and the runtime retain the same settings.
 5. Test logout/login and retain new recovery codes before retiring the old domain.
 
 Nocturne recovery sessions are restricted to passkey enrollment. Merely changing
-the domain does not migrate passkeys. If no recovery code remains, use a linked
-login provider or an authorized owner; this experiment does **not** implement
-owner recovery without existing proof of access. A CLI cannot perform a browser's
-WebAuthn ceremony. Restore backups only when needed, rather than deleting accounts.
+the domain does not migrate passkeys. A CLI cannot perform a browser's WebAuthn
+ceremony; the replacement passkey is created on the working HTTPS origin.
+
+### All Nocturne login details and recovery codes lost
+
+This situation is supported through **local HA administrator authority**, without
+an existing Nocturne login, passkey, recovery code or remembered username:
+
+1. Back up Personal through HA. Configure a working HTTPS domain/certificate in
+   HA and restart. PostgreSQL must be running; maintenance alone does not start it
+   after an invalid app configuration stops the database.
+2. Enable maintenance and set a new maintenance password through HA if needed.
+   Alternatively use the local container console as root. No Nocturne login is needed.
+3. Run `nocturne-ha owner-recovery list` to find the existing owners, usernames,
+   tenant IDs and subject IDs. Select the correct tenant and owner explicitly.
+4. Run:
+
+   ```sh
+   nocturne-ha owner-recovery issue --tenant TENANT_ID --subject SUBJECT_ID --backup-confirmed --write
+   ```
+
+   If an OIDC-only owner has no username, also supply `--username recovery-owner`
+   to assign one to that existing account. Existing usernames are not changed.
+5. The CLI prints the username, new recovery code and code ID once. Open
+   `https://YOUR-WORKING-DOMAIN/auth/recovery`, enter username/code, register a
+   replacement passkey, then sign in with it. This restores access to the existing
+   owner account and its records; it does not create a second owner.
+6. Once login works, review/remove obsolete passkeys and generate/store fresh
+   recovery codes in Nocturne. Disable maintenance and restart if no longer needed.
+
+The code is native, single-use and stored only as a salted PBKDF2 hash. The CLI
+output is sensitive; it is not copied to app logs or command history. A private
+receipt in `/data/maintenance` stores the selected account and code ID, never the
+code. The code **does not automatically expire**. Revoke an unused code with:
+
+```sh
+nocturne-ha owner-recovery revoke --code-id CODE_ID --write
+```
+
+The command rejects inactive, system, demo and non-owner accounts. It never
+changes owner roles, existing passkeys or existing recovery codes. The database
+mutation is transactional and rechecks eligibility. Only the currently pinned
+Personal Nocturne source is supported: an unreviewed source change disables this
+command rather than guessing a new schema/hash format. Generic CLI API access
+remains available for other compatible endpoints.
+
+If access to HA **and** the container/Hyper-V console is also lost, this wrapper
+cannot establish administrator authority; restore HA access or a trusted backup
+first. Losing Nocturne credentials alone does not prevent this recovery.
 
 ## Test and decide
 
@@ -90,6 +138,10 @@ WebAuthn ceremony. Restore backups only when needed, rather than deleting accoun
   maintenance reachable. The failure remains visible; no silent authentication fallback.
 - Recover on a disposable account/domain with a saved recovery code; confirm a
   replacement passkey works and records remain intact.
+- Lose all Nocturne credentials on that disposable account; issue a fresh code
+  through HA, enroll a replacement passkey and confirm the same owner/data remain.
+- Confirm native code consumption is single-use, unused codes can be revoked,
+  and a non-owner or wrong tenant cannot receive a code.
 - Restart and cold restore; disable maintenance and confirm terminal access ends.
 
 The maintenance host does not auto-restart a failed Nocturne process: diagnose it,
