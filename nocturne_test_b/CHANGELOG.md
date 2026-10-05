@@ -1,3 +1,9 @@
+## 0.3.25-b30
+
+- Pin PR #1977 source `bf5c517e3` after merging main `b515516d4` and resolving merge conflicts.
+- Retain the PR translations and the new realtime availability message in all eleven locales.
+- Keep shared wrapper 0.1.10 and Test B settings, ports and storage.
+
 ## 0.3.25-b29
 
 - Apply the chosen A1c/HbA1c name to settings labels and unit explanations in all 11 supported languages.

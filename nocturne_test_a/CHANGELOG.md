@@ -1,3 +1,10 @@
+## 0.3.26-a13
+
+- Pin PR #1293 source `969896385` after merging main `b515516d4` and resolving merge conflicts.
+- Retain the PR translations and the new realtime availability message in all eleven locales.
+- Preserve sleep-session identities and creation times with main's transactional replacement of stages and biometric samples; cover both import and update paths with SQLite regressions.
+- Keep shared wrapper 0.1.10 and Test A settings, ports and storage.
+
 ## 0.3.26-a12
 
 - Pin Google Health PR #1293 source `2f6556cc3` on main `d21c2fb81`.
