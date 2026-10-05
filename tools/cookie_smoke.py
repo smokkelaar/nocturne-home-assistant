@@ -93,6 +93,10 @@ def main(official=None, latest=None, personal=None):
             docker('stop', '-t', '100', name)
             docker('start', name)
             wait_ready(name, Path(__file__).with_name('configured_native_probe.py').read_text())
+            if prefix == 'NocturnePersonal_':
+                phase = 'OWNER_RECOVERY'
+                docker('exec', '-i', '-e', 'NOCTURNE_CI_FIXTURE=' + name, name, 'python3', '-',
+                       input=Path(__file__).with_name('owner_recovery_probe.py').read_text())
             routes[port] = docker('inspect', '--format',
                                  '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}', name)
             # Only the fixture just created above is accepted; not shipped in the image.

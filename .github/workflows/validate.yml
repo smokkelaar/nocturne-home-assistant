@@ -43,6 +43,23 @@ jobs:
         run: |
           docker build --platform linux/amd64 --tag nocturne-test-a:ci nocturne_test_a
           python3 tools/smoke.py --image nocturne-test-a:ci
+  maintenance:
+    name: Personal maintenance recovery and ingress
+    needs: unit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Test maintenance with deliberately broken Nocturne configuration
+        run: |
+          docker build -f tools/personal-maintenance/Dockerfile.smoke -t nocturne-maintenance:ci .
+          mkdir "$RUNNER_TEMP/maintenance-data"
+          printf '%s' '{"public_url":"invalid","maintenance_enabled":true,"maintenance_password":"ci-disposable-maintenance-password"}' > "$RUNNER_TEMP/maintenance-data/options.json"
+          docker run -d --name maintenance-test --cap-add NET_ADMIN -v "$RUNNER_TEMP/maintenance-data:/data" nocturne-maintenance:ci
+          trap 'docker rm -f maintenance-test >/dev/null' EXIT
+          docker exec -i maintenance-test python3 - < tools/personal-maintenance/container_probe.py
   google-health:
     name: Test C container smoke test
     needs: unit
@@ -131,7 +148,7 @@ jobs:
         run: python3 tools/cookie_smoke.py --official nocturne-official:ci --latest nocturne-latest:ci --personal nocturne-personal:ci
   container-gate:
     name: Container smoke test
-    needs: [unit, google-health, container]
+    needs: [unit, google-health, container, maintenance]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-24.04
     timeout-minutes: 2
@@ -141,4 +158,5 @@ jobs:
           UNIT_RESULT: ${{ needs.unit.result }}
           GOOGLE_RESULT: ${{ needs.google-health.result }}
           CORE_RESULT: ${{ needs.container.result }}
-        run: test "$UNIT_RESULT" = success && test "$GOOGLE_RESULT" = success && test "$CORE_RESULT" = success
+          MAINTENANCE_RESULT: ${{ needs.maintenance.result }}
+        run: test "$UNIT_RESULT" = success && test "$GOOGLE_RESULT" = success && test "$CORE_RESULT" = success && test "$MAINTENANCE_RESULT" = success

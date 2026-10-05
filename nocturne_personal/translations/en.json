@@ -19,6 +19,14 @@
     "skip_gateway_check": {
       "name": "Consciously skip gateway check",
       "description": "Default off. Only effective with gateway_auth off. Skips only the wrapper authentication check; Nocturne access/share permissions still decide who can read or write. TLS and hostname checks remain active. Does not enable anonymous access itself. Save and restart this app."
+    },
+    "maintenance_enabled": {
+      "name": "Enable experimental maintenance",
+      "description": "Personal only: CLI, recovery wizard and root terminal inside this app through HA. Off by default. Separate password required. Back up first; save and restart."
+    },
+    "maintenance_password": {
+      "name": "Separate maintenance password",
+      "description": "Unique password of 16–256 characters. Username: maintenance. Not displayed on the status page. Required only when maintenance is enabled."
     }
   },
   "network": {

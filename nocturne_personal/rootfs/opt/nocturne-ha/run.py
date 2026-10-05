@@ -349,7 +349,7 @@ def make_handler(supervisor, options, passwords, test_certificate):
         def do_GET(self):
             # Ingress connections originate from Supervisor, not X-Forwarded-For.
             # Ignore any spoofed forwarded headers. Never expose this listener as a host port.
-            if self.client_address[0] != '172.30.32.2':
+            if self.client_address[0] != ('127.0.0.1' if os.environ.get('NOCTURNE_PERSONAL_STATUS_PORT') == '8100' else '172.30.32.2'):
                 self.send_error(403)
                 return
             if self.path.split('?')[0] != '/':
@@ -357,6 +357,8 @@ def make_handler(supervisor, options, passwords, test_certificate):
                 return
             body = status_page(options, supervisor.status, passwords['gateway'], test_certificate,
                                supervisor.checks, supervisor.resources.snapshot()).encode()
+            if os.environ.get('NOCTURNE_PERSONAL_STATUS_PORT') == '8100':
+                body = body.replace(b'</html>', b'<p><a href="maintenance/">Personal onderhoud: CLI, terminal en herstelwizard</a></p></html>')
             self.send_response(200)
             self.send_header('Content-Type', 'text/html; charset=utf-8')
             self.send_header('Cache-Control', 'no-store')
@@ -401,7 +403,7 @@ def main():
         cert, key = certificates.active.cert, certificates.active.key
         supervisor.checks = {**certificates.checks(), 'Toegangscontrole': auth_check}
         handler = make_handler(supervisor, options, passwords, test_certificate)
-        server = http.server.ThreadingHTTPServer(('0.0.0.0', 8099), handler)
+        server = http.server.ThreadingHTTPServer(('127.0.0.1' if os.environ.get('NOCTURNE_PERSONAL_STATUS_PORT') == '8100' else '0.0.0.0', int(os.environ.get('NOCTURNE_PERSONAL_STATUS_PORT', '8099'))), handler)
         threading.Thread(target=server.serve_forever, daemon=True).start()
         log('Appdiensten starten; bestaande appgegevens en sleutels blijven behouden')
 

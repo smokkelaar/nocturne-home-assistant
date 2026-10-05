@@ -43,7 +43,9 @@ class GatewayOptOutTests(unittest.TestCase):
                 self.assertFalse(config['options']['skip_gateway_check'])
                 self.assertEqual('bool', config['schema']['skip_gateway_check'])
                 common = json.loads((ROOT / 'nocturne_latest/config.json').read_text(encoding='utf-8'))
-                self.assertEqual(common['schema'], config['schema'])
+                shared_schema = {key: value for key, value in config['schema'].items()
+                                 if package != 'nocturne_personal' or not key.startswith('maintenance_')}
+                self.assertEqual(common['schema'], shared_schema)
                 self.assertNotIn('verify_native_auth', config['options'])
                 for locale in ('en', 'nl'):
                     labels = json.loads((ROOT / package / 'translations' / (locale + '.json')).read_text(encoding='utf-8'))
