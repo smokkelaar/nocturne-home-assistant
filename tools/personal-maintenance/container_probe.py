@@ -21,6 +21,7 @@ def request(path, auth=None, source=None, upgrade=False):
     if upgrade:
         headers.update({'Upgrade': 'websocket', 'Connection': 'Upgrade',
                         'Sec-WebSocket-Version': '13',
+                        'Sec-WebSocket-Protocol': 'tty',
                         'Sec-WebSocket-Key': 'dGhlIHNhbXBsZSBub25jZQ=='})
     connection.request('GET', path, headers=headers)
     response = connection.getresponse()
@@ -46,6 +47,13 @@ assert request('/maintenance/', 'Basic d3Jvbmc6d3Jvbmc=', '172.30.32.2')[0] == 4
 status, page = request('/maintenance/', AUTH, '172.30.32.2')
 assert status == 200 and b'Herstelwizard' in page
 assert PASSWORD.encode() not in page
+# The maintenance listener starts before the application: wait for the deliberate
+# startup failure instead of treating that short startup interval as a failure.
+for _ in range(20):
+    if b'gestopt' in page:
+        break
+    time.sleep(0.5)
+    status, page = request('/maintenance/', AUTH, '172.30.32.2')
 assert b'gestopt' in page  # invalid public_url killed Nocturne, not maintenance
 config = Path('/run/nocturne-maintenance/nginx.conf').read_text()
 terminal = config.split('location /maintenance/terminal/')[1].split('/ {')[0]
@@ -60,7 +68,8 @@ sock = socket.create_connection(('127.0.0.1', 8099), timeout=10,
                                source_address=('172.30.32.2', 0))
 sock.sendall((f'GET {path}ws HTTP/1.1\r\nHost: ha.example.test\r\n'
               f'Authorization: {AUTH}\r\nUpgrade: websocket\r\nConnection: Upgrade\r\n'
-              'Sec-WebSocket-Version: 13\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n\r\n').encode())
+              'Sec-WebSocket-Version: 13\r\nSec-WebSocket-Protocol: tty\r\n'
+              'Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n\r\n').encode())
 headers = b''
 while not headers.endswith(b'\r\n\r\n'):
     headers += sock.recv(1)
