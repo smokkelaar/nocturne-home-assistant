@@ -49,6 +49,21 @@ def files():
     generated = {}
     for letter, port, source in (("a", 8451, test_a), ("b", 8452, test_b), ("c", 8453, google)):
         package = "nocturne_test_" + letter
+        # Keep per-channel gateway migration/logging choices, but own this common
+        # metadata helper so a later source update cannot restore the old date bug.
+        latest_settings = (ROOT / "nocturne_latest/rootfs/opt/nocturne-ha/settings.py").read_text(encoding="utf-8")
+        helper = latest_settings[latest_settings.index("def api_build_metadata("):latest_settings.index("def service_environments(")]
+        settings_path = package + "/rootfs/opt/nocturne-ha/settings.py"
+        settings = (ROOT / settings_path).read_text(encoding="utf-8")
+        if not re.search(r"(?m)^import os$", settings):
+            settings = settings.replace("import json\n", "import json\nimport os\n")
+        if "def api_build_metadata(" in settings:
+            settings = re.sub(r"(?s)def api_build_metadata\(.*?(?=def service_environments\()", helper, settings)
+        else:
+            settings = settings.replace("def service_environments(", helper + "def service_environments(", 1)
+        settings = settings.replace("api.update(GIT_COMMIT=versions['source_commit'], BUILD_DATE=versions['source_at'])",
+                                    "api.update(api_build_metadata(versions))")
+        generated[settings_path] = settings
         config = read(package + "/config.json")
         # One visible schema for every variant; the old Test A flag is read-only migration input.
         config["options"].pop("verify_native_auth", None)

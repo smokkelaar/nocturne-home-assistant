@@ -1,3 +1,9 @@
+## 0.3.26-a14
+
+- Wrapper 0.1.11 forwards the exact Nocturne source commit and actual API build date to Nocturne.
+- Source builds record their own publish time; prebuilt API images retain their embedded build date.
+- Source pins and stored data remain unchanged.
+
 ## 0.3.26-a13
 
 - Pin PR #1293 source `969896385` after merging main `b515516d4` and resolving merge conflicts.

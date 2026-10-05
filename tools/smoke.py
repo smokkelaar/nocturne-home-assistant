@@ -32,7 +32,18 @@ from pathlib import Path
 import sys
 sys.path.insert(0, '/opt/nocturne-ha')
 import run
+import settings
 assert run.api_reachable('homeassistant.local')
+if hasattr(settings, 'api_build_metadata'):  # Old restore baselines predate this fix.
+    metadata = json.loads(Path('/opt/nocturne-ha/version.json').read_text())
+    request = urllib.request.Request('http://127.0.0.1:8080/api/v1/status',
+        headers={'Host': settings.validate_options({})['authority'], 'Accept': 'application/json'})
+    with urllib.request.urlopen(request, timeout=10) as response:
+        status = json.loads(response.read(65536))
+    assert status['head'] == metadata['source_commit']
+    from datetime import datetime
+    build = datetime.fromisoformat(status['build'].replace('Z', '+00:00'))
+    assert build.tzinfo is not None
 if hasattr(run, 'web_response_reachable'):  # Baseline 0.1.0 predates this check.
     assert run.web_response_reachable(run.validate_options({}))
 context = ssl._create_unverified_context()  # Only the disposable CI test certificate.

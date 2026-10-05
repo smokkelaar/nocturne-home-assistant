@@ -1,3 +1,9 @@
+## 0.3.26-7
+
+- Wrapper 0.1.11 forwards the exact Nocturne source commit and actual API build date to Nocturne.
+- Source builds record their own publish time; prebuilt API images retain their embedded build date.
+- Source pins and stored data remain unchanged.
+
 # 0.3.26-6
 
 Recover the existing owner through local HA administration even when all Nocturne

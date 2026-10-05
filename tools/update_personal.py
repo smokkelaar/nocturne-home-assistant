@@ -129,7 +129,6 @@ def files(lock, delivery, maintenance=True):
     settings = (latest / 'rootfs/opt/nocturne-ha/settings.py').read_text(encoding='utf-8')
     settings = settings.replace("('NocturneOfficial_', 'NocturneLatest_')",
                                 "('NocturnePersonal_',)")
-    settings = replace_once(settings, "    return api, web", "    versions = json.loads(Path(__file__).with_name('version.json').read_text())\n    api.update(GIT_COMMIT=versions['source_commit'], BUILD_DATE=versions['source_at'])\n    return api, web")
     generated['rootfs/opt/nocturne-ha/settings.py'] = settings
     cookies = (latest / 'rootfs/opt/nocturne-ha/cookies.mjs').read_text(encoding='utf-8')
     generated['rootfs/opt/nocturne-ha/cookies.mjs'] = replace_once(cookies,
@@ -143,7 +142,7 @@ def files(lock, delivery, maintenance=True):
     tail = re.sub(r'ARG BUILD_VERSION=\S+', 'ARG BUILD_VERSION=' + delivery, tail)
     tail = replace_once(tail, 'COPY --from=web /app/ /opt/nocturne-web/',
                         'COPY --from=source /out/web/ /opt/nocturne-web/')
-    tail = replace_once(tail, 'USER root\nARG BUILD_VERSION=', 'USER root\nCOPY --from=source /out/api/ /app/\nCOPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so\nARG BUILD_VERSION=')
+    tail = replace_once(tail, 'USER root\nARG BUILD_VERSION=', 'USER root\nCOPY --from=source /out/api/ /app/\nCOPY --from=source /out/api-build-date /opt/nocturne-ha/api-build-date\nCOPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so\nARG BUILD_VERSION=')
     generated['Dockerfile'] = f'''# Both API and web are compiled from the same checksum-verified Personal source.
 {node}
 FROM {RUST} AS rust
@@ -169,7 +168,8 @@ RUN printf '\\n=== Nocturne build phase 5/7: compile alert engine ===\\n' \\
     && cargo build --manifest-path crates/Cargo.toml --release --locked -p nocturne-alerts-ffi
 RUN printf '\\n=== Nocturne build phase 6/7: publish API ===\\n' \\
     && dotnet publish src/API/Nocturne.API/Nocturne.API.csproj -c Release -r linux-x64 --self-contained false \\
-    -p:GenerateNSwagClient=false -p:UseSharedCompilation=false -o /out/api
+    -p:GenerateNSwagClient=false -p:UseSharedCompilation=false -o /out/api \\
+    && date -u +%Y-%m-%dT%H:%M:%SZ > /out/api-build-date
 WORKDIR /src/src/Web
 ENV PUBLIC_API_URL=http://localhost:1612 PUBLIC_WEBSOCKET_RECONNECT_ATTEMPTS=5 PUBLIC_WEBSOCKET_RECONNECT_DELAY=1000
 ENV PUBLIC_WEBSOCKET_MAX_RECONNECT_DELAY=30000 PUBLIC_WEBSOCKET_PING_TIMEOUT=15000 PUBLIC_WEBSOCKET_PING_INTERVAL=20000
