@@ -121,7 +121,9 @@ def wait_ready(name, probe=PROBE):
             marker = safe_failure_marker(last_error)
             if marker and marker.group(0).startswith('CI_PROBE_FAILED:') and not any(
                     f':{kind}:' in marker.group(0)
-                    for kind in ('URLError', 'TimeoutError', 'ConnectionError', 'OSError')):
+                    for kind in ('URLError', 'TimeoutError', 'ConnectionError',
+                                 'ConnectionRefusedError', 'ConnectionResetError',
+                                 'BrokenPipeError', 'OSError')):
                 raise RuntimeError('Container readiness probe failed: ' + marker.group(0))
             # njs request-time exceptions do not stop nginx. Abort this disposable
             # test early, exposing a fixed marker but never raw cookie/error logs.
