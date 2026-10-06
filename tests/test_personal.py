@@ -139,6 +139,9 @@ class PersonalTests(unittest.TestCase):
             'dotnet test tests/Unit/Nocturne.Connectors.GoogleHealth.Tests/'
             'Nocturne.Connectors.GoogleHealth.Tests.csproj -c Release',
             test_recipe)
+        self.assertIn('ARG RUN_GOOGLE_HEALTH_TESTS=false', test_recipe)
+        workflow = (ROOT / '.github/workflows/validate.yml').read_text()
+        self.assertIn('--build-arg RUN_GOOGLE_HEALTH_TESTS=true', workflow)
         test_settings = (ROOT / 'nocturne_test_c/rootfs/opt/nocturne-ha/settings.py').read_text()
         self.assertIn("('NocturneTestC_',)", test_settings)
         test_cookies = (ROOT / 'nocturne_test_c/rootfs/opt/nocturne-ha/cookies.mjs').read_text()

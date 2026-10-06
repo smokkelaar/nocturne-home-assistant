@@ -19,8 +19,11 @@ RUN printf '\n=== Nocturne build phase 3/7: install web dependencies and build b
 WORKDIR /src
 RUN printf '\n=== Nocturne build phase 4/7: compile API ===\n' \
     && dotnet build src/API/Nocturne.API/Nocturne.API.csproj -c Release -p:UseSharedCompilation=false
-RUN printf '\n=== Nocturne validation: Google Health unit tests ===\n' \
-    && dotnet test tests/Unit/Nocturne.Connectors.GoogleHealth.Tests/Nocturne.Connectors.GoogleHealth.Tests.csproj -c Release -p:UseSharedCompilation=false
+ARG RUN_GOOGLE_HEALTH_TESTS=false
+RUN if [ "$RUN_GOOGLE_HEALTH_TESTS" = "true" ]; then \
+        printf '\n=== Nocturne validation: Google Health unit tests ===\n' && \
+        dotnet test tests/Unit/Nocturne.Connectors.GoogleHealth.Tests/Nocturne.Connectors.GoogleHealth.Tests.csproj -c Release -p:UseSharedCompilation=false; \
+    fi
 RUN printf '\n=== Nocturne build phase 5/7: compile alert engine ===\n' \
     && cargo build --manifest-path crates/Cargo.toml --release --locked -p nocturne-alerts-ffi
 RUN printf '\n=== Nocturne build phase 6/7: publish API ===\n' \

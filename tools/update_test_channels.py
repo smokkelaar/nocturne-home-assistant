@@ -88,12 +88,12 @@ def files():
             recipe = update_personal.files(source_lock, personal["version"] + "-1", maintenance=False)["Dockerfile"].decode()
         elif letter == "c":
             recipe = google_files["Dockerfile"].decode()
-            test_phase = (
-                "RUN printf '\\n=== Nocturne validation: Google Health unit tests ===\\n' \\\n"
-                "    && dotnet test tests/Unit/Nocturne.Connectors.GoogleHealth.Tests/"
-                "Nocturne.Connectors.GoogleHealth.Tests.csproj -c Release "
-                "-p:UseSharedCompilation=false\n"
-            )
+            test_phase = """ARG RUN_GOOGLE_HEALTH_TESTS=false
+RUN if [ "$RUN_GOOGLE_HEALTH_TESTS" = "true" ]; then \\
+        printf '\\n=== Nocturne validation: Google Health unit tests ===\\n' && \\
+        dotnet test tests/Unit/Nocturne.Connectors.GoogleHealth.Tests/Nocturne.Connectors.GoogleHealth.Tests.csproj -c Release -p:UseSharedCompilation=false; \\
+    fi
+"""
             next_phase = "RUN printf '\\n=== Nocturne build phase 5/7: compile alert engine ==="
             if next_phase not in recipe:
                 raise ValueError("Could not locate Test C Google Health test insertion point")
