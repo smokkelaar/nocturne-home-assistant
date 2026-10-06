@@ -62,6 +62,13 @@ class UpdateTests(unittest.TestCase):
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / 'nocturne_local' / name, target)
         (root / 'nocturne_local/rootfs/opt/nocturne-ha').mkdir(parents=True)
+        (root / 'nocturne_local/rootfs/usr/local/bin').mkdir(parents=True)
+        for name in ('rootfs/opt/nocturne-ha/diagnostic_cli.py',
+                     'rootfs/usr/local/bin/nocturne-ha'):
+            source = ROOT / 'nocturne_latest' / name
+            target = root / 'nocturne_latest' / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source, target)
         (root / 'upstream.json').write_text(json.dumps(self.lock))
         return root
 

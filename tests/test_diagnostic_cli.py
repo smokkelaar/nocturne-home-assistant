@@ -36,12 +36,11 @@ class DiagnosticCliTests(unittest.TestCase):
                 connection.assert_not_called()
 
     def test_doctor_reports_invalid_configuration_without_exposing_its_values(self):
-        with patch.object(cli, 'checked_options', side_effect=ValueError('invalid')):
+        with patch.object(cli, 'checked_options', side_effect=ValueError('secret-value')):
             result = cli.doctor()
         self.assertEqual('invalid', result['configuration'])
-        self.assertNotIn('invalid', str(result))
+        self.assertNotIn('secret-value', str(result))
 
 
 if __name__ == '__main__':
     unittest.main()
-
