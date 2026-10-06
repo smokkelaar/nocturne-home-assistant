@@ -65,11 +65,11 @@ if hasattr(settings, 'api_build_metadata'):  # Old restore baselines predate thi
         if not process.name.isdecimal():
             continue
         try:
-            command = (process / 'cmdline').read_bytes()
-            if b'/app/Nocturne.API.dll' in command:
-                api_environment = dict(
-                    item.split(b'=', 1) for item in (process / 'environ').read_bytes().split(b'\\0')
-                    if b'=' in item)
+            process_environment = dict(
+                item.split(b'=', 1) for item in (process / 'environ').read_bytes().split(b'\\0')
+                if b'=' in item)
+            if process_environment.get(b'ASPNETCORE_URLS') == b'http://127.0.0.1:8080':
+                api_environment = process_environment
                 break
         except (FileNotFoundError, PermissionError, ProcessLookupError):
             continue
