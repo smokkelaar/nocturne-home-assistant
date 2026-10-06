@@ -29,7 +29,7 @@ def safe_failure_marker(output):
         output)
 
 
-def execute(name, code):
+def execute(name, code, user=None):
     wrapped = (
         'import sys, traceback\n'
         '_ci_code = ' + repr(code) + '\n'
@@ -45,7 +45,10 @@ def execute(name, code):
         "    print(f'CI_PROBE_FAILED:{type(error).__name__}:LINE_{line}{status_marker}', "
         'file=sys.stderr)\n'
         '    raise\n')
-    return docker('exec', '-i', name, 'python3', '-', input=wrapped)
+    command = ['exec']
+    if user:
+        command.extend(('--user', user))
+    return docker(*command, '-i', name, 'python3', '-', input=wrapped)
 
 
 PROBE = '''
@@ -58,25 +61,6 @@ import settings
 options = settings.validate_options({})
 with socket.create_connection(('127.0.0.1', 8080), timeout=2):
     pass
-if hasattr(settings, 'api_build_metadata'):  # Old restore baselines predate this fix.
-    metadata = json.loads(Path('/opt/nocturne-ha/version.json').read_text())
-    api_environment = None
-    for process in Path('/proc').iterdir():
-        if not process.name.isdecimal():
-            continue
-        try:
-            process_environment = dict(
-                item.split(b'=', 1) for item in (process / 'environ').read_bytes().split(b'\\0')
-                if b'=' in item)
-            if process_environment.get(b'ASPNETCORE_URLS') == b'http://127.0.0.1:8080':
-                api_environment = process_environment
-                break
-        except (FileNotFoundError, PermissionError, ProcessLookupError):
-            continue
-    assert api_environment is not None
-    expected = settings.api_build_metadata(metadata)
-    assert all(api_environment.get(key.encode()) == value.encode()
-               for key, value in expected.items())
 if hasattr(run, 'web_response_reachable'):  # Baseline 0.1.0 predates this check.
     assert run.web_response_reachable(options)
 context = ssl._create_unverified_context()  # Only the disposable CI test certificate.
@@ -105,6 +89,33 @@ else:
     raise AssertionError('Ingress accepted a direct client')
 '''
 
+API_ENV_PROBE = '''
+import json
+from pathlib import Path
+import sys
+sys.path.insert(0, '/opt/nocturne-ha')
+import settings
+if hasattr(settings, 'api_build_metadata'):  # Old restore baselines predate this fix.
+    metadata = json.loads(Path('/opt/nocturne-ha/version.json').read_text())
+    api_environment = None
+    for process in Path('/proc').iterdir():
+        if not process.name.isdecimal():
+            continue
+        try:
+            process_environment = dict(
+                item.split(b'=', 1) for item in (process / 'environ').read_bytes().split(b'\\0')
+                if b'=' in item)
+            if process_environment.get(b'ASPNETCORE_URLS') == b'http://127.0.0.1:8080':
+                api_environment = process_environment
+                break
+        except (FileNotFoundError, PermissionError, ProcessLookupError):
+            continue
+    assert api_environment is not None
+    expected = settings.api_build_metadata(metadata)
+    assert all(api_environment.get(key.encode()) == value.encode()
+               for key, value in expected.items())
+'''
+
 
 def wait_ready(name, probe=PROBE):
     deadline = time.monotonic() + 420
@@ -123,6 +134,7 @@ def wait_ready(name, probe=PROBE):
                                + (','.join(markers) or 'NONE'))
         try:
             execute(name, probe)
+            execute(name, API_ENV_PROBE, user='app')
             return
         except RuntimeError as error:
             last_error = str(error)  # docker() only exposes bounded safe markers.
