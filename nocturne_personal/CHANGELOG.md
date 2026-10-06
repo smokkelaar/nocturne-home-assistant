@@ -3,6 +3,11 @@
 - Fix Steps and Heart Rate reports crashing with `each_key_duplicate` when the profile's lower and upper glucose target values coincide.
 - Preserve all imported readings and configured targets; no reconnect, reimport or data deletion is needed.
 
+## 0.3.26-8
+
+- Add shared read-only `nocturne-ha` diagnostics to Official, Latest, Personal and Test channels.
+- Query the setup-independent Nocturne API version endpoint in fresh-instance smoke checks.
+
 ## 0.3.26-7
 
 - Wrapper 0.1.11 forwards the exact Nocturne source commit and actual API build date to Nocturne.
@@ -557,7 +562,3 @@ Personal 0.2.0; source `752ebf65017a41508b76346090778d8965c87f9a`; Daily base `3
 # 0.1.0-1
 
 Personal 0.1.0; source `fdf290aab0e5ab5eccedfb15026622a94a0f2d56`; Daily base `3b7514591f854f4794deeeb75d43e33d979d1ee4`.
-## 0.3.26-8
-
-- Add shared read-only `nocturne-ha` diagnostics to Official, Latest, Personal and Test channels.
-- Query the setup-independent Nocturne API version endpoint in fresh-instance smoke checks.
