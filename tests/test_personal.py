@@ -133,6 +133,10 @@ class PersonalTests(unittest.TestCase):
         test_recipe = (ROOT / 'nocturne_test_c/Dockerfile').read_text()
         self.assertIn(google['commit'], test_recipe)
         self.assertIn('--checksum=sha256:' + google['archive_sha256'], test_recipe)
+        self.assertIn(
+            'dotnet test tests/Unit/Nocturne.Connectors.GoogleHealth.Tests/'
+            'Nocturne.Connectors.GoogleHealth.Tests.csproj -c Release',
+            test_recipe)
         test_settings = (ROOT / 'nocturne_test_c/rootfs/opt/nocturne-ha/settings.py').read_text()
         self.assertIn("('NocturneTestC_',)", test_settings)
         test_cookies = (ROOT / 'nocturne_test_c/rootfs/opt/nocturne-ha/cookies.mjs').read_text()
