@@ -1,3 +1,8 @@
+## 0.3.25-c29
+
+- Google Health heart-rate backfills now aggregate incrementally per UTC minute, bounding retained memory for large history windows.
+- Test C runs the connector unit tests, including the paginated memory regression, in the HA CI image pipeline before building the candidate image.
+
 ## 0.3.25-c27
 
 - Wrapper 0.1.11 forwards the exact Nocturne source commit and actual API build date to Nocturne.

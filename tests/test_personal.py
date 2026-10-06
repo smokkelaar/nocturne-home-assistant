@@ -124,6 +124,8 @@ class PersonalTests(unittest.TestCase):
         self.assertNotEqual(self.config['version'], test_c['version'])
         self.assertTrue(test_c['version'].startswith('0.3.25-'))
         self.assertEqual(test_c['version'], test_runtime['package'])
+        test_c_changelog = (ROOT / 'nocturne_test_c/CHANGELOG.md').read_text()
+        self.assertTrue(test_c_changelog.startswith(f"## {test_c['version']}\n"))
         self.assertEqual('Nocturne Test C', test_c['name'])
         self.assertEqual('NocturneTestC_', test_runtime['cookie_namespace'])
         self.assertEqual('https://homeassistant.local:8453', test_runtime['default_public_url'])
