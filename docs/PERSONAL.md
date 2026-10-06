@@ -83,6 +83,14 @@ relational reconciliation; a real Google sleep import still requires account acc
 
 ## Install or update
 
+### Steps or Heart Rate shows `each_key_duplicate`
+
+Personal delivery `0.3.26-9` fixes the shared actogram renderer when the profile's
+lower and upper glucose target values are equal, including two zero values.
+Update Personal and hard-refresh the browser (`Ctrl+Shift+R`). Existing imported
+readings and profile values are preserved; do not delete data, reconnect Google
+or reimport history to address this rendering error.
+
 1. Refresh the Home Assistant app store for the repository
    `https://github.com/smokkelaar/nocturne-home-assistant`, then install or update
    **Nocturne Personal Release**.

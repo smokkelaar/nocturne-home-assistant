@@ -9,7 +9,8 @@ import unittest
 from unittest.mock import patch
 import uuid
 
-SOURCE = Path(__file__).resolve().parents[1] / 'tools/personal-maintenance/rootfs/opt/nocturne-ha/owner_recovery.py'
+ROOT = Path(__file__).resolve().parents[1]
+SOURCE = ROOT / 'tools/personal-maintenance/rootfs/opt/nocturne-ha/owner_recovery.py'
 spec = importlib.util.spec_from_file_location('owner_recovery', SOURCE)
 recovery = importlib.util.module_from_spec(spec)
 sys.modules['owner_recovery'] = recovery
@@ -19,6 +20,15 @@ OWNER = {'tenant_id': TENANT, 'subject_id': SUBJECT, 'username': 'forgotten-owne
 
 
 class OwnerRecoveryTests(unittest.TestCase):
+    def test_reviewed_source_matches_personal_pin_and_packaged_guard(self):
+        lock = json.loads((ROOT / 'upstream-personal.json').read_text())
+        self.assertEqual(lock['commit'], recovery.SUPPORTED_COMMIT)
+        packaged = ROOT / 'nocturne_personal/rootfs/opt/nocturne-ha'
+        self.assertEqual(SOURCE.read_bytes(), (packaged / 'owner_recovery.py').read_bytes())
+        with patch.object(recovery, 'BASE', packaged), \
+             patch.object(recovery.os, 'geteuid', return_value=0, create=True):
+            recovery.guard()
+
     def test_native_pbkdf2_format_and_code_normalization(self):
         code, stored = recovery.fresh_code()
         self.assertRegex(code, r'^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{5}-[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{5}$')
