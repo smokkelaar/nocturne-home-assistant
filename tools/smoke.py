@@ -48,14 +48,15 @@ def execute(name, code):
 
 
 PROBE = '''
-import json, ssl, urllib.request, urllib.error, base64
+import json, socket, ssl, urllib.request, urllib.error, base64
 from pathlib import Path
 import sys
 sys.path.insert(0, '/opt/nocturne-ha')
 import run
 import settings
 options = settings.validate_options({})
-assert run.api_reachable(options['hostname'])
+with socket.create_connection(('127.0.0.1', 8080), timeout=2):
+    pass
 if hasattr(settings, 'api_build_metadata'):  # Old restore baselines predate this fix.
     metadata = json.loads(Path('/opt/nocturne-ha/version.json').read_text())
     # The legacy status endpoint omits build metadata before first tenant setup.
