@@ -1,3 +1,8 @@
+## 0.3.26-9
+
+- Fix Steps and Heart Rate reports crashing with `each_key_duplicate` when the profile's lower and upper glucose target values coincide.
+- Preserve all imported readings and configured targets; no reconnect, reimport or data deletion is needed.
+
 ## 0.3.26-7
 
 - Wrapper 0.1.11 forwards the exact Nocturne source commit and actual API build date to Nocturne.
