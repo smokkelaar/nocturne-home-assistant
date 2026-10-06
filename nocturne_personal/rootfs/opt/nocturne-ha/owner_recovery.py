@@ -13,7 +13,7 @@ import re
 import secrets
 import uuid
 
-SUPPORTED_COMMIT = '6f112069122e1ded12ddac7eee7e6cbd2dcd01dc'
+SUPPORTED_COMMIT = '05648996c10e39e91f517187c10395a534f8d24a'
 BASE = Path('/opt/nocturne-ha')
 RECEIPTS = Path('/data/maintenance')
 
