@@ -34,6 +34,7 @@ class BuildMetadataTests(unittest.TestCase):
         probe = (ROOT / 'tools/smoke.py').read_text()
         self.assertIn('http://127.0.0.1:8080/api/v3/version', probe)
         self.assertNotIn('http://127.0.0.1:8080/api/v1/status', probe)
+        self.assertIn("run.api_reachable(options['hostname'])", probe)
 
     def test_all_channels_export_pinned_commit_and_only_selected_parent_metadata(self):
         for channel in CHANNELS:
