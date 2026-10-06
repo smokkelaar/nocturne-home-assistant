@@ -1,6 +1,7 @@
 """Personal must not change existing HA app identities or silently use stock code."""
 import importlib.util
 import json
+import re
 from pathlib import Path
 import sys
 import unittest
@@ -124,6 +125,14 @@ class PersonalTests(unittest.TestCase):
         self.assertNotEqual(self.config['version'], test_c['version'])
         self.assertTrue(test_c['version'].startswith('0.3.25-'))
         self.assertEqual(test_c['version'], test_runtime['package'])
+        test_c_changelog = (ROOT / 'nocturne_test_c/CHANGELOG.md').read_text()
+        self.assertTrue(test_c_changelog.startswith(f"## {test_c['version']}\n"))
+        changelog_versions = [
+            int(version) for version in re.findall(
+                r'(?m)^#{1,2} 0\.3\.25-c(\d+)$', test_c_changelog)
+        ]
+        self.assertEqual(len(changelog_versions), len(set(changelog_versions)))
+        self.assertEqual(sorted(changelog_versions, reverse=True), changelog_versions)
         self.assertEqual('Nocturne Test C', test_c['name'])
         self.assertEqual('NocturneTestC_', test_runtime['cookie_namespace'])
         self.assertEqual('https://homeassistant.local:8453', test_runtime['default_public_url'])
@@ -133,6 +142,13 @@ class PersonalTests(unittest.TestCase):
         test_recipe = (ROOT / 'nocturne_test_c/Dockerfile').read_text()
         self.assertIn(google['commit'], test_recipe)
         self.assertIn('--checksum=sha256:' + google['archive_sha256'], test_recipe)
+        self.assertIn(
+            'dotnet test tests/Unit/Nocturne.Connectors.GoogleHealth.Tests/'
+            'Nocturne.Connectors.GoogleHealth.Tests.csproj -c Release',
+            test_recipe)
+        self.assertIn('ARG RUN_GOOGLE_HEALTH_TESTS=false', test_recipe)
+        workflow = (ROOT / '.github/workflows/validate.yml').read_text()
+        self.assertIn('--build-arg RUN_GOOGLE_HEALTH_TESTS=true', workflow)
         test_settings = (ROOT / 'nocturne_test_c/rootfs/opt/nocturne-ha/settings.py').read_text()
         self.assertIn("('NocturneTestC_',)", test_settings)
         test_cookies = (ROOT / 'nocturne_test_c/rootfs/opt/nocturne-ha/cookies.mjs').read_text()

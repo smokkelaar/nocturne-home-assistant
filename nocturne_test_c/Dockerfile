@@ -10,7 +10,7 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@11.5.0
-ADD --checksum=sha256:78a59fc7ceefbf55cb9be3097d052415dc7450757230f01fb6bd63bdfea1f146 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/9b801fc76bd36270a1bcdd2caecf5864ee23e6c2 /tmp/source.tar.gz
+ADD --checksum=sha256:41f1fa1971cb7805a5d4f130664de7c0aa039f1239e99c90654252eeed80bfc3 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/eb3d83d8f452b3bd5c67e50bdb52700e498955a4 /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
 WORKDIR /src/src/Web
@@ -19,6 +19,11 @@ RUN printf '\n=== Nocturne build phase 3/7: install web dependencies and build b
 WORKDIR /src
 RUN printf '\n=== Nocturne build phase 4/7: compile API ===\n' \
     && dotnet build src/API/Nocturne.API/Nocturne.API.csproj -c Release -p:UseSharedCompilation=false
+ARG RUN_GOOGLE_HEALTH_TESTS=false
+RUN if [ "$RUN_GOOGLE_HEALTH_TESTS" = "true" ]; then \
+        printf '\n=== Nocturne validation: Google Health unit tests ===\n' && \
+        dotnet test tests/Unit/Nocturne.Connectors.GoogleHealth.Tests/Nocturne.Connectors.GoogleHealth.Tests.csproj -c Release -p:UseSharedCompilation=false; \
+    fi
 RUN printf '\n=== Nocturne build phase 5/7: compile alert engine ===\n' \
     && cargo build --manifest-path crates/Cargo.toml --release --locked -p nocturne-alerts-ffi
 RUN printf '\n=== Nocturne build phase 6/7: publish API ===\n' \
@@ -43,7 +48,7 @@ USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /out/api-build-date /opt/nocturne-ha/api-build-date
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so
-ARG BUILD_VERSION=0.3.25-c28
+ARG BUILD_VERSION=0.3.25-c30
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Test C - Home Assistant app" \

@@ -1,3 +1,17 @@
+## 0.3.25-c30
+
+- Refresh the pinned Google Health source and continue running its complete connector unit suite in CI, including the bounded-memory regression.
+
+## 0.3.25-c29
+
+- Google Health heart-rate backfills now aggregate incrementally per UTC minute, bounding retained memory for large history windows.
+- Test C runs the connector unit tests, including the paginated memory regression, in the HA CI image pipeline before building the candidate image.
+
+## 0.3.25-c28
+
+- Add shared read-only `nocturne-ha` diagnostics.
+- Use the setup-independent API version endpoint in fresh-instance smoke tests.
+
 ## 0.3.25-c27
 
 - Wrapper 0.1.11 forwards the exact Nocturne source commit and actual API build date to Nocturne.
@@ -112,7 +126,3 @@ Klikbare broninformatie voor issue #1360, het testscenario en actuele systeemres
 # 0.3.25-c1
 
 Test C uses the same Personal software as Test B, pinned to the eHbA1c lab-result tooltip fix for issue #1360 at commit `9b3a0977518e60837fd0b5bd6f3fae7e08f59218`. Temporary isolated instance for manual verification only; Test B remains available for comparison.
-## 0.3.25-c28
-
-- Add shared read-only `nocturne-ha` diagnostics.
-- Use the setup-independent API version endpoint in fresh-instance smoke tests.
