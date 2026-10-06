@@ -1,6 +1,7 @@
 """Personal must not change existing HA app identities or silently use stock code."""
 import importlib.util
 import json
+import re
 from pathlib import Path
 import sys
 import unittest
@@ -126,6 +127,12 @@ class PersonalTests(unittest.TestCase):
         self.assertEqual(test_c['version'], test_runtime['package'])
         test_c_changelog = (ROOT / 'nocturne_test_c/CHANGELOG.md').read_text()
         self.assertTrue(test_c_changelog.startswith(f"## {test_c['version']}\n"))
+        changelog_versions = [
+            int(version) for version in re.findall(
+                r'(?m)^#{1,2} 0\.3\.25-c(\d+)$', test_c_changelog)
+        ]
+        self.assertEqual(len(changelog_versions), len(set(changelog_versions)))
+        self.assertEqual(sorted(changelog_versions, reverse=True), changelog_versions)
         self.assertEqual('Nocturne Test C', test_c['name'])
         self.assertEqual('NocturneTestC_', test_runtime['cookie_namespace'])
         self.assertEqual('https://homeassistant.local:8453', test_runtime['default_public_url'])
