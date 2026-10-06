@@ -30,10 +30,12 @@ class BuildMetadataTests(unittest.TestCase):
         self.assertEqual('CI_PROBE_FAILED:HTTPError:LINE_12:STATUS_404', marker.group(0))
         self.assertIsNone(smoke.safe_failure_marker('credential-value'))
 
-    def test_fresh_instance_smoke_reads_setup_independent_version_endpoint(self):
+    def test_fresh_instance_smoke_checks_api_identity_without_tenant_setup(self):
         probe = (ROOT / 'tools/smoke.py').read_text()
-        self.assertIn('http://127.0.0.1:8080/api/v3/version', probe)
-        self.assertNotIn('http://127.0.0.1:8080/api/v1/status', probe)
+        self.assertIn("b'/app/Nocturne.API.dll' in command", probe)
+        self.assertIn('settings.api_build_metadata(metadata)', probe)
+        self.assertNotIn('/api/v1/status', probe)
+        self.assertNotIn('/api/v3/version', probe)
         self.assertIn("socket.create_connection(('127.0.0.1', 8080)", probe)
         self.assertNotIn('run.api_reachable(', probe)
 

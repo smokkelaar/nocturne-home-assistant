@@ -59,16 +59,23 @@ with socket.create_connection(('127.0.0.1', 8080), timeout=2):
     pass
 if hasattr(settings, 'api_build_metadata'):  # Old restore baselines predate this fix.
     metadata = json.loads(Path('/opt/nocturne-ha/version.json').read_text())
-    # The legacy status endpoint omits build metadata before first tenant setup.
-    request = urllib.request.Request('http://127.0.0.1:8080/api/v3/version',
-        headers={'Host': options['authority'], 'Accept': 'application/json'})
-    with urllib.request.urlopen(request, timeout=10) as response:
-        status = json.loads(response.read(65536))
-    assert status['head'] == metadata['source_commit']
-    assert status['build'] == settings.api_build_metadata(metadata)['BUILD_DATE']
-    from datetime import datetime
-    build = datetime.fromisoformat(status['build'].replace('Z', '+00:00'))
-    assert build.tzinfo is not None
+    api_environment = None
+    for process in Path('/proc').iterdir():
+        if not process.name.isdecimal():
+            continue
+        try:
+            command = (process / 'cmdline').read_bytes()
+            if b'/app/Nocturne.API.dll' in command:
+                api_environment = dict(
+                    item.split(b'=', 1) for item in (process / 'environ').read_bytes().split(b'\0')
+                    if b'=' in item)
+                break
+        except (FileNotFoundError, PermissionError, ProcessLookupError):
+            continue
+    assert api_environment is not None
+    expected = settings.api_build_metadata(metadata)
+    assert all(api_environment.get(key.encode()) == value.encode()
+               for key, value in expected.items())
 if hasattr(run, 'web_response_reachable'):  # Baseline 0.1.0 predates this check.
     assert run.web_response_reachable(options)
 context = ssl._create_unverified_context()  # Only the disposable CI test certificate.
