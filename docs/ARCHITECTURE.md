@@ -1,5 +1,12 @@
 # Architecture
 
+Wrapper 0.1.11 forwards the pinned Nocturne source SHA as `GIT_COMMIT` to every
+channel's API process. Prebuilt API images retain their embedded `BUILD_DATE`.
+Personal and Test A/B/C stamp their own UTC API publish time in the source build
+stage and copy it into the runtime; they never report the inherited Daily build
+date or the source commit date as their build time. Container smoke tests verify
+the actual `/api/v1/status` response used by Nocturne's About panel.
+
 ```text
 HA authenticated ingress ──> :8099 status/launcher (Supervisor peer only)
                                   │ HTTPS link (+ gateway code in default mode)

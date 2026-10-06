@@ -2,6 +2,7 @@
 import html
 import ipaddress
 import json
+import os
 import re
 import secrets
 from pathlib import Path
@@ -79,6 +80,18 @@ def load_secrets(data_dir):
     return values
 
 
+def api_build_metadata(versions, stamp_path=None, environment=None):
+    """Use the pinned API source and its actual build time, never source commit time."""
+    environment = os.environ if environment is None else environment
+    stamp_path = Path(__file__).with_name('api-build-date') if stamp_path is None else Path(stamp_path)
+    build_date = (stamp_path.read_text().strip() if stamp_path.exists()
+                  else environment.get('BUILD_DATE', '').strip())
+    metadata = {'GIT_COMMIT': versions['source_commit']}
+    if build_date:
+        metadata['BUILD_DATE'] = build_date
+    return metadata
+
+
 def service_environments(options, passwords, timezone='Europe/Amsterdam'):
     # BASE_DOMAIN is a public authority for generated URLs; host checks use hostname.
     common = {'PATH': '/usr/local/bin:/usr/bin:/bin', 'TZ': timezone,
@@ -97,7 +110,7 @@ def service_environments(options, passwords, timezone='Europe/Amsterdam'):
                PROTOCOL_HEADER='x-forwarded-proto', HOST_HEADER='x-forwarded-host',
                NOCTURNE_POSTGRES_URI=f"postgresql://nocturne_web:{passwords['web']}@127.0.0.1:5432/nocturne")
     versions = json.loads(Path(__file__).with_name('version.json').read_text())
-    api.update(GIT_COMMIT=versions['source_commit'], BUILD_DATE=versions['source_at'])
+    api.update(api_build_metadata(versions))
     return api, web
 
 

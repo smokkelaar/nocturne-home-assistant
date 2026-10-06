@@ -1,3 +1,9 @@
+## 0.1.11-1
+
+- Wrapper 0.1.11 forwards the exact Nocturne source commit and actual API build date to Nocturne.
+- Source builds record their own publish time; prebuilt API images retain their embedded build date.
+- Source pins and stored data remain unchanged.
+
 ## 0.1.10-1
 
 - Shared wrapper 0.1.10: explicit `skip_gateway_check`, default false, only effective with `gateway_auth: false`.
@@ -78,3 +84,7 @@
 - Shared lock/version metadata, daily stable-upstream update proposals, regression checks and disposable container smoke testing.
 - Generic installation, migration, architecture and contributor documentation; no personal configuration included.
 - Runtime design remains experimental. Repository installation does not migrate an existing local app's data.
+## 0.1.12-1
+
+- Add read-only `nocturne-ha` diagnostics to every app channel.
+- Use the setup-independent API version endpoint in fresh-instance smoke tests.

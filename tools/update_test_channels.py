@@ -49,6 +49,24 @@ def files():
     generated = {}
     for letter, port, source in (("a", 8451, test_a), ("b", 8452, test_b), ("c", 8453, google)):
         package = "nocturne_test_" + letter
+        for path in ("rootfs/opt/nocturne-ha/diagnostic_cli.py",
+                     "rootfs/usr/local/bin/nocturne-ha"):
+            generated[package + "/" + path] = google_files[path]
+        # Keep per-channel gateway migration/logging choices, but own this common
+        # metadata helper so a later source update cannot restore the old date bug.
+        latest_settings = (ROOT / "nocturne_latest/rootfs/opt/nocturne-ha/settings.py").read_text(encoding="utf-8")
+        helper = latest_settings[latest_settings.index("def api_build_metadata("):latest_settings.index("def service_environments(")]
+        settings_path = package + "/rootfs/opt/nocturne-ha/settings.py"
+        settings = (ROOT / settings_path).read_text(encoding="utf-8")
+        if not re.search(r"(?m)^import os$", settings):
+            settings = settings.replace("import json\n", "import json\nimport os\n")
+        if "def api_build_metadata(" in settings:
+            settings = re.sub(r"(?s)def api_build_metadata\(.*?(?=def service_environments\()", helper, settings)
+        else:
+            settings = settings.replace("def service_environments(", helper + "def service_environments(", 1)
+        settings = settings.replace("api.update(GIT_COMMIT=versions['source_commit'], BUILD_DATE=versions['source_at'])",
+                                    "api.update(api_build_metadata(versions))")
+        generated[settings_path] = settings
         config = read(package + "/config.json")
         # One visible schema for every variant; the old Test A flag is read-only migration input.
         config["options"].pop("verify_native_auth", None)
@@ -122,7 +140,8 @@ def files():
         config["description"] = f"HA wrapper {runtime['app']} · {description}. Isolated test instance; not for clinical use."
         generated[package + "/config.json"] = json.dumps(config, indent=2) + "\n"
         generated[package + "/rootfs/opt/nocturne-ha/version.json"] = json.dumps(runtime, indent=2) + "\n"
-    return {path: data.encode("utf-8") for path, data in generated.items()}
+    return {path: data if isinstance(data, bytes) else data.encode("utf-8")
+            for path, data in generated.items()}
 
 
 def main():
@@ -133,6 +152,7 @@ def main():
     for path, expected in files().items():
         target = ROOT / path
         if args.update:
+            target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(expected)
         elif target.read_bytes() != expected:
             raise ValueError("Test channel differs from pinned source: " + path)

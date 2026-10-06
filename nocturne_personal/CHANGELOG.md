@@ -1,3 +1,9 @@
+## 0.3.26-7
+
+- Wrapper 0.1.11 forwards the exact Nocturne source commit and actual API build date to Nocturne.
+- Source builds record their own publish time; prebuilt API images retain their embedded build date.
+- Source pins and stored data remain unchanged.
+
 # 0.3.26-6
 
 Recover the existing owner through local HA administration even when all Nocturne
@@ -546,3 +552,7 @@ Personal 0.2.0; source `752ebf65017a41508b76346090778d8965c87f9a`; Daily base `3
 # 0.1.0-1
 
 Personal 0.1.0; source `fdf290aab0e5ab5eccedfb15026622a94a0f2d56`; Daily base `3b7514591f854f4794deeeb75d43e33d979d1ee4`.
+## 0.3.26-8
+
+- Add shared read-only `nocturne-ha` diagnostics to Official, Latest, Personal and Test channels.
+- Query the setup-independent Nocturne API version endpoint in fresh-instance smoke checks.

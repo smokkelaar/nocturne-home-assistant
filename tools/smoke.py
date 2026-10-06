@@ -16,28 +16,57 @@ def docker(*args, check=True, input=None):
     if check and result.returncode:
         # A dedicated probe may emit only this bounded, non-sensitive marker.
         # Never publish arbitrary container output, which can contain secrets.
-        marker = re.search(r'NATIVE_PROBE_FAILED:[A-Z_0-9]+:[A-Za-z]+', result.stdout + result.stderr)
+        marker = safe_failure_marker(result.stdout + result.stderr)
         detail = ' (' + marker.group(0) + ')' if marker else ''
         raise RuntimeError('Docker operation failed: ' + args[0] + detail)
     return result.stdout.strip()
 
 
-def execute(name, code):
-    return docker('exec', '-i', name, 'python3', '-', input=code)
+def safe_failure_marker(output):
+    return re.search(
+        r'(?:NATIVE_PROBE_FAILED:[A-Z_0-9]+:[A-Za-z]+|CI_PROBE_FAILED:[A-Za-z]+:LINE_[0-9]+'
+        r'(?::STATUS_[1-5][0-9]{2})?)',
+        output)
+
+
+def execute(name, code, user=None):
+    wrapped = (
+        'import sys, traceback\n'
+        '_ci_code = ' + repr(code) + '\n'
+        'try:\n'
+        "    exec(compile(_ci_code, '<ci-probe>', 'exec'), {'__name__': '__main__'})\n"
+        'except BaseException as error:\n'
+        "    frames = [frame for frame in traceback.extract_tb(error.__traceback__) "
+        "if frame.filename == '<ci-probe>']\n"
+        '    frame = frames[-1] if frames else traceback.extract_tb(error.__traceback__)[-1]\n'
+        "    line = getattr(error, 'lineno', None) or frame.lineno\n"
+        "    status = getattr(error, 'code', None)\n"
+        "    status_marker = f':STATUS_{status}' if type(status) is int else ''\n"
+        "    print(f'CI_PROBE_FAILED:{type(error).__name__}:LINE_{line}{status_marker}', "
+        'file=sys.stderr)\n'
+        '    raise\n')
+    command = ['exec']
+    if user:
+        command.extend(('--user', user))
+    return docker(*command, '-i', name, 'python3', '-', input=wrapped)
 
 
 PROBE = '''
-import json, ssl, urllib.request, urllib.error, base64
+import json, socket, ssl, urllib.request, urllib.error, base64
 from pathlib import Path
 import sys
 sys.path.insert(0, '/opt/nocturne-ha')
 import run
-assert run.api_reachable('homeassistant.local')
+import settings
+options = settings.validate_options({})
+with socket.create_connection(('127.0.0.1', 8080), timeout=2):
+    pass
 if hasattr(run, 'web_response_reachable'):  # Baseline 0.1.0 predates this check.
-    assert run.web_response_reachable(run.validate_options({}))
+    if not run.web_response_reachable(options):
+        raise ConnectionError('Web service is not ready')
 context = ssl._create_unverified_context()  # Only the disposable CI test certificate.
 base_url = 'https://127.0.0.1:8448'
-headers = {'Host': 'homeassistant.local:8448'}
+headers = {'Host': options['hostname'] + ':8448'}
 for path in ('/setup', '/health'):
     try:
         urllib.request.urlopen(urllib.request.Request(base_url + path, headers=headers), context=context, timeout=10)
@@ -61,6 +90,33 @@ else:
     raise AssertionError('Ingress accepted a direct client')
 '''
 
+API_ENV_PROBE = '''
+import json
+from pathlib import Path
+import sys
+sys.path.insert(0, '/opt/nocturne-ha')
+import settings
+if hasattr(settings, 'api_build_metadata'):  # Old restore baselines predate this fix.
+    metadata = json.loads(Path('/opt/nocturne-ha/version.json').read_text())
+    api_environment = None
+    for process in Path('/proc').iterdir():
+        if not process.name.isdecimal():
+            continue
+        try:
+            process_environment = dict(
+                item.split(b'=', 1) for item in (process / 'environ').read_bytes().split(b'\\0')
+                if b'=' in item)
+            if process_environment.get(b'ASPNETCORE_URLS') == b'http://127.0.0.1:8080':
+                api_environment = process_environment
+                break
+        except (FileNotFoundError, PermissionError, ProcessLookupError):
+            continue
+    assert api_environment is not None
+    expected = settings.api_build_metadata(metadata)
+    assert all(api_environment.get(key.encode()) == value.encode()
+               for key, value in expected.items())
+'''
+
 
 def wait_ready(name, probe=PROBE):
     deadline = time.monotonic() + 420
@@ -79,9 +135,19 @@ def wait_ready(name, probe=PROBE):
                                + (','.join(markers) or 'NONE'))
         try:
             execute(name, probe)
+            execute(name, API_ENV_PROBE, user='app')
             return
         except RuntimeError as error:
             last_error = str(error)  # docker() only exposes bounded safe markers.
+            marker = safe_failure_marker(last_error)
+            if marker and marker.group(0).startswith('CI_PROBE_FAILED:'):
+                transient = marker.group(0).endswith(':STATUS_503') or any(
+                    f':{kind}:' in marker.group(0)
+                    for kind in ('URLError', 'TimeoutError', 'ConnectionError',
+                                 'ConnectionRefusedError', 'ConnectionResetError',
+                                 'BrokenPipeError', 'OSError'))
+                if not transient:
+                    raise RuntimeError('Container readiness probe failed: ' + marker.group(0))
             # njs request-time exceptions do not stop nginx. Abort this disposable
             # test early, exposing a fixed marker but never raw cookie/error logs.
             logs = docker('logs', name, check=False).lower()

@@ -23,7 +23,8 @@ RUN printf '\n=== Nocturne build phase 5/7: compile alert engine ===\n' \
     && cargo build --manifest-path crates/Cargo.toml --release --locked -p nocturne-alerts-ffi
 RUN printf '\n=== Nocturne build phase 6/7: publish API ===\n' \
     && dotnet publish src/API/Nocturne.API/Nocturne.API.csproj -c Release -r linux-x64 --self-contained false \
-    -p:GenerateNSwagClient=false -p:UseSharedCompilation=false -o /out/api
+    -p:GenerateNSwagClient=false -p:UseSharedCompilation=false -o /out/api \
+    && date -u +%Y-%m-%dT%H:%M:%SZ > /out/api-build-date
 WORKDIR /src/src/Web
 ENV PUBLIC_API_URL=http://localhost:1612 PUBLIC_WEBSOCKET_RECONNECT_ATTEMPTS=5 PUBLIC_WEBSOCKET_RECONNECT_DELAY=1000
 ENV PUBLIC_WEBSOCKET_MAX_RECONNECT_DELAY=30000 PUBLIC_WEBSOCKET_PING_TIMEOUT=15000 PUBLIC_WEBSOCKET_PING_INTERVAL=20000
@@ -40,8 +41,9 @@ RUN mkdir -p /out/web/packages/app /out/web/packages/bridge \
 FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:92cb1eadc462fac72cf7816d66bd546290cc270446d2f11d943f4934f6769c8e
 USER root
 COPY --from=source /out/api/ /app/
+COPY --from=source /out/api-build-date /opt/nocturne-ha/api-build-date
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so
-ARG BUILD_VERSION=0.3.26-6
+ARG BUILD_VERSION=0.3.26-8
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Personal Release - Home Assistant app" \
@@ -85,7 +87,7 @@ RUN dotnet --list-runtimes && /usr/lib/postgresql/17/bin/postgres --version
 
 COPY rootfs/ /
 RUN python3 -m compileall -q /opt/nocturne-ha \
-    && chmod 755 /opt/nocturne-ha/run.py /usr/local/bin/nocturne-ha \
+    && chmod 755 /opt/nocturne-ha/run.py /usr/local/bin/nocturne-ha /usr/local/bin/nocturne-ha \
     && nginx -t -c /opt/nocturne-ha-build/check_cookies.conf
 ENV NODE_ENV=production DOTNET_ENVIRONMENT=Production ASPNETCORE_ENVIRONMENT=Production
 WORKDIR /app

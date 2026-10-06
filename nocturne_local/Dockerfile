@@ -4,7 +4,7 @@ FROM node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd3
 FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:01f5ec038da453330db709ac5dabc6abd907411190b76511fffced8e9d945d50
 
 USER root
-ARG BUILD_VERSION=0.1.10-1
+ARG BUILD_VERSION=0.1.12-1
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Official Release - Home Assistant app" \
@@ -48,7 +48,7 @@ RUN dotnet --list-runtimes && /usr/lib/postgresql/17/bin/postgres --version
 
 COPY rootfs/ /
 RUN python3 -m compileall -q /opt/nocturne-ha \
-    && chmod 755 /opt/nocturne-ha/run.py \
+    && chmod 755 /opt/nocturne-ha/run.py /usr/local/bin/nocturne-ha \
     && nginx -t -c /opt/nocturne-ha-build/check_cookies.conf
 ENV NODE_ENV=production DOTNET_ENVIRONMENT=Production ASPNETCORE_ENVIRONMENT=Production
 WORKDIR /app

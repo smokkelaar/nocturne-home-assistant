@@ -1,3 +1,9 @@
+## 0.3.26-a14
+
+- Wrapper 0.1.11 forwards the exact Nocturne source commit and actual API build date to Nocturne.
+- Source builds record their own publish time; prebuilt API images retain their embedded build date.
+- Source pins and stored data remain unchanged.
+
 ## 0.3.26-a13
 
 - Pin PR #1293 source `969896385` after merging main `b515516d4` and resolving merge conflicts.
@@ -625,3 +631,7 @@ Personal 0.2.0; source `752ebf65017a41508b76346090778d8965c87f9a`; Daily base `3
 # 0.1.0-1
 
 Personal 0.1.0; source `fdf290aab0e5ab5eccedfb15026622a94a0f2d56`; Daily base `3b7514591f854f4794deeeb75d43e33d979d1ee4`.
+## 0.3.26-a15
+
+- Add shared read-only `nocturne-ha` diagnostics.
+- Use the setup-independent API version endpoint in fresh-instance smoke tests.
