@@ -25,8 +25,9 @@ class BuildMetadataTests(unittest.TestCase):
         smoke = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(smoke)
         marker = smoke.safe_failure_marker(
-            'AssertionError: credential-value\nCI_PROBE_FAILED:AssertionError:LINE_12')
-        self.assertEqual('CI_PROBE_FAILED:AssertionError:LINE_12', marker.group(0))
+            'AssertionError: credential-value\n'
+            'CI_PROBE_FAILED:HTTPError:LINE_12:STATUS_404')
+        self.assertEqual('CI_PROBE_FAILED:HTTPError:LINE_12:STATUS_404', marker.group(0))
         self.assertIsNone(smoke.safe_failure_marker('credential-value'))
 
     def test_fresh_instance_smoke_reads_setup_independent_version_endpoint(self):

@@ -24,7 +24,8 @@ def docker(*args, check=True, input=None):
 
 def safe_failure_marker(output):
     return re.search(
-        r'(?:NATIVE_PROBE_FAILED:[A-Z_0-9]+:[A-Za-z]+|CI_PROBE_FAILED:[A-Za-z]+:LINE_[0-9]+)',
+        r'(?:NATIVE_PROBE_FAILED:[A-Z_0-9]+:[A-Za-z]+|CI_PROBE_FAILED:[A-Za-z]+:LINE_[0-9]+'
+        r'(?::STATUS_[1-5][0-9]{2})?)',
         output)
 
 
@@ -35,8 +36,13 @@ def execute(name, code):
         'try:\n'
         "    exec(compile(_ci_code, '<ci-probe>', 'exec'), {'__name__': '__main__'})\n"
         'except BaseException as error:\n'
-        '    frame = traceback.extract_tb(error.__traceback__)[-1]\n'
-        "    print(f'CI_PROBE_FAILED:{type(error).__name__}:LINE_{frame.lineno}', file=sys.stderr)\n"
+        "    frames = [frame for frame in traceback.extract_tb(error.__traceback__) "
+        "if frame.filename == '<ci-probe>']\n"
+        '    frame = frames[-1] if frames else traceback.extract_tb(error.__traceback__)[-1]\n'
+        "    status = getattr(error, 'code', None)\n"
+        "    status_marker = f':STATUS_{status}' if type(status) is int else ''\n"
+        "    print(f'CI_PROBE_FAILED:{type(error).__name__}:LINE_{frame.lineno}{status_marker}', "
+        'file=sys.stderr)\n'
         '    raise\n')
     return docker('exec', '-i', name, 'python3', '-', input=wrapped)
 
@@ -110,6 +116,11 @@ def wait_ready(name, probe=PROBE):
             return
         except RuntimeError as error:
             last_error = str(error)  # docker() only exposes bounded safe markers.
+            marker = safe_failure_marker(last_error)
+            if marker and marker.group(0).startswith('CI_PROBE_FAILED:') and not any(
+                    f':{kind}:' in marker.group(0)
+                    for kind in ('URLError', 'TimeoutError', 'ConnectionError', 'OSError')):
+                raise RuntimeError('Container readiness probe failed: ' + marker.group(0))
             # njs request-time exceptions do not stop nginx. Abort this disposable
             # test early, exposing a fixed marker but never raw cookie/error logs.
             logs = docker('logs', name, check=False).lower()
