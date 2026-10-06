@@ -37,6 +37,7 @@ class BuildMetadataTests(unittest.TestCase):
         self.assertNotIn('/api/v1/status', probe)
         self.assertNotIn('/api/v3/version', probe)
         self.assertIn("socket.create_connection(('127.0.0.1', 8080)", probe)
+        self.assertIn("options['hostname'] + ':8448'", probe)
         self.assertNotIn('run.api_reachable(', probe)
 
     def test_all_channels_export_pinned_commit_and_only_selected_parent_metadata(self):

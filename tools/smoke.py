@@ -39,9 +39,10 @@ def execute(name, code):
         "    frames = [frame for frame in traceback.extract_tb(error.__traceback__) "
         "if frame.filename == '<ci-probe>']\n"
         '    frame = frames[-1] if frames else traceback.extract_tb(error.__traceback__)[-1]\n'
+        "    line = getattr(error, 'lineno', None) or frame.lineno\n"
         "    status = getattr(error, 'code', None)\n"
         "    status_marker = f':STATUS_{status}' if type(status) is int else ''\n"
-        "    print(f'CI_PROBE_FAILED:{type(error).__name__}:LINE_{frame.lineno}{status_marker}', "
+        "    print(f'CI_PROBE_FAILED:{type(error).__name__}:LINE_{line}{status_marker}', "
         'file=sys.stderr)\n'
         '    raise\n')
     return docker('exec', '-i', name, 'python3', '-', input=wrapped)
@@ -67,7 +68,7 @@ if hasattr(settings, 'api_build_metadata'):  # Old restore baselines predate thi
             command = (process / 'cmdline').read_bytes()
             if b'/app/Nocturne.API.dll' in command:
                 api_environment = dict(
-                    item.split(b'=', 1) for item in (process / 'environ').read_bytes().split(b'\0')
+                    item.split(b'=', 1) for item in (process / 'environ').read_bytes().split(b'\\0')
                     if b'=' in item)
                 break
         except (FileNotFoundError, PermissionError, ProcessLookupError):
@@ -80,7 +81,7 @@ if hasattr(run, 'web_response_reachable'):  # Baseline 0.1.0 predates this check
     assert run.web_response_reachable(options)
 context = ssl._create_unverified_context()  # Only the disposable CI test certificate.
 base_url = 'https://127.0.0.1:8448'
-headers = {'Host': 'homeassistant.local:8448'}
+headers = {'Host': options['hostname'] + ':8448'}
 for path in ('/setup', '/health'):
     try:
         urllib.request.urlopen(urllib.request.Request(base_url + path, headers=headers), context=context, timeout=10)
