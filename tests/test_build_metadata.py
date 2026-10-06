@@ -20,6 +20,15 @@ def settings(channel):
 
 
 class BuildMetadataTests(unittest.TestCase):
+    def test_smoke_probe_reports_only_safe_failure_markers(self):
+        spec = importlib.util.spec_from_file_location('smoke_probe', ROOT / 'tools/smoke.py')
+        smoke = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(smoke)
+        marker = smoke.safe_failure_marker(
+            'AssertionError: credential-value\nCI_PROBE_FAILED:AssertionError:LINE_12')
+        self.assertEqual('CI_PROBE_FAILED:AssertionError:LINE_12', marker.group(0))
+        self.assertIsNone(smoke.safe_failure_marker('credential-value'))
+
     def test_fresh_instance_smoke_reads_setup_independent_version_endpoint(self):
         probe = (ROOT / 'tools/smoke.py').read_text()
         self.assertIn('http://127.0.0.1:8080/api/v3/version', probe)

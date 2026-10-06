@@ -16,14 +16,29 @@ def docker(*args, check=True, input=None):
     if check and result.returncode:
         # A dedicated probe may emit only this bounded, non-sensitive marker.
         # Never publish arbitrary container output, which can contain secrets.
-        marker = re.search(r'NATIVE_PROBE_FAILED:[A-Z_0-9]+:[A-Za-z]+', result.stdout + result.stderr)
+        marker = safe_failure_marker(result.stdout + result.stderr)
         detail = ' (' + marker.group(0) + ')' if marker else ''
         raise RuntimeError('Docker operation failed: ' + args[0] + detail)
     return result.stdout.strip()
 
 
+def safe_failure_marker(output):
+    return re.search(
+        r'(?:NATIVE_PROBE_FAILED:[A-Z_0-9]+:[A-Za-z]+|CI_PROBE_FAILED:[A-Za-z]+:LINE_[0-9]+)',
+        output)
+
+
 def execute(name, code):
-    return docker('exec', '-i', name, 'python3', '-', input=code)
+    wrapped = (
+        'import sys, traceback\n'
+        '_ci_code = ' + repr(code) + '\n'
+        'try:\n'
+        "    exec(compile(_ci_code, '<ci-probe>', 'exec'), {'__name__': '__main__'})\n"
+        'except BaseException as error:\n'
+        '    frame = traceback.extract_tb(error.__traceback__)[-1]\n'
+        "    print(f'CI_PROBE_FAILED:{type(error).__name__}:LINE_{frame.lineno}', file=sys.stderr)\n"
+        '    raise\n')
+    return docker('exec', '-i', name, 'python3', '-', input=wrapped)
 
 
 PROBE = '''
