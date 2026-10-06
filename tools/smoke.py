@@ -119,12 +119,14 @@ def wait_ready(name, probe=PROBE):
         except RuntimeError as error:
             last_error = str(error)  # docker() only exposes bounded safe markers.
             marker = safe_failure_marker(last_error)
-            if marker and marker.group(0).startswith('CI_PROBE_FAILED:') and not any(
+            if marker and marker.group(0).startswith('CI_PROBE_FAILED:'):
+                transient = marker.group(0).endswith(':STATUS_503') or any(
                     f':{kind}:' in marker.group(0)
                     for kind in ('URLError', 'TimeoutError', 'ConnectionError',
                                  'ConnectionRefusedError', 'ConnectionResetError',
-                                 'BrokenPipeError', 'OSError')):
-                raise RuntimeError('Container readiness probe failed: ' + marker.group(0))
+                                 'BrokenPipeError', 'OSError'))
+                if not transient:
+                    raise RuntimeError('Container readiness probe failed: ' + marker.group(0))
             # njs request-time exceptions do not stop nginx. Abort this disposable
             # test early, exposing a fixed marker but never raw cookie/error logs.
             logs = docker('logs', name, check=False).lower()
