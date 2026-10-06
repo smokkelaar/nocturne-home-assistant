@@ -62,7 +62,8 @@ options = settings.validate_options({})
 with socket.create_connection(('127.0.0.1', 8080), timeout=2):
     pass
 if hasattr(run, 'web_response_reachable'):  # Baseline 0.1.0 predates this check.
-    assert run.web_response_reachable(options)
+    if not run.web_response_reachable(options):
+        raise ConnectionError('Web service is not ready')
 context = ssl._create_unverified_context()  # Only the disposable CI test certificate.
 base_url = 'https://127.0.0.1:8448'
 headers = {'Host': options['hostname'] + ':8448'}

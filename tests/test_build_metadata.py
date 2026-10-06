@@ -34,6 +34,7 @@ class BuildMetadataTests(unittest.TestCase):
         probe = (ROOT / 'tools/smoke.py').read_text()
         self.assertIn("execute(name, API_ENV_PROBE, user='app')", probe)
         self.assertIn("process_environment.get(b'ASPNETCORE_URLS')", probe)
+        self.assertIn("raise ConnectionError('Web service is not ready')", probe)
         self.assertIn('settings.api_build_metadata(metadata)', probe)
         self.assertNotIn('/api/v1/status', probe)
         self.assertNotIn('/api/v3/version', probe)
