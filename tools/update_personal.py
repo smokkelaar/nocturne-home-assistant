@@ -15,7 +15,8 @@ SDK = 'mcr.microsoft.com/dotnet/sdk@sha256:0e53453ccfc8ff2d51319fe80c678971c6d0f
 RUST = 'rust@sha256:4673f78db88b71f09d5451bbc404734807918161241215ba0a50bbbe9b448117'
 COMMON = ('build/check_web.mjs', 'build/prepare_web.py', 'build/check_cookies.conf',
           'rootfs/opt/nocturne-ha/bootstrap.sql', 'rootfs/opt/nocturne-ha/run.py',
-          'rootfs/opt/nocturne-ha/tls.py', 'translations/nl.json', 'translations/en.json')
+          'rootfs/opt/nocturne-ha/tls.py', 'rootfs/opt/nocturne-ha/diagnostic_cli.py',
+          'rootfs/usr/local/bin/nocturne-ha', 'translations/nl.json', 'translations/en.json')
 
 
 def github(path, raw=False):

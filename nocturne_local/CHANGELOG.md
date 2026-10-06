@@ -84,3 +84,7 @@
 - Shared lock/version metadata, daily stable-upstream update proposals, regression checks and disposable container smoke testing.
 - Generic installation, migration, architecture and contributor documentation; no personal configuration included.
 - Runtime design remains experimental. Repository installation does not migrate an existing local app's data.
+## 0.1.12-1
+
+- Add read-only `nocturne-ha` diagnostics to every app channel.
+- Use the setup-independent API version endpoint in fresh-instance smoke tests.

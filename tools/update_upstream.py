@@ -128,6 +128,10 @@ def render(root, lock, app_version):
         'upstream.json': dumps(lock),
         'nocturne_local/config.json': dumps(config),
         'nocturne_local/Dockerfile': dockerfile,
+        'nocturne_local/rootfs/opt/nocturne-ha/diagnostic_cli.py':
+            (root / 'nocturne_latest/rootfs/opt/nocturne-ha/diagnostic_cli.py').read_text(encoding='utf-8'),
+        'nocturne_local/rootfs/usr/local/bin/nocturne-ha':
+            (root / 'nocturne_latest/rootfs/usr/local/bin/nocturne-ha').read_text(encoding='utf-8'),
         'nocturne_local/rootfs/opt/nocturne-ha/version.json': dumps({
             'app': wrapper, 'package': app_version,
             'nocturne': lock['version'], 'repository': PROJECT,

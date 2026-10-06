@@ -57,6 +57,9 @@ CI now rehearses a full cold-data copy, restore into a different disposable volu
 
 Do not assume downgrading an image reverses a database migration. Restoring a coordinated pre-upgrade database/key backup may be required. PostgreSQL major upgrades are explicitly refused; there is no automatic database reset.
 
+All app channels include the read-only `nocturne-ha doctor`, `status` and
+`api` commands. See [CLI diagnostics](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/CLI.md).
+
 Official app updates are intentionally manual in this repository and optional in HA. Leave HA automatic updates off for this channel. See the repository's `docs/UPDATES.md` for both update processes.
 
 ## Known boundaries

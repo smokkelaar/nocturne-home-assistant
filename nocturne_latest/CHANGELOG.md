@@ -118,3 +118,7 @@
 - Use slug `nocturne_latest`, a separate private data directory and default host port 8449. Official data, accounts, passkeys and keys are not copied.
 - Include the same guarded TLS, gateway/passkey, health and persistence wrapper as the Official channel.
 - Daily automation may promote newer tested `main` snapshots. Schema changes can be frequent and rollback is not guaranteed; keep cold backups.
+## 0.1.12-1
+
+- Add read-only `nocturne-ha` diagnostics to every app channel.
+- Use the setup-independent API version endpoint in fresh-instance smoke tests.

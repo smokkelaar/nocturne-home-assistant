@@ -1,9 +1,11 @@
 # Personal maintenance experiment: CLI, terminal and guided recovery
 
-Only **Nocturne Personal Release** includes this opt-in experiment. Official,
-Latest, Stable, Main and Test A/B/C are unchanged. No Nocturne source, schema,
-passkeys or stored instance credentials are modified by installing it. The explicit
-owner-recovery command does add a recovery-code hash to the existing database.
+Only **Nocturne Personal Release** includes this opt-in terminal and recovery
+experiment. All channels include the read-only `nocturne-ha doctor`, `status`
+and `api` CLI; only Personal adds its separately protected terminal and
+owner-recovery commands. No Nocturne source, schema, passkeys or stored instance
+credentials are modified by installing the shared CLI. The explicit owner-recovery
+command does add a recovery-code hash to the existing database.
 
 ## Enable and compare
 

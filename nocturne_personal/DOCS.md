@@ -39,6 +39,16 @@ No router port-forwarding is required or recommended for this test. A publicly r
 
 Changing options requires restarting the app. There is no need to restart all of HA for ordinary app option changes.
 
+## Read-only command-line diagnostics
+
+The container includes `nocturne-ha doctor`, `nocturne-ha status`, and
+`nocturne-ha api /api/v3/version` for diagnosis from the app's container
+console. The API command is GET-only and limited to the local Nocturne API.
+API output can contain private information; do not paste it into public reports.
+See [CLI diagnostics](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/CLI.md)
+for access and examples. Personal keeps its separate opt-in maintenance
+interface and recovery commands.
+
 ## Test certificate vs trusted HTTPS
 
 Both certificate fields empty generates a self-signed 30-day test certificate. This is for boot testing only, **not a supported route to real account/passkey use**. Do not disable browser security to make it work.

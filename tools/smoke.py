@@ -36,7 +36,8 @@ import settings
 assert run.api_reachable('homeassistant.local')
 if hasattr(settings, 'api_build_metadata'):  # Old restore baselines predate this fix.
     metadata = json.loads(Path('/opt/nocturne-ha/version.json').read_text())
-    request = urllib.request.Request('http://127.0.0.1:8080/api/v1/status',
+    # The legacy status endpoint omits build metadata before first tenant setup.
+    request = urllib.request.Request('http://127.0.0.1:8080/api/v3/version',
         headers={'Host': settings.validate_options({})['authority'], 'Accept': 'application/json'})
     with urllib.request.urlopen(request, timeout=10) as response:
         status = json.loads(response.read(65536))

@@ -1,8 +1,8 @@
 {
   "name": "Nocturne Test B",
-  "version": "0.3.25-b31",
+  "version": "0.3.25-b32",
   "slug": "nocturne_test_b",
-  "description": "HA wrapper 0.1.11 \u00b7 A1c preferences PR #1977 bf5c517 \u00b7 main b515516. Isolated test instance; not for clinical use.",
+  "description": "HA wrapper 0.1.12 \u00b7 A1c preferences PR #1977 bf5c517 \u00b7 main b515516. Isolated test instance; not for clinical use.",
   "url": "https://github.com/smokkelaar/nocturne-home-assistant",
   "arch": [
     "amd64"
