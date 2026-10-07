@@ -1,8 +1,8 @@
 {
   "name": "Nocturne Test C",
-  "version": "0.3.25-c30",
+  "version": "0.3.25-c31",
   "slug": "nocturne_test_c",
-  "description": "HA wrapper 0.1.12 \u00b7 Google Health eb3d83d \u00b7 main 8635bd5. Isolated test instance; not for clinical use.",
+  "description": "HA wrapper 0.1.12 \u00b7 Clock face units PR #2007 e17d9ee \u00b7 main 0198225. Isolated test instance; not for clinical use.",
   "url": "https://github.com/smokkelaar/nocturne-home-assistant",
   "arch": [
     "amd64"

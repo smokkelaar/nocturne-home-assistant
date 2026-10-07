@@ -23,12 +23,11 @@ duplicaten, verwijderen gevolgd door synchroniseren en opnieuw verbinden/herstar
 De bronreviews staan op [PR #1293](https://github.com/nightscout/nocturne/pull/1293)
 en de bouw- en opstartcontroles op [HA PR #95](https://github.com/smokkelaar/nocturne-home-assistant/pull/95).
 
-Test C (poort 8453) blijft de afzonderlijke Google Health-ontwikkelomgeving.
-De bron is de branch
-[`smokkelaar/google-health-heart-rate-aggregation-and-backfill`](https://github.com/smokkelaar/nocturne-personal/tree/smokkelaar/google-health-heart-rate-aggregation-and-backfill),
-met de nieuwste goedgekeurde Nightscout main-basis ingemerged. Het exacte
-broncommit en de archive-checksum staan in `upstream-google-health.json`.
-Test C behoudt zijn eigen installatie, configuratie, database en cookies.
+Test C (poort 8453) is geen Google Health-omgeving meer; die test nu
+[Nightscout PR #2007](https://github.com/nightscout/nocturne/pull/2007)
+(klokface-eenheden en tijdnotatie). Google Health wordt op Test A getest.
+De Google Health-bronpin in `upstream-google-health.json` blijft alleen de
+diagnostische CLI voor alle testkanalen leveren.
 
 ## Eerdere test checklist voor Personal 0.3.26-2 / Test A 0.3.26-a2
 
@@ -53,7 +52,7 @@ is, op Personal (8450):
    over de labdriehoek zichtbaar blijven; een labresultaat mag de berekende
    lijn niet aanpassen.
 6. Controleer dat Test B (8452) zijn eigen A1c-bronpin behoudt en dat Test C
-   (8453) zijn eigen Google Health-branch, data en cookies behoudt. Official
+   (8453) zijn eigen bronpin, data en cookies behoudt. Official
    (8448) en Latest (8449) worden door deze update niet gewijzigd.
 
 Deze eerdere checklist beschrijft Test A vóór 0.3.26-a3, toen die dezelfde

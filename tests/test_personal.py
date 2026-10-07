@@ -119,7 +119,16 @@ class PersonalTests(unittest.TestCase):
         self.assertNotEqual(test_b['ports']['8448/tcp'],
                              json.loads((ROOT / 'nocturne_test_a/config.json').read_text())['ports']['8448/tcp'])
 
-    def test_test_c_uses_the_issue_fix_source_with_a_distinct_runtime_identity(self):
+    def test_test_c_rejects_invalid_provenance(self):
+        source = json.loads((ROOT / 'upstream-test-c.json').read_text())
+        for field, value in [('repository', 'untrusted/repo'), ('commit', 'main'),
+                             ('base_commit', 'moving-branch'), ('archive_sha256', 'bad'),
+                             ('pull_request', True), ('pull_request_url', 'https://example.com'),
+                             ('commit_at', '2026-10-03')]:
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                update_test_channels.validate_test_pr_source({**source, field: value}, 'Test C')
+
+    def test_test_c_pins_clock_face_pr_with_a_distinct_runtime_identity(self):
         test_c = json.loads((ROOT / 'nocturne_test_c/config.json').read_text())
         test_runtime = json.loads((ROOT / 'nocturne_test_c/rootfs/opt/nocturne-ha/version.json').read_text())
         self.assertNotEqual(self.config['version'], test_c['version'])
@@ -136,19 +145,20 @@ class PersonalTests(unittest.TestCase):
         self.assertEqual('Nocturne Test C', test_c['name'])
         self.assertEqual('NocturneTestC_', test_runtime['cookie_namespace'])
         self.assertEqual('https://homeassistant.local:8453', test_runtime['default_public_url'])
-        google = json.loads((ROOT / 'upstream-google-health.json').read_text())
-        self.assertEqual(google['commit'], test_runtime['source_commit'])
-        self.assertEqual(self.lock['upstream']['commit'], test_runtime['base_commit'])
+        pr = json.loads((ROOT / 'upstream-test-c.json').read_text())
+        self.assertEqual(pr['commit'], test_runtime['source_commit'])
+        self.assertEqual(pr['base_commit'], test_runtime['base_commit'])
+        self.assertEqual(pr['repository'], test_runtime['repository'])
+        self.assertEqual(pr['pull_request_url'], test_runtime['release_url'])
         test_recipe = (ROOT / 'nocturne_test_c/Dockerfile').read_text()
-        self.assertIn(google['commit'], test_recipe)
-        self.assertIn('--checksum=sha256:' + google['archive_sha256'], test_recipe)
-        self.assertIn(
-            'dotnet test tests/Unit/Nocturne.Connectors.GoogleHealth.Tests/'
-            'Nocturne.Connectors.GoogleHealth.Tests.csproj -c Release',
-            test_recipe)
-        self.assertIn('ARG RUN_GOOGLE_HEALTH_TESTS=false', test_recipe)
-        workflow = (ROOT / '.github/workflows/validate.yml').read_text()
-        self.assertIn('--build-arg RUN_GOOGLE_HEALTH_TESTS=true', workflow)
+        self.assertIn(pr['commit'], test_recipe)
+        self.assertIn('--checksum=sha256:' + pr['archive_sha256'], test_recipe)
+        self.assertIn('codeload.github.com', test_recipe)
+        self.assertIn(f'ARG BUILD_VERSION={test_c["version"]}', test_recipe)
+        self.assertIn('Clock face units PR #2007', test_c['description'])
+        self.assertNotIn('Google Health', test_runtime['purpose'])
+        self.assertNotIn('Google Health', test_c['description'])
+        self.assertNotIn('RUN_GOOGLE_HEALTH_TESTS', test_recipe)
         test_settings = (ROOT / 'nocturne_test_c/rootfs/opt/nocturne-ha/settings.py').read_text()
         self.assertIn("('NocturneTestC_',)", test_settings)
         test_cookies = (ROOT / 'nocturne_test_c/rootfs/opt/nocturne-ha/cookies.mjs').read_text()

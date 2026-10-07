@@ -69,9 +69,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Compile and smoke-test the Google Health development source
+      - name: Compile and smoke-test the Test C PR source
         run: |
-          docker build --platform linux/amd64 --build-arg RUN_GOOGLE_HEALTH_TESTS=true --tag nocturne-test-c:ci nocturne_test_c
+          docker build --platform linux/amd64 --tag nocturne-test-c:ci nocturne_test_c
           python3 tools/smoke.py --image nocturne-test-c:ci
   container:
     name: Core container smoke tests
