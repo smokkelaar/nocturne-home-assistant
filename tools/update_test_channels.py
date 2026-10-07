@@ -39,25 +39,19 @@ def validate_test_b_source(source):
 def files():
     personal = read("upstream-personal.json")
     latest = read("upstream-latest.json")
-    google = read("upstream-google-health.json")
     test_b = read("upstream-test-b.json")
     test_a = read("upstream-test-a.json")
     test_c = read("upstream-test-c.json")
-    if google["base_commit"] != latest["commit"] or personal["upstream"] != latest:
+    if personal["upstream"] != latest:
         raise ValueError("All development channels must use the approved Latest base")
-    if google["repository"] != update_personal.REPO:
-        raise ValueError("Unexpected Google Health repository")
     validate_test_b_source(test_b)
     validate_test_pr_source(test_c, "Test C")
-    google_lock = {**personal, "commit": google["commit"],
-                   "commit_at": google["commit_at"], "archive_sha256": google["archive_sha256"]}
-    google_files = update_personal.files(google_lock, personal["version"] + "-1", maintenance=False)
     generated = {}
     for letter, port, source in (("a", 8451, test_a), ("b", 8452, test_b), ("c", 8453, test_c)):
         package = "nocturne_test_" + letter
         for path in ("rootfs/opt/nocturne-ha/diagnostic_cli.py",
                      "rootfs/usr/local/bin/nocturne-ha"):
-            generated[package + "/" + path] = google_files[path]
+            generated[package + "/" + path] = (ROOT / "nocturne_latest" / path).read_bytes()
         # Keep per-channel gateway migration/logging choices, but own this common
         # metadata helper so a later source update cannot restore the old date bug.
         latest_settings = (ROOT / "nocturne_latest/rootfs/opt/nocturne-ha/settings.py").read_text(encoding="utf-8")

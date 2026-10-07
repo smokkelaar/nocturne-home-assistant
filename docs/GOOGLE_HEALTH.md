@@ -26,8 +26,6 @@ en de bouw- en opstartcontroles op [HA PR #95](https://github.com/smokkelaar/noc
 Test C (poort 8453) is geen Google Health-omgeving meer; die test nu
 [Nightscout PR #2007](https://github.com/nightscout/nocturne/pull/2007)
 (klokface-eenheden en tijdnotatie). Google Health wordt op Test A getest.
-De Google Health-bronpin in `upstream-google-health.json` blijft alleen de
-diagnostische CLI voor alle testkanalen leveren.
 
 ## Eerdere test checklist voor Personal 0.3.26-2 / Test A 0.3.26-a2
 
