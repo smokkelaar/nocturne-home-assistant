@@ -3,7 +3,9 @@
 Vanaf wrapper **0.1.13** hebben Official, Latest, Personal en Test A/B/C dezelfde
 onderhoudsoptie. Hij staat standaard uit en vereist een eigen wachtwoord per app.
 Controleer altijd welke variant je opent: iedere app heeft eigen accounts, data,
-poorten en sleutels. Alleen een bewuste terminalopdracht wijzigt herstelgegevens.
+poorten en sleutels. Een nieuwe herstelcode maak je alleen met een bewuste
+terminalopdracht. De afzonderlijke TOTP-knop voert na twee bevestigingen direct
+een reset van de authenticator uit.
 De oude documentnaam blijft behouden zodat bestaande links blijven werken.
 
 ## Snel kiezen wat je nodig hebt
@@ -64,9 +66,11 @@ browser-/apparaatceremonie of Supervisor-back-upherstel op jouw installatie.
    `--backup-confirmed --write` bevestigen bewust de back-up en de wijziging.
    Je voegt één code aan je bestaande account toe. Als het account geen
    gebruikersnaam heeft, legt de wizard uit hoe je er expliciet één toewijst.
-6. Alleen als je ook je authenticator kwijt bent: voeg `--reset-totp` toe.
+6. Alleen als je ook je authenticator kwijt bent: gebruik de onderstaande
+   afzonderlijke TOTP-knop, of voeg `--reset-totp` aan de terminalopdracht toe.
    Dat verwijdert de tweede factor voor het geselecteerde account, ook als dat
-   account tot meerdere tenants behoort. Anders blijft TOTP actief.
+   account tot meerdere tenants behoort. Gebruik na een geslaagde knopreset
+   geen extra resetoptie; zonder reset blijft actieve TOTP behouden.
 7. Gebruik de velden `username` en `code` uit de terminaluitvoer op het
    Nocturne-hersteladres. Bewaar ook `code_id` tijdelijk privé. Plak codes niet
    in deze wizard, een GitHub-issue, app-log of gedeelde schermafbeelding.
@@ -78,6 +82,33 @@ browser-/apparaatceremonie of Supervisor-back-upherstel op jouw installatie.
     `nocturne-ha owner-recovery revoke --code-id CODE_ID --write`, met de ID uit
     de uitvoer. Ongebruikte codes verlopen niet automatisch. Zet daarna onderhoud
     uit in HA en herstart; controleer dat de terminal niet meer bereikbaar is.
+
+## Alleen de authenticator kwijt: reset met de knop
+
+1. Open onderhoud en selecteer bewust de bestaande eigenaar. De wizard toont
+   of voor dat account TOTP actief is. Als TOTP al uitstaat, verschijnt geen resetknop.
+2. Maak een volledige HA-back-up van de juiste app.
+3. Bij **Authenticator kwijt? TOTP direct uitschakelen** bevestig je beide vakjes:
+   de back-up is gemaakt en je wilt TOTP voor het getoonde account uitschakelen,
+   ook in andere tenants van dat account.
+4. Klik **TOTP uitschakelen voor dit account**. De knop reset direct, zonder
+   terminalopdracht. De melding bevestigt het resultaat; het verzoek kan niet
+   nogmaals worden uitgevoerd door dubbelklikken of het opnieuw versturen.
+5. Meld aan met je bestaande passkey. Zijn ook je passkeys/herstelcodes kwijt,
+   volg dan alsnog de herstelcodestappen hierboven: deze knop maakt geen code
+   en geeft op zichzelf geen toegang tot Nocturne.
+6. Stel in Nocturne bij de beveiligingsinstellingen TOTP opnieuw in en koppel
+   je authenticator opnieuw. Bestaande aanmeldsessies worden door deze knop
+   niet afgemeld. Zet na afloop onderhoud uit in HA en herstart.
+
+De reset verwijdert uitsluitend de TOTP-registraties van dit ene bestaande
+account. Gebruikersnaam, rollen, passkeys, herstelcodes en gegevens blijven
+staan. De backend controleert opnieuw account, broncompatibiliteit en database
+en herhaalt de eigenaarcontrole binnen de transactie. Het eenmalige formulier
+is aan de geselecteerde eigenaar gebonden en verloopt na 30 minuten. Bij een
+verlopen verzoek selecteer je het account opnieuw en controleer je de status.
+Een privaat ontvangstbewijs in `/data/maintenance/totp-reset-*.json` legt alleen
+het resetverzoek vast, zonder authenticatorgeheim of codes.
 
 ## Enable and compare
 

@@ -60,7 +60,7 @@ def check_schema(kind):
         'tenant_roles': {'id': 'uuid', 'tenant_id': 'uuid', 'slug': 'string'},
         'tenant_member_roles': {'tenant_member_id': 'uuid', 'tenant_role_id': 'uuid'},
         'recovery_codes': {'id': 'uuid', 'subject_id': 'uuid', 'code_hash': 'string', 'used_at': 'date', 'created_at': 'date'},
-        'totp_credentials': {'subject_id': 'uuid'},
+        'totp_credentials': {'id': 'uuid', 'subject_id': 'uuid'},
         'passkey_credentials': {'subject_id': 'uuid'},
     }
     required['tenant_members'].update({'revoked_at': 'date'} if kind == 'hmac' else {})
@@ -122,10 +122,10 @@ def fresh_code(legacy=False):
     return code, encoded
 
 
-def write_receipt(receipt):
+def write_receipt(receipt, prefix='owner-recovery'):
     RECEIPTS.mkdir(mode=0o700, parents=True, exist_ok=True)
     RECEIPTS.chmod(0o700)
-    path = RECEIPTS / ('owner-recovery-' + receipt['code_id'] + '.json')
+    path = RECEIPTS / (prefix + '-' + receipt['code_id'] + '.json')
     # Create before committing so disk-full cannot leave an untracked code.
     fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
     with os.fdopen(fd, 'w') as handle:
@@ -211,3 +211,53 @@ def revoke(code_id, write=False):
         database(f"UPDATE recovery_codes SET invalidated_at = now() WHERE id = '{code_id}' "
                  f"AND subject_id = '{subject}' AND used_at IS NULL AND invalidated_at IS NULL;")
     return {'code_id': code_id, 'revoked': True}
+
+
+def reset_totp(tenant, subject, write=False, backup_confirmed=False, expected_username=None):
+    """Disable only this eligible owner's TOTP; no new code or credential is created."""
+    if not write or not backup_confirmed:
+        raise ValueError('Maak eerst een HA-back-up en bevestig de TOTP-reset expliciet')
+    tenant, subject = str(uuid.UUID(tenant)), str(uuid.UUID(subject))
+    matches = [owner for owner in owners()
+               if owner['tenant_id'] == tenant and owner['subject_id'] == subject]
+    if len(matches) != 1 or matches[0]['username'] != expected_username:
+        raise ValueError('Het gekozen eigenaaraccount is gewijzigd; selecteer het opnieuw')
+    owner = matches[0]
+    # A separate private receipt records the requested action, never TOTP secrets.
+    # Write before SQL so a full disk prevents a mutation without a local trace.
+    action_id = str(uuid.uuid4())
+    receipt = {'code_id': action_id, 'action': 'totp-reset', 'tenant_id': tenant,
+               'subject_id': subject, 'username': owner['username'],
+               'requested_at': datetime.now(timezone.utc).isoformat(),
+               'backup_confirmed': True, 'status': 'requested'}
+    path = write_receipt(receipt, prefix='totp-reset')
+    username = owner['username']
+    username_check = ('AND s.username IS NULL' if username is None else
+                      "AND s.username = '" + username.replace("'", "''") + "'")
+    result = database(f"""
+\\set QUIET 1
+BEGIN;
+SET LOCAL lock_timeout = '5s';
+SET LOCAL statement_timeout = '15s';
+LOCK TABLE subjects, tenants, tenant_members, tenant_roles, tenant_member_roles IN SHARE MODE;
+WITH eligible AS ({owner_query()} AND t.id = '{tenant}' AND s.id = '{subject}' {username_check}),
+removed AS (
+    DELETE FROM totp_credentials WHERE subject_id = '{subject}'
+    AND EXISTS (SELECT 1 FROM eligible) RETURNING id
+)
+SELECT json_build_object('eligible', (SELECT count(*) FROM eligible),
+                         'removed', (SELECT count(*) FROM removed));
+COMMIT;
+""")
+    try:
+        result = json.loads(next(line for line in result.splitlines() if line.startswith('{')))
+        if set(result) != {'eligible', 'removed'} or any(type(value) is not int for value in result.values()):
+            raise ValueError('Invalid result')
+    except (ValueError, TypeError, StopIteration) as error:
+        raise RuntimeError('De reset kon niet worden bevestigd; vernieuw de wizard en controleer de TOTP-status') from error
+    if result['eligible'] != 1:
+        raise ValueError('Het gekozen eigenaaraccount is gewijzigd; geen TOTP-reset uitgevoerd')
+    return {'reset_id': action_id, 'subject_id': subject, 'tenant_id': tenant,
+            'removed': result['removed'], 'receipt': str(path),
+            'message': 'TOTP voor dit account staat uit. Stel het na aanmelden opnieuw in. '
+                       'Bestaande aanmeldsessies zijn niet afgemeld.'}

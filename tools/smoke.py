@@ -4,6 +4,7 @@ Never run against a user container/volume. No credentials or raw logs are printe
 This checks boot/restart, not WebAuthn, data import, or database upgrade compatibility.
 """
 import argparse
+import json
 from pathlib import Path
 import re
 import subprocess
