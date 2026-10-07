@@ -14,44 +14,44 @@ def read(path):
     return json.loads((ROOT / path).read_text(encoding="utf-8"))
 
 
-def validate_test_b_source(source):
+def validate_test_pr_source(source, channel="Test B"):
     pr = source.get("pull_request")
     if (source.get("channel") != "test-pr" or
             source.get("repository") != update_personal.REPO or
             type(pr) is not int or pr <= 0 or
             source.get("pull_request_url") != f"https://github.com/nightscout/nocturne/pull/{pr}"):
-        raise ValueError("Unexpected Test B PR source")
+        raise ValueError(f"Unexpected {channel} PR source")
     for field in ("commit", "base_commit"):
         if not re.fullmatch(r"[0-9a-f]{40}", source.get(field, "")):
-            raise ValueError("Invalid Test B commit")
+            raise ValueError(f"Invalid {channel} commit")
     if not re.fullmatch(r"[0-9a-f]{64}", source.get("archive_sha256", "")):
-        raise ValueError("Invalid Test B archive checksum")
+        raise ValueError(f"Invalid {channel} archive checksum")
     for field in ("commit_at", "base_commit_at"):
         stamp = datetime.fromisoformat(source.get(field, "").replace("Z", "+00:00"))
         if stamp.tzinfo is None:
-            raise ValueError("Test B timestamps must include a timezone")
+            raise ValueError(f"{channel} timestamps must include a timezone")
+
+
+def validate_test_b_source(source):
+    validate_test_pr_source(source, "Test B")
 
 
 def files():
     personal = read("upstream-personal.json")
     latest = read("upstream-latest.json")
-    google = read("upstream-google-health.json")
     test_b = read("upstream-test-b.json")
     test_a = read("upstream-test-a.json")
-    if google["base_commit"] != latest["commit"] or personal["upstream"] != latest:
+    test_c = read("upstream-test-c.json")
+    if personal["upstream"] != latest:
         raise ValueError("All development channels must use the approved Latest base")
-    if google["repository"] != update_personal.REPO:
-        raise ValueError("Unexpected Google Health repository")
     validate_test_b_source(test_b)
-    google_lock = {**personal, "commit": google["commit"],
-                   "commit_at": google["commit_at"], "archive_sha256": google["archive_sha256"]}
-    google_files = update_personal.files(google_lock, personal["version"] + "-1", maintenance=False)
+    validate_test_pr_source(test_c, "Test C")
     generated = {}
-    for letter, port, source in (("a", 8451, test_a), ("b", 8452, test_b), ("c", 8453, google)):
+    for letter, port, source in (("a", 8451, test_a), ("b", 8452, test_b), ("c", 8453, test_c)):
         package = "nocturne_test_" + letter
         for path in ("rootfs/opt/nocturne-ha/diagnostic_cli.py",
                      "rootfs/usr/local/bin/nocturne-ha"):
-            generated[package + "/" + path] = google_files[path]
+            generated[package + "/" + path] = (ROOT / "nocturne_latest" / path).read_bytes()
         # Keep per-channel gateway migration/logging choices, but own this common
         # metadata helper so a later source update cannot restore the old date bug.
         latest_settings = (ROOT / "nocturne_latest/rootfs/opt/nocturne-ha/settings.py").read_text(encoding="utf-8")
@@ -75,7 +75,7 @@ def files():
         config["schema"]["skip_gateway_check"] = "bool"
         version = config["version"]
         name = "Nocturne Test " + letter.upper()
-        if letter in ("a", "b"):
+        if letter in ("a", "b", "c"):
             if letter == "a" and (source.get("channel") != "google-health-pr" or
                     source.get("repository") != update_personal.REPO or
                     source.get("pull_request") != 1293):
@@ -86,26 +86,14 @@ def files():
                            "upstream": {**latest, "commit": source["base_commit"],
                                         "commit_at": source["base_commit_at"]}}
             recipe = update_personal.files(source_lock, personal["version"] + "-1", maintenance=False)["Dockerfile"].decode()
-        elif letter == "c":
-            recipe = google_files["Dockerfile"].decode()
-            test_phase = """ARG RUN_GOOGLE_HEALTH_TESTS=false
-RUN if [ "$RUN_GOOGLE_HEALTH_TESTS" = "true" ]; then \\
-        printf '\\n=== Nocturne validation: Google Health unit tests ===\\n' && \\
-        dotnet test tests/Unit/Nocturne.Connectors.GoogleHealth.Tests/Nocturne.Connectors.GoogleHealth.Tests.csproj -c Release -p:UseSharedCompilation=false; \\
-    fi
-"""
-            next_phase = "RUN printf '\\n=== Nocturne build phase 5/7: compile alert engine ==="
-            if next_phase not in recipe:
-                raise ValueError("Could not locate Test C Google Health test insertion point")
-            recipe = recipe.replace(next_phase, test_phase + next_phase, 1)
         else:
             recipe = (ROOT / "nocturne_personal" / "Dockerfile").read_text(encoding="utf-8")
         recipe = recipe.replace("Nocturne Personal Release", name).replace("Nocturne Latest Release", name)
-        if letter in ("a", "c"):
+        if letter == "a":
             recipe = recipe.replace("checksum-verified Personal source", "checksum-verified Google Health source")
         recipe = re.sub(r"ARG BUILD_VERSION=\S+", "ARG BUILD_VERSION=" + version, recipe)
         generated[package + "/Dockerfile"] = recipe
-        parent = "nocturne_latest" if letter in ("a", "b") else "nocturne_personal"
+        parent = "nocturne_latest"
         runtime = read(parent + "/rootfs/opt/nocturne-ha/version.json")
         base_commit = (source.get("base_commit") or source.get("upstream", {}).get("commit") or
                        latest["commit"])
@@ -127,6 +115,16 @@ RUN if [ "$RUN_GOOGLE_HEALTH_TESTS" = "true" ]; then \\
             runtime["release"] = label
             recipe = recipe.replace("checksum-verified Personal source", "checksum-verified A1c preferences source")
             generated[package + "/Dockerfile"] = recipe
+        elif letter == "c":
+            label = f"Clock face units PR #{source['pull_request']}"
+            purpose = "Klokface-eenheden en tijdnotatie per face testen: dezelfde weergave voor eigenaar, andere ingelogde kijkers en publieke kloklinks."
+            description = f"{label} {source['commit'][:7]} · main {source['base_commit'][:7]}"
+            runtime.pop("personal", None)
+            runtime["base"] = f"Nocturne main + PR #{source['pull_request']}"
+            runtime["nocturne"] = f"main@{source['base_commit'][:7]} + PR #{source['pull_request']}"
+            runtime["release"] = label
+            recipe = recipe.replace("checksum-verified Personal source", "checksum-verified clock face units source")
+            generated[package + "/Dockerfile"] = recipe
         elif letter == "a":
             purpose = f"Google Health PR #1293 testen vóór merge, op een geïsoleerde Test {letter.upper()}-instantie."
             description = f"Google Health PR #1293 {source['commit'][:7]} · main {source['base_commit'][:7]}"
@@ -134,18 +132,12 @@ RUN if [ "$RUN_GOOGLE_HEALTH_TESTS" = "true" ]; then \\
             runtime["base"] = "Nocturne main + PR #1293"
             runtime["nocturne"] = "main@" + source["base_commit"][:7] + " + PR #1293"
             runtime["release"] = "Google Health PR #1293"
-        else:
-            purpose = "Google Health ontwikkelen en testen op de actuele main-basis."
-            description = f"Google Health {source['commit'][:7]} · main {latest['commit'][:7]}"
-            runtime.pop("personal", None)
-            runtime["release"] = "Google Health development"
-        runtime["release_url"] = (source.get("pull_request_url") if letter in ("a", "b") else
-                                   f"https://github.com/{runtime['repository']}/tree/{source['commit']}")
+        runtime["release_url"] = source["pull_request_url"]
         runtime.update(purpose=purpose, purpose_url=runtime["release_url"],
                        test_plan=("Open Settings → Appearance → Units & Formats; test beide namen en eenheden, e-prefix, labinvoer, rapporten en print; herlaad en controleer voorkeuren."
                                   if letter == "b" else "Open Settings → Connectors → Google Health, autoriseer Google, test paging en herstel vanaf een datum voor steps, heart rate, weight en sleep."
                                   if letter == "a" else
-                                  "Start, rapporten, kanaalfuncties en sessiescheiding controleren met testgegevens."),
+                                  "Maak of reset een klokface en kies per face mg/dL of mmol/L en 12/24 uur; open de face als eigenaar, als ingelogde kijker met andere voorkeuren en via de publieke kloklink; controleer de builder-preview en dat oude faces mg/dL en 12 uur tonen."),
                        test_url="https://github.com/smokkelaar/nocturne-home-assistant")
         config["description"] = f"HA wrapper {runtime['app']} · {description}. Isolated test instance; not for clinical use."
         generated[package + "/config.json"] = json.dumps(config, indent=2) + "\n"
@@ -166,7 +158,7 @@ def main():
             target.write_bytes(expected)
         elif target.read_bytes() != expected:
             raise ValueError("Test channel differs from pinned source: " + path)
-    print("Independently pinned Test A, Test B and Google Health Test C verified.")
+    print("Independently pinned Test A, Test B and Test C verified.")
 
 
 if __name__ == "__main__":

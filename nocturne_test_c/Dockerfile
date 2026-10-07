@@ -1,4 +1,4 @@
-# Both API and web are compiled from the same checksum-verified Google Health source.
+# Both API and web are compiled from the same checksum-verified clock face units source.
 FROM node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d AS node
 FROM rust@sha256:4673f78db88b71f09d5451bbc404734807918161241215ba0a50bbbe9b448117 AS rust
 FROM mcr.microsoft.com/dotnet/sdk@sha256:0e53453ccfc8ff2d51319fe80c678971c6d0f8008dff3565fa88e15840b69854 AS source
@@ -10,7 +10,7 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@11.5.0
-ADD --checksum=sha256:41f1fa1971cb7805a5d4f130664de7c0aa039f1239e99c90654252eeed80bfc3 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/eb3d83d8f452b3bd5c67e50bdb52700e498955a4 /tmp/source.tar.gz
+ADD --checksum=sha256:310de70f70f50dd3858bb0b6d3b38f9f16f9cbfa23c914e122df63f5931d5fc3 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/e17d9ee806a44e613d93dd7e191c2693f5b27729 /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
 WORKDIR /src/src/Web
@@ -19,11 +19,6 @@ RUN printf '\n=== Nocturne build phase 3/7: install web dependencies and build b
 WORKDIR /src
 RUN printf '\n=== Nocturne build phase 4/7: compile API ===\n' \
     && dotnet build src/API/Nocturne.API/Nocturne.API.csproj -c Release -p:UseSharedCompilation=false
-ARG RUN_GOOGLE_HEALTH_TESTS=false
-RUN if [ "$RUN_GOOGLE_HEALTH_TESTS" = "true" ]; then \
-        printf '\n=== Nocturne validation: Google Health unit tests ===\n' && \
-        dotnet test tests/Unit/Nocturne.Connectors.GoogleHealth.Tests/Nocturne.Connectors.GoogleHealth.Tests.csproj -c Release -p:UseSharedCompilation=false; \
-    fi
 RUN printf '\n=== Nocturne build phase 5/7: compile alert engine ===\n' \
     && cargo build --manifest-path crates/Cargo.toml --release --locked -p nocturne-alerts-ffi
 RUN printf '\n=== Nocturne build phase 6/7: publish API ===\n' \
@@ -48,7 +43,7 @@ USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /out/api-build-date /opt/nocturne-ha/api-build-date
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so
-ARG BUILD_VERSION=0.3.25-c30
+ARG BUILD_VERSION=0.3.25-c31
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Test C - Home Assistant app" \

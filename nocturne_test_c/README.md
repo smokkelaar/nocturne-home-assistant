@@ -1,7 +1,7 @@
 # Nocturne Test C
 
-Isolated Nocturne main build with a personal pre-PR branch of the Google Health connector (heart-rate per-minute aggregation, monthly backfill with adaptive retries) for manual verification before it is sent to PR #1293. Default host port 8453, separate data and cookies.
+Isolated Nocturne main build with upstream [PR #2007](https://github.com/nightscout/nocturne/pull/2007) (a clock face carries its own glucose units and time format) for manual verification before merge. Default host port 8453, separate data and cookies.
 
-This test combines the approved Nocturne runtime basis with that personal source overlay. It covers read-only Google Health imports for steps, heart rate, weight and sleep; it makes no dosing advice or insulin/IOB changes.
+The source is the exact PR head commit, pinned with its archive checksum in `upstream-test-c.json`. It changes clock-face display only; it makes no dosing advice or insulin/IOB changes.
 
 [Installation and updates](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/UPDATES.md).

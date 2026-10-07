@@ -1,3 +1,8 @@
+## 0.3.25-c31
+
+- Test C now builds Nocturne main `0198225` + [PR #2007](https://github.com/nightscout/nocturne/pull/2007) (clock face units and time format) from pinned head `e17d9ee`. Google Health development moves off Test C; Test A keeps Google Health PR #1293.
+- Back up Test C before updating. Existing data, accounts and cookies are kept; Google Health connector data stays in the database but the connector is not part of this build.
+
 ## 0.3.25-c30
 
 - Refresh the pinned Google Health source and continue running its complete connector unit suite in CI, including the bounded-memory regression.
