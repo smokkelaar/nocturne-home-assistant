@@ -127,7 +127,12 @@ installation can continue after phase 7.
 
 The HA interface distinguishes the wrapper version, Personal feature version, and
 approved Nocturne Daily commit. HA packages add a delivery suffix, such as
-`0.3.0-1`. A new source commit with the same feature version increments that suffix.
+`0.3.26-p11`. The `p` identifies Personal, like `a`, `b` and `c` for the test
+channels. A new source commit with the same feature version increments the suffix
+(`p11` → `p12`). A new feature version starts at `p1`. This avoids the bare numeric
+suffix ordering bug at `-9` → `-10`. Legacy numeric suffixes are read only as
+migration input; new packages always use `p`. The feature version and source pins
+remain unchanged for a delivery-only fix.
 Official and Latest keep their own package versions.
 
 The source fork's `personal` branch and `.personal/version.json` identify the feature

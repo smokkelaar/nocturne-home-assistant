@@ -1,3 +1,8 @@
+## 0.3.26-p11
+
+- Fix HA package version ordering: Personal deliveries now use a `p` prefix, like the isolated test channels.
+- Packaging-only update from `0.3.26-10`; source pins, feature version, app identity and existing data are unchanged.
+
 ## 0.3.26-10
 
 - Guided standalone TOTP reset button: selected owner, backup/account confirmation, one-use request, and clear reenrollment steps. No new recovery code or changes to passkeys/data; existing login sessions stay signed in.

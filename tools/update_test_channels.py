@@ -86,7 +86,7 @@ def files():
                            "archive_sha256": source["archive_sha256"],
                            "upstream": {**latest, "commit": source["base_commit"],
                                         "commit_at": source["base_commit_at"]}}
-            recipe = update_personal.files(source_lock, personal["version"] + "-1", maintenance=False)["Dockerfile"].decode()
+            recipe = update_personal.files(source_lock, personal["version"] + "-p1", maintenance=False)["Dockerfile"].decode()
         else:
             recipe = (ROOT / "nocturne_personal" / "Dockerfile").read_text(encoding="utf-8")
         recipe = recipe.replace("Nocturne Personal Release", name).replace("Nocturne Latest Release", name)
