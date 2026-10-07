@@ -1,8 +1,8 @@
 {
   "name": "Nocturne Test C",
-  "version": "0.3.25-c31",
+  "version": "0.3.25-c32",
   "slug": "nocturne_test_c",
-  "description": "HA wrapper 0.1.12 \u00b7 Clock face units PR #2007 e17d9ee \u00b7 main 0198225. Isolated test instance; not for clinical use.",
+  "description": "HA wrapper 0.1.13 \u00b7 Clock face units PR #2007 e17d9ee \u00b7 main 0198225. Isolated test instance; not for clinical use.",
   "url": "https://github.com/smokkelaar/nocturne-home-assistant",
   "arch": [
     "amd64"
@@ -34,13 +34,17 @@
     "certificate": "",
     "private_key": "",
     "gateway_auth": true,
-    "skip_gateway_check": false
+    "skip_gateway_check": false,
+    "maintenance_enabled": false,
+    "maintenance_password": ""
   },
   "schema": {
     "public_url": "url",
     "certificate": "str",
     "private_key": "str",
     "gateway_auth": "bool",
-    "skip_gateway_check": "bool"
+    "skip_gateway_check": "bool",
+    "maintenance_enabled": "bool",
+    "maintenance_password": "password"
   }
 }

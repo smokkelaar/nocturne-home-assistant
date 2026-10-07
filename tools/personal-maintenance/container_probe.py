@@ -12,8 +12,8 @@ PASSWORD = 'ci-disposable-maintenance-password'
 AUTH = 'Basic ' + base64.b64encode(('maintenance:' + PASSWORD).encode()).decode()
 
 
-def request(path, auth=None, source=None, upgrade=False):
-    connection = http.client.HTTPConnection('127.0.0.1', 8099, timeout=5,
+def request(path, auth=None, source=None, upgrade=False, method='GET', body=None, port=8099):
+    connection = http.client.HTTPConnection('127.0.0.1', port, timeout=5,
         source_address=(source, 0) if source else None)
     headers = {'Host': 'ha.example.test'}
     if auth:
@@ -23,7 +23,9 @@ def request(path, auth=None, source=None, upgrade=False):
                         'Sec-WebSocket-Version': '13',
                         'Sec-WebSocket-Protocol': 'tty',
                         'Sec-WebSocket-Key': 'dGhlIHNhbXBsZSBub25jZQ=='})
-    connection.request('GET', path, headers=headers)
+    if body is not None:
+        headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    connection.request(method, path, body=body, headers=headers)
     response = connection.getresponse()
     status = response.status
     body = response.read() if status != 101 else b''
@@ -47,6 +49,14 @@ assert request('/maintenance/', 'Basic d3Jvbmc6d3Jvbmc=', '172.30.32.2')[0] == 4
 status, page = request('/maintenance/', AUTH, '172.30.32.2')
 assert status == 200 and b'Herstelwizard' in page
 assert PASSWORD.encode() not in page
+# The backend requires nginx's private per-start header, even from loopback.
+assert request('/maintenance/', port=8102)[0] == 403
+reset_form = 'token=guessed&backup=yes&confirm=yes'
+assert request('/maintenance/totp-reset', method='POST', body=reset_form, port=8102)[0] == 403
+assert request('/maintenance/totp-reset', AUTH, method='POST', body=reset_form)[0] == 403
+assert request('/maintenance/totp-reset', source='172.30.32.2', method='POST', body=reset_form)[0] == 401
+assert request('/maintenance/totp-reset', AUTH, '172.30.32.2', method='POST', body=reset_form)[0] == 400
+assert request('/maintenance/totp-reset', AUTH, '172.30.32.2')[0] == 404  # GET never mutates
 # The maintenance listener starts before the application: wait for the deliberate
 # startup failure instead of treating that short startup interval as a failure.
 for _ in range(20):

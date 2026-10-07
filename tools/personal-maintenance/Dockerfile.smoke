@@ -1,6 +1,7 @@
 FROM ubuntu:24.04
 RUN apt-get update && apt-get install -y --no-install-recommends python3 nginx ttyd openssl iproute2 \
     && rm -rf /var/lib/apt/lists/*
-COPY nocturne_personal/rootfs/ /
+ARG CHANNEL=nocturne_personal
+COPY ${CHANNEL}/rootfs/ /
 RUN chmod 755 /usr/local/bin/nocturne-ha
 ENTRYPOINT ["python3", "/opt/nocturne-ha/personal_entry.py"]

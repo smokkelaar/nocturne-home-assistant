@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Personal-only local management client with explicit HA-admin owner recovery."""
+"""Shared local management client with explicit HA-admin owner recovery."""
 import argparse
 import hashlib
 import http.client
@@ -103,7 +103,7 @@ def api_request(path, method='GET', body=None, service=False):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description='Personal wrapper onderhoud; nocturne-ha <command> --help')
+    parser = argparse.ArgumentParser(description='Nocturne wrapper onderhoud; nocturne-ha <command> --help')
     commands = parser.add_subparsers(dest='command', required=True)
     commands.add_parser('doctor', help='Configuratie, DNS, certificaat en lokale API controleren')
     commands.add_parser('status', help='Zelfde technische diagnose als doctor')
@@ -111,6 +111,7 @@ def main(argv=None):
     recover.add_argument('--url', help='Nieuw HTTPS-adres om een herstelplan voor te maken')
     owner = commands.add_parser('owner-recovery', help='Lokale HA-beheerder: herstellen zonder bestaande Nocturne-login')
     actions = owner.add_subparsers(dest='action', required=True)
+    actions.add_parser('check', help='Controleer deze build en database; wijzigt geen accounts of codes')
     actions.add_parser('list', help='Vind bestaande eigenaars, gebruikersnamen en tenants')
     issue = actions.add_parser('issue', help='Voeg een nieuwe eenmalige herstelcode toe')
     issue.add_argument('--tenant', required=True)
@@ -136,7 +137,11 @@ def main(argv=None):
             print(json.dumps(recovery_plan(public_url=args.url), indent=2, ensure_ascii=False))
         elif args.command == 'owner-recovery':
             import owner_recovery
-            if args.action == 'list':
+            if args.action == 'check':
+                result = owner_recovery.readiness()
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+                return 0 if result['compatible'] else 1
+            elif args.action == 'list':
                 result = owner_recovery.owners()
             elif args.action == 'issue':
                 result = owner_recovery.issue(args.tenant, args.subject, args.write, args.backup_confirmed, args.username, args.reset_totp)
@@ -155,6 +160,12 @@ def main(argv=None):
             return api_request(args.path, args.method, body, args.service)
         return 0
     except (ValueError, OSError, KeyError, RuntimeError, subprocess.SubprocessError, http.client.HTTPException):
+        if args.command == 'owner-recovery':
+            print('Eigenaarherstel niet voltooid. Voer nocturne-ha owner-recovery check uit. '
+                  'Controleer daarna met owner-recovery list de juiste tenant en eigenaar. '
+                  'Een nieuwe code vereist --backup-confirmed --write; volg de herstelwizard. '
+                  'Geen geheimen gelogd.', file=sys.stderr)
+            return 1
         print('Onderhoudsopdracht mislukt; controleer configuratie en dienststatus. Geen geheimen gelogd.', file=sys.stderr)
         return 1
 

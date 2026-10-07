@@ -1,4 +1,4 @@
-"""CI-only native recovery test in cookie_smoke.py's disposable Personal fixture.
+"""CI-only native recovery test in smoke.py's disposable configured fixture.
 
 No real login credentials, real accounts or user data are accepted or logged.
 """
@@ -31,6 +31,17 @@ try:
     assert run.psql(database='nocturne', sql=f"SELECT count(*) FROM recovery_codes WHERE subject_id = '{subject}'") == '0'
     before = run.psql(database='nocturne', sql=f"SELECT count(*) FROM passkey_credentials WHERE subject_id = '{subject}'")
     # Synthetic unusable second factor: no secret is ever read or decrypted.
+    run.psql(database='nocturne', sql=f"INSERT INTO totp_credentials (id, subject_id, secret_key, created_at) "
+             f"VALUES ('{uuid.uuid4()}', '{subject}', decode('010203', 'hex'), now())")
+    phase = 'STANDALONE_TOTP_RESET'
+    reset = owner_recovery.reset_totp(owner['tenant_id'], subject, write=True,
+                                     backup_confirmed=True, expected_username=owner['username'])
+    assert reset['removed'] == 1
+    assert run.psql(database='nocturne', sql=f"SELECT count(*) FROM totp_credentials WHERE subject_id = '{subject}'") == '0'
+    assert run.psql(database='nocturne', sql=f"SELECT count(*) FROM recovery_codes WHERE subject_id = '{subject}'") == '0'
+    assert run.psql(database='nocturne', sql=f"SELECT count(*) FROM passkey_credentials WHERE subject_id = '{subject}'") == before
+    assert owner_recovery.reset_totp(owner['tenant_id'], subject, True, True, owner['username'])['removed'] == 0
+    # Preserve coverage of the separate CLI flag as well as the standalone action.
     run.psql(database='nocturne', sql=f"INSERT INTO totp_credentials (id, subject_id, secret_key, created_at) "
              f"VALUES ('{uuid.uuid4()}', '{subject}', decode('010203', 'hex'), now())")
 
@@ -144,4 +155,4 @@ except BaseException as error:
     print(f'NATIVE_PROBE_FAILED:OWNER_RECOVERY_{phase}:{type(error).__name__}', file=sys.stderr)
     raise SystemExit(1) from None
 else:
-    print('PASS: lost-credential owner recovery, replacement passkey registration/login, TOTP reset, single use and revocation')
+    print('PASS: lost-credential owner recovery, replacement passkey registration/login, standalone and CLI TOTP reset, single use and revocation')

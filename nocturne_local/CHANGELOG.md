@@ -1,3 +1,9 @@
+## 0.1.13-1
+
+- Guided standalone TOTP reset button: selected owner, backup/account confirmation, one-use request, and clear reenrollment steps. No new recovery code or changes to passkeys/data; existing login sessions stay signed in.
+- Shared wrapper 0.1.13: opt-in HA maintenance terminal, CLI and recovery wizard across all six channels. Disabled by default; separate password required.
+- Existing identities, ports, source pins and data remain intact. Owner recovery accepts only reviewed source commits.
+
 ## 0.1.11-1
 
 - Wrapper 0.1.11 forwards the exact Nocturne source commit and actual API build date to Nocturne.

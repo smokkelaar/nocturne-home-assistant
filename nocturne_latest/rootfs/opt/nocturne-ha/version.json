@@ -1,6 +1,6 @@
 {
-  "app": "0.1.12",
-  "package": "0.1.12-1",
+  "app": "0.1.13",
+  "package": "0.1.13-1",
   "nocturne": "main@8635bd5",
   "repository": "nightscout/nocturne",
   "source_commit": "8635bd530e6f8b792c3f2442cd3198ec7104fa96",

@@ -22,7 +22,7 @@
     },
     "maintenance_enabled": {
       "name": "Enable experimental maintenance",
-      "description": "Personal only: CLI, recovery wizard and root terminal inside this app through HA. Off by default. Separate password required. Back up first; save and restart."
+      "description": "CLI, recovery wizard and root terminal inside this app through HA. Off by default. Separate password required. Back up first; save and restart."
     },
     "maintenance_password": {
       "name": "Separate maintenance password",

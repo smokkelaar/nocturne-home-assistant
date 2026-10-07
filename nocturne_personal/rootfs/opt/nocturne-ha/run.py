@@ -358,7 +358,7 @@ def make_handler(supervisor, options, passwords, test_certificate):
             body = status_page(options, supervisor.status, passwords['gateway'], test_certificate,
                                supervisor.checks, supervisor.resources.snapshot()).encode()
             if os.environ.get('NOCTURNE_PERSONAL_STATUS_PORT') == '8100':
-                body = body.replace(b'</html>', b'<p><a href="maintenance/">Personal onderhoud: CLI, terminal en herstelwizard</a></p></html>')
+                body = body.replace(b'</html>', b'<p><a href="maintenance/">Onderhoud: CLI, terminal en herstelwizard</a></p></html>')
             self.send_response(200)
             self.send_header('Content-Type', 'text/html; charset=utf-8')
             self.send_header('Cache-Control', 'no-store')

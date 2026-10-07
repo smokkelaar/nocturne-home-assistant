@@ -44,7 +44,11 @@ jobs:
           docker build --platform linux/amd64 --tag nocturne-test-a:ci nocturne_test_a
           python3 tools/smoke.py --image nocturne-test-a:ci
   maintenance:
-    name: Personal maintenance recovery and ingress
+    name: Maintenance recovery and ingress (${{ matrix.channel }})
+    strategy:
+      fail-fast: false
+      matrix:
+        channel: [nocturne_local, nocturne_latest, nocturne_personal, nocturne_test_a, nocturne_test_b, nocturne_test_c]
     needs: unit
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -54,7 +58,7 @@ jobs:
           persist-credentials: false
       - name: Test maintenance with deliberately broken Nocturne configuration
         run: |
-          docker build -f tools/personal-maintenance/Dockerfile.smoke -t nocturne-maintenance:ci .
+          docker build --build-arg CHANNEL=${{ matrix.channel }} -f tools/personal-maintenance/Dockerfile.smoke -t nocturne-maintenance:ci .
           mkdir "$RUNNER_TEMP/maintenance-data"
           printf '%s' '{"public_url":"invalid","maintenance_enabled":true,"maintenance_password":"ci-disposable-maintenance-password"}' > "$RUNNER_TEMP/maintenance-data/options.json"
           docker run -d --name maintenance-test --cap-add NET_ADMIN -v "$RUNNER_TEMP/maintenance-data:/data" nocturne-maintenance:ci
