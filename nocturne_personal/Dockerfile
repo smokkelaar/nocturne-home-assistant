@@ -43,7 +43,7 @@ USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /out/api-build-date /opt/nocturne-ha/api-build-date
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so
-ARG BUILD_VERSION=0.3.26-9
+ARG BUILD_VERSION=0.3.26-10
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Personal Release - Home Assistant app" \
@@ -86,8 +86,9 @@ USER root
 RUN dotnet --list-runtimes && /usr/lib/postgresql/17/bin/postgres --version
 
 COPY rootfs/ /
+RUN python3 /opt/nocturne-ha/recovery_compatibility.py
 RUN python3 -m compileall -q /opt/nocturne-ha \
-    && chmod 755 /opt/nocturne-ha/run.py /usr/local/bin/nocturne-ha /usr/local/bin/nocturne-ha \
+    && chmod 755 /opt/nocturne-ha/run.py /usr/local/bin/nocturne-ha \
     && nginx -t -c /opt/nocturne-ha-build/check_cookies.conf
 ENV NODE_ENV=production DOTNET_ENVIRONMENT=Production ASPNETCORE_ENVIRONMENT=Production
 WORKDIR /app

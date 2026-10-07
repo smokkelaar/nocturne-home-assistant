@@ -15,14 +15,16 @@ nocturne-ha api /api/v4/status
 pair and whether the local API responds. These checks do not prove browser
 reachability or certificate trust. `status` is an alias for `doctor`.
 
-On Official, Latest and Test A/B/C, `api` accepts only local `/api/...` paths
-and sends GET requests to the container's loopback API. It does not accept
-external URLs, add service credentials, follow redirects, or perform writes.
-Responses are capped at 2 MB. Some endpoints may still return private or
-health-related information: inspect the output locally and do not publish it
-unredacted.
+From wrapper 0.1.13 all six channels include the opt-in maintenance terminal,
+guided recovery, and enhanced CLI. `api` accepts only local `/api/...` paths,
+defaults to GET and follows no redirects. Mutations require `--write`; powerful
+instance-service credentials require the separate `--service` flag. Responses
+are capped at 2 MB and can contain private data. Inspect output locally and
+do not publish it unredacted.
 
-Personal retains its separate opt-in maintenance terminal and the enhanced
-`nocturne-ha api` and `owner-recovery` commands; those powerful options remain
-Personal-only and are documented in [Personal maintenance](PERSONAL-MAINTENANCE.md).
+Start lost-credential recovery with `nocturne-ha owner-recovery check`, then
+`nocturne-ha owner-recovery list`. A build whose recovery contract is unknown
+cannot issue or revoke owner-recovery codes. Unrelated new source commits are
+accepted automatically when their complete recovery contract is unchanged.
+Follow the [step-by-step maintenance guide](PERSONAL-MAINTENANCE.md).
 No channel exposes a public debug endpoint or Docker/host access.

@@ -1,3 +1,8 @@
+## 0.3.25-c32
+
+- Shared wrapper 0.1.13: opt-in HA maintenance terminal, CLI and recovery wizard across all six channels. Disabled by default; separate password required.
+- Existing identities, ports, source pins and data remain intact. Owner recovery accepts only reviewed source commits.
+
 ## 0.3.25-c31
 
 - Test C now builds Nocturne main `0198225` + [PR #2007](https://github.com/nightscout/nocturne/pull/2007) (clock face units and time format) from pinned head `e17d9ee`. Google Health development moves off Test C; Test A keeps Google Health PR #1293.

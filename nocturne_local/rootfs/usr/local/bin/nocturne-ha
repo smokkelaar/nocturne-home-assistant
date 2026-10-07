@@ -1,5 +1,2 @@
 #!/bin/sh
-if [ -f /opt/nocturne-ha/maintenance_cli.py ]; then
-    exec python3 /opt/nocturne-ha/maintenance_cli.py "$@"
-fi
-exec python3 /opt/nocturne-ha/diagnostic_cli.py "$@"
+exec python3 /opt/nocturne-ha/maintenance_cli.py "$@"

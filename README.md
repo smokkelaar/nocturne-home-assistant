@@ -43,6 +43,12 @@ This is an app-store repository, **not a HACS integration**. HA ingress currentl
 
 ## How updates reach you
 
+From wrapper **0.1.13**, all six variants share an optional HA maintenance terminal,
+diagnostics and guided account recovery. Off by default; each app requires its own
+maintenance password. New builds check their recovery source contract automatically,
+so unrelated source updates remain compatible. Unknown recovery contracts disable
+only new owner-recovery codes. [Dutch step-by-step recovery guide](docs/PERSONAL-MAINTENANCE.md).
+
 All six apps use **one shared functional HA-wrapper version** (currently 0.1.12).
 Official pairs it with Nocturne 0.2.4; Latest pairs it with a pinned main snapshot.
 HA's technical package version adds a delivery counter, e.g. `0.1.5-1`.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Opt-in Personal ingress/ttyd host, independent of Nocturne/TLS startup."""
+"""Shared opt-in ingress/ttyd host, independent of Nocturne/TLS startup."""
 import html
 import http.server
 import json
@@ -17,6 +17,10 @@ from maintenance_cli import doctor, recovery_plan
 BASE = Path('/opt/nocturne-ha')
 DATA = Path('/data')
 RUNTIME = Path('/run/nocturne-maintenance')
+
+
+def app_name():
+    return json.loads((BASE / 'version.json').read_text())['name']
 
 
 def enabled_options(raw):
@@ -48,13 +52,13 @@ http {{
     add_header Referrer-Policy "no-referrer" always;
     add_header X-Content-Type-Options "nosniff" always;
     location /maintenance/ {{
-      auth_basic "Nocturne Personal onderhoud";
+      auth_basic "{app_name()} onderhoud";
       auth_basic_user_file {RUNTIME}/htpasswd;
       proxy_pass http://127.0.0.1:8102;
       proxy_set_header Authorization "";
     }}
     location {terminal_path}/ {{
-      auth_basic "Nocturne Personal onderhoud";
+      auth_basic "{app_name()} onderhoud";
       auth_basic_user_file {RUNTIME}/htpasswd;
       proxy_pass http://127.0.0.1:8101;
       proxy_http_version 1.1;
@@ -77,7 +81,47 @@ http {{
 '''
 
 
-def wizard_page(raw, terminal_path, state, target=None):
+def owner_guidance(selection=None, target=None):
+    import owner_recovery
+    readiness = owner_recovery.readiness()
+    status = '<p role="status">' + html.escape(readiness['message']) + '</p>'
+    if not readiness['compatible']:
+        return status + '<p><code>nocturne-ha owner-recovery check</code></p><p>Los eerst deze controle op. Gebruik intussen een bestaande herstelcode als je die hebt. Verwijder de app of database niet en maak geen nieuwe eigenaar aan.</p>'
+    try:
+        owners = owner_recovery.owners()
+    except (ValueError, OSError, RuntimeError, subprocess.SubprocessError):
+        return status + '<p>Eigenaars konden nog niet worden gelezen. Voer <code>nocturne-ha owner-recovery check</code> uit en herstart zo nodig de app via HA.</p>'
+    if not owners:
+        return status + '<p>Geen actieve eigenaar gevonden. Controleer of je de juiste app hebt geopend. Maak geen nieuwe installatie boven op je bestaande gegevens; laat de situatie eerst onderzoeken.</p>'
+    options = '<option value="">Kies bewust het bestaande account dat je wilt herstellen</option>'
+    chosen = None
+    for owner in owners:
+        key = owner['tenant_id'] + ':' + owner['subject_id']
+        selected = ' selected' if selection == key else ''
+        if selected:
+            chosen = owner
+        label = (owner.get('tenant_name') or owner.get('tenant_slug') or owner['tenant_id']) + ' · ' + (owner.get('username') or owner.get('name') or 'account zonder gebruikersnaam')
+        options += '<option value="' + html.escape(key, quote=True) + '"' + selected + '>' + html.escape(label) + '</option>'
+    hidden = '<input type="hidden" name="url" value="' + html.escape(target, quote=True) + '">' if target else ''
+    form = '<form method="get">' + hidden + '<label>Bestaande eigenaar <select name="owner" required>' + options + '</select></label><button>Toon stappen voor dit account</button></form>'
+    if chosen is None:
+        return status + form + '<p>Selecteren leest alleen gegevens. Je maakt hier nog geen herstelcode.</p>'
+    command = ('nocturne-ha owner-recovery issue --tenant ' + chosen['tenant_id'] + ' --subject ' + chosen['subject_id'] + ' --backup-confirmed --write')
+    username_help = ''
+    if not chosen.get('username'):
+        command += ' --username recovery-owner'
+        username_help = '<p>Dit bestaande account heeft geen gebruikersnaam. De opdracht geeft het de naam <strong>recovery-owner</strong>. Kies een andere eenvoudige, unieke naam als die al in gebruik is; je maakt geen nieuw account.</p>'
+    return status + form + f'''<ol>
+<li><strong>Controleer je keuze.</strong> App: {html.escape(app_name())}; gebruiker: {html.escape(chosen.get('username') or 'nog geen gebruikersnaam')}; tenant: <code>{html.escape(chosen['tenant_id'])}</code>. Kies bij twijfel geen account.</li>
+<li><strong>Maak nu een volledige HA-back-up van deze app</strong>, inclusief appgegevens. Download de back-up en bewaar de bijbehorende herstelinformatie. Ga pas verder als die klaar is.</li>
+<li><strong>Open de terminal</strong> en voer onderstaande opdracht uit. De opties <code>--backup-confirmed --write</code> bevestigen dat je bewust één nieuwe herstelcode aan dit bestaande account toevoegt.{username_help}<p><code>{html.escape(command)}</code><button type="button" class="copy">Kopieer opdracht</button></p>
+<p>Heb je je authenticator ook verloren? Voeg alleen dan <code>--reset-totp</code> toe. Dat verwijdert de tweede factor voor dit account, ook als het in meerdere tenants voorkomt. Zonder die optie blijft TOTP actief.</p></li>
+<li><strong>Bewaar de terminaluitvoer tijdelijk privé.</strong> Je ziet <code>username</code>, <code>code</code> en <code>code_id</code>. De nieuwe code verschijnt alleen in die uitvoer; deel die niet en plak hem niet in deze wizard, een issue of logbestand.</li>
+<li><strong>Open het Nocturne-hersteladres hieronder in een aparte browsertab.</strong> Gebruik de getoonde gebruikersnaam en code en registreer een nieuwe passkey. Je moet toegang hebben tot het juiste HTTPS-domein; HA Ingress kan de passkey niet voor je aanmaken.</li>
+</ol>'''
+
+
+def wizard_page(raw, terminal_path, state, target=None, selection=None):
     report = doctor(raw)
     try:
         plan = recovery_plan(raw, target)
@@ -88,12 +132,19 @@ def wizard_page(raw, terminal_path, state, target=None):
         link = ''
     report_html = ''.join('<dt>' + html.escape(key) + '</dt><dd>' + html.escape(str(value)) + '</dd>'
                           for key, value in report.items())
+    guidance = owner_guidance(selection, target)
     return f'''<!doctype html><html lang="nl"><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>Personal onderhoud</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(app_name())} onderhoud</title>
 <style>body{{font:16px system-ui;background:#101724;color:#e5edf7;max-width:850px;margin:30px auto;padding:20px}}
 section{{background:#1d293c;padding:20px;border-radius:12px;margin:20px 0}}a{{color:#80d5fc}}input,button{{padding:10px}}
-dt{{font-weight:bold}}dd{{margin:4px 0 15px}}li{{margin:12px 0}}code{{overflow-wrap:anywhere}}</style>
-<h1>Nocturne Personal · onderhoudsproef</h1><p><a href="../">Dienststatus</a></p>
+dt{{font-weight:bold}}dd{{margin:4px 0 15px}}li{{margin:12px 0}}code{{overflow-wrap:anywhere}}select{{max-width:100%;padding:10px}}button{{margin:5px}}.copy{{display:block}}</style>
+<h1>{html.escape(app_name())} · onderhoudsproef</h1><p><a href="../">Dienststatus</a></p>
+<section><h2>Begin hier: wat is er mis?</h2><p>Je werkt alleen aan <strong>{html.escape(app_name())}</strong>. Controleer eerst of dit de juiste variant met jouw gegevens is.</p>
+<ul><li><strong>Je hebt nog een ongebruikte herstelcode:</strong> controleer het HTTPS-adres hieronder en gebruik die code op het Nocturne-hersteladres. Je hoeft geen nieuwe code te maken.</li>
+<li><strong>Het domein of certificaat is veranderd:</strong> herstel eerst <code>public_url</code>, DNS en certificaat via de HA-appconfiguratie. Herstart de app. Een passkey voor het oude domein werkt doorgaans niet op het nieuwe domein.</li>
+<li><strong>Alle inloggegevens kwijt:</strong> volg hieronder de controle en kies bewust je bestaande eigenaar.</li>
+<li><strong>Nocturne start niet:</strong> gebruik de diagnose. Onderhoud kan bereikbaar blijven terwijl PostgreSQL en Nocturne gestopt zijn; eigenaarherstel vereist een werkende database.</li></ul>
+<p>Deze pagina controleert en begeleidt. Alleen een expliciete opdracht in de terminal kan een herstelcode maken; selecteren of een herstelplan openen wijzigt niets.</p></section>
 <section><h2>1 · CLI</h2><p><code>nocturne-ha doctor</code> · <code>nocturne-ha recover</code> · <code>nocturne-ha api --help</code></p>
 <p>CLI-uitvoer kan privégegevens bevatten. Geheimen en commandogeschiedenis worden niet centraal gelogd.</p></section>
 <section><h2>2 · Onderhoudsterminal</h2><p><a href="terminal/{terminal_path.rsplit('/', 1)[1]}/">Open terminal</a></p>
@@ -103,17 +154,25 @@ Maak eerst een HA-back-up. Geen toegang tot de Docker-host of andere apps.</p></
 <form method="get"><label>Gewenst HTTPS-adres <input name="url" type="url" required value="{html.escape(target or raw.get('public_url', ''), quote=True)}"></label>
 <button>Herstelplan controleren</button></form><ol>{steps}</ol>{link}
 <h3>Alle Nocturne-inloggegevens kwijt?</h3>
-<p>Open de onderhoudsterminal en voer <code>nocturne-ha owner-recovery list</code> uit.
-Hiermee vind je ook een vergeten gebruikersnaam. Maak eerst een HA-back-up en kies de juiste tenant en bestaande eigenaar.</p>
-<p><code>nocturne-ha owner-recovery issue --tenant TENANT_ID --subject SUBJECT_ID --backup-confirmed --write</code></p>
-<p>Deze opdracht voegt een nieuwe eenmalige herstelcode toe. Gebruik die met de getoonde gebruikersnaam op het hersteladres;
-registreer daar een nieuwe passkey. Er is geen oude Nocturne-login of oude herstelcode nodig.
-Ben je ook de tweefactor-authenticator kwijt, voeg dan bewust <code>--reset-totp</code> toe;
-dat verwijdert TOTP voor dit account. Stel het na herstel opnieuw in.
-Toegang tot HA of de lokale containerconsole blijft vereist. PostgreSQL moet draaien;
-herstel een ongeldige domeinconfiguratie eerst via HA en herstart de app.</p>
+{guidance}{link}
+<h3>Na herstel: controleer of je echt klaar bent</h3><ol>
+<li>Meld af en weer aan met de nieuwe passkey. Controleer of je het oorspronkelijke account en je bestaande gegevens ziet.</li>
+<li>Stel TOTP opnieuw in als je die hebt gereset. Verwijder daarna alleen de oude passkeys die je niet meer gebruikt.</li>
+<li>Genereer en bewaar nieuwe Nocturne-herstelcodes op een veilige plek.</li>
+<li>Heb je de zojuist gemaakte code niet gebruikt? Voer <code>nocturne-ha owner-recovery revoke --code-id CODE_ID --write</code> uit, met de <code>code_id</code> uit de terminaluitvoer. Een ongebruikte code verloopt niet automatisch.</li>
+<li>Zet onderhoud uit in de HA-appconfiguratie en herstart. Controleer daarna dat de terminal niet meer bereikbaar is.</li></ol>
+<details><summary>Het lukt nog niet — wat nu?</summary><ul>
+<li><strong>Database niet bereikbaar:</strong> controleer URL/certificaat in HA, herstart en wacht tot de dienst gestart is. Voer daarna <code>nocturne-ha owner-recovery check</code> uit.</li>
+<li><strong>Build niet geschikt voor eigenaarherstel:</strong> de terminal blijft werken. Gebruik een bestaande code of laat het gewijzigde herstelmechanisme controleren. Zet geen compatibiliteitscontrole uit.</li>
+<li><strong>Code wordt geweigerd:</strong> gebruik de gebruikersnaam uit de uitvoer, controleer app en domein, en of de code al gebruikt is. Gebruik daarna de zojuist geregistreerde passkey.</li>
+<li><strong>Certificaatwaarschuwing of geen passkeyknop:</strong> herstel DNS en vertrouwd HTTPS en open Nocturne buiten HA Ingress.</li>
+<li><strong>Ook HA-toegang kwijt:</strong> herstel eerst HA-toegang of een vertrouwde back-up. Deze wizard kan geen beheerderstoegang tot HA maken.</li></ul></details>
 <p>De wizard zelf wijzigt geen instellingen, verbruikt geen herstelcodes en reset geen accounts.
-Passkeyregistratie gebeurt op het geldige Nocturne-domein, niet in HA Ingress.</p></section></html>'''
+Passkeyregistratie gebeurt op het geldige Nocturne-domein, niet in HA Ingress.</p></section>
+<script>document.querySelectorAll('.copy').forEach(button => button.addEventListener('click', async () => {{
+try {{ await navigator.clipboard.writeText(button.previousElementSibling.textContent); button.textContent = 'Opdracht gekopieerd'; }}
+catch {{ button.textContent = 'Selecteer en kopieer de opdracht handmatig'; }}
+}}));</script></html>'''
 
 
 def wizard_handler(raw, terminal_path, state):
@@ -123,10 +182,14 @@ def wizard_handler(raw, terminal_path, state):
                 self.send_error(404)
                 return
             target = parse_qs(urlsplit(self.path).query).get('url', [None])[0]
+            selection = parse_qs(urlsplit(self.path).query).get('owner', [None])[0]
             if target and len(target) > 300:
                 self.send_error(400)
                 return
-            body = wizard_page(raw, terminal_path, state, target).encode()
+            if selection and len(selection) > 80:
+                self.send_error(400)
+                return
+            body = wizard_page(raw, terminal_path, state, target, selection).encode()
             self.send_response(200)
             self.send_header('Content-Type', 'text/html; charset=utf-8')
             self.send_header('Cache-Control', 'no-store')
@@ -188,7 +251,7 @@ def main():
         children.append(subprocess.Popen(['nginx', '-c', str(conf), '-g', 'daemon off;'], start_new_session=True))
         env = {**os.environ, 'NOCTURNE_PERSONAL_STATUS_PORT': '8100'}
         app = subprocess.Popen(['python3', str(BASE / 'run.py')], env=env)
-        print('Personal onderhoud ingeschakeld via HA Ingress; gebruiker maintenance. Geen extra hostpoort.', flush=True)
+        print(app_name() + ' onderhoud ingeschakeld via HA Ingress; gebruiker maintenance. Geen extra hostpoort.', flush=True)
         while not stop.wait(1):
             if any(process.poll() is not None for process in children):
                 raise RuntimeError('Onderhoudsdienst gestopt')

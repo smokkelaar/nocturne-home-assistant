@@ -1,4 +1,4 @@
-"""CI-only native recovery test in cookie_smoke.py's disposable Personal fixture.
+"""CI-only native recovery test in smoke.py's disposable configured fixture.
 
 No real login credentials, real accounts or user data are accepted or logged.
 """

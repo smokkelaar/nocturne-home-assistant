@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 
 import update_personal
+import personal_maintenance
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -142,6 +143,15 @@ def files():
         config["description"] = f"HA wrapper {runtime['app']} · {description}. Isolated test instance; not for clinical use."
         generated[package + "/config.json"] = json.dumps(config, indent=2) + "\n"
         generated[package + "/rootfs/opt/nocturne-ha/version.json"] = json.dumps(runtime, indent=2) + "\n"
+    # Overlay each isolated package, including its own runtime and translations.
+    for letter in ('a', 'b', 'c'):
+        package = 'nocturne_test_' + letter
+        shared = ('config.json', 'Dockerfile', 'DOCS.md', 'translations/nl.json',
+                  'translations/en.json', 'rootfs/opt/nocturne-ha/run.py')
+        inputs = {path: generated.get(package + '/' + path,
+                  (ROOT / package / path).read_bytes()) for path in shared}
+        for path, data in personal_maintenance.apply(inputs).items():
+            generated[package + '/' + path] = data
     return {path: data if isinstance(data, bytes) else data.encode("utf-8")
             for path, data in generated.items()}
 

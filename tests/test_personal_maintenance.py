@@ -19,10 +19,73 @@ def load(name, file):
 
 cli = load('maintenance_cli', BASE / 'maintenance_cli.py')
 entry = load('personal_entry', BASE / 'personal_entry.py')
+entry.BASE = BASE
 settings = load('personal_maintenance_settings', BASE / 'settings.py')
+sys.path.insert(0, str(ROOT / 'tools'))
+import personal_maintenance
 
 
 class MaintenanceTests(unittest.TestCase):
+    def test_all_channels_package_same_overlay_with_isolated_identity_and_auth_realm(self):
+        channels = ('nocturne_local', 'nocturne_latest', 'nocturne_personal',
+                    'nocturne_test_a', 'nocturne_test_b', 'nocturne_test_c')
+        realms = set()
+        for channel in channels:
+            directory = ROOT / channel
+            with self.subTest(channel=channel):
+                config = json.loads((directory / 'config.json').read_text())
+                self.assertFalse(config['options']['maintenance_enabled'])
+                self.assertEqual('', config['options']['maintenance_password'])
+                self.assertEqual({'8448/tcp'}, set(config['ports']))
+                for flag in ('docker_api', 'host_pid', 'full_access', 'privileged'):
+                    self.assertNotIn(flag, config)
+                for template in (ROOT / 'tools/personal-maintenance/rootfs').rglob('*'):
+                    if template.is_file() and '__pycache__' not in template.parts:
+                        path = template.relative_to(ROOT / 'tools/personal-maintenance/rootfs')
+                        self.assertEqual(template.read_bytes(), (directory / 'rootfs' / path).read_bytes())
+                with patch.object(entry, 'BASE', directory / 'rootfs/opt/nocturne-ha'):
+                    proxy = entry.nginx_configuration('/maintenance/terminal/test-nonce')
+                    realms.add(entry.app_name())
+                self.assertIn('auth_basic "' + config['name'] + ' onderhoud"', proxy)
+        self.assertEqual(6, len(realms))
+
+    def test_overlay_is_idempotent_and_preserves_appended_channel_documentation(self):
+        directory = ROOT / 'nocturne_latest'
+        paths = ('config.json', 'Dockerfile', 'DOCS.md', 'translations/nl.json',
+                 'translations/en.json', 'rootfs/opt/nocturne-ha/run.py')
+        original = {p: (directory / p).read_bytes() for p in paths}
+        original['DOCS.md'] += b'\nChannel-specific tail must survive.\n'
+        generated = personal_maintenance.apply(original)
+        self.assertEqual(generated, personal_maintenance.apply(generated))
+        self.assertIn('Channel-specific tail must survive.', generated['DOCS.md'])
+        self.assertEqual(json.loads(original['config.json'])['slug'], json.loads(generated['config.json'])['slug'])
+
+    def test_guidance_selects_existing_owner_without_issuing_code_and_keeps_target_url(self):
+        import owner_recovery
+        owner = {'tenant_id': '11111111-1111-4111-8111-111111111111',
+                 'subject_id': '22222222-2222-4222-8222-222222222222',
+                 'tenant_name': '<script>unsafe</script>', 'username': 'existing-owner'}
+        selection = owner['tenant_id'] + ':' + owner['subject_id']
+        with patch.object(owner_recovery, 'readiness', return_value={'compatible': True, 'message': 'Ready'}), \
+             patch.object(owner_recovery, 'owners', return_value=[owner]), \
+             patch.object(owner_recovery, 'issue') as issue:
+            page = entry.owner_guidance(selection, 'https://new.example.net:8450')
+        issue.assert_not_called()
+        self.assertIn('--tenant ' + owner['tenant_id'] + ' --subject ' + owner['subject_id'], page)
+        self.assertIn('--backup-confirmed --write', page)
+        self.assertIn('name="url" value="https://new.example.net:8450"', page)
+        self.assertNotIn('<script>unsafe</script>', page)
+
+    def test_blocked_recovery_explains_next_step_without_reading_accounts(self):
+        import owner_recovery
+        with patch.object(owner_recovery, 'readiness', return_value={'compatible': False, 'message': 'Build blocked'}), \
+             patch.object(owner_recovery, 'owners') as owners:
+            page = entry.owner_guidance()
+        owners.assert_not_called()
+        self.assertIn('owner-recovery check', page)
+        self.assertNotIn('owner-recovery issue', page)
+
+
     def test_disabled_requires_no_new_password_and_preserves_old_configuration(self):
         self.assertEqual((False, ''), entry.enabled_options({}))
         config = json.loads((ROOT / 'nocturne_personal/config.json').read_text())
@@ -89,6 +152,7 @@ class MaintenanceTests(unittest.TestCase):
     def test_wizard_escapes_input_does_not_show_secret_and_uses_relative_ingress_links(self):
         raw = {'public_url': 'https://example.net', 'maintenance_password': 'hidden-test-secret'}
         with patch.object(entry, 'doctor', return_value={'api': 'stopped'}), \
+             patch.object(entry, 'owner_guidance', return_value=''), \
              patch.object(entry, 'recovery_plan', return_value={'steps': ['Keep data'],
                          'recovery_url': 'https://example.net/auth/recovery'}):
             page = entry.wizard_page(raw, '/maintenance/terminal/test-nonce', lambda: 'stopped', '"><script>bad</script>')

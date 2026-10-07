@@ -1,3 +1,8 @@
+## 0.3.26-10
+
+- Shared wrapper 0.1.13: opt-in HA maintenance terminal, CLI and recovery wizard across all six channels. Disabled by default; separate password required.
+- Existing identities, ports, source pins and data remain intact. Owner recovery accepts only reviewed source commits.
+
 ## 0.3.26-9
 
 - Fix Steps and Heart Rate reports crashing with `each_key_duplicate` when the profile's lower and upper glucose target values coincide.

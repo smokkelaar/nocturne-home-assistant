@@ -1,0 +1,132 @@
+{
+  "format": 1,
+  "files": [
+    "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/SubjectEntity.cs",
+    "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantEntity.cs",
+    "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantMemberEntity.cs",
+    "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantMemberRoleEntity.cs",
+    "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantRoleEntity.cs",
+    "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/RecoveryCodeEntity.cs",
+    "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TotpCredentialEntity.cs",
+    "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/PasskeyCredentialEntity.cs",
+    "src/API/Nocturne.API/Services/Auth/RecoveryCodeService.cs",
+    "src/API/Nocturne.API/Controllers/Authentication/PasskeyController.cs",
+    "src/API/Nocturne.API/Extensions/ServiceRegistrationExtensions.cs",
+    "src/Core/Nocturne.Core.Models/Configuration/JwtOptions.cs",
+    "src/Core/Nocturne.Core.Models/Configuration/OidcOptions.cs",
+    "src/Core/Nocturne.Core.Models/Configuration/NocturneOptions.cs",
+    "src/Core/Nocturne.Core.Constants/ServiceNames.cs"
+  ],
+  "profiles": [
+    {
+      "kind": "hmac",
+      "reviewed_repository": "nightscout/nocturne",
+      "reviewed_commit": "d9e1430975c7a05967cba66374392f75f08c858f",
+      "hashes": {
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/SubjectEntity.cs": "5f5eac05decd6d7724b593720b5f912d2b2ce8bc5dd0f0175cc3dab341649b58",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantEntity.cs": "45cbc372ee4f17cea5c56cc918d42f231c72c1670d63655d2a749b5a671bea32",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantMemberEntity.cs": "b44d544a954b775ce38536a23a7d9470037a84afd9a7308637ec488570044c6e",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantMemberRoleEntity.cs": "55de94b3e17bd02a08efe36a450fd05fe297d596a19aa81752456e069ed4fdb4",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantRoleEntity.cs": "a8b5a7b6e37f53d5f755856050d0b6b6e5dbd8ba0bc6e55f24597b91eb17cb44",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/RecoveryCodeEntity.cs": "dc9a6eabb8fff5d7e501dca377d3ad901c7658cc558246a27d126f486cb1d7b9",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TotpCredentialEntity.cs": "f178fe72708f4e9cd0dfe3cbdafe77657e86a33f6cde5e930e311f7bcbf088cf",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/PasskeyCredentialEntity.cs": "ace9f59b6d52a6fdb1f8466d97fd160dfea461257225ce3214c5e02bd1ec7785",
+        "src/API/Nocturne.API/Services/Auth/RecoveryCodeService.cs": "02f1b161e890b25c7216274dd7c6021554f4cf07c14191ee2c5883b715f0c227",
+        "src/API/Nocturne.API/Controllers/Authentication/PasskeyController.cs": "437ea2a4a082a5de37eb2d5ae8c33af2adfef67ae5fd8ab4dda679c941d29c8d",
+        "src/API/Nocturne.API/Extensions/ServiceRegistrationExtensions.cs": "ee07fc5332d798445753589458e600b8e5ba9063180cd4819971e709b9150378",
+        "src/Core/Nocturne.Core.Models/Configuration/JwtOptions.cs": "9326fd7fbf1aa9f1f012c4c75978c56fad98c8ac5a12a95086c9b8ce9931d8b6",
+        "src/Core/Nocturne.Core.Models/Configuration/OidcOptions.cs": "2a48b31fcbe82691b9e0e846c4b9cc2e63088b63b2fcb2f54d8d9f632e9308f0",
+        "src/Core/Nocturne.Core.Models/Configuration/NocturneOptions.cs": "c36b8a0c3913a346e707877fb28e470a5dc9ff697d23654b18f5c77ad1cba46a",
+        "src/Core/Nocturne.Core.Constants/ServiceNames.cs": "a9186ae188bce3481412543e6ed03f9d822ab1e1dc5835fb06b6abc362440c91"
+      }
+    },
+    {
+      "kind": "pbkdf2",
+      "reviewed_repository": "nightscout/nocturne",
+      "reviewed_commit": "8635bd530e6f8b792c3f2442cd3198ec7104fa96",
+      "hashes": {
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/SubjectEntity.cs": "52a783c70c34b2e851419967fa3c60534da857ff6851736ddcf5c841ad2d9b0e",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantEntity.cs": "483515a0086685d80cf5cdf3a8f563a55ea35364ffeabbfba3f6868043ed5642",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantMemberEntity.cs": "d3ed171cf849757e128b2c3c8509f1ced9bb87370fe846619a899da2ccb8d3b9",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantMemberRoleEntity.cs": "55de94b3e17bd02a08efe36a450fd05fe297d596a19aa81752456e069ed4fdb4",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantRoleEntity.cs": "a8b5a7b6e37f53d5f755856050d0b6b6e5dbd8ba0bc6e55f24597b91eb17cb44",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/RecoveryCodeEntity.cs": "63b471fdf9da0abe652261bf1ae19ce6f018a3d6442f3e74fe28ad19f4029264",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TotpCredentialEntity.cs": "f178fe72708f4e9cd0dfe3cbdafe77657e86a33f6cde5e930e311f7bcbf088cf",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/PasskeyCredentialEntity.cs": "ace9f59b6d52a6fdb1f8466d97fd160dfea461257225ce3214c5e02bd1ec7785",
+        "src/API/Nocturne.API/Services/Auth/RecoveryCodeService.cs": "c1aa38f863a3abd918e21f7337f28c5b1814c41c2b72d433a00209dc38acbde2",
+        "src/API/Nocturne.API/Controllers/Authentication/PasskeyController.cs": "a003df1a4d36474e0e0437ece5d2d4143de6ffa3e20fbc23209cf24631e12756",
+        "src/API/Nocturne.API/Extensions/ServiceRegistrationExtensions.cs": "435109f657c73ab301dcf484b8d4e423f1a49b8fc8a9d78ec94b429ab3162749",
+        "src/Core/Nocturne.Core.Models/Configuration/JwtOptions.cs": "0fb49c6ecdbe7d7016f66841121f99867630bf2c7e43c5cddd6aa0da712d987c",
+        "src/Core/Nocturne.Core.Models/Configuration/OidcOptions.cs": "2a48b31fcbe82691b9e0e846c4b9cc2e63088b63b2fcb2f54d8d9f632e9308f0",
+        "src/Core/Nocturne.Core.Models/Configuration/NocturneOptions.cs": "9326fd7fbf1aa9f1f012c4c75978c56fad98c8ac5a12a95086c9b8ce9931d8b6",
+        "src/Core/Nocturne.Core.Constants/ServiceNames.cs": "a9186ae188bce3481412543e6ed03f9d822ab1e1dc5835fb06b6abc362440c91"
+      }
+    },
+    {
+      "kind": "pbkdf2",
+      "reviewed_repository": "smokkelaar/nocturne-personal",
+      "reviewed_commit": "05648996c10e39e91f517187c10395a534f8d24a",
+      "hashes": {
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/SubjectEntity.cs": "52a783c70c34b2e851419967fa3c60534da857ff6851736ddcf5c841ad2d9b0e",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantEntity.cs": "483515a0086685d80cf5cdf3a8f563a55ea35364ffeabbfba3f6868043ed5642",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantMemberEntity.cs": "d3ed171cf849757e128b2c3c8509f1ced9bb87370fe846619a899da2ccb8d3b9",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantMemberRoleEntity.cs": "55de94b3e17bd02a08efe36a450fd05fe297d596a19aa81752456e069ed4fdb4",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantRoleEntity.cs": "a8b5a7b6e37f53d5f755856050d0b6b6e5dbd8ba0bc6e55f24597b91eb17cb44",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/RecoveryCodeEntity.cs": "63b471fdf9da0abe652261bf1ae19ce6f018a3d6442f3e74fe28ad19f4029264",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TotpCredentialEntity.cs": "f178fe72708f4e9cd0dfe3cbdafe77657e86a33f6cde5e930e311f7bcbf088cf",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/PasskeyCredentialEntity.cs": "ace9f59b6d52a6fdb1f8466d97fd160dfea461257225ce3214c5e02bd1ec7785",
+        "src/API/Nocturne.API/Services/Auth/RecoveryCodeService.cs": "c1aa38f863a3abd918e21f7337f28c5b1814c41c2b72d433a00209dc38acbde2",
+        "src/API/Nocturne.API/Controllers/Authentication/PasskeyController.cs": "a003df1a4d36474e0e0437ece5d2d4143de6ffa3e20fbc23209cf24631e12756",
+        "src/API/Nocturne.API/Extensions/ServiceRegistrationExtensions.cs": "435109f657c73ab301dcf484b8d4e423f1a49b8fc8a9d78ec94b429ab3162749",
+        "src/Core/Nocturne.Core.Models/Configuration/JwtOptions.cs": "0fb49c6ecdbe7d7016f66841121f99867630bf2c7e43c5cddd6aa0da712d987c",
+        "src/Core/Nocturne.Core.Models/Configuration/OidcOptions.cs": "2a48b31fcbe82691b9e0e846c4b9cc2e63088b63b2fcb2f54d8d9f632e9308f0",
+        "src/Core/Nocturne.Core.Models/Configuration/NocturneOptions.cs": "9326fd7fbf1aa9f1f012c4c75978c56fad98c8ac5a12a95086c9b8ce9931d8b6",
+        "src/Core/Nocturne.Core.Constants/ServiceNames.cs": "947e3c0c5c8464be05287fe29e7bded0d07a230ba567c1d224ba6c4650e6ddaa"
+      }
+    },
+    {
+      "kind": "pbkdf2",
+      "reviewed_repository": "smokkelaar/nocturne-personal",
+      "reviewed_commit": "9698963856c9118268fe8bd44574ce79e22ff6f2",
+      "hashes": {
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/SubjectEntity.cs": "52a783c70c34b2e851419967fa3c60534da857ff6851736ddcf5c841ad2d9b0e",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantEntity.cs": "483515a0086685d80cf5cdf3a8f563a55ea35364ffeabbfba3f6868043ed5642",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantMemberEntity.cs": "c538603e89e07c3799e972547b88d51bbf370767b6fa2dae9c2521c03d8f4776",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantMemberRoleEntity.cs": "55de94b3e17bd02a08efe36a450fd05fe297d596a19aa81752456e069ed4fdb4",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantRoleEntity.cs": "a8b5a7b6e37f53d5f755856050d0b6b6e5dbd8ba0bc6e55f24597b91eb17cb44",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/RecoveryCodeEntity.cs": "63b471fdf9da0abe652261bf1ae19ce6f018a3d6442f3e74fe28ad19f4029264",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TotpCredentialEntity.cs": "f178fe72708f4e9cd0dfe3cbdafe77657e86a33f6cde5e930e311f7bcbf088cf",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/PasskeyCredentialEntity.cs": "ace9f59b6d52a6fdb1f8466d97fd160dfea461257225ce3214c5e02bd1ec7785",
+        "src/API/Nocturne.API/Services/Auth/RecoveryCodeService.cs": "c1aa38f863a3abd918e21f7337f28c5b1814c41c2b72d433a00209dc38acbde2",
+        "src/API/Nocturne.API/Controllers/Authentication/PasskeyController.cs": "a003df1a4d36474e0e0437ece5d2d4143de6ffa3e20fbc23209cf24631e12756",
+        "src/API/Nocturne.API/Extensions/ServiceRegistrationExtensions.cs": "20a6f9226885b745bd0cd04b0410c0e1e777c82da140da578e3f938ea354d50d",
+        "src/Core/Nocturne.Core.Models/Configuration/JwtOptions.cs": "0fb49c6ecdbe7d7016f66841121f99867630bf2c7e43c5cddd6aa0da712d987c",
+        "src/Core/Nocturne.Core.Models/Configuration/OidcOptions.cs": "2a48b31fcbe82691b9e0e846c4b9cc2e63088b63b2fcb2f54d8d9f632e9308f0",
+        "src/Core/Nocturne.Core.Models/Configuration/NocturneOptions.cs": "9326fd7fbf1aa9f1f012c4c75978c56fad98c8ac5a12a95086c9b8ce9931d8b6",
+        "src/Core/Nocturne.Core.Constants/ServiceNames.cs": "947e3c0c5c8464be05287fe29e7bded0d07a230ba567c1d224ba6c4650e6ddaa"
+      }
+    },
+    {
+      "kind": "pbkdf2",
+      "reviewed_repository": "smokkelaar/nocturne-personal",
+      "reviewed_commit": "bf5c517e3fe8922dbf036071421991bcbb0f5ecd",
+      "hashes": {
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/SubjectEntity.cs": "52a783c70c34b2e851419967fa3c60534da857ff6851736ddcf5c841ad2d9b0e",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantEntity.cs": "483515a0086685d80cf5cdf3a8f563a55ea35364ffeabbfba3f6868043ed5642",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantMemberEntity.cs": "c538603e89e07c3799e972547b88d51bbf370767b6fa2dae9c2521c03d8f4776",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantMemberRoleEntity.cs": "55de94b3e17bd02a08efe36a450fd05fe297d596a19aa81752456e069ed4fdb4",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TenantRoleEntity.cs": "a8b5a7b6e37f53d5f755856050d0b6b6e5dbd8ba0bc6e55f24597b91eb17cb44",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/RecoveryCodeEntity.cs": "63b471fdf9da0abe652261bf1ae19ce6f018a3d6442f3e74fe28ad19f4029264",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/TotpCredentialEntity.cs": "f178fe72708f4e9cd0dfe3cbdafe77657e86a33f6cde5e930e311f7bcbf088cf",
+        "src/Infrastructure/Nocturne.Infrastructure.Data/Entities/PasskeyCredentialEntity.cs": "ace9f59b6d52a6fdb1f8466d97fd160dfea461257225ce3214c5e02bd1ec7785",
+        "src/API/Nocturne.API/Services/Auth/RecoveryCodeService.cs": "c1aa38f863a3abd918e21f7337f28c5b1814c41c2b72d433a00209dc38acbde2",
+        "src/API/Nocturne.API/Controllers/Authentication/PasskeyController.cs": "a003df1a4d36474e0e0437ece5d2d4143de6ffa3e20fbc23209cf24631e12756",
+        "src/API/Nocturne.API/Extensions/ServiceRegistrationExtensions.cs": "20a6f9226885b745bd0cd04b0410c0e1e777c82da140da578e3f938ea354d50d",
+        "src/Core/Nocturne.Core.Models/Configuration/JwtOptions.cs": "0fb49c6ecdbe7d7016f66841121f99867630bf2c7e43c5cddd6aa0da712d987c",
+        "src/Core/Nocturne.Core.Models/Configuration/OidcOptions.cs": "2a48b31fcbe82691b9e0e846c4b9cc2e63088b63b2fcb2f54d8d9f632e9308f0",
+        "src/Core/Nocturne.Core.Models/Configuration/NocturneOptions.cs": "9326fd7fbf1aa9f1f012c4c75978c56fad98c8ac5a12a95086c9b8ce9931d8b6",
+        "src/Core/Nocturne.Core.Constants/ServiceNames.cs": "a9186ae188bce3481412543e6ed03f9d822ab1e1dc5835fb06b6abc362440c91"
+      }
+    }
+  ]
+}

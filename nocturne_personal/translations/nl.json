@@ -22,7 +22,7 @@
     },
     "maintenance_enabled": {
       "name": "Experimenteel onderhoud inschakelen",
-      "description": "Alleen Personal: CLI, herstelwizard en rootterminal binnen deze app via HA. Standaard uit. Eigen wachtwoord vereist. Maak eerst een back-up; opslaan en herstarten."
+      "description": "CLI, herstelwizard en rootterminal binnen deze app via HA. Standaard uit. Eigen wachtwoord vereist. Maak eerst een back-up; opslaan en herstarten."
     },
     "maintenance_password": {
       "name": "Eigen onderhoudswachtwoord",

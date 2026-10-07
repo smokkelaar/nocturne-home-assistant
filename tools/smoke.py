@@ -201,6 +201,28 @@ def main(image):
             if before != after:
                 raise RuntimeError('Secrets changed in native mode')
         print('PASS: configured native startup and second restart; no Basic prompt; anonymous data 401; stable keys')
+        # Only our UUID fixture is accepted by this end-to-end recovery probe.
+        # A changed contract must fail closed while normal app smoke tests continue.
+        if (Path(__file__).resolve().parents[1] / 'nocturne_latest/rootfs/opt/nocturne-ha/recovery_compatibility.py').is_file():
+            capability = json.loads(execute(identity, "import sys, json\nfrom pathlib import Path\n"
+                "sys.path.insert(0, '/opt/nocturne-ha')\n"
+                "if Path('/opt/nocturne-ha/recovery_compatibility.py').is_file():\n"
+                "    import recovery_compatibility\n"
+                "    manifest = json.loads(Path('/opt/nocturne-ha/recovery-compatibility.json').read_text())\n"
+                "    print(json.dumps({'compatible': recovery_compatibility.report()['compatible'], 'reason': manifest.get('reason')}))\n"
+                "else:\n    print('null')"))
+            if capability and capability['reason'] == 'source-check-unavailable':
+                raise RuntimeError('Recovery source check unavailable during image build; rebuild before publishing')
+            if capability and capability['compatible']:
+                print(docker('exec', '-i', '-e', 'NOCTURNE_CI_FIXTURE=' + identity,
+                    identity, 'python3', '-', input=Path(__file__).with_name('owner_recovery_probe.py').read_text()))
+            elif capability:
+                execute(identity, "import sys\nsys.path.insert(0, '/opt/nocturne-ha')\n"
+                    "import owner_recovery\n"
+                    "try:\n    owner_recovery.guard()\n"
+                    "except ValueError:\n    pass\n"
+                    "else:\n    raise AssertionError('Unknown build accepted for recovery')")
+                print('PASS: unknown recovery contract blocked; normal app remains available')
         # Toggle only the wrapper check in this same disposable configured volume.
         # The real API must still deny data, and nginx must still reject wrong hosts.
         for skip in (True, False):
