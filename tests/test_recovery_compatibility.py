@@ -58,6 +58,10 @@ class RecoveryCompatibilityTests(unittest.TestCase):
             compatibility.verify_manifest(self.version, manifest, self.rules, self.binary)
         with self.assertRaises(ValueError):
             compatibility.identity({**self.version, 'repository': 'someone/else'})
+        with self.assertRaises(ValueError):
+            compatibility.verify_manifest(self.version, [], self.rules, self.binary)
+        unsupported = {'profiles': [{**self.rule, 'kind': 'unknown'}]}
+        self.assertIsNone(compatibility.classify(self.rule['hashes'], unsupported))
 
     def test_actual_source_changes_are_detected_but_unrelated_files_do_not_matter(self):
         rules = {'files': ['auth/Recovery.cs'], 'profiles': []}

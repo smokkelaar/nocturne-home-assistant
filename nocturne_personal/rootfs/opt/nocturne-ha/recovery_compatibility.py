@@ -31,8 +31,10 @@ def binary_hash():
 
 
 def identity(version):
+    if not isinstance(version, dict):
+        raise ValueError('Invalid pinned Nocturne source identity')
     repository, commit = version.get('repository'), version.get('source_commit', '')
-    if repository not in ALLOWED_REPOSITORIES or not re.fullmatch('[0-9a-f]{40}', commit):
+    if repository not in ALLOWED_REPOSITORIES or not isinstance(commit, str) or not re.fullmatch('[0-9a-f]{40}', commit):
         raise ValueError('Invalid pinned Nocturne source identity')
     return repository, commit
 
@@ -43,7 +45,8 @@ def contracts():
 
 def classify(hashes, rules):
     # Match the complete reviewed set, never mix independent per-file allowlists.
-    return next((rule for rule in rules['profiles'] if rule['hashes'] == hashes), None)
+    return next((rule for rule in rules['profiles']
+                 if rule['kind'] in ('hmac', 'pbkdf2') and rule['hashes'] == hashes), None)
 
 
 def source_hashes(version, rules, source=None):
@@ -82,6 +85,8 @@ def build_manifest(version, rules, hashes, api_hash):
 
 def verify_manifest(version, manifest, rules, api_hash):
     identity(version)
+    if not isinstance(manifest, dict):
+        raise ValueError('Herstelcontrole is ongeldig. Installeer een opnieuw gecontroleerde build; de terminal blijft beschikbaar.')
     if (manifest.get('format') != 1 or manifest.get('repository') != version['repository']
             or manifest.get('source_commit') != version['source_commit']
             or manifest.get('api_sha256') != api_hash or not re.fullmatch('[0-9a-f]{64}', api_hash)):
