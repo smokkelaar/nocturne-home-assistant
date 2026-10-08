@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import urllib.request
 import personal_maintenance
+from versioning import publication_mode, published_number, next_package
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO = 'smokkelaar/nocturne-personal'
@@ -98,6 +99,9 @@ def next_delivery(feature, previous=None):
         raise ValueError('Invalid Personal feature version')
     if previous is None:
         return feature + '-p1'
+    if published_number(previous):
+        # The GHCR package series is independent of the fork's feature version.
+        return next_package(ROOT, previous)
     match = re.fullmatch(r'(\d+\.\d+\.\d+)-(p)?([1-9]\d*)', previous)
     if not match:
         raise ValueError('Invalid previous Personal delivery version')
@@ -118,15 +122,23 @@ def files(lock, delivery, maintenance=True):
     latest = ROOT / 'nocturne_latest'
     wrapper = json.loads((ROOT / 'wrapper.json').read_text())['version']
     package_match = re.fullmatch(r'(\d+\.\d+\.\d+)-p[1-9]\d*', delivery)
-    if not package_match or tuple(map(int, package_match[1].split('.'))) < tuple(map(int, lock['version'].split('.'))):
+    if not published_number(delivery) and (not package_match or tuple(map(int, package_match[1].split('.'))) < tuple(map(int, lock['version'].split('.')))):
         raise ValueError('Invalid Personal delivery version')
     generated = {path: (latest / path).read_bytes() for path in COMMON}
     config = json.loads((latest / 'config.json').read_text())
     config.update(name='Nocturne Personal Release', slug='nocturne_personal', version=delivery,
                   panel_title='Nocturne Personal', ports={'8448/tcp': 8450})
+    # Never inherit the Latest registry image/architecture declaration.
+    current_config = json.loads((ROOT / 'nocturne_personal/config.json').read_text())
+    config.pop('image', None)
+    if 'image' in current_config:
+        config['image'] = current_config['image']
+        config['arch'] = current_config['arch']
     config['options']['public_url'] = 'https://homeassistant.local:8450'
     stamp = datetime.fromisoformat(lock['upstream']['commit_at'].replace('Z', '+00:00')).strftime('%Y-%m-%d %H:%M UTC')
     config['description'] = f"HA wrapper {wrapper} · Personal {lock['version']} · Daily {lock['upstream']['commit'][:7]} - {stamp}. Experimental; not for clinical use. Local build: HA may show 0% until it finishes."
+    if publication_mode(ROOT):
+        config['description'] = current_config['description']
     generated['config.json'] = json.dumps(config, indent=2) + '\n'
     docs = (latest / 'DOCS.md').read_text(encoding='utf-8').replace('Nocturne Latest Release', 'Nocturne Personal Release').replace('8449', '8450')
     docs = docs.replace('the frequently updated upstream-`main` channel', 'the Personal source-fork channel following the approved Daily base')
@@ -170,6 +182,7 @@ def files(lock, delivery, maintenance=True):
 {node}
 FROM {RUST} AS rust
 FROM {SDK} AS source
+ARG DOTNET_RID=linux-x64
 COPY --from=node /usr/local/ /usr/local/
 COPY --from=rust /usr/local/cargo/ /usr/local/cargo/
 COPY --from=rust /usr/local/rustup/ /usr/local/rustup/
@@ -190,7 +203,7 @@ RUN printf '\\n=== Nocturne build phase 4/7: compile API ===\\n' \\
 RUN printf '\\n=== Nocturne build phase 5/7: compile alert engine ===\\n' \\
     && cargo build --manifest-path crates/Cargo.toml --release --locked -p nocturne-alerts-ffi
 RUN printf '\\n=== Nocturne build phase 6/7: publish API ===\\n' \\
-    && dotnet publish src/API/Nocturne.API/Nocturne.API.csproj -c Release -r linux-x64 --self-contained false \\
+    && dotnet publish src/API/Nocturne.API/Nocturne.API.csproj -c Release -r $DOTNET_RID --self-contained false \\
     -p:GenerateNSwagClient=false -p:UseSharedCompilation=false -o /out/api \\
     && date -u +%Y-%m-%dT%H:%M:%SZ > /out/api-build-date
 WORKDIR /src/src/Web
@@ -236,6 +249,8 @@ def update():
     directory = ROOT / 'nocturne_personal'
     previous = json.loads((directory / 'config.json').read_text())['version'] if old else None
     delivery = next_delivery(lock['version'], previous)
+    if publication_mode(ROOT) and previous:
+        delivery = previous
     for path, data in files(lock, delivery).items():
         target = directory / path
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -243,7 +258,8 @@ def update():
     lock_path.write_text(json.dumps(lock, indent=2) + '\n')
     changelog = directory / 'CHANGELOG.md'
     prior = changelog.read_text(encoding='utf-8') if old else ''
-    changelog.write_text(f"# {delivery}\n\nPersonal {lock['version']}; source `{lock['commit']}`; Daily base `{lock['upstream']['commit']}`.\n\n" + prior, encoding='utf-8')
+    heading = '## Unreleased source candidate' if publication_mode(ROOT) else f'# {delivery}'
+    changelog.write_bytes((f"{heading}\n\nPersonal {lock['version']}; source `{lock['commit']}`; Daily base `{lock['upstream']['commit']}`.\n\n" + prior).encode('utf-8'))
     check(lock)
 
 

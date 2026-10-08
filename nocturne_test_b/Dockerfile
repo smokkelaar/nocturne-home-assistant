@@ -2,6 +2,7 @@
 FROM node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d AS node
 FROM rust@sha256:4673f78db88b71f09d5451bbc404734807918161241215ba0a50bbbe9b448117 AS rust
 FROM mcr.microsoft.com/dotnet/sdk@sha256:0e53453ccfc8ff2d51319fe80c678971c6d0f8008dff3565fa88e15840b69854 AS source
+ARG DOTNET_RID=linux-x64
 COPY --from=node /usr/local/ /usr/local/
 COPY --from=rust /usr/local/cargo/ /usr/local/cargo/
 COPY --from=rust /usr/local/rustup/ /usr/local/rustup/
@@ -22,7 +23,7 @@ RUN printf '\n=== Nocturne build phase 4/7: compile API ===\n' \
 RUN printf '\n=== Nocturne build phase 5/7: compile alert engine ===\n' \
     && cargo build --manifest-path crates/Cargo.toml --release --locked -p nocturne-alerts-ffi
 RUN printf '\n=== Nocturne build phase 6/7: publish API ===\n' \
-    && dotnet publish src/API/Nocturne.API/Nocturne.API.csproj -c Release -r linux-x64 --self-contained false \
+    && dotnet publish src/API/Nocturne.API/Nocturne.API.csproj -c Release -r $DOTNET_RID --self-contained false \
     -p:GenerateNSwagClient=false -p:UseSharedCompilation=false -o /out/api \
     && date -u +%Y-%m-%dT%H:%M:%SZ > /out/api-build-date
 WORKDIR /src/src/Web
@@ -43,7 +44,7 @@ USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /out/api-build-date /opt/nocturne-ha/api-build-date
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so
-ARG BUILD_VERSION=0.3.25-b33
+ARG BUILD_VERSION=1.0.43901
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Test B - Home Assistant app" \

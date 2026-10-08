@@ -85,7 +85,10 @@ class LatestUpdateTests(unittest.TestCase):
         rendered = updater.render(ROOT, lock, version)
         config = json.loads(rendered[
             'nocturne_latest/config.json'])
-        self.assertIn('bbbbbbb - 2026-09-01 06:52 UTC', config['description'])
+        if updater.publication_mode(ROOT):
+            self.assertEqual(json.loads((ROOT / 'nocturne_latest/config.json').read_text())['description'], config['description'])
+        else:
+            self.assertIn('bbbbbbb - 2026-09-01 06:52 UTC', config['description'])
         self.assertEqual(lock['commit_at'], json.loads(rendered[
             'nocturne_latest/rootfs/opt/nocturne-ha/version.json'])['commit_at'])
 

@@ -1,0 +1,93 @@
+name: Native prebuilt image validation
+on:
+  workflow_call:
+    inputs:
+      runner:
+        type: string
+        required: true
+      context:
+        type: string
+        required: true
+      arch:
+        type: string
+        required: true
+      channel:
+        type: string
+        required: true
+      package:
+        type: string
+        required: true
+      image:
+        type: string
+        required: true
+      baseline:
+        type: string
+        required: true
+      legacy_baseline_ref:
+        type: string
+        required: true
+      publish:
+        type: boolean
+        default: false
+jobs:
+  native:
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: prebuilt-candidates
+          path: work/prebuilt
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
+      - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8
+        with:
+          context: ${{ inputs.context }}
+          platforms: linux/${{ inputs.arch }}
+          load: true
+          push: false
+          tags: ${{ inputs.image }}
+          cache-from: type=gha,scope=prebuilt-${{ inputs.channel }}-${{ inputs.arch }}
+          cache-to: type=gha,mode=max,scope=prebuilt-${{ inputs.channel }}-${{ inputs.arch }}
+      - name: Native startup, gateway, owner recovery and standalone TOTP
+        env:
+          IMAGE: ${{ inputs.image }}
+        run: python tools/smoke.py --image "$IMAGE"
+      - name: Cold restore and previous-version upgrade
+        env:
+          IMAGE: ${{ inputs.image }}
+          BASELINE: ${{ inputs.baseline }}
+          LEGACY_REF: ${{ inputs.legacy_baseline_ref }}
+          PACKAGE: ${{ inputs.package }}
+          ARCH: ${{ inputs.arch }}
+        shell: bash
+        run: |
+          if [ -n "$BASELINE" ]; then
+            docker pull "$BASELINE"
+          elif [ -n "$LEGACY_REF" ]; then
+            git fetch --no-tags origin "$LEGACY_REF"
+            mkdir -p work/legacy
+            git archive "$LEGACY_REF" "$PACKAGE" | tar -x -C work/legacy
+            BASELINE="nocturne-legacy:ci"
+            docker build --platform "linux/$ARCH" -t "$BASELINE" "work/legacy/$PACKAGE"
+          else
+            BASELINE="$IMAGE"
+          fi
+          python tools/recovery_smoke.py --image "$IMAGE" --baseline "$BASELINE"
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
+        if: inputs.publish && github.repository == 'smokkelaar/nocturne-home-assistant'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish the exact tested image without overwriting any version
+        if: inputs.publish && github.repository == 'smokkelaar/nocturne-home-assistant'
+        env:
+          IMAGE: ${{ inputs.image }}
+          GHCR_PUBLISH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python tools/registry.py --require-absent "$IMAGE"
+          docker push "$IMAGE"

@@ -4,11 +4,20 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish tested native prebuilt images and prepare the store promotion
+        type: boolean
+        default: false
+      force:
+        description: Rebuild all six channels, even if source fingerprints are unchanged
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
-  group: validate-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ inputs.publish && 'prebuilt-publication' || format('validate-{0}', github.ref) }}
+  cancel-in-progress: ${{ !inputs.publish }}
 jobs:
   unit:
     name: Unit tests
@@ -154,7 +163,7 @@ jobs:
         run: python3 tools/cookie_smoke.py --official nocturne-official:ci --latest nocturne-latest:ci --personal nocturne-personal:ci
   container-gate:
     name: Container smoke test
-    needs: [unit, google-health, container, maintenance]
+    needs: [unit, test-a, google-health, container, maintenance, prebuilt, prebuilt-release, prebuilt-select]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-24.04
     timeout-minutes: 2
@@ -165,4 +174,146 @@ jobs:
           GOOGLE_RESULT: ${{ needs.google-health.result }}
           CORE_RESULT: ${{ needs.container.result }}
           MAINTENANCE_RESULT: ${{ needs.maintenance.result }}
-        run: test "$UNIT_RESULT" = success && test "$GOOGLE_RESULT" = success && test "$CORE_RESULT" = success && test "$MAINTENANCE_RESULT" = success
+          TEST_A_RESULT: ${{ needs.test-a.result }}
+          PREBUILT_RESULT: ${{ needs.prebuilt.result }}
+          RELEASE_RESULT: ${{ needs.prebuilt-release.result }}
+          PREBUILT_CHANGED: ${{ needs.prebuilt-select.outputs.changed }}
+          SELECT_RESULT: ${{ needs.prebuilt-select.result }}
+          PUBLISH: ${{ github.event_name == 'workflow_dispatch' && inputs.publish }}
+        run: |
+          test "$UNIT_RESULT" = success && test "$GOOGLE_RESULT" = success && test "$CORE_RESULT" = success && test "$MAINTENANCE_RESULT" = success && test "$TEST_A_RESULT" = success && test "$SELECT_RESULT" = success
+          if [ "$PREBUILT_CHANGED" = true ]; then
+            if [ "$PUBLISH" = true ]; then test "$RELEASE_RESULT" = success; else test "$PREBUILT_RESULT" = success; fi
+          else
+            test "$PREBUILT_RESULT" = skipped && test "$RELEASE_RESULT" = skipped
+          fi
+  prebuilt-select:
+    name: Select prebuilt candidates
+    needs: unit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    outputs:
+      matrix: ${{ steps.prepare.outputs.matrix }}
+      changed: ${{ steps.prepare.outputs.changed }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - run: python -m pip install awesomeversion==25.8.0
+      - id: prepare
+        env:
+          WRAPPER_SHA: ${{ github.sha }}
+          RUN_NUMBER: ${{ github.run_number }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          FORCE: ${{ inputs.force || github.event_name == 'pull_request' }}
+        shell: bash
+        run: |
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          base="${PR_BASE:-$(git rev-parse origin/main)}"
+          extra=()
+          mkdir -p work
+          if [ "$FORCE" = true ]; then extra+=(--force); fi
+          python tools/prebuilt_publish.py prepare --output work/prebuilt --wrapper-commit "$WRAPPER_SHA" --run-number "$RUN_NUMBER" --attempt "$RUN_ATTEMPT" --baseline-ref "$base" "${extra[@]}" > work/prebuilt-matrix.json
+          echo "matrix=$(cat work/prebuilt-matrix.json)" >> "$GITHUB_OUTPUT"
+          echo "changed=$(python -c 'import json; print(str(bool(json.load(open("work/prebuilt-matrix.json"))["include"])).lower())')" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: prebuilt-candidates
+          path: work/prebuilt
+          retention-days: 7
+  prebuilt:
+    name: Validate (${{ matrix.channel }}/${{ matrix.arch }})
+    needs: prebuilt-select
+    if: needs.prebuilt-select.outputs.changed == 'true' && !(github.event_name == 'workflow_dispatch' && inputs.publish)
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.prebuilt-select.outputs.matrix) }}
+    permissions:
+      contents: read
+      packages: read
+    uses: ./.github/workflows/native-prebuilt.yml
+    with:
+      runner: ${{ matrix.runner }}
+      context: ${{ matrix.context }}
+      arch: ${{ matrix.arch }}
+      channel: ${{ matrix.channel }}
+      package: ${{ matrix.package }}
+      image: ${{ matrix.image }}
+      baseline: ${{ matrix.baseline }}
+      legacy_baseline_ref: ${{ matrix.legacy_baseline_ref }}
+      publish: false
+  prebuilt-release:
+    name: Publish (${{ matrix.channel }}/${{ matrix.arch }})
+    needs: prebuilt-select
+    if: needs.prebuilt-select.outputs.changed == 'true' && github.event_name == 'workflow_dispatch' && inputs.publish && github.repository == 'smokkelaar/nocturne-home-assistant'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.prebuilt-select.outputs.matrix) }}
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/native-prebuilt.yml
+    with:
+      runner: ${{ matrix.runner }}
+      context: ${{ matrix.context }}
+      arch: ${{ matrix.arch }}
+      channel: ${{ matrix.channel }}
+      package: ${{ matrix.package }}
+      image: ${{ matrix.image }}
+      baseline: ${{ matrix.baseline }}
+      legacy_baseline_ref: ${{ matrix.legacy_baseline_ref }}
+      publish: true
+  prebuilt-promote:
+    name: Verify public images and prepare HA store promotion
+    needs: [container-gate, prebuilt-select]
+    if: always() && needs.container-gate.result == 'success' && github.event_name == 'workflow_dispatch' && inputs.publish && needs.prebuilt-select.outputs.changed == 'true' && github.repository == 'smokkelaar/nocturne-home-assistant'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+      packages: read
+      actions: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - run: python -m pip install awesomeversion==25.8.0
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: prebuilt-candidates
+          path: work/prebuilt
+      - name: Require anonymous pulls, both native architectures, labels and HA upgrade order
+        run: python tools/prebuilt_publish.py promote --candidates work/prebuilt/candidates.json
+      - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1
+        id: proposal
+        with:
+          base: main
+          branch: automation/prebuilt-store
+          title: Publish tested prebuilt AMD64 and ARM64 HA images
+          commit-message: Publish verified dual-architecture GHCR images in the existing HA store
+          add-paths: |
+            nocturne_local
+            nocturne_latest
+            nocturne_personal
+            nocturne_test_a
+            nocturne_test_b
+            nocturne_test_c
+          body: |
+            Both native architectures passed startup, owner/TOTP recovery and cold-restore/upgrade tests before image publication. Anonymous GHCR pulls and HA image labels were verified for every advertised image.
+            The 1.x package series marks prebuilt distribution. Existing repository URL, slugs, options, ports and private data identities are retained. No local HA compilation is required.
+      - name: Dispatch protected checks for the publication proposal
+        if: steps.proposal.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh workflow run validate.yml --ref automation/prebuilt-store -f publish=false -f force=true

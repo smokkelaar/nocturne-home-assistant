@@ -11,7 +11,7 @@ import re
 import urllib.error
 import urllib.request
 
-from versioning import next_package, package_build, wrapper_version
+from versioning import advertised_version, publication_mode, next_package, package_build, wrapper_version
 
 ROOT = Path(__file__).resolve().parents[1]
 PROJECT = 'nightscout/nocturne'
@@ -109,11 +109,13 @@ def render(root, lock, app_version):
     package_build(root, app_version)
     wrapper = wrapper_version(root)
     config = json.loads((root / 'nocturne_local/config.json').read_text(encoding='utf-8'))
+    app_version = advertised_version(root, config, app_version)
     config['version'] = app_version
     config['options']['skip_gateway_check'] = False
     config['schema']['skip_gateway_check'] = 'bool'
-    config['description'] = (f"HA wrapper {wrapper} · Official Nocturne {lock['version']} with PostgreSQL. "
-                             'Experimental; not for clinical use.')
+    if not publication_mode(root):
+        config['description'] = (f"HA wrapper {wrapper} · Official Nocturne {lock['version']} with PostgreSQL. "
+                                 'Experimental; not for clinical use.')
     dockerfile = (root / 'nocturne_local/Dockerfile').read_text(encoding='utf-8')
     for kind in ('api', 'web'):
         pattern = rf'(?m)^FROM ghcr\.io/nightscout/nocturne/nocturne-{kind}@sha256:[0-9a-f]{{64}}'
@@ -162,6 +164,10 @@ def apply_update(root, current, candidate):
             f"- [Upstream release](https://github.com/{PROJECT}/releases/tag/{candidate['tag']}).\n"
             '- Maintainer review and backup required before installation; database migrations may occur.\n\n')
     prepared['nocturne_local/CHANGELOG.md'] = note + changelog.read_text(encoding='utf-8')
+    if publication_mode(root):
+        prepared['nocturne_local/CHANGELOG.md'] = ('## Unreleased source candidate\n\n'
+            f"- Official source prepared: Nocturne {candidate['version']}. The existing published image remains advertised until registry promotion.\n\n"
+            + changelog.read_text(encoding='utf-8'))
     for name, content in prepared.items():
         (root / name).write_text(content, encoding='utf-8', newline='\n')
     return next_version

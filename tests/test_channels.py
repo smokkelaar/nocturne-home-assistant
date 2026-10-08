@@ -143,7 +143,8 @@ class ChannelTests(unittest.TestCase):
             runtime = json.loads((ROOT / package / 'rootfs/opt/nocturne-ha/version.json').read_text())
             self.assertEqual(wrapper, runtime['app'])
             self.assertEqual(manifest['version'], runtime['package'])
-            self.assertRegex(runtime['package'], '^' + wrapper.replace('.', r'\.') + r'-[1-9]\d*$')
+            pattern = r'^[1-9]\d*\.\d+\.\d+$' if manifest.get('image') else '^' + wrapper.replace('.', r'\.') + r'-[1-9]\d*$'
+            self.assertRegex(runtime['package'], pattern)
             self.assertIn('HA wrapper ' + wrapper, manifest['description'])
 
     def test_latest_uses_only_immutable_image_references(self):

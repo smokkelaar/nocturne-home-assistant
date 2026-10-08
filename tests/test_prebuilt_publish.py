@@ -1,0 +1,173 @@
+"""Publication must preserve identities and fail closed before advertising images."""
+import copy
+import json
+from pathlib import Path
+import shutil
+import sys
+import tempfile
+import unittest
+from unittest.mock import patch
+from awesomeversion import AwesomeVersion
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'tools'))
+import prebuilt_publish as publisher
+import update_personal
+import update_test_channels
+import update_latest
+import update_upstream
+from versioning import next_package
+
+
+def inspected(repository, reference, arch, revision=None, labels=None):
+    return {'digest': 'sha256:' + ('a' if arch == 'amd64' else 'b') * 64,
+            'index': 'sha256:' + 'c' * 64, 'revision': revision, 'labels': labels or {}}
+
+
+class PrebuiltTests(unittest.TestCase):
+    def test_license_is_a_build_input_and_fingerprint_is_platform_independent(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fixture(root)
+            before = publisher.recipe_hash(root, 'nocturne_personal')
+            (root / 'LICENSE').write_bytes((root / 'LICENSE').read_bytes() + b'\nSynthetic license notice\n')
+            self.assertNotEqual(before, publisher.recipe_hash(root, 'nocturne_personal'))
+
+    def test_large_plain_version_upgrades_every_legacy_variant_and_handles_retries(self):
+        previous = ['0.1.13-1', '0.3.27-p1', '0.3.26-9', '0.3.26-a16', '0.3.25-b33', '0.3.25-c32']
+        version = publisher.next_version(previous, 1, 1)
+        self.assertEqual('1.0.101', version)
+        for old in previous:
+            self.assertGreater(AwesomeVersion(version), AwesomeVersion(old))
+        self.assertGreater(AwesomeVersion(publisher.next_version([version], 1, 2)), AwesomeVersion(version))
+        self.assertGreater(AwesomeVersion(publisher.next_version(['1.0.9001'], 1, 1)), AwesomeVersion('1.0.9001'))
+        for candidate in ('1.0.101', '1.0.100', '1.0.102-p1', '01.0.102'):
+            with self.assertRaises(ValueError):
+                publisher.require_upgrade(candidate, version)
+        self.assertEqual('1.0.102', next_package(ROOT, '1.0.101'))
+
+    def test_prepare_builds_twelve_native_contexts_without_changing_the_store(self):
+        before = {package: (ROOT / package / 'config.json').read_bytes() for package in publisher.CHANNELS.values()}
+        with tempfile.TemporaryDirectory() as temporary, patch.object(publisher.registry, 'image', side_effect=inspected):
+            target = Path(temporary)
+            matrix = publisher.prepare(ROOT, target, 'd' * 40, 1, 1, 'e' * 40, force=True)
+            self.assertEqual(12, len(matrix['include']))
+            self.assertEqual({(channel, arch) for channel in publisher.CHANNELS for arch in publisher.PLATFORMS},
+                             {(item['channel'], item['arch']) for item in matrix['include']})
+            for item in matrix['include']:
+                context = Path(item['context'])
+                config = publisher.read(context / 'config.json')
+                old = json.loads(before[item['package']])
+                self.assertEqual(old['slug'], config['slug'])
+                self.assertEqual(old['options'], config['options'])
+                self.assertEqual(old['ports'], config['ports'])
+                self.assertEqual(['amd64', 'aarch64'], config['arch'])
+                self.assertIn('nocturne-' + item['channel'] + '-{arch}', config['image'])
+                recipe = (context / 'Dockerfile').read_text()
+                self.assertIn('ARG BUILD_ARCH=' + item['hass_arch'], recipe)
+                if item['channel'] not in ('official', 'latest'):
+                    self.assertIn('ARG DOTNET_RID=' + publisher.PLATFORMS[item['arch']]['rid'], recipe)
+                    self.assertIn(publisher.read(ROOT / 'build-platforms.json')['sdk'][item['arch']], recipe)
+            self.assertEqual(before, {package: (ROOT / package / 'config.json').read_bytes() for package in publisher.CHANNELS.values()})
+
+    def fixture(self, target):
+        for name in ('publication.json', 'build-platforms.json', 'LICENSE', 'wrapper.json',
+                     'upstream-test-a.json', 'upstream-test-b.json', 'upstream-test-c.json'):
+            shutil.copyfile(ROOT / name, target / name)
+        (target / 'tools').mkdir()
+        shutil.copyfile(ROOT / 'tools/prebuilt_publish.py', target / 'tools/prebuilt_publish.py')
+        for package in publisher.CHANNELS.values():
+            shutil.copytree(ROOT / package, target / package, ignore=shutil.ignore_patterns('__pycache__'))
+
+    def test_failed_public_pull_never_changes_any_store_configuration(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fixture(root)
+            # Prepare uses approved source locks; copy those read-only inputs too.
+            for name in ('upstream.json', 'upstream-latest.json', 'upstream-personal.json'):
+                shutil.copyfile(ROOT / name, root / name)
+            output = root / 'work/candidates'
+            with patch.object(publisher.registry, 'image', side_effect=inspected):
+                publisher.prepare(root, output, 'd' * 40, 1, 1, 'e' * 40, force=True)
+            before = {package: (root / package / 'config.json').read_bytes() for package in publisher.CHANNELS.values()}
+            def public_image(repository, reference, arch, *args, **kwargs):
+                if arch == 'arm64':
+                    raise ValueError('Anonymous ARM64 pull failed')
+                return inspected(repository, reference, arch, *args, **kwargs)
+            with patch.object(publisher.registry, 'image', side_effect=public_image), self.assertRaises(ValueError):
+                publisher.promote(root, output / 'candidates.json')
+            self.assertEqual(before, {package: (root / package / 'config.json').read_bytes() for package in publisher.CHANNELS.values()})
+
+    def test_only_complete_public_images_are_promoted_and_recipe_does_not_loop(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fixture(root)
+            for name in ('upstream.json', 'upstream-latest.json', 'upstream-personal.json'):
+                shutil.copyfile(ROOT / name, root / name)
+            output = root / 'work/candidates'
+            with patch.object(publisher.registry, 'image', side_effect=inspected):
+                publisher.prepare(root, output, 'd' * 40, 1, 1, 'e' * 40, force=True)
+                publisher.promote(root, output / 'candidates.json')
+                matrix = publisher.prepare(root, root / 'work/next', 'f' * 40, 2, 1, 'e' * 40)
+            self.assertEqual([], matrix['include'])
+            for channel, package in publisher.CHANNELS.items():
+                config = publisher.read(root / package / 'config.json')
+                self.assertEqual(publisher.read(output / 'candidates.json')[channel]['version'], config['version'])
+                self.assertEqual(publisher.image_name('smokkelaar/nocturne-home-assistant', channel), config['image'])
+                self.assertEqual(config['version'], publisher.read(root / package / 'rootfs/opt/nocturne-ha/version.json')['package'])
+
+    def test_store_or_source_race_prevents_promotion(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fixture(root)
+            for name in ('upstream.json', 'upstream-latest.json', 'upstream-personal.json'):
+                shutil.copyfile(ROOT / name, root / name)
+            with patch.object(publisher.registry, 'image', side_effect=inspected):
+                publisher.prepare(root, root / 'work/candidates', 'd' * 40, 1, 1, 'e' * 40, force=True)
+                config = publisher.read(root / 'nocturne_local/config.json')
+                config['version'] = '1.0.100'
+                publisher.write(root / 'nocturne_local/config.json', config)
+                with self.assertRaisesRegex(ValueError, 'changed'):
+                    publisher.promote(root, root / 'work/candidates/candidates.json')
+
+    def test_generators_keep_each_own_image_after_publication(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fixture(root)
+            for name in ('upstream.json', 'upstream-latest.json', 'upstream-personal.json'):
+                shutil.copyfile(ROOT / name, root / name)
+            with patch.object(publisher.registry, 'image', side_effect=inspected):
+                publisher.prepare(root, root / 'work/candidates', 'd' * 40, 1, 1, 'e' * 40, force=True)
+                publisher.promote(root, root / 'work/candidates/candidates.json')
+            for updater, lockfile, package in ((update_upstream, 'upstream.json', 'nocturne_local'),
+                                              (update_latest, 'upstream-latest.json', 'nocturne_latest')):
+                rendered = updater.render(root, publisher.read(root / lockfile), '1.0.102')
+                for name, value in rendered.items():
+                    self.assertEqual((root / name).read_bytes(), value.encode('utf-8'), name)
+            with patch.object(update_personal, 'ROOT', root), patch.object(update_test_channels, 'ROOT', root):
+                delivery = publisher.read(root / 'nocturne_personal/config.json')['version']
+                generated = update_personal.files(publisher.read(root / 'upstream-personal.json'), delivery)
+                for name, value in generated.items():
+                    self.assertEqual((root / 'nocturne_personal' / name).read_bytes(), value, name)
+                for name, value in update_test_channels.files().items():
+                    self.assertEqual((root / name).read_bytes(), value, name)
+
+    def test_unreleased_source_notes_receive_only_the_published_version(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fixture(root)
+            for name in ('upstream.json', 'upstream-latest.json', 'upstream-personal.json'):
+                shutil.copyfile(ROOT / name, root / name)
+            notes = root / 'nocturne_personal/CHANGELOG.md'
+            notes.write_bytes(('## Unreleased source candidate\n\n- Second candidate\n\n## Unreleased source candidate\n\n- First candidate\n\n' + notes.read_text()).encode())
+            with patch.object(publisher.registry, 'image', side_effect=inspected):
+                publisher.prepare(root, root / 'work/candidates', 'd' * 40, 1, 1, 'e' * 40, force=True)
+                publisher.promote(root, root / 'work/candidates/candidates.json')
+            content = notes.read_text()
+            self.assertNotIn('## Unreleased', content)
+            self.assertIn('Second candidate', content)
+            self.assertIn('First candidate', content)
+
+
+if __name__ == '__main__':
+    unittest.main()
