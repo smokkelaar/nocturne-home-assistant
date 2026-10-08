@@ -7,6 +7,7 @@ from pathlib import Path
 
 import update_personal
 import personal_maintenance
+from versioning import publication_mode
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -140,7 +141,8 @@ def files():
                                   if letter == "a" else
                                   "Maak of reset een klokface en kies per face mg/dL of mmol/L en 12/24 uur; open de face als eigenaar, als ingelogde kijker met andere voorkeuren en via de publieke kloklink; controleer de builder-preview en dat oude faces mg/dL en 12 uur tonen."),
                        test_url="https://github.com/smokkelaar/nocturne-home-assistant")
-        config["description"] = f"HA wrapper {runtime['app']} · {description}. Isolated test instance; not for clinical use."
+        if not publication_mode(ROOT):
+            config["description"] = f"HA wrapper {runtime['app']} · {description}. Isolated test instance; not for clinical use."
         generated[package + "/config.json"] = json.dumps(config, indent=2) + "\n"
         generated[package + "/rootfs/opt/nocturne-ha/version.json"] = json.dumps(runtime, indent=2) + "\n"
     # Overlay each isolated package, including its own runtime and translations.

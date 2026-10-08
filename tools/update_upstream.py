@@ -11,7 +11,7 @@ import re
 import urllib.error
 import urllib.request
 
-from versioning import next_package, package_build, wrapper_version
+from versioning import advertised_version, publication_mode, next_package, package_build, wrapper_version
 
 ROOT = Path(__file__).resolve().parents[1]
 PROJECT = 'nightscout/nocturne'
@@ -109,11 +109,13 @@ def render(root, lock, app_version):
     package_build(root, app_version)
     wrapper = wrapper_version(root)
     config = json.loads((root / 'nocturne_local/config.json').read_text(encoding='utf-8'))
+    app_version = advertised_version(root, config, app_version)
     config['version'] = app_version
     config['options']['skip_gateway_check'] = False
     config['schema']['skip_gateway_check'] = 'bool'
-    config['description'] = (f"HA wrapper {wrapper} · Official Nocturne {lock['version']} with PostgreSQL. "
-                             'Experimental; not for clinical use.')
+    if not publication_mode(root):
+        config['description'] = (f"HA wrapper {wrapper} · Official Nocturne {lock['version']} with PostgreSQL. "
+                                 'Experimental; not for clinical use.')
     dockerfile = (root / 'nocturne_local/Dockerfile').read_text(encoding='utf-8')
     for kind in ('api', 'web'):
         pattern = rf'(?m)^FROM ghcr\.io/nightscout/nocturne/nocturne-{kind}@sha256:[0-9a-f]{{64}}'

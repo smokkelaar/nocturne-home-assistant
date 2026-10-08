@@ -106,8 +106,8 @@ class PersonalTests(unittest.TestCase):
     def test_test_a_pins_pr1293_independently_with_a_distinct_runtime_identity(self):
         test_a = json.loads((ROOT / 'nocturne_test_a/config.json').read_text())
         test_runtime = json.loads((ROOT / 'nocturne_test_a/rootfs/opt/nocturne-ha/version.json').read_text())
-        self.assertNotEqual(self.config['version'], test_a['version'])
-        self.assertTrue(test_a['version'].startswith(self.lock['version'] + '-'))
+        self.assertNotEqual(self.config['slug'], test_a['slug'])
+        self.assertTrue(updater.published_number(test_a['version']) or test_a['version'].startswith(self.lock['version'] + '-'))
         source = json.loads((ROOT / 'upstream-test-a.json').read_text())
         self.assertEqual(source['commit'], test_runtime['source_commit'])
         self.assertEqual(source['base_commit'], test_runtime['base_commit'])
@@ -138,8 +138,8 @@ class PersonalTests(unittest.TestCase):
     def test_test_b_pins_a1c_fix_with_a_distinct_runtime_identity(self):
         test_b = json.loads((ROOT / 'nocturne_test_b/config.json').read_text())
         test_runtime = json.loads((ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/version.json').read_text())
-        self.assertNotEqual(self.config['version'], test_b['version'])
-        self.assertTrue(test_b['version'].startswith('0.3.25-'))
+        self.assertNotEqual(self.config['slug'], test_b['slug'])
+        self.assertTrue(updater.published_number(test_b['version']) or test_b['version'].startswith('0.3.25-'))
         self.assertEqual(test_b['version'], test_runtime['package'])
         self.assertEqual('Nocturne Test B', test_b['name'])
         self.assertEqual('NocturneTestB_', test_runtime['cookie_namespace'])
@@ -176,8 +176,8 @@ class PersonalTests(unittest.TestCase):
     def test_test_c_pins_clock_face_pr_with_a_distinct_runtime_identity(self):
         test_c = json.loads((ROOT / 'nocturne_test_c/config.json').read_text())
         test_runtime = json.loads((ROOT / 'nocturne_test_c/rootfs/opt/nocturne-ha/version.json').read_text())
-        self.assertNotEqual(self.config['version'], test_c['version'])
-        self.assertTrue(test_c['version'].startswith('0.3.25-'))
+        self.assertNotEqual(self.config['slug'], test_c['slug'])
+        self.assertTrue(updater.published_number(test_c['version']) or test_c['version'].startswith('0.3.25-'))
         self.assertEqual(test_c['version'], test_runtime['package'])
         test_c_changelog = (ROOT / 'nocturne_test_c/CHANGELOG.md').read_text()
         self.assertTrue(test_c_changelog.startswith(f"## {test_c['version']}\n"))

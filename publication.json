@@ -1,0 +1,6 @@
+{
+  "format": 1,
+  "version_floor": "1.0.0",
+  "repository": "smokkelaar/nocturne-home-assistant",
+  "architectures": ["amd64", "arm64"]
+}

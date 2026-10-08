@@ -1,0 +1,30 @@
+name: Publish changed prebuilt HA channels
+on:
+  schedule:
+    - cron: '17 * * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'nocturne_*/**'
+      - 'upstream*.json'
+      - 'tools/**'
+      - 'publication.json'
+      - 'build-platforms.json'
+      - '.github/workflows/validate.yml'
+      - '.github/workflows/native-prebuilt.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: write
+concurrency:
+  group: prebuilt-publication-dispatch
+  cancel-in-progress: false
+jobs:
+  dispatch:
+    if: github.repository == 'smokkelaar/nocturne-home-assistant'
+    runs-on: ubuntu-24.04
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh workflow run validate.yml --ref main -f publish=true -f force=false

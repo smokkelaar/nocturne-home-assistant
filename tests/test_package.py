@@ -221,7 +221,7 @@ class WebPreparationTests(unittest.TestCase):
 class PackagingTests(unittest.TestCase):
     def test_ha_manifest(self):
         config = json.loads((ROOT / 'nocturne_local/config.json').read_text())
-        self.assertEqual(['amd64'], config['arch'])
+        self.assertEqual(['amd64', 'aarch64'] if config.get('image') else ['amd64'], config['arch'])
         self.assertEqual('cold', config['backup'])
         self.assertFalse(config['init'])
         self.assertEqual({'8448/tcp': 8448}, config['ports'])

@@ -14,7 +14,7 @@ import re
 import urllib.error
 import urllib.request
 
-from versioning import next_package, package_build, wrapper_version
+from versioning import advertised_version, publication_mode, next_package, package_build, wrapper_version
 
 ROOT = Path(__file__).resolve().parents[1]
 PROJECT = 'nightscout/nocturne'
@@ -75,7 +75,16 @@ def resolve_image(kind, commit):
     auth, _ = fetch(f'https://ghcr.io/token?service=ghcr.io&scope=repository:{repository}:pull')
     headers = {'Authorization': 'Bearer ' + auth['token'], 'Accept': ACCEPT}
     manifest, digest = fetch(f'https://ghcr.io/v2/{repository}/manifests/latest', headers)
+    platforms = {}
     if 'manifests' in manifest:
+        for platform in ('amd64', 'arm64'):
+            matches = [entry for entry in manifest['manifests']
+                       if entry.get('platform', {}).get('os') == 'linux'
+                       and entry['platform'].get('architecture') == platform]
+            if len(matches) > 1:
+                raise ValueError('Ambiguous upstream platform')
+            if matches:
+                platforms[platform] = matches[0]['digest']
         entries = [entry for entry in manifest['manifests']
                    if entry.get('platform', {}).get('os') == 'linux'
                    and entry['platform'].get('architecture') == 'amd64']
@@ -97,7 +106,10 @@ def resolve_image(kind, commit):
     # accepted only from the same completed build-and-push job below.
     if (kind == 'api' and revision != commit) or (revision and revision != commit):
         raise NotReady('Published latest image does not match current main')
-    return {'tag': 'latest', 'digest': digest}
+    result = {'tag': 'latest', 'digest': digest}
+    if platforms:
+        result['platforms'] = platforms
+    return result
 
 
 def successful_build(commit):
@@ -150,13 +162,15 @@ def render(root, lock, app_version):
     package_build(root, app_version)
     wrapper = wrapper_version(root)
     config = json.loads((root / 'nocturne_latest/config.json').read_text(encoding='utf-8'))
+    app_version = advertised_version(root, config, app_version)
     config['version'] = app_version
     config['options']['skip_gateway_check'] = False
     config['schema']['skip_gateway_check'] = 'bool'
     commit_at = datetime.fromisoformat(lock['commit_at'].replace('Z', '+00:00'))
     commit_at = commit_at.astimezone(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
-    config['description'] = (f"HA wrapper {wrapper} · Nocturne main {lock['commit'][:7]} - {commit_at}. "
-                             'Highly experimental; not for clinical use.')
+    if not publication_mode(root):
+        config['description'] = (f"HA wrapper {wrapper} · Nocturne main {lock['commit'][:7]} - {commit_at}. "
+                                 'Highly experimental; not for clinical use.')
     dockerfile = (root / 'nocturne_latest/Dockerfile').read_text(encoding='utf-8')
     for kind in ('api', 'web'):
         pattern = rf'(?m)^FROM ghcr\.io/nightscout/nocturne/nocturne-{kind}@sha256:[0-9a-f]{{64}}'
