@@ -139,7 +139,7 @@ class PersonalTests(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(ValueError):
                 update_test_channels.validate_test_b_source({**source, field: value})
 
-    def test_test_b_pins_a1c_fix_with_a_distinct_runtime_identity(self):
+    def test_test_b_pins_hypo_comparison_with_a_distinct_runtime_identity(self):
         test_b = json.loads((ROOT / 'nocturne_test_b/config.json').read_text())
         test_runtime = json.loads((ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/version.json').read_text())
         self.assertNotEqual(self.config['slug'], test_b['slug'])
@@ -158,7 +158,9 @@ class PersonalTests(unittest.TestCase):
         self.assertIn('--checksum=sha256:' + pr['archive_sha256'], test_b_recipe)
         self.assertIn('codeload.github.com', test_b_recipe)
         self.assertIn(f'ARG BUILD_VERSION={test_b["version"]}', test_b_recipe)
-        self.assertIn('A1c preferences PR #1977', test_b['description'])
+        self.assertIn(f"Hypo comparison PR #{pr['pull_request']}", test_runtime['release'])
+        self.assertIn('Hypo Duration', test_runtime['purpose'])
+        self.assertIn('Hypo Events', test_runtime['test_plan'])
         self.assertNotIn('Google Health', test_runtime['purpose'])
         self.assertNotIn('Google Health', test_b['description'])
         test_settings = (ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/settings.py').read_text()

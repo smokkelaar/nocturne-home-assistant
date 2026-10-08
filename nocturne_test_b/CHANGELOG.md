@@ -1,3 +1,9 @@
+## Unreleased source candidate
+
+- Test B switches to draft Hypo comparison PR #2031: Hypo Duration and Hypo Events beside the hyper metrics, using backend covered minutes and consensus episodes.
+- No-data periods stay distinct from measured zero; the test guide covers period swapping, print and low/very-low excursions.
+- This replaces the previous A1c preferences PR #1977 test source. The existing published image remains advertised until registry promotion.
+
 ## 1.0.43901
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
