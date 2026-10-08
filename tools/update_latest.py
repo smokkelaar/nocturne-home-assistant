@@ -220,6 +220,10 @@ def apply_update(root, current, candidate):
             '- Automated container and previous-Latest upgrade tests are required before merge. '
             'Keep a cold backup; rollback after a development schema migration is not guaranteed.\n\n')
     prepared['nocturne_latest/CHANGELOG.md'] = note + changelog.read_text(encoding='utf-8')
+    if publication_mode(root):
+        prepared['nocturne_latest/CHANGELOG.md'] = ('## Unreleased source candidate\n\n'
+            f"- Latest source prepared: `{candidate['commit']}`. The existing published image remains advertised until registry promotion.\n\n"
+            + changelog.read_text(encoding='utf-8'))
     for name, content in prepared.items():
         (root / name).write_text(content, encoding='utf-8', newline='\n')
     return next_version

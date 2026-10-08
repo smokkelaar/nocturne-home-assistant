@@ -258,7 +258,8 @@ def update():
     lock_path.write_text(json.dumps(lock, indent=2) + '\n')
     changelog = directory / 'CHANGELOG.md'
     prior = changelog.read_text(encoding='utf-8') if old else ''
-    changelog.write_text(f"# {delivery}\n\nPersonal {lock['version']}; source `{lock['commit']}`; Daily base `{lock['upstream']['commit']}`.\n\n" + prior, encoding='utf-8')
+    heading = '## Unreleased source candidate' if publication_mode(ROOT) else f'# {delivery}'
+    changelog.write_bytes((f"{heading}\n\nPersonal {lock['version']}; source `{lock['commit']}`; Daily base `{lock['upstream']['commit']}`.\n\n" + prior).encode('utf-8'))
     check(lock)
 
 

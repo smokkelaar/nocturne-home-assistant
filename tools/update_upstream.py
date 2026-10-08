@@ -164,6 +164,10 @@ def apply_update(root, current, candidate):
             f"- [Upstream release](https://github.com/{PROJECT}/releases/tag/{candidate['tag']}).\n"
             '- Maintainer review and backup required before installation; database migrations may occur.\n\n')
     prepared['nocturne_local/CHANGELOG.md'] = note + changelog.read_text(encoding='utf-8')
+    if publication_mode(root):
+        prepared['nocturne_local/CHANGELOG.md'] = ('## Unreleased source candidate\n\n'
+            f"- Official source prepared: Nocturne {candidate['version']}. The existing published image remains advertised until registry promotion.\n\n"
+            + changelog.read_text(encoding='utf-8'))
     for name, content in prepared.items():
         (root / name).write_text(content, encoding='utf-8', newline='\n')
     return next_version

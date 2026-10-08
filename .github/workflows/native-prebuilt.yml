@@ -87,9 +87,7 @@ jobs:
         if: inputs.publish && github.repository == 'smokkelaar/nocturne-home-assistant'
         env:
           IMAGE: ${{ inputs.image }}
+          GHCR_PUBLISH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if docker manifest inspect "$IMAGE" >/dev/null 2>&1; then
-            echo 'Refusing to overwrite an existing immutable version tag'
-            exit 1
-          fi
+          python tools/registry.py --require-absent "$IMAGE"
           docker push "$IMAGE"

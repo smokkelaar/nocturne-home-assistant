@@ -6,6 +6,8 @@ deploy/home-assistant/tools/candidate.py. Tokens stay in memory and are never lo
 import hashlib
 import json
 import re
+import os
+import urllib.error
 import urllib.request
 
 ACCEPT = ', '.join(('application/vnd.oci.image.index.v1+json',
@@ -54,3 +56,34 @@ def image(repository, reference, arch, revision=None, labels=None):
     if any(actual_labels.get(key) != value for key, value in (labels or {}).items()):
         raise ValueError('Registry HA image labels mismatch')
     return {'digest': digest, 'index': parent, 'revision': actual_revision, 'labels': actual_labels}
+
+
+def require_absent(repository, reference, github_token):
+    # Authenticate so a private existing version cannot look like an absent one.
+    import base64
+    basic = base64.b64encode(('x-access-token:' + github_token).encode()).decode()
+    token = fetch('https://ghcr.io/token?service=ghcr.io&scope=repository:' + repository + ':pull',
+                  {'Authorization': 'Basic ' + basic})[0]['token']
+    try:
+        fetch(f'https://ghcr.io/v2/{repository}/manifests/{reference}',
+              {'Authorization': 'Bearer ' + token, 'Accept': ACCEPT})
+    except urllib.error.HTTPError as error:
+        if error.code == 404:
+            try:
+                response = json.loads(error.read(65536))
+            except (ValueError, OSError):
+                raise ValueError('Invalid registry absence response') from error
+            codes = {item.get('code') for item in response.get('errors', [])}
+            if codes and codes <= {'MANIFEST_UNKNOWN', 'NAME_UNKNOWN'}:
+                return
+        raise ValueError('Cannot determine immutable tag absence; publication aborted') from error
+    raise ValueError('Refusing to overwrite an existing immutable version tag')
+
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--require-absent', required=True)
+    args = parser.parse_args()
+    repository, version = args.require_absent.removeprefix('ghcr.io/').rsplit(':', 1)
+    require_absent(repository, version, os.environ['GHCR_PUBLISH_TOKEN'])

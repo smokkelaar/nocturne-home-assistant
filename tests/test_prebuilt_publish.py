@@ -25,6 +25,14 @@ def inspected(repository, reference, arch, revision=None, labels=None):
 
 
 class PrebuiltTests(unittest.TestCase):
+    def test_license_is_a_build_input_and_fingerprint_is_platform_independent(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fixture(root)
+            before = publisher.recipe_hash(root, 'nocturne_personal')
+            (root / 'LICENSE').write_bytes((root / 'LICENSE').read_bytes() + b'\nSynthetic license notice\n')
+            self.assertNotEqual(before, publisher.recipe_hash(root, 'nocturne_personal'))
+
     def test_large_plain_version_upgrades_every_legacy_variant_and_handles_retries(self):
         previous = ['0.1.13-1', '0.3.27-p1', '0.3.26-9', '0.3.26-a16', '0.3.25-b33', '0.3.25-c32']
         version = publisher.next_version(previous, 1, 1)
@@ -143,6 +151,22 @@ class PrebuiltTests(unittest.TestCase):
                     self.assertEqual((root / 'nocturne_personal' / name).read_bytes(), value, name)
                 for name, value in update_test_channels.files().items():
                     self.assertEqual((root / name).read_bytes(), value, name)
+
+    def test_unreleased_source_notes_receive_only_the_published_version(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fixture(root)
+            for name in ('upstream.json', 'upstream-latest.json', 'upstream-personal.json'):
+                shutil.copyfile(ROOT / name, root / name)
+            notes = root / 'nocturne_personal/CHANGELOG.md'
+            notes.write_bytes(('## Unreleased source candidate\n\n- Second candidate\n\n## Unreleased source candidate\n\n- First candidate\n\n' + notes.read_text()).encode())
+            with patch.object(publisher.registry, 'image', side_effect=inspected):
+                publisher.prepare(root, root / 'work/candidates', 'd' * 40, 1, 1, 'e' * 40, force=True)
+                publisher.promote(root, root / 'work/candidates/candidates.json')
+            content = notes.read_text()
+            self.assertNotIn('## Unreleased', content)
+            self.assertIn('Second candidate', content)
+            self.assertIn('First candidate', content)
 
 
 if __name__ == '__main__':

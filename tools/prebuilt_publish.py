@@ -63,9 +63,9 @@ def image_name(repository, channel, hass_arch='{arch}'):
 def recipe_hash(root, package):
     hashed = hashlib.sha256()
     paths = list((root / package / 'rootfs').rglob('*')) + list((root / package / 'build').rglob('*'))
-    paths += [root / package / 'Dockerfile', root / package / 'config.json', root / 'build-platforms.json',
+    paths += [root / package / 'Dockerfile', root / package / 'config.json', root / 'LICENSE', root / 'build-platforms.json',
               root / 'publication.json', root / 'tools/prebuilt_publish.py']
-    for path in sorted(paths):
+    for path in sorted(paths, key=lambda item: item.relative_to(root).as_posix()):
         if not path.is_file() or '__pycache__' in path.parts:
             continue
         raw = path.read_bytes().replace(b'\r\n', b'\n')
@@ -137,7 +137,7 @@ def prepare(root, destination, wrapper_commit, run_number, attempt, baseline_ref
                       for kind in (('api', 'web') if channel in ('official', 'latest') else ('api',))}
                 for arch in PLATFORMS}
         config.update(version=version, image=image_name(repo, channel), arch=['amd64', 'aarch64'],
-                      description=f"Vooraf gebouwd 1.x · AMD64/ARM64 · {metadata.get('release', metadata['nocturne'])} · HA wrapper {metadata['app']}")
+                      description=f"Vooraf gebouwd 1.x · AMD64/ARM64 · {metadata.get('release', metadata['nocturne'])} · HA wrapper {metadata['app']}. Experimental; not for clinical use.")
         proof = {'format': 1, 'channel': channel, 'package': package, 'version': version,
                  'repository': repo, 'wrapper_commit': wrapper_commit, 'recipe': recipe,
                  'source_repository': metadata['repository'], 'source_commit': metadata['source_commit'],
@@ -216,8 +216,14 @@ def promote(root, candidates):
         recipe = (directory / 'Dockerfile').read_text(encoding='utf-8')
         (directory / 'Dockerfile').write_bytes(re.sub(r'ARG BUILD_VERSION=\S+', 'ARG BUILD_VERSION=' + proof['version'], recipe).encode())
         changelog = directory / 'CHANGELOG.md'
+        history = changelog.read_text(encoding='utf-8')
+        pending = ''
+        while history.startswith('## Unreleased source candidate\n'):
+            section, separator, remainder = history.partition('\n## ')
+            pending += section.split('\n\n', 1)[1].replace('The existing published image remains advertised until registry promotion.', '')
+            history = '## ' + remainder if separator else ''
         note = f"## {proof['version']}\n\n- New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.\n- Existing app identity, options, private data and Nocturne source remain intact.\n\n"
-        changelog.write_bytes((note + changelog.read_text(encoding='utf-8')).encode())
+        changelog.write_bytes((note + pending + history).encode())
 
 
 if __name__ == '__main__':
