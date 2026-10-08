@@ -1,9 +1,11 @@
 # Nocturne Test B
 
-Pakket **0.3.25-b30** bouwt actuele Nocturne main met alleen de A1c-voorkeurenfix uit [PR #1977](https://github.com/nightscout/nocturne/pull/1977), inclusief de herstelde vertalingen en keuzelijsten voor alle elf beschikbare talen. Deze versie gebruikt PR-commit `bf5c517e3` op main `b515516d4`, na het oplossen van de mergeconflicten. De exacte bron en checksum staan in `upstream-test-b.json`.
+Test B bevat **Hypo Duration** en **Hypo Events** in **Reports → Comparison**, naast de bestaande hyperinformatie. Deze testversie gebruikt [draft-PR #2031](https://github.com/nightscout/nocturne/pull/2031), vastgezet op broncommit `4554d318d` en upstream main `8e1de9070`. De exacte bron en checksum staan in `upstream-test-b.json`.
 
-Kies A1c/HbA1c en %/mmol/mol op één plek: **Settings → Appearance → Units & Formats**. Geschatte waarden blijven eA1c/eHbA1c; labmetingen blijven A1c/HbA1c. GMI blijft een aparte maat. [Installatie en teststappen](DOCS.md).
+De **1.x**-pakketreeks gebruikt vooraf gebouwde GitHub-images voor AMD64 en ARM64. Home Assistant downloadt de geteste image; lokaal compileren is niet nodig.
 
-De veldnamen en eenheidsuitleg volgen nu ook de gekozen naam in alle talen. Als een periode te weinig metingen bevat om de A1c-streefwaarde te leveren, laat de samenvatting die streefwaarde weg in plaats van `Target: <–` te tonen.
+Vergelijk twee periodes van gelijke lengte. Hypo Duration toont de totale geregistreerde tijd onder bereik in uren; Hypo Events gebruikt de bestaande episode-definitie. Een overgang tussen laag en zeer laag binnen één episode telt één keer. Een periode zonder metingen toont **No data** in plaats van nul en een berekend verschil.
 
-Test B behoudt zijn slug, poort 8452, opties, data en cookie-namespace. De eerdere Google Health PR #1293-build wordt vervangen.
+Controleer beide periodewaarden, het verschil, wisselen van periodes en de afdruk. [Installatie en volledige teststappen](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/nocturne_test_b/DOCS.md).
+
+Test B behoudt zijn slug, standaardpoort **8452**, opties, data en cookie-namespace. Deze bron vervangt de vorige A1c-voorkeurentest uit PR #1977.

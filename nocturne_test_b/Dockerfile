@@ -1,4 +1,4 @@
-# Both API and web are compiled from the same checksum-verified A1c preferences source.
+# Both API and web are compiled from the same checksum-verified hypo comparison source.
 FROM node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d AS node
 FROM rust@sha256:4673f78db88b71f09d5451bbc404734807918161241215ba0a50bbbe9b448117 AS rust
 FROM mcr.microsoft.com/dotnet/sdk@sha256:0e53453ccfc8ff2d51319fe80c678971c6d0f8008dff3565fa88e15840b69854 AS source
@@ -11,7 +11,7 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@11.5.0
-ADD --checksum=sha256:0eded296ea7cb731c8833633a550556e26b3219b0b34f7d8d89f4def9fa9bac1 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/bf5c517e3fe8922dbf036071421991bcbb0f5ecd /tmp/source.tar.gz
+ADD --checksum=sha256:1947374cdaa0e2a4870f1b7160830b03b2243929878ac1bda735efe5cdc084eb https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/4554d318d909e1d73851ce584bcac1f1f946cfc4 /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
 WORKDIR /src/src/Web
@@ -44,7 +44,7 @@ USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /out/api-build-date /opt/nocturne-ha/api-build-date
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so
-ARG BUILD_VERSION=1.0.43901
+ARG BUILD_VERSION=1.0.45001
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Test B - Home Assistant app" \

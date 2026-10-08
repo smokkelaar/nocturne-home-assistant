@@ -2,12 +2,12 @@
   "format": 1,
   "channel": "test-b",
   "package": "nocturne_test_b",
-  "version": "1.0.43901",
+  "version": "1.0.45001",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "e4c67681b90c154cd44fc804f3101ecd20cc2b54",
-  "recipe": "5cfe78adc0ae993d8b104eaf2cafde8e6b246c453968c30c5ab20778cf58efad",
+  "wrapper_commit": "892794d3ed3fc3e2b924b6a02d8e1686bbe5ca23",
+  "recipe": "6546b1d8c5dcf97f79465ecf70e315ea2e864d53431359b409720be1c31eede6",
   "source_repository": "smokkelaar/nocturne-personal",
-  "source_commit": "bf5c517e3fe8922dbf036071421991bcbb0f5ecd",
+  "source_commit": "4554d318d909e1d73851ce584bcac1f1f946cfc4",
   "architectures": [
     "amd64",
     "arm64"
@@ -22,9 +22,9 @@
   },
   "config": {
     "name": "Nocturne Test B",
-    "version": "1.0.43901",
+    "version": "1.0.45001",
     "slug": "nocturne_test_b",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 A1c preferences PR #1977 \u00b7 HA wrapper 0.1.13",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Hypo comparison PR #2031 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
       "amd64",
@@ -74,12 +74,13 @@
   },
   "previous_config": {
     "name": "Nocturne Test B",
-    "version": "0.3.25-b33",
+    "version": "1.0.43901",
     "slug": "nocturne_test_b",
-    "description": "HA wrapper 0.1.13 \u00b7 A1c preferences PR #1977 bf5c517 \u00b7 main b515516. Isolated test instance; not for clinical use.",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 A1c preferences PR #1977 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
-      "amd64"
+      "amd64",
+      "aarch64"
     ],
     "startup": "application",
     "boot": "manual",
@@ -120,10 +121,11 @@
       "skip_gateway_check": "bool",
       "maintenance_enabled": "bool",
       "maintenance_password": "password"
-    }
+    },
+    "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-b-{arch}"
   },
   "digests": {
-    "amd64": "sha256:d5ffc2e8ed483be9950c9c7e710b485de64357dc5fc51d9b0fdfe4a2b76dba14",
-    "aarch64": "sha256:6dc4d36ed0875f897aa4e776fd54db210fa03447a44989c0fa936f60d3f01f76"
+    "amd64": "sha256:2c038f1ec7b28243ac55f0cd14edd6fda37417eb5a03082e9a0cf27a9dd8124f",
+    "aarch64": "sha256:969eafbdb7ef7c9f43b846268ae1b4a6a0514beea182a34b757b224ce0442e71"
   }
 }

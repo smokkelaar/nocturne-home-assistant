@@ -2,10 +2,10 @@
   "format": 1,
   "channel": "test-a",
   "package": "nocturne_test_a",
-  "version": "1.0.43901",
+  "version": "1.0.45001",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "e4c67681b90c154cd44fc804f3101ecd20cc2b54",
-  "recipe": "1ffa0414421f4e8494e8e1e982f8f844dc01b1a29e45b441d3b1115d5f3bf5cb",
+  "wrapper_commit": "892794d3ed3fc3e2b924b6a02d8e1686bbe5ca23",
+  "recipe": "60b1e50f6d6e6cf4af99079d3530d550603be136b3da68a580208bc2d5a45bbd",
   "source_repository": "smokkelaar/nocturne-personal",
   "source_commit": "9698963856c9118268fe8bd44574ce79e22ff6f2",
   "architectures": [
@@ -22,9 +22,9 @@
   },
   "config": {
     "name": "Nocturne Test A",
-    "version": "1.0.43901",
+    "version": "1.0.45001",
     "slug": "nocturne_test_a",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Google Health PR #1293 \u00b7 HA wrapper 0.1.13",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Google Health PR #1293 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
       "amd64",
@@ -74,12 +74,13 @@
   },
   "previous_config": {
     "name": "Nocturne Test A",
-    "version": "0.3.26-a16",
+    "version": "1.0.43901",
     "slug": "nocturne_test_a",
-    "description": "HA wrapper 0.1.13 \u00b7 Google Health PR #1293 9698963 \u00b7 main b515516. Isolated test instance; not for clinical use.",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Google Health PR #1293 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
-      "amd64"
+      "amd64",
+      "aarch64"
     ],
     "startup": "application",
     "boot": "manual",
@@ -120,10 +121,11 @@
       "skip_gateway_check": "bool",
       "maintenance_enabled": "bool",
       "maintenance_password": "password"
-    }
+    },
+    "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-a-{arch}"
   },
   "digests": {
-    "amd64": "sha256:52bb1964a89bdd969705e5a6eea456dc4c14ad4bb30b0b76abbc43451a432e3b",
-    "aarch64": "sha256:06e543478f93621b1555162ab3dae019c2f1ddd2cd01a5b7adf3e346d5fb81d5"
+    "amd64": "sha256:d6e7faa874d712fd5bca3cc4826d3ef12e05220a2aab9681ed4d95e1725e979b",
+    "aarch64": "sha256:2586931a30125adafffbaef24427c82bdcf937e154cd258d9efb155ddf6c4115"
   }
 }

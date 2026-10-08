@@ -2,10 +2,10 @@
   "format": 1,
   "channel": "official",
   "package": "nocturne_local",
-  "version": "1.0.43901",
+  "version": "1.0.45001",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "e4c67681b90c154cd44fc804f3101ecd20cc2b54",
-  "recipe": "41b788ce2705f0b260a6497e086c28f357fd51b000b02d4ee8661072e54a6744",
+  "wrapper_commit": "892794d3ed3fc3e2b924b6a02d8e1686bbe5ca23",
+  "recipe": "018d782b7b27e6358f141d31cf9178ccc7f246a8bf1e3b20e277bf528e224759",
   "source_repository": "nightscout/nocturne",
   "source_commit": "d9e1430975c7a05967cba66374392f75f08c858f",
   "architectures": [
@@ -24,9 +24,9 @@
   },
   "config": {
     "name": "Nocturne Official Release",
-    "version": "1.0.43901",
+    "version": "1.0.45001",
     "slug": "nocturne_local",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 0.2.7 \u00b7 HA wrapper 0.1.13",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 0.2.7 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
       "amd64",
@@ -76,12 +76,13 @@
   },
   "previous_config": {
     "name": "Nocturne Official Release",
-    "version": "0.1.13-1",
+    "version": "1.0.43901",
     "slug": "nocturne_local",
-    "description": "HA wrapper 0.1.13 \u00b7 Official Nocturne 0.2.7 with PostgreSQL. Experimental; not for clinical use.",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 0.2.7 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
-      "amd64"
+      "amd64",
+      "aarch64"
     ],
     "startup": "application",
     "boot": "manual",
@@ -122,10 +123,11 @@
       "skip_gateway_check": "bool",
       "maintenance_enabled": "bool",
       "maintenance_password": "password"
-    }
+    },
+    "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-official-{arch}"
   },
   "digests": {
-    "amd64": "sha256:97e76760eb57470fc8bae75c3a7b1bac8897ec64451bb76bdd958d6d62372e4a",
-    "aarch64": "sha256:553590cd1fcbbe5c18ee763fe93fd18f911db964b3ef3dcb0e63191713f68499"
+    "amd64": "sha256:e0e2ee8832516b4f6ba2595bc4aa9f39835f5ebef40157f2ecad2fd45153771f",
+    "aarch64": "sha256:62d51d271b6275b1db8d56a1cf7da96a9fc8bd376d67f55793345d8aa9dc9b5f"
   }
 }
