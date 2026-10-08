@@ -93,23 +93,32 @@ def validate_transition(old, new):
 
 
 def next_delivery(feature, previous=None):
-    """Emit p counters so HA orders p9 < p10; accept numeric suffixes only as migration input."""
+    """Keep the published package floor; bump the base when migrating numeric suffixes."""
     if not re.fullmatch(r'\d+\.\d+\.\d+', feature):
         raise ValueError('Invalid Personal feature version')
-    counter = 1
-    if previous is not None:
-        match = re.fullmatch(re.escape(feature) + r'-(?:p)?([1-9]\d*)', previous)
-        if not match:
-            raise ValueError('Invalid previous Personal delivery version')
-        counter = int(match[1]) + 1
-    return feature + '-p' + str(counter)
+    if previous is None:
+        return feature + '-p1'
+    match = re.fullmatch(r'(\d+\.\d+\.\d+)-(p)?([1-9]\d*)', previous)
+    if not match:
+        raise ValueError('Invalid previous Personal delivery version')
+    base = match[1]
+    feature_parts = tuple(map(int, feature.split('.')))
+    base_parts = tuple(map(int, base.split('.')))
+    if not match[2]:
+        # A p suffix on the same base sorts below a numeric suffix in HA.
+        migrated = (base_parts[0], base_parts[1], base_parts[2] + 1)
+        return '.'.join(map(str, max(feature_parts, migrated))) + '-p1'
+    if feature_parts > base_parts:
+        return feature + '-p1'
+    return base + '-p' + str(int(match[3]) + 1)
 
 
 def files(lock, delivery, maintenance=True):
     validate(lock)
     latest = ROOT / 'nocturne_latest'
     wrapper = json.loads((ROOT / 'wrapper.json').read_text())['version']
-    if not re.fullmatch(re.escape(lock['version']) + r'-p[1-9]\d*', delivery):
+    package_match = re.fullmatch(r'(\d+\.\d+\.\d+)-p[1-9]\d*', delivery)
+    if not package_match or tuple(map(int, package_match[1].split('.'))) < tuple(map(int, lock['version'].split('.'))):
         raise ValueError('Invalid Personal delivery version')
     generated = {path: (latest / path).read_bytes() for path in COMMON}
     config = json.loads((latest / 'config.json').read_text())
@@ -225,8 +234,7 @@ def update():
     if old:
         validate_transition(old, lock)
     directory = ROOT / 'nocturne_personal'
-    previous = (json.loads((directory / 'config.json').read_text())['version']
-                if old and old['version'] == lock['version'] else None)
+    previous = json.loads((directory / 'config.json').read_text())['version'] if old else None
     delivery = next_delivery(lock['version'], previous)
     for path, data in files(lock, delivery).items():
         target = directory / path

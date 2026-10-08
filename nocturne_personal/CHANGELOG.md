@@ -1,3 +1,9 @@
+## 0.3.27-p1
+
+- Fix the HA update transition from installed `0.3.26-9`: raise the package base once, so this version ranks above both the numeric suffix and `0.3.26-p11`.
+- Personal feature version remains `0.3.26` with identical source pins, app identity, options and existing data.
+- Future deliveries preserve this package base; the counter continues when the actual feature version catches up.
+
 ## 0.3.26-p11
 
 - Fix HA package version ordering: Personal deliveries now use a `p` prefix, like the isolated test channels.
