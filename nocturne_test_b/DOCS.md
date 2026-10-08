@@ -1,6 +1,6 @@
 # Nocturne Test B — installation and operation
 
-> Test B evaluates [Hypo comparison PR #2031](https://github.com/nightscout/nocturne/pull/2031), pinned to commit `33ad31c69`, based on upstream `main` `8e1de9070`. It is a separate HA app with its own data and default host port **8452**. The tested image is offered in the prebuilt **1.x** package series after publication.
+> Test B evaluates [Hypo comparison PR #2031](https://github.com/nightscout/nocturne/pull/2031), pinned to commit `4554d318d`, based on upstream `main` `8e1de9070`. It is a separate HA app with its own data and default host port **8452**. The tested image is offered in the prebuilt **1.x** package series after publication.
 
 > **Nederlands, met afbeeldingen en exacte stappen:** [Volledige visuele installatiehandleiding](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md), van repository toevoegen tot dashboard en herstarttest. [Domein, certificaat en lokale DNS](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/HTTPS-EN-DNS.md) is apart uitgewerkt. These absolute links also work from Home Assistant's Documentation tab.
 
