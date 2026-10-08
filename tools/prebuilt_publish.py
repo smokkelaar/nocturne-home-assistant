@@ -28,7 +28,7 @@ def read(path):
 
 def write(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes((json.dumps(value, indent=2, ensure_ascii=False) + '\n').encode('utf-8'))
+    path.write_bytes((json.dumps(value, indent=2) + '\n').encode('utf-8'))
 
 
 def require_upgrade(candidate, previous=None):

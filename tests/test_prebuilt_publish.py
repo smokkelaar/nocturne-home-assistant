@@ -12,6 +12,10 @@ from awesomeversion import AwesomeVersion
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 import prebuilt_publish as publisher
+import update_personal
+import update_test_channels
+import update_latest
+import update_upstream
 from versioning import next_package
 
 
@@ -60,7 +64,8 @@ class PrebuiltTests(unittest.TestCase):
             self.assertEqual(before, {package: (ROOT / package / 'config.json').read_bytes() for package in publisher.CHANNELS.values()})
 
     def fixture(self, target):
-        for name in ('publication.json', 'build-platforms.json', 'LICENSE'):
+        for name in ('publication.json', 'build-platforms.json', 'LICENSE', 'wrapper.json',
+                     'upstream-test-a.json', 'upstream-test-b.json', 'upstream-test-c.json'):
             shutil.copyfile(ROOT / name, target / name)
         (target / 'tools').mkdir()
         shutil.copyfile(ROOT / 'tools/prebuilt_publish.py', target / 'tools/prebuilt_publish.py')
@@ -117,6 +122,27 @@ class PrebuiltTests(unittest.TestCase):
                 publisher.write(root / 'nocturne_local/config.json', config)
                 with self.assertRaisesRegex(ValueError, 'changed'):
                     publisher.promote(root, root / 'work/candidates/candidates.json')
+
+    def test_generators_keep_each_own_image_after_publication(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fixture(root)
+            for name in ('upstream.json', 'upstream-latest.json', 'upstream-personal.json'):
+                shutil.copyfile(ROOT / name, root / name)
+            with patch.object(publisher.registry, 'image', side_effect=inspected):
+                publisher.prepare(root, root / 'work/candidates', 'd' * 40, 1, 1, 'e' * 40, force=True)
+                publisher.promote(root, root / 'work/candidates/candidates.json')
+            for updater, lockfile, package in ((update_upstream, 'upstream.json', 'nocturne_local'),
+                                              (update_latest, 'upstream-latest.json', 'nocturne_latest')):
+                rendered = updater.render(root, publisher.read(root / lockfile), '1.0.102')
+                for name, value in rendered.items():
+                    self.assertEqual((root / name).read_bytes(), value.encode('utf-8'), name)
+            with patch.object(update_personal, 'ROOT', root), patch.object(update_test_channels, 'ROOT', root):
+                generated = update_personal.files(publisher.read(root / 'upstream-personal.json'), '1.0.101')
+                for name, value in generated.items():
+                    self.assertEqual((root / 'nocturne_personal' / name).read_bytes(), value, name)
+                for name, value in update_test_channels.files().items():
+                    self.assertEqual((root / name).read_bytes(), value, name)
 
 
 if __name__ == '__main__':
