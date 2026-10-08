@@ -4,6 +4,7 @@ import json
 import re
 from pathlib import Path
 import sys
+import tempfile
 import unittest
 from unittest.mock import patch
 
@@ -15,11 +16,14 @@ import update_test_channels
 
 class PersonalTests(unittest.TestCase):
     def test_personal_delivery_counters_migrate_and_keep_the_p_prefix(self):
-        self.assertEqual('0.3.26-p11', updater.next_delivery('0.3.26', '0.3.26-10'))
+        self.assertEqual('0.3.27-p1', updater.next_delivery('0.3.26', '0.3.26-10'))
         self.assertEqual('0.3.26-p10', updater.next_delivery('0.3.26', '0.3.26-p9'))
         self.assertEqual('0.3.26-p100', updater.next_delivery('0.3.26', '0.3.26-p99'))
         self.assertEqual('0.3.27-p1', updater.next_delivery('0.3.27'))
-        for previous in ('0.3.26-a10', '0.3.26-p0', '0.3.26-0', '0.3.25-p10'):
+        self.assertEqual('0.3.27-p2', updater.next_delivery('0.3.26', '0.3.27-p1'))
+        self.assertEqual('0.3.27-p3', updater.next_delivery('0.3.27', '0.3.27-p2'))
+        self.assertEqual('0.3.28-p1', updater.next_delivery('0.3.28', '0.3.27-p99'))
+        for previous in ('0.3.26-a10', '0.3.26-p0', '0.3.26-0'):
             with self.subTest(previous=previous), self.assertRaises(ValueError):
                 updater.next_delivery('0.3.26', previous)
 
@@ -27,6 +31,33 @@ class PersonalTests(unittest.TestCase):
         for delivery in (self.lock['version'] + '-10', self.lock['version'] + '-a10'):
             with self.subTest(delivery=delivery), self.assertRaises(ValueError):
                 updater.files(self.lock, delivery)
+
+    def test_higher_package_base_keeps_actual_personal_feature_version(self):
+        major, minor, patch_version = map(int, self.lock['version'].split('.'))
+        delivery = f'{major}.{minor}.{patch_version + 1}-p1'
+        generated = updater.files(self.lock, delivery)
+        runtime = json.loads(generated['rootfs/opt/nocturne-ha/version.json'])
+        self.assertEqual(self.lock['version'], runtime['personal'])
+        self.assertEqual(delivery, runtime['package'])
+        with self.assertRaises(ValueError):
+            updater.files(self.lock, '0.0.1-p1')
+
+    def test_daily_promotion_keeps_package_floor_when_feature_catches_up(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            directory = root / 'nocturne_personal'
+            directory.mkdir()
+            (root / 'upstream-personal.json').write_text(json.dumps(self.lock))
+            (directory / 'config.json').write_text('{"version":"0.3.27-p2"}')
+            (directory / 'CHANGELOG.md').write_text('Existing history\n')
+            candidate = {**self.lock, 'version': '0.3.27'}
+            with patch.object(updater, 'ROOT', root), \
+                 patch.object(updater, 'resolve', return_value=candidate), \
+                 patch.object(updater, 'validate_transition'), \
+                 patch.object(updater, 'files', return_value={}) as generated, \
+                 patch.object(updater, 'check'):
+                updater.update()
+            generated.assert_called_once_with(candidate, '0.3.27-p3')
 
     def setUp(self):
         self.lock = json.loads((ROOT / 'upstream-personal.json').read_text())
