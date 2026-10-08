@@ -1,0 +1,131 @@
+{
+  "format": 1,
+  "channel": "latest",
+  "package": "nocturne_latest",
+  "version": "1.0.43901",
+  "repository": "smokkelaar/nocturne-home-assistant",
+  "wrapper_commit": "e4c67681b90c154cd44fc804f3101ecd20cc2b54",
+  "recipe": "365755728de2e9bc0399eb6a20282627db9c9c4295d2389f5ebb1374951d7602",
+  "source_repository": "nightscout/nocturne",
+  "source_commit": "8635bd530e6f8b792c3f2442cd3198ec7104fa96",
+  "architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "runtime_pins": {
+    "amd64": {
+      "api": "sha256:92cb1eadc462fac72cf7816d66bd546290cc270446d2f11d943f4934f6769c8e",
+      "web": "sha256:1e998d9f8b058b62dd1698373adbe17b312e00a986a8f45f9fd8874f0f76c23e"
+    },
+    "arm64": {
+      "api": "sha256:c749df8daa46fa1b2a5e44d00c4a53abf133a5c3eb7ac648fffd5f10ceed82f9",
+      "web": "sha256:ace3b463e89b08800c71f1ddf2d84612badb18e68bc47a533d80f4a28a45dde2"
+    }
+  },
+  "config": {
+    "name": "Nocturne Latest Release",
+    "version": "1.0.43901",
+    "slug": "nocturne_latest",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Geen release; vastgezette main-snapshot \u00b7 HA wrapper 0.1.13",
+    "url": "https://github.com/smokkelaar/nocturne-home-assistant",
+    "arch": [
+      "amd64",
+      "aarch64"
+    ],
+    "startup": "application",
+    "boot": "manual",
+    "init": false,
+    "timeout": 120,
+    "ingress": true,
+    "ingress_port": 8099,
+    "panel_icon": "mdi:heart-pulse",
+    "panel_title": "Nocturne Latest",
+    "panel_admin": true,
+    "ports": {
+      "8448/tcp": 8449
+    },
+    "ports_description": {
+      "8448/tcp": "Nocturne HTTPS - alleen lokaal gebruiken; extra toegangscode staat in de HA-webinterface"
+    },
+    "map": [
+      {
+        "type": "ssl",
+        "read_only": true
+      }
+    ],
+    "backup": "cold",
+    "options": {
+      "public_url": "https://homeassistant.local:8449",
+      "certificate": "",
+      "private_key": "",
+      "gateway_auth": true,
+      "skip_gateway_check": false,
+      "maintenance_enabled": false,
+      "maintenance_password": ""
+    },
+    "schema": {
+      "public_url": "url",
+      "certificate": "str",
+      "private_key": "str",
+      "gateway_auth": "bool",
+      "skip_gateway_check": "bool",
+      "maintenance_enabled": "bool",
+      "maintenance_password": "password"
+    },
+    "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-latest-{arch}"
+  },
+  "previous_config": {
+    "name": "Nocturne Latest Release",
+    "version": "0.1.13-1",
+    "slug": "nocturne_latest",
+    "description": "HA wrapper 0.1.13 \u00b7 Nocturne main 8635bd5 - 2026-09-26 23:45 UTC. Highly experimental; not for clinical use.",
+    "url": "https://github.com/smokkelaar/nocturne-home-assistant",
+    "arch": [
+      "amd64"
+    ],
+    "startup": "application",
+    "boot": "manual",
+    "init": false,
+    "timeout": 120,
+    "ingress": true,
+    "ingress_port": 8099,
+    "panel_icon": "mdi:heart-pulse",
+    "panel_title": "Nocturne Latest",
+    "panel_admin": true,
+    "ports": {
+      "8448/tcp": 8449
+    },
+    "ports_description": {
+      "8448/tcp": "Nocturne HTTPS - alleen lokaal gebruiken; extra toegangscode staat in de HA-webinterface"
+    },
+    "map": [
+      {
+        "type": "ssl",
+        "read_only": true
+      }
+    ],
+    "backup": "cold",
+    "options": {
+      "public_url": "https://homeassistant.local:8449",
+      "certificate": "",
+      "private_key": "",
+      "gateway_auth": true,
+      "skip_gateway_check": false,
+      "maintenance_enabled": false,
+      "maintenance_password": ""
+    },
+    "schema": {
+      "public_url": "url",
+      "certificate": "str",
+      "private_key": "str",
+      "gateway_auth": "bool",
+      "skip_gateway_check": "bool",
+      "maintenance_enabled": "bool",
+      "maintenance_password": "password"
+    }
+  },
+  "digests": {
+    "amd64": "sha256:6277edbb247d429752a7116041731f4aae0400337f29d453e242235c2d2ca5de",
+    "aarch64": "sha256:09879c023b12d5897dfee90a08ff763c3405a450ccf0516f89000802247e66b5"
+  }
+}

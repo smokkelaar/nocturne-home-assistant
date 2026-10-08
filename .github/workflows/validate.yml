@@ -271,7 +271,7 @@ jobs:
   prebuilt-promote:
     name: Verify public images and prepare HA store promotion
     needs: [container-gate, prebuilt-select]
-    if: github.event_name == 'workflow_dispatch' && inputs.publish && needs.prebuilt-select.outputs.changed == 'true' && github.repository == 'smokkelaar/nocturne-home-assistant'
+    if: always() && needs.container-gate.result == 'success' && github.event_name == 'workflow_dispatch' && inputs.publish && needs.prebuilt-select.outputs.changed == 'true' && github.repository == 'smokkelaar/nocturne-home-assistant'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:

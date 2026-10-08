@@ -1,3 +1,8 @@
+## 1.0.43901
+
+- New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
+- Existing app identity, options, private data and Nocturne source remain intact.
+
 ## 0.3.27-p1
 
 - Fix the HA update transition from installed `0.3.26-9`: raise the package base once, so this version ranks above both the numeric suffix and `0.3.26-p11`.

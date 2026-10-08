@@ -26,8 +26,7 @@ def inspected(repository, reference, arch, revision=None, labels=None):
 
 class PrebuiltTests(unittest.TestCase):
     def test_large_plain_version_upgrades_every_legacy_variant_and_handles_retries(self):
-        previous = [json.loads((ROOT / package / 'config.json').read_text())['version']
-                    for package in publisher.CHANNELS.values()]
+        previous = ['0.1.13-1', '0.3.27-p1', '0.3.26-9', '0.3.26-a16', '0.3.25-b33', '0.3.25-c32']
         version = publisher.next_version(previous, 1, 1)
         self.assertEqual('1.0.101', version)
         for old in previous:
@@ -105,7 +104,7 @@ class PrebuiltTests(unittest.TestCase):
             self.assertEqual([], matrix['include'])
             for channel, package in publisher.CHANNELS.items():
                 config = publisher.read(root / package / 'config.json')
-                self.assertEqual('1.0.101', config['version'])
+                self.assertEqual(publisher.read(output / 'candidates.json')[channel]['version'], config['version'])
                 self.assertEqual(publisher.image_name('smokkelaar/nocturne-home-assistant', channel), config['image'])
                 self.assertEqual(config['version'], publisher.read(root / package / 'rootfs/opt/nocturne-ha/version.json')['package'])
 
@@ -138,7 +137,8 @@ class PrebuiltTests(unittest.TestCase):
                 for name, value in rendered.items():
                     self.assertEqual((root / name).read_bytes(), value.encode('utf-8'), name)
             with patch.object(update_personal, 'ROOT', root), patch.object(update_test_channels, 'ROOT', root):
-                generated = update_personal.files(publisher.read(root / 'upstream-personal.json'), '1.0.101')
+                delivery = publisher.read(root / 'nocturne_personal/config.json')['version']
+                generated = update_personal.files(publisher.read(root / 'upstream-personal.json'), delivery)
                 for name, value in generated.items():
                     self.assertEqual((root / 'nocturne_personal' / name).read_bytes(), value, name)
                 for name, value in update_test_channels.files().items():

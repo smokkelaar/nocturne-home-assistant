@@ -1,3 +1,8 @@
+## 1.0.43901
+
+- New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
+- Existing app identity, options, private data and Nocturne source remain intact.
+
 ## 0.3.25-b33
 
 - Guided standalone TOTP reset button: selected owner, backup/account confirmation, one-use request, and clear reenrollment steps. No new recovery code or changes to passkeys/data; existing login sessions stay signed in.

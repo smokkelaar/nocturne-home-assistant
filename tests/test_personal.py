@@ -86,8 +86,12 @@ class PersonalTests(unittest.TestCase):
         dockerfile = generated['Dockerfile'].decode()
         docs = generated['DOCS.md'].decode()
 
-        self.assertIn('HA may show 0% until it finishes', config['description'])
-        self.assertIn('Experimental; not for clinical use', config['description'])
+        if config.get('image'):
+            self.assertIn('Vooraf gebouwd', config['description'])
+        else:
+            self.assertIn('HA may show 0% until it finishes', config['description'])
+        if not config.get('image'):
+            self.assertIn('Experimental; not for clinical use', config['description'])
         self.assertIn('keeps the update dialog at 0%', docs)
         for phase in range(1, 8):
             self.assertIn(f'Nocturne build phase {phase}/7:', dockerfile)

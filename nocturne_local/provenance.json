@@ -1,0 +1,131 @@
+{
+  "format": 1,
+  "channel": "official",
+  "package": "nocturne_local",
+  "version": "1.0.43901",
+  "repository": "smokkelaar/nocturne-home-assistant",
+  "wrapper_commit": "e4c67681b90c154cd44fc804f3101ecd20cc2b54",
+  "recipe": "41b788ce2705f0b260a6497e086c28f357fd51b000b02d4ee8661072e54a6744",
+  "source_repository": "nightscout/nocturne",
+  "source_commit": "d9e1430975c7a05967cba66374392f75f08c858f",
+  "architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "runtime_pins": {
+    "amd64": {
+      "api": "sha256:507f3497203703382f204b1833ab4e6ac5540906042705b676b7a2984a95c6b9",
+      "web": "sha256:5ec638cdefb06d56fc4d25c680772778e6d1defc0c6dc4e9993443b9f5dcd2f5"
+    },
+    "arm64": {
+      "api": "sha256:0f82833b24b440fae3153fec0b34386fcaafd57a31b855354d058dde5d326992",
+      "web": "sha256:3fc19100a29984ae9f22a233324c1f4a4b05f07ea35346a7e2c56a0b6998e000"
+    }
+  },
+  "config": {
+    "name": "Nocturne Official Release",
+    "version": "1.0.43901",
+    "slug": "nocturne_local",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 0.2.7 \u00b7 HA wrapper 0.1.13",
+    "url": "https://github.com/smokkelaar/nocturne-home-assistant",
+    "arch": [
+      "amd64",
+      "aarch64"
+    ],
+    "startup": "application",
+    "boot": "manual",
+    "init": false,
+    "timeout": 120,
+    "ingress": true,
+    "ingress_port": 8099,
+    "panel_icon": "mdi:heart-pulse",
+    "panel_title": "Nocturne Official",
+    "panel_admin": true,
+    "ports": {
+      "8448/tcp": 8448
+    },
+    "ports_description": {
+      "8448/tcp": "Nocturne HTTPS - alleen lokaal gebruiken; extra toegangscode staat in de HA-webinterface"
+    },
+    "map": [
+      {
+        "type": "ssl",
+        "read_only": true
+      }
+    ],
+    "backup": "cold",
+    "options": {
+      "public_url": "https://homeassistant.local:8448",
+      "certificate": "",
+      "private_key": "",
+      "gateway_auth": true,
+      "skip_gateway_check": false,
+      "maintenance_enabled": false,
+      "maintenance_password": ""
+    },
+    "schema": {
+      "public_url": "url",
+      "certificate": "str",
+      "private_key": "str",
+      "gateway_auth": "bool",
+      "skip_gateway_check": "bool",
+      "maintenance_enabled": "bool",
+      "maintenance_password": "password"
+    },
+    "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-official-{arch}"
+  },
+  "previous_config": {
+    "name": "Nocturne Official Release",
+    "version": "0.1.13-1",
+    "slug": "nocturne_local",
+    "description": "HA wrapper 0.1.13 \u00b7 Official Nocturne 0.2.7 with PostgreSQL. Experimental; not for clinical use.",
+    "url": "https://github.com/smokkelaar/nocturne-home-assistant",
+    "arch": [
+      "amd64"
+    ],
+    "startup": "application",
+    "boot": "manual",
+    "init": false,
+    "timeout": 120,
+    "ingress": true,
+    "ingress_port": 8099,
+    "panel_icon": "mdi:heart-pulse",
+    "panel_title": "Nocturne Official",
+    "panel_admin": true,
+    "ports": {
+      "8448/tcp": 8448
+    },
+    "ports_description": {
+      "8448/tcp": "Nocturne HTTPS - alleen lokaal gebruiken; extra toegangscode staat in de HA-webinterface"
+    },
+    "map": [
+      {
+        "type": "ssl",
+        "read_only": true
+      }
+    ],
+    "backup": "cold",
+    "options": {
+      "public_url": "https://homeassistant.local:8448",
+      "certificate": "",
+      "private_key": "",
+      "gateway_auth": true,
+      "skip_gateway_check": false,
+      "maintenance_enabled": false,
+      "maintenance_password": ""
+    },
+    "schema": {
+      "public_url": "url",
+      "certificate": "str",
+      "private_key": "str",
+      "gateway_auth": "bool",
+      "skip_gateway_check": "bool",
+      "maintenance_enabled": "bool",
+      "maintenance_password": "password"
+    }
+  },
+  "digests": {
+    "amd64": "sha256:97e76760eb57470fc8bae75c3a7b1bac8897ec64451bb76bdd958d6d62372e4a",
+    "aarch64": "sha256:553590cd1fcbbe5c18ee763fe93fd18f911db964b3ef3dcb0e63191713f68499"
+  }
+}

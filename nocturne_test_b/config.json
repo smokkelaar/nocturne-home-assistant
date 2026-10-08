@@ -1,11 +1,12 @@
 {
   "name": "Nocturne Test B",
-  "version": "0.3.25-b33",
+  "version": "1.0.43901",
   "slug": "nocturne_test_b",
-  "description": "HA wrapper 0.1.13 \u00b7 A1c preferences PR #1977 bf5c517 \u00b7 main b515516. Isolated test instance; not for clinical use.",
+  "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 A1c preferences PR #1977 \u00b7 HA wrapper 0.1.13",
   "url": "https://github.com/smokkelaar/nocturne-home-assistant",
   "arch": [
-    "amd64"
+    "amd64",
+    "aarch64"
   ],
   "startup": "application",
   "boot": "manual",
@@ -46,5 +47,6 @@
     "skip_gateway_check": "bool",
     "maintenance_enabled": "bool",
     "maintenance_password": "password"
-  }
+  },
+  "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-b-{arch}"
 }
