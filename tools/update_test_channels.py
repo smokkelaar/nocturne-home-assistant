@@ -108,14 +108,14 @@ def files():
                        base_commit=base_commit, commit_at=base_at,
                        nocturne="main@" + base_commit[:7])
         if letter == "b":
-            label = f"A1c preferences PR #{source['pull_request']}"
-            purpose = "Globale A1c/HbA1c-naam en %/mmol/mol-weergave testen; schattingen behouden de e-prefix."
+            label = f"Hypo comparison PR #{source['pull_request']}"
+            purpose = "Hypo Duration en Hypo Events tussen twee periodes vergelijken, naast de bestaande hyperinformatie."
             description = f"{label} {source['commit'][:7]} · main {source['base_commit'][:7]}"
             runtime.pop("personal", None)
             runtime["base"] = f"Nocturne main + PR #{source['pull_request']}"
             runtime["nocturne"] = f"main@{source['base_commit'][:7]} + PR #{source['pull_request']}"
             runtime["release"] = label
-            recipe = recipe.replace("checksum-verified Personal source", "checksum-verified A1c preferences source")
+            recipe = recipe.replace("checksum-verified Personal source", "checksum-verified hypo comparison source")
             generated[package + "/Dockerfile"] = recipe
         elif letter == "c":
             label = f"Clock face units PR #{source['pull_request']}"
@@ -136,7 +136,7 @@ def files():
             runtime["release"] = "Google Health PR #1293"
         runtime["release_url"] = source["pull_request_url"]
         runtime.update(purpose=purpose, purpose_url=runtime["release_url"],
-                       test_plan=("Open Settings → Appearance → Units & Formats; test beide namen en eenheden, e-prefix, labinvoer, rapporten en print; herlaad en controleer voorkeuren."
+                       test_plan=("Open Reports → Comparison; kies twee periodes met metingen en controleer Hypo Duration (uren), Hypo Events en het verschil. Test ook nul hypo's, een periode zonder data, wisselen van periodes en print. Laag en zeer laag binnen één episode mogen niet dubbel tellen."
                                   if letter == "b" else "Open Settings → Connectors → Google Health, autoriseer Google, test paging en herstel vanaf een datum voor steps, heart rate, weight en sleep."
                                   if letter == "a" else
                                   "Maak of reset een klokface en kies per face mg/dL of mmol/L en 12/24 uur; open de face als eigenaar, als ingelogde kijker met andere voorkeuren en via de publieke kloklink; controleer de builder-preview en dat oude faces mg/dL en 12 uur tonen."),

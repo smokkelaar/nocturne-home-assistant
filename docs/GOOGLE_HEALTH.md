@@ -5,7 +5,7 @@
 Test A (poort 8451), versie **0.3.26-a13**, bouwt nu PR #1293 op exact commit
 `969896385` met main-basis `b515516d4`. `upstream-test-a.json` bevat de bronpin
 en checksum. De app-identiteit, opties en private opslag blijven behouden.
-Test B test nu de A1c-voorkeuren uit [PR #1977](https://github.com/nightscout/nocturne/pull/1977) op actuele main, zonder de Google Health PR-wijzigingen. Personal blijft op zijn eigen
+Test B test nu de hypo-vergelijking uit [PR #2031](https://github.com/nightscout/nocturne/pull/2031) op actuele main, zonder de Google Health PR-wijzigingen. Personal blijft op zijn eigen
 bron; de Personal-uitbreidingen zijn geen onderdeel van deze Test A-build.
 
 Deze versie lost de mergeconflicten met main op en verwerkt de reviewfix voor
@@ -49,7 +49,7 @@ is, op Personal (8450):
 5. Controleer op de eHbA1c-pagina dat **eHbA1c**, **Lab results** en de uitleg
    over de labdriehoek zichtbaar blijven; een labresultaat mag de berekende
    lijn niet aanpassen.
-6. Controleer dat Test B (8452) zijn eigen A1c-bronpin behoudt en dat Test C
+6. Controleer dat Test B (8452) zijn eigen hypo-comparison-bronpin behoudt en dat Test C
    (8453) zijn eigen bronpin, data en cookies behoudt. Official
    (8448) en Latest (8449) worden door deze update niet gewijzigd.
 

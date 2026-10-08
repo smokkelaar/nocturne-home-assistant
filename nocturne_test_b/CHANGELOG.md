@@ -1,7 +1,7 @@
 ## 1.0.45001
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
-- Existing app identity, options, private data and Nocturne source remain intact.
+- Existing app identity, options and private data remain intact; Test B source is updated to the pinned hypo comparison PR #2031.
 
 - Test B switches to draft Hypo comparison PR #2031: Hypo Duration and Hypo Events beside the hyper metrics, using backend covered minutes and consensus episodes.
 - No-data periods stay distinct from measured zero; the test guide covers period swapping, print and low/very-low excursions.
