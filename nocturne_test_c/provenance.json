@@ -2,10 +2,10 @@
   "format": 1,
   "channel": "test-c",
   "package": "nocturne_test_c",
-  "version": "1.0.43901",
+  "version": "1.0.45001",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "e4c67681b90c154cd44fc804f3101ecd20cc2b54",
-  "recipe": "d1506311bffc3286927161c82597ecf4472a815ee6fdcd89f4153a9f0a7081ce",
+  "wrapper_commit": "892794d3ed3fc3e2b924b6a02d8e1686bbe5ca23",
+  "recipe": "595b10405ee6f71ceb80314a3f97d3b5b3eaea3f6bc0a95a725b76e8bee20526",
   "source_repository": "smokkelaar/nocturne-personal",
   "source_commit": "e17d9ee806a44e613d93dd7e191c2693f5b27729",
   "architectures": [
@@ -22,9 +22,9 @@
   },
   "config": {
     "name": "Nocturne Test C",
-    "version": "1.0.43901",
+    "version": "1.0.45001",
     "slug": "nocturne_test_c",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Clock face units PR #2007 \u00b7 HA wrapper 0.1.13",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Clock face units PR #2007 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
       "amd64",
@@ -74,12 +74,13 @@
   },
   "previous_config": {
     "name": "Nocturne Test C",
-    "version": "0.3.25-c32",
+    "version": "1.0.43901",
     "slug": "nocturne_test_c",
-    "description": "HA wrapper 0.1.13 \u00b7 Clock face units PR #2007 e17d9ee \u00b7 main 0198225. Isolated test instance; not for clinical use.",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Clock face units PR #2007 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
-      "amd64"
+      "amd64",
+      "aarch64"
     ],
     "startup": "application",
     "boot": "manual",
@@ -120,10 +121,11 @@
       "skip_gateway_check": "bool",
       "maintenance_enabled": "bool",
       "maintenance_password": "password"
-    }
+    },
+    "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-c-{arch}"
   },
   "digests": {
-    "amd64": "sha256:e3ef3b9d2f7bedf9893c90b9ca91ba0d5adf16cba5bbe413e24b7849f3081c6a",
-    "aarch64": "sha256:a17d91c39b565335aefd82f5871b6d4407d870dfc3eca31166855dcd43519417"
+    "amd64": "sha256:f305bfb6d2a114f97046c914f973109fb1041c142d097040c0093028ce51911a",
+    "aarch64": "sha256:888e87438182df02a614ed6671ad8853ae9232e7baa65c433c96b98aaeaf235d"
   }
 }

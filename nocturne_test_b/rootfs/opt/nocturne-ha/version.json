@@ -1,7 +1,7 @@
 {
   "app": "0.1.13",
-  "package": "1.0.43901",
-  "nocturne": "main@b515516 + PR #1977",
+  "package": "1.0.45001",
+  "nocturne": "main@8e1de90 + PR #2031",
   "repository": "smokkelaar/nocturne-personal",
   "source_commit": "bf5c517e3fe8922dbf036071421991bcbb0f5ecd",
   "commit_at": "2026-10-05T00:37:57Z",
