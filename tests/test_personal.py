@@ -14,6 +14,20 @@ import update_test_channels
 
 
 class PersonalTests(unittest.TestCase):
+    def test_personal_delivery_counters_migrate_and_keep_the_p_prefix(self):
+        self.assertEqual('0.3.26-p11', updater.next_delivery('0.3.26', '0.3.26-10'))
+        self.assertEqual('0.3.26-p10', updater.next_delivery('0.3.26', '0.3.26-p9'))
+        self.assertEqual('0.3.26-p100', updater.next_delivery('0.3.26', '0.3.26-p99'))
+        self.assertEqual('0.3.27-p1', updater.next_delivery('0.3.27'))
+        for previous in ('0.3.26-a10', '0.3.26-p0', '0.3.26-0', '0.3.25-p10'):
+            with self.subTest(previous=previous), self.assertRaises(ValueError):
+                updater.next_delivery('0.3.26', previous)
+
+    def test_generator_rejects_bare_numeric_and_other_channel_versions(self):
+        for delivery in (self.lock['version'] + '-10', self.lock['version'] + '-a10'):
+            with self.subTest(delivery=delivery), self.assertRaises(ValueError):
+                updater.files(self.lock, delivery)
+
     def setUp(self):
         self.lock = json.loads((ROOT / 'upstream-personal.json').read_text())
         self.directory = ROOT / 'nocturne_personal'
@@ -28,7 +42,7 @@ class PersonalTests(unittest.TestCase):
 
     def test_generated_feature_docs_follow_extension_version(self):
         lock = {**self.lock, 'version': '0.2.99'}
-        generated = updater.files(lock, '0.2.99-1')
+        generated = updater.files(lock, '0.2.99-p1')
         for path in ('DOCS.md', 'README.md'):
             self.assertIn(b'Personal 0.2.99 includes Google Health imports for steps, heart rate, weight and sleep', generated[path])
             self.assertIn(b'Progress refreshes while the connector page is open', generated[path])

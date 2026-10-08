@@ -11,7 +11,7 @@ the existing Official/Latest packages to implement personal product features.
 Source fork: `smokkelaar/nocturne-personal`, default branch `personal`.
 Personal alone compiles that pinned source. Its slug, port and cookie namespace
 are `nocturne_personal`, 8450 and `NocturnePersonal_`. Personal package version
-uses its own extension version plus delivery counter; wrapper stays separately
+uses its own extension version plus a `-pN` delivery counter; wrapper stays separately
 visible. `upstream-personal.json` and `tools/update_personal.py` define its build.
 The required Validate container job gates Personal-changing proposals; do not
 add a globally required separate check which the existing Daily bot never dispatches.

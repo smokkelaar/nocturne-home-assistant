@@ -92,11 +92,24 @@ def validate_transition(old, new):
             raise ValueError('Personal source must preserve the previously published source history')
 
 
+def next_delivery(feature, previous=None):
+    """Emit p counters so HA orders p9 < p10; accept numeric suffixes only as migration input."""
+    if not re.fullmatch(r'\d+\.\d+\.\d+', feature):
+        raise ValueError('Invalid Personal feature version')
+    counter = 1
+    if previous is not None:
+        match = re.fullmatch(re.escape(feature) + r'-(?:p)?([1-9]\d*)', previous)
+        if not match:
+            raise ValueError('Invalid previous Personal delivery version')
+        counter = int(match[1]) + 1
+    return feature + '-p' + str(counter)
+
+
 def files(lock, delivery, maintenance=True):
     validate(lock)
     latest = ROOT / 'nocturne_latest'
     wrapper = json.loads((ROOT / 'wrapper.json').read_text())['version']
-    if not re.fullmatch(re.escape(lock['version']) + r'-[1-9]\d*', delivery):
+    if not re.fullmatch(re.escape(lock['version']) + r'-p[1-9]\d*', delivery):
         raise ValueError('Invalid Personal delivery version')
     generated = {path: (latest / path).read_bytes() for path in COMMON}
     config = json.loads((latest / 'config.json').read_text())
@@ -212,10 +225,9 @@ def update():
     if old:
         validate_transition(old, lock)
     directory = ROOT / 'nocturne_personal'
-    delivery = lock['version'] + '-1'
-    if old and old['version'] == lock['version']:
-        previous = json.loads((directory / 'config.json').read_text())['version']
-        delivery = lock['version'] + '-' + str(int(previous.rsplit('-', 1)[1]) + 1)
+    previous = (json.loads((directory / 'config.json').read_text())['version']
+                if old and old['version'] == lock['version'] else None)
+    delivery = next_delivery(lock['version'], previous)
     for path, data in files(lock, delivery).items():
         target = directory / path
         target.parent.mkdir(parents=True, exist_ok=True)
