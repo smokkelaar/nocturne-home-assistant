@@ -1,9 +1,11 @@
-## Unreleased source candidate
+## 1.0.49001
+
+- New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
+- Existing app identity, options, private data and Nocturne source remain intact.
 
 - Source `dd2b027746cc956be9a6f5564d805f0bdc76c64d` on compiled main `df000c33e15d3809591261d78a22135bb0176ffd`. Includes dashboard refresh, v3 deletion/history and temp basal origin fixes.
 - Google Health PR #1293 remains present.
 - Channel identity, ports, options, cookies and private data are retained.
-
 ## 1.0.45001
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
