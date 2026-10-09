@@ -1,5 +1,9 @@
 ## Unreleased source candidate
 
+Personal 0.3.28; source `51e2c1de50d01a75ac3029c08b30254ef655447c`; Daily base `df000c33e15d3809591261d78a22135bb0176ffd`.
+
+## Unreleased source candidate
+
 Personal 0.3.27; source `6ec88de018c0fa5f56913490903d84a2f76c5649`; Daily base `ef8850840c349fa9519a7f3022599ec9adddff82`.
 
 ## 1.0.45001

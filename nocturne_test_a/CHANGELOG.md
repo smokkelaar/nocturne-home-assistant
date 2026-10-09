@@ -1,7 +1,8 @@
 ## Unreleased source candidate
 
-- Updated source `4e2ec5cdbb32922e4fb390dc7b2a85b622913627` on upstream main `ef8850840c349fa9519a7f3022599ec9adddff82`. Google Health PR #1293 is preserved.
-- Preserve channel identity, private data, ports, options and cookie namespace. Native startup and upgrade checks precede publication.
+- Source `dd2b027746cc956be9a6f5564d805f0bdc76c64d` on compiled main `df000c33e15d3809591261d78a22135bb0176ffd`. Includes dashboard refresh, v3 deletion/history and temp basal origin fixes.
+- Google Health PR #1293 remains present.
+- Channel identity, ports, options, cookies and private data are retained.
 
 ## 1.0.45001
 

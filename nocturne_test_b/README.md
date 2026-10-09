@@ -2,28 +2,34 @@
 
 ## Main synchronization — 2026-10-09
 
-All development sources now include upstream main `ef8850840c349fa9519a7f3022599ec9adddff82` (2026-10-09 06:48:03 UTC).
-Official remains Nocturne **0.2.7** because no newer release exists.
-The functional wrapper remains **0.1.13**. HA package versions are generated only
-after both native architectures pass publication checks; source versions are separate.
+The common compiled upstream base is `df000c33e15d3809591261d78a22135bb0176ffd` (2026-10-09T09:16:08Z).
+It includes dashboard/chart refresh fixes (#2019), v3 deletion/history fixes
+(#1825), and temporary basal uploader-origin handling (#1570), in addition to
+the previously merged clock-face and hypo-comparison changes.
+Upstream's later `d106f6085` commit only synchronizes translations and skips
+image publication. Daily therefore selects the newest verified published main
+ancestor; all five channels use that same compiled base.
+
+Official remains Nocturne **0.2.7**. The functional wrapper remains **0.1.13**.
+HA package versions are separate and become available only after both native
+architectures, runtime/upgrade checks and anonymous image verification pass.
 
 | Channel | Source | Upstream base | Additional code |
 |---|---|---|---|
-| Daily / Latest | `ef88508` | `ef88508` | None |
-| Personal 0.3.27 | `6ec88de` | `ef88508` | Personal extensions, including Google Health and HbA1c method comparison |
-| Test A | `4e2ec5c` | `ef88508` | Google Health PR #1293, still unmerged |
-| Test B | `ef88508` | `ef88508` | Hypo comparison PR #2031 is already merged into main |
-| Test C | `ef88508` | `ef88508` | Clock-face settings PR #2007 is already merged into main |
+| Daily / Latest | `df000c3` | `df000c3` | None |
+| Personal 0.3.28 | `51e2c1d` | `df000c3` | Personal extensions, including Google Health and HbA1c method comparison |
+| Test A | `dd2b027` | `df000c3` | Google Health PR #1293, still unmerged |
+| Test B | `df000c3` | `df000c3` | Hypo comparison PR #2031 is merged into main |
+| Test C | `df000c3` | `df000c3` | Clock-face settings PR #2007 are merged into main |
 
-Main images come from the immutable `main-ef88508` publication tags and verified
-OCI digests. `latest` now denotes an official upstream release, so it is not the
-discovery source for Daily. [Upstream publication](https://github.com/nightscout/nocturne/actions/runs/37895441854).
-
+Images are resolved through the immutable `main-df000c3` tags and OCI digests.
+`latest` denotes upstream's official release and is not the Daily discovery tag.
+[Upstream publication](https://github.com/nightscout/nocturne/actions/runs/37910180933).
 Published package versions and image digests are in each channel's `config.json`
-and `provenance.json`; the runtime source and feature version are in
+and `provenance.json`; runtime source and feature versions are in
 `rootfs/opt/nocturne-ha/version.json`. These files must agree before HA is updated.
 
-Test B bevat **Hypo Duration** en **Hypo Events** in **Reports → Comparison**, naast de bestaande hyperinformatie. Deze testversie gebruikt [gemergede PR #2031](https://github.com/nightscout/nocturne/pull/2031), vastgezet op broncommit `ef8850840` en upstream main `ef8850840`. De exacte bron en checksum staan in `upstream-test-b.json`.
+Test B bevat **Hypo Duration** en **Hypo Events** in **Reports → Comparison**, naast de bestaande hyperinformatie. Deze testversie gebruikt [gemergede PR #2031](https://github.com/nightscout/nocturne/pull/2031), vastgezet op broncommit `df000c33e` en upstream main `df000c33e`. De exacte bron en checksum staan in `upstream-test-b.json`.
 
 De **1.x**-pakketreeks gebruikt vooraf gebouwde GitHub-images voor AMD64 en ARM64. Home Assistant downloadt de geteste image; lokaal compileren is niet nodig.
 

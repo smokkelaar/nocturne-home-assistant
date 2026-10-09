@@ -1,6 +1,6 @@
 # Nocturne Test C — installation and operation
 
-> This is an isolated Nocturne main test app with upstream [PR #2007](https://github.com/nightscout/nocturne/pull/2007) (per-clock-face glucose units and time format) for manual verification before merge. It is a separate HA app with its own data and default host port **8453**. Never copy `/data`, accounts or keys between test instances.
+> This is an isolated Nocturne main test app with upstream [PR #2007](https://github.com/nightscout/nocturne/pull/2007) (per-clock-face glucose units and time format) now merged upstream, for regression verification on current main. It is a separate HA app with its own data and default host port **8453**. Never copy `/data`, accounts or keys between test instances.
 
 > **Nederlands, met afbeeldingen en exacte stappen:** [Volledige visuele installatiehandleiding](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md), van repository toevoegen tot dashboard en herstarttest. [Domein, certificaat en lokale DNS](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/HTTPS-EN-DNS.md) is apart uitgewerkt. These absolute links also work from Home Assistant's Documentation tab.
 
@@ -10,8 +10,8 @@
 on the same hostname. Sign in once again with your existing passkey; do not
 recreate the account or change its URL. [Cookie isolation and browser checklist](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/COOKIES.md).
 
-- Home Assistant OS with Supervisor and the app store, **amd64**.
-- Spare memory, storage and network access for downloading/building the pinned images and running PostgreSQL/API/web. No reliable minimum resource benchmark has been established; do not exhaust the resources required by HA itself.
+- Home Assistant OS with Supervisor and the app store, **AMD64 or ARM64**.
+- Spare memory, storage and network access for downloading the prebuilt images and running PostgreSQL/API/web. No reliable minimum resource benchmark has been established; do not exhaust the resources required by HA itself.
 - One stable **DNS hostname**, reachable on the local network and covered by a certificate trusted by your browser/device. Passkey setup cannot use an IP address as its domain.
 - A browser/device supporting passkeys. Decide the hostname **before creating the account**; it is part of the authentication identity.
 
@@ -20,7 +20,7 @@ No router port-forwarding is required or recommended for this test. A publicly r
 ## Fresh installation
 
 1. Add `https://github.com/smokkelaar/nocturne-home-assistant` in the HA app store repository settings.
-2. Install **Nocturne Test C**. This channel has no prebuilt wrapper image: Supervisor builds it from its Dockerfile. Wait for that job to finish; repeatedly clicking install/update can produce “Another job is running”.
+2. Install **Nocturne Test C**. This channel uses prebuilt AMD64 and ARM64 images compiled and tested on GitHub. Wait for the image download and update to finish; repeatedly clicking install/update can produce “Another job is running”.
 3. Configure the following options with **your own** hostname/certificate filenames:
 
    ```yaml

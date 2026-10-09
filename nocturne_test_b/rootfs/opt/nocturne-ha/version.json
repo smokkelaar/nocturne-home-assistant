@@ -1,12 +1,12 @@
 {
   "app": "0.1.13",
   "package": "1.0.45001",
-  "nocturne": "main@ef88508",
+  "nocturne": "main@df000c3",
   "repository": "smokkelaar/nocturne-personal",
-  "source_commit": "ef8850840c349fa9519a7f3022599ec9adddff82",
-  "commit_at": "2026-10-09T17:48:03+11:00",
+  "source_commit": "df000c33e15d3809591261d78a22135bb0176ffd",
+  "commit_at": "2026-10-09T20:16:08+11:00",
   "base": "Nocturne main",
-  "base_commit": "ef8850840c349fa9519a7f3022599ec9adddff82",
+  "base_commit": "df000c33e15d3809591261d78a22135bb0176ffd",
   "release": "Hypo comparison PR #2031 (merged into main)",
   "release_url": "https://github.com/nightscout/nocturne/pull/2031",
   "purpose": "Hypo Duration en Hypo Events tussen twee periodes vergelijken, naast de bestaande hyperinformatie. De oorspronkelijke PR is gemerged; dit kanaal valideert nu de actuele main.",
@@ -16,5 +16,5 @@
   "name": "Nocturne Test B",
   "default_public_url": "https://homeassistant.local:8452",
   "cookie_namespace": "NocturneTestB_",
-  "source_at": "2026-10-09T17:48:03+11:00"
+  "source_at": "2026-10-09T20:16:08+11:00"
 }

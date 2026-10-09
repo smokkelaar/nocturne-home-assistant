@@ -1,5 +1,9 @@
 ## Unreleased source candidate
 
+- Latest source prepared: `df000c33e15d3809591261d78a22135bb0176ffd`. The existing published image remains advertised until registry promotion.
+
+## Unreleased source candidate
+
 - Latest source prepared: `ef8850840c349fa9519a7f3022599ec9adddff82`. The existing published image remains advertised until registry promotion.
 
 ## 1.0.45001

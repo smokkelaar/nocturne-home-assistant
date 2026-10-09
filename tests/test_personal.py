@@ -92,7 +92,9 @@ class PersonalTests(unittest.TestCase):
             self.assertIn('HA may show 0% until it finishes', config['description'])
         if not config.get('image'):
             self.assertIn('Experimental; not for clinical use', config['description'])
-        self.assertIn('keeps the update dialog at 0%', docs)
+        self.assertIn('compiled together on GitHub', docs)
+        self.assertIn('prebuilt AMD64 and ARM64 images', docs)
+        self.assertNotIn('keeps the update dialog at 0%', docs)
         for phase in range(1, 8):
             self.assertIn(f'Nocturne build phase {phase}/7:', dockerfile)
 

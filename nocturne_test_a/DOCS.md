@@ -1,6 +1,6 @@
 # Nocturne Test A — installation and operation
 
-> This is an isolated build of [Nocturne PR #1293](https://github.com/nightscout/nocturne/pull/1293). It is a separate HA app with its own data and default host port **8451**. Version **0.3.26-a13** pins PR commit `969896385` on main `b515516d4`; source and checksum are recorded in `upstream-test-a.json`.
+> This is an isolated build of [Nocturne PR #1293](https://github.com/nightscout/nocturne/pull/1293). It is a separate HA app with its own data and default host port **8451**. Source `dd2b027746cc956be9a6f5564d805f0bdc76c64d` uses compiled main `df000c33e15d3809591261d78a22135bb0176ffd`; source and checksum are recorded in `upstream-test-a.json`.
 
 ## Public ports and native access
 
@@ -80,8 +80,8 @@ removing secrets, tokens and health data.
 on the same hostname. Sign in once again with your existing passkey; do not
 recreate the account or change its URL. [Cookie isolation and browser checklist](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/COOKIES.md).
 
-- Home Assistant OS with Supervisor and the app store, **amd64**.
-- Spare memory, storage and network access for downloading/building the pinned images and running PostgreSQL/API/web. No reliable minimum resource benchmark has been established; do not exhaust the resources required by HA itself.
+- Home Assistant OS with Supervisor and the app store, **AMD64 or ARM64**.
+- Spare memory, storage and network access for downloading the prebuilt images and running PostgreSQL/API/web. No reliable minimum resource benchmark has been established; do not exhaust the resources required by HA itself.
 - One stable **DNS hostname**, reachable on the local network and covered by a certificate trusted by your browser/device. Passkey setup cannot use an IP address as its domain.
 - A browser/device supporting passkeys. Decide the hostname **before creating the account**; it is part of the authentication identity.
 
@@ -90,7 +90,7 @@ No router port-forwarding is required or recommended for this test. A publicly r
 ## Fresh installation
 
 1. Add `https://github.com/smokkelaar/nocturne-home-assistant` in the HA app store repository settings.
-2. Install or update **Nocturne Test A**. This channel has no prebuilt wrapper image: Supervisor builds it from its Dockerfile. Wait for that job to finish; repeatedly clicking install/update can produce “Another job is running”.
+2. Install or update **Nocturne Test A**. This channel uses prebuilt AMD64 and ARM64 images compiled and tested on GitHub. Wait for the image download and update to finish; repeatedly clicking install/update can produce “Another job is running”.
 3. Configure the following options with **your own** hostname/certificate filenames:
 
    ```yaml
@@ -137,7 +137,7 @@ Automatic app updates are optional per app in HA. Test A updates are published m
 - No clinical reliability, automatic dosing, external data connectors or internet-facing deployment has been validated.
 - Never paste full logs, keys, recovery codes or health data into public issues. Report only a sanitized relevant excerpt with the app/Nocturne versions.
 
-Test A compiles API and web from its pinned PR source. Builds need more time and resources than Latest. Home Assistant Supervisor currently keeps the update dialog at 0% during this local Docker build; this does not mean the build is stuck. Follow the named `Nocturne build phase` entries in **Settings → System → Logs → Supervisor** for live detail. PR #1293 includes Google Health imports for steps, heart rate, weight and sleep. Progress refreshes while the connector page is open; the percentage estimates data-type stages, not remaining time. No dosing advice or insulin/IOB changes. [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).
+Test A API and web are compiled together from the pinned source on GitHub. HA downloads the tested prebuilt image and does not compile Nocturne locally. PR #1293 includes Google Health imports for steps, heart rate, weight and sleep. Progress refreshes while the connector page is open; the percentage estimates data-type stages, not remaining time. No dosing advice or insulin/IOB changes. [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).
 
 From wrapper **0.1.10**, all six variants offer **Consciously skip gateway check** (`skip_gateway_check`, default false). Only effective with `gateway_auth: false`; save and restart this app. It skips only the wrapper authentication probe; Nocturne access/share permissions and TLS/host checks still apply. The helper prominently shows `GATEWAY_SKIPPED`. Test A now uses the same visible settings: migrate old `verify_native_auth: false` to `skip_gateway_check: true`, remove the old YAML key, save and restart. The canonical option takes precedence; restore the guard with `skip_gateway_check: false`. [Configuration and rollback](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/GATEWAY.md).
 

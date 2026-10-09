@@ -2,10 +2,10 @@
   "channel": "google-health-pr",
   "repository": "smokkelaar/nocturne-personal",
   "pull_request": 1293,
-  "commit": "4e2ec5cdbb32922e4fb390dc7b2a85b622913627",
-  "commit_at": "2026-10-09T10:54:20+02:00",
-  "archive_sha256": "990c84659b61de0e6d5c60af56d838c6077bfc3aa22f93f93c3809758a336d3e",
-  "base_commit": "ef8850840c349fa9519a7f3022599ec9adddff82",
-  "base_commit_at": "2026-10-09T17:48:03+11:00",
+  "commit": "dd2b027746cc956be9a6f5564d805f0bdc76c64d",
+  "commit_at": "2026-10-09T13:11:23+02:00",
+  "archive_sha256": "a8127f2bc9703fc5076b89b38ebcefe2ce95f41b9ef60cc92a0d22c0fb4ff7d9",
+  "base_commit": "df000c33e15d3809591261d78a22135bb0176ffd",
+  "base_commit_at": "2026-10-09T20:16:08+11:00",
   "pull_request_url": "https://github.com/nightscout/nocturne/pull/1293"
 }

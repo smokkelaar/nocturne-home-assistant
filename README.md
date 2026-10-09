@@ -41,7 +41,7 @@ plus a separate medication log (including Mounjaro-style medications, without do
 Your own Google OAuth client and consent are required; real Google account access remains a user test.
 [Personal installation, feature setup and daily updates](docs/PERSONAL.md).
 
-Read the [Official installation reference](nocturne_local/DOCS.md) or [Latest reference](nocturne_latest/DOCS.md) first. Requirements: **Home Assistant OS / Supervisor, amd64**, enough free storage/memory for a local build and PostgreSQL, and working local DNS/trusted HTTPS for passkeys. AMD64 and ARM64 are supported; Home Assistant Container/Core without Supervisor is not supported.
+Read the [Official installation reference](nocturne_local/DOCS.md) or [Latest reference](nocturne_latest/DOCS.md) first. Requirements: **Home Assistant OS / Supervisor, AMD64 or ARM64**, enough free storage/memory for the prebuilt app and PostgreSQL, and working local DNS/trusted HTTPS for passkeys. AMD64 and ARM64 are supported; Home Assistant Container/Core without Supervisor is not supported.
 
 **Command-line diagnostics:** all six app channels package a read-only `nocturne-ha` CLI. See [examples and safety boundaries](docs/CLI.md).
 

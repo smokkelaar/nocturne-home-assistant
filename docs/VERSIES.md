@@ -2,25 +2,31 @@
 
 ## Main synchronization — 2026-10-09
 
-All development sources now include upstream main `ef8850840c349fa9519a7f3022599ec9adddff82` (2026-10-09 06:48:03 UTC).
-Official remains Nocturne **0.2.7** because no newer release exists.
-The functional wrapper remains **0.1.13**. HA package versions are generated only
-after both native architectures pass publication checks; source versions are separate.
+The common compiled upstream base is `df000c33e15d3809591261d78a22135bb0176ffd` (2026-10-09T09:16:08Z).
+It includes dashboard/chart refresh fixes (#2019), v3 deletion/history fixes
+(#1825), and temporary basal uploader-origin handling (#1570), in addition to
+the previously merged clock-face and hypo-comparison changes.
+Upstream's later `d106f6085` commit only synchronizes translations and skips
+image publication. Daily therefore selects the newest verified published main
+ancestor; all five channels use that same compiled base.
+
+Official remains Nocturne **0.2.7**. The functional wrapper remains **0.1.13**.
+HA package versions are separate and become available only after both native
+architectures, runtime/upgrade checks and anonymous image verification pass.
 
 | Channel | Source | Upstream base | Additional code |
 |---|---|---|---|
-| Daily / Latest | `ef88508` | `ef88508` | None |
-| Personal 0.3.27 | `6ec88de` | `ef88508` | Personal extensions, including Google Health and HbA1c method comparison |
-| Test A | `4e2ec5c` | `ef88508` | Google Health PR #1293, still unmerged |
-| Test B | `ef88508` | `ef88508` | Hypo comparison PR #2031 is already merged into main |
-| Test C | `ef88508` | `ef88508` | Clock-face settings PR #2007 is already merged into main |
+| Daily / Latest | `df000c3` | `df000c3` | None |
+| Personal 0.3.28 | `51e2c1d` | `df000c3` | Personal extensions, including Google Health and HbA1c method comparison |
+| Test A | `dd2b027` | `df000c3` | Google Health PR #1293, still unmerged |
+| Test B | `df000c3` | `df000c3` | Hypo comparison PR #2031 is merged into main |
+| Test C | `df000c3` | `df000c3` | Clock-face settings PR #2007 are merged into main |
 
-Main images come from the immutable `main-ef88508` publication tags and verified
-OCI digests. `latest` now denotes an official upstream release, so it is not the
-discovery source for Daily. [Upstream publication](https://github.com/nightscout/nocturne/actions/runs/37895441854).
-
+Images are resolved through the immutable `main-df000c3` tags and OCI digests.
+`latest` denotes upstream's official release and is not the Daily discovery tag.
+[Upstream publication](https://github.com/nightscout/nocturne/actions/runs/37910180933).
 Published package versions and image digests are in each channel's `config.json`
-and `provenance.json`; the runtime source and feature version are in
+and `provenance.json`; runtime source and feature versions are in
 `rootfs/opt/nocturne-ha/version.json`. These files must agree before HA is updated.
 
 De functionaliteit van deze Home Assistant-verpakking heeft vanaf **0.1.4 één
@@ -28,14 +34,14 @@ gedeeld versienummer**. Alleen de meegeleverde upstream-Nocturne-code verschilt:
 
 | Keuze in HA | Wrapperfunctionaliteit | Meegeleverde Nocturne |
 |---|---|---|
-| Nocturne Official Release | 0.1.6 | Officiële release 0.2.4 |
-| Nocturne Latest Release | 0.1.6 | Vastgezette daily/main-build, met commitcode en UTC-datum/tijd |
+| Nocturne Official Release | 0.1.13 | Officiële release 0.2.7 |
+| Nocturne Latest Release | 0.1.13 | Vastgezette daily/main-build, met commitcode en UTC-datum/tijd |
 
 De code voor opstarten, HTTPS, toegangscontrole, opslag en status is identiek.
 Accounts, gegevens en instellingen blijven afzonderlijk; beide apps hebben
 bewust een andere naam, slug en standaard hostpoort.
 
-## Waarom toont HA ook 0.1.4-1?
+## Historische pakketnummers vóór de prebuilt 1.x-reeks
 
 Home Assistant heeft een veranderend **pakketversienummer** nodig om een nieuwe
 build aan te bieden. Daarom bestaat dat uit wrapperversie plus leveringsnummer:
@@ -44,7 +50,7 @@ build aan te bieden. Daarom bestaat dat uit wrapperversie plus leveringsnummer:
 - `0.1.4-2`: volgende upstream-build, nog steeds exact wrapper 0.1.4.
 - `0.1.5-1`: pas bij een wijziging aan onze eigen functionaliteit.
 
-De statuspagina toont **HA-wrapper 0.1.6** prominent. Het volledige HA-pakketnummer
+De huidige statuspagina toont **HA-wrapper 0.1.13**. De onderstaande 0.1.x-leveringsnummers zijn historische voorbeelden; de huidige prebuilt pakketreeks is 1.0.x. Het volledige HA-pakketnummer
 staat onder **Technische pakketgegevens**. Official en Latest mogen verschillende
 leveringsnummers hebben zonder dat hun wrapperfunctionaliteit verschilt.
 De HA-appwinkel kan dit technische versienummer niet vervangen door twee losse velden.

@@ -59,6 +59,15 @@ class LatestUpdateTests(unittest.TestCase):
         lock['api']['tag'] = 'main'
         with self.assertRaises(ValueError):
             updater.validate_lock(lock)
+        mixed = copy.deepcopy(self.lock)
+        mixed['api']['tag'] = 'latest'
+        mixed['web']['tag'] = 'main-' + mixed['commit'][:7]
+        with self.assertRaises(ValueError):
+            updater.validate_lock(mixed)
+        legacy = copy.deepcopy(self.lock)
+        for kind in ('api', 'web'):
+            legacy[kind]['tag'] = 'latest'
+        updater.validate_lock(legacy)
 
     def test_generated_metadata_matches_both_digests_and_commit(self):
         version = json.loads((ROOT / 'nocturne_latest/config.json').read_text(encoding='utf-8'))['version']
@@ -157,6 +166,35 @@ class LatestUpdateTests(unittest.TestCase):
             with patch.object(updater, 'github', side_effect=[runs, {'jobs': jobs[:index] + jobs[index + 1:]}]):
                 with self.assertRaises(updater.NotReady):
                     updater.successful_build(commit)
+
+    def test_skipped_translation_head_uses_verified_published_main_ancestor(self):
+        branch = 'b' * 40
+        published = 'c' * 40
+        head = {'sha': branch}
+        ancestor = {'sha': published, 'commit': {'committer': {'date': '2026-10-09T09:16:08Z'}}}
+        run = {'id': 7, 'created_at': '2026-10-09T09:16:12Z'}
+        api = {'tag': 'main-' + published[:7], 'digest': 'sha256:' + 'd' * 64}
+        web = {'tag': 'main-' + published[:7], 'digest': 'sha256:' + 'e' * 64}
+        responses = [head, {'workflow_runs': [dict(run, head_sha=published,
+                     status='completed', conclusion='success')]},
+                     {'status': 'ahead', 'behind_by': 0}, ancestor,
+                     {'status': 'ahead', 'behind_by': 0}, head]
+        with patch.object(updater, 'github', side_effect=responses), \
+             patch.object(updater, 'successful_build', side_effect=[updater.NotReady(), run]), \
+             patch.object(updater, 'resolve_image', side_effect=[api, web, api]):
+            result = updater.resolve_candidate(self.lock)
+        self.assertEqual(published, result['commit'])
+        self.assertEqual(7, result['workflow_run'])
+
+    def test_unpublished_main_rejects_a_published_commit_from_divergent_history(self):
+        branch = 'b' * 40
+        published = 'c' * 40
+        with patch.object(updater, 'successful_build', side_effect=updater.NotReady()), \
+             patch.object(updater, 'github', side_effect=[{'sha': branch},
+                {'workflow_runs': [{'head_sha': published, 'status': 'completed', 'conclusion': 'success'}]},
+                {'status': 'diverged', 'behind_by': 1}]):
+            with self.assertRaises(updater.NotReady):
+                updater.resolve_candidate(self.lock)
 
 
 if __name__ == '__main__':

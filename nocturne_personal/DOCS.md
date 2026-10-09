@@ -10,8 +10,8 @@
 on the same hostname. Sign in once again with your existing passkey; do not
 recreate the account or change its URL. [Cookie isolation and browser checklist](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/COOKIES.md).
 
-- Home Assistant OS with Supervisor and the app store, **amd64**.
-- Spare memory, storage and network access for downloading/building the pinned images and running PostgreSQL/API/web. No reliable minimum resource benchmark has been established; do not exhaust the resources required by HA itself.
+- Home Assistant OS with Supervisor and the app store, **AMD64 or ARM64**.
+- Spare memory, storage and network access for downloading the prebuilt images and running PostgreSQL/API/web. No reliable minimum resource benchmark has been established; do not exhaust the resources required by HA itself.
 - One stable **DNS hostname**, reachable on the local network and covered by a certificate trusted by your browser/device. Passkey setup cannot use an IP address as its domain.
 - A browser/device supporting passkeys. Decide the hostname **before creating the account**; it is part of the authentication identity.
 
@@ -20,7 +20,7 @@ No router port-forwarding is required or recommended for this test. A publicly r
 ## Fresh installation
 
 1. Add `https://github.com/smokkelaar/nocturne-home-assistant` in the HA app store repository settings.
-2. Install **Nocturne Personal Release**. This channel has no prebuilt wrapper image: Supervisor builds it from its Dockerfile. Wait for that job to finish; repeatedly clicking install/update can produce “Another job is running”.
+2. Install **Nocturne Personal Release**. This channel uses prebuilt AMD64 and ARM64 images compiled and tested on GitHub. Wait for the image download and update to finish; repeatedly clicking install/update can produce “Another job is running”.
 3. Configure the following options with **your own** hostname/certificate filenames:
 
    ```yaml
@@ -79,7 +79,7 @@ Automatic app updates are optional per app in HA. Enable them only for **Nocturn
 
 From wrapper **0.1.10**, all six variants offer **Consciously skip gateway check** (`skip_gateway_check`, default false). Only effective with `gateway_auth: false`; save and restart this app. It skips only the wrapper authentication probe; Nocturne access/share permissions and TLS/host checks still apply. The helper prominently shows `GATEWAY_SKIPPED`. Test A now uses the same visible settings: migrate old `verify_native_auth: false` to `skip_gateway_check: true`, remove the old YAML key, save and restart. The canonical option takes precedence; restore the guard with `skip_gateway_check: false`. [Configuration and rollback](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/GATEWAY.md).
 
-Personal compiles API and web from its pinned fork source. Builds need more time and resources than Latest. Home Assistant Supervisor currently keeps the update dialog at 0% during this local Docker build; this does not mean the build is stuck. Follow the named `Nocturne build phase` entries in **Settings → System → Logs → Supervisor** for live detail. Personal 0.3.27 includes Google Health imports for steps, heart rate, weight and sleep. Progress refreshes while the connector page is open; the percentage estimates data-type stages, not remaining time. No dosing advice or insulin/IOB changes. [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).
+Personal source `51e2c1de50d01a75ac3029c08b30254ef655447c` follows upstream main `df000c33e15d3809591261d78a22135bb0176ffd`. API and web are compiled together on GitHub, then delivered as tested prebuilt AMD64 and ARM64 images. Home Assistant downloads the image; it does not compile Nocturne locally. Personal 0.3.28 includes Google Health imports for steps, heart rate, weight and sleep. Progress refreshes while the connector page is open; the percentage estimates data-type stages, not remaining time. No dosing advice or insulin/IOB changes. [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).
 
 ## Experimental maintenance
 

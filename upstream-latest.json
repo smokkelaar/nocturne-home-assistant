@@ -1,23 +1,23 @@
 {
   "channel": "main",
-  "commit": "ef8850840c349fa9519a7f3022599ec9adddff82",
-  "workflow_run": 37895441854,
-  "commit_at": "2026-10-09T06:48:03Z",
-  "published_at": "2026-10-09T06:48:06Z",
+  "commit": "df000c33e15d3809591261d78a22135bb0176ffd",
+  "workflow_run": 37910180933,
+  "commit_at": "2026-10-09T09:16:08Z",
+  "published_at": "2026-10-09T09:16:12Z",
   "api": {
-    "tag": "main-ef88508",
-    "digest": "sha256:2aa570f996d571419fc67cc883498272ef142727394942afa5cef2c54135a272",
+    "tag": "main-df000c3",
+    "digest": "sha256:729f3a44bff93c0109e61012db2c0776307552aaab2f76c1bfa407ddbbb29e65",
     "platforms": {
-      "amd64": "sha256:2aa570f996d571419fc67cc883498272ef142727394942afa5cef2c54135a272",
-      "arm64": "sha256:0e374127cdb58da9b38cddfae9d19433b1f944eca2af6c96afa1fd6cb73e1fbd"
+      "amd64": "sha256:729f3a44bff93c0109e61012db2c0776307552aaab2f76c1bfa407ddbbb29e65",
+      "arm64": "sha256:0afd2b7caef2ddd379828ac73bc04193265a61e9ee98d35f461f4ec83c733068"
     }
   },
   "web": {
-    "tag": "main-ef88508",
-    "digest": "sha256:0133cec7e21ac528bd4d1772ce9a8a8cbadd326ca53e6bcd85b2d8528428ac3b",
+    "tag": "main-df000c3",
+    "digest": "sha256:4830363cf8057b852d20d9d992f8b56ecbda60c1247649750fda7696331cf76e",
     "platforms": {
-      "amd64": "sha256:0133cec7e21ac528bd4d1772ce9a8a8cbadd326ca53e6bcd85b2d8528428ac3b",
-      "arm64": "sha256:4559902999f6b58ab886d823c94f9cfe9c9e99074a4f128c6ea1f4be68b29519"
+      "amd64": "sha256:4830363cf8057b852d20d9d992f8b56ecbda60c1247649750fda7696331cf76e",
+      "arm64": "sha256:8045e38f672bca1ad00349687b30f31265bf7e62275fd8369fcfe240e6db6a44"
     }
   }
 }

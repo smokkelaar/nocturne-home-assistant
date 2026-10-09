@@ -64,9 +64,10 @@ def validate_lock(lock):
             raise ValueError(f'Invalid upstream {label} timestamp') from None
         if parsed.tzinfo is None:
             raise ValueError(f'Invalid upstream {label} timestamp')
+    tags = {lock.get(kind, {}).get('tag') for kind in ('api', 'web')}
+    if len(tags) != 1 or not tags <= {'latest', 'main-' + lock['commit'][:7]}:
+        raise ValueError('Main image tags must stay paired and match the source commit or legacy Latest pins')
     for kind in ('api', 'web'):
-        if lock.get(kind, {}).get('tag') not in ('latest', 'main-' + lock['commit'][:7]):
-            raise ValueError('Main image tags must match the source commit or legacy Latest pins')
         if not re.fullmatch(r'sha256:[0-9a-f]{64}', lock[kind].get('digest', '')):
             raise ValueError('Invalid immutable image digest')
 
@@ -135,13 +136,31 @@ def successful_build(commit):
 def resolve_candidate(current):
     validate_lock(current)
     head = github('commits/main')
+    branch_commit = head['sha']
+    try:
+        run = successful_build(branch_commit)
+    except NotReady:
+        # Translation synchronization commits skip CI; only a published ancestor
+        # with a verified API/web pair can be delivered as a main snapshot.
+        runs = github('actions/workflows/docker-publish.yml/runs?branch=main&event=push&per_page=50')
+        for previous in runs.get('workflow_runs', []):
+            revision = previous.get('head_sha')
+            if previous.get('status') != 'completed' or previous.get('conclusion') != 'success':
+                continue
+            ancestry = github(f'compare/{revision}...{branch_commit}')
+            if ancestry.get('status') != 'ahead' or ancestry.get('behind_by') != 0:
+                continue
+            head = github(f'commits/{revision}')
+            run = successful_build(revision)
+            break
+        else:
+            raise NotReady('Current main has no verified published ancestor yet')
     commit = head['sha']
     if commit == current['commit']:
         return current
     comparison = github(f"compare/{current['commit']}...{commit}")
     if comparison.get('status') != 'ahead' or comparison.get('behind_by') != 0:
         raise ValueError('Refusing rewritten, divergent or downgraded main history')
-    run = successful_build(commit)
     candidate = {
         'channel': 'main', 'commit': commit, 'workflow_run': run['id'],
         'commit_at': head['commit']['committer']['date'], 'published_at': run['created_at'],
@@ -149,7 +168,7 @@ def resolve_candidate(current):
     }
     # Close the race where main or the floating discovery tag changes while
     # manifests are being inspected. Nothing is written unless both stay put.
-    if github('commits/main')['sha'] != commit or resolve_image('api', commit) != candidate['api']:
+    if github('commits/main')['sha'] != branch_commit or resolve_image('api', commit) != candidate['api']:
         raise NotReady('Upstream main/images changed during resolution; retry later')
     validate_lock(candidate)
     return candidate

@@ -1,7 +1,8 @@
 ## Unreleased source candidate
 
-- Updated source `ef8850840c349fa9519a7f3022599ec9adddff82` on upstream main `ef8850840c349fa9519a7f3022599ec9adddff82`. PR #2007 is merged; this is a current-main regression channel.
-- Preserve channel identity, private data, ports, options and cookie namespace. Native startup and upgrade checks precede publication.
+- Source `df000c33e15d3809591261d78a22135bb0176ffd` on compiled main `df000c33e15d3809591261d78a22135bb0176ffd`. Includes dashboard refresh, v3 deletion/history and temp basal origin fixes.
+- PR #2007 is merged; current-main regression channel.
+- Channel identity, ports, options, cookies and private data are retained.
 
 ## 1.0.45001
 

@@ -145,7 +145,8 @@ def files(lock, delivery, maintenance=True):
     docs = docs.replace('Leave the Latest host port', 'Leave the Personal host port')
     docs = docs.replace('isolated from Official even', 'isolated from Official and Latest even')
     features = f"Personal {lock['version']} includes Google Health imports for steps, heart rate, weight and sleep. Progress refreshes while the connector page is open; the percentage estimates data-type stages, not remaining time. No dosing advice or insulin/IOB changes."
-    generated['DOCS.md'] = docs + '\nPersonal compiles API and web from its pinned fork source. Builds need more time and resources than Latest. Home Assistant Supervisor currently keeps the update dialog at 0% during this local Docker build; this does not mean the build is stuck. Follow the named `Nocturne build phase` entries in **Settings → System → Logs → Supervisor** for live detail. ' + features + ' [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
+    source_note = f"Personal source `{lock['commit']}` follows upstream main `{lock['upstream']['commit']}`. API and web are compiled together on GitHub, then delivered as tested prebuilt AMD64 and ARM64 images. Home Assistant downloads the image; it does not compile Nocturne locally."
+    generated['DOCS.md'] = docs + '\n' + source_note + ' ' + features + ' [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
     generated['README.md'] = '# Nocturne Personal Release\n\nIndependent Personal fork on the tested Daily base. Default host port 8450, separate data and cookies.\n\n' + features + '\n\n[Installation and updates](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
     runtime = dict(app=wrapper, package=delivery, personal=lock['version'],
                    repository=lock['repository'],
