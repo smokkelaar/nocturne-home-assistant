@@ -2,27 +2,27 @@
   "format": 1,
   "channel": "test-a",
   "package": "nocturne_test_a",
-  "version": "1.0.45001",
+  "version": "1.0.48601",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "892794d3ed3fc3e2b924b6a02d8e1686bbe5ca23",
-  "recipe": "60b1e50f6d6e6cf4af99079d3530d550603be136b3da68a580208bc2d5a45bbd",
+  "wrapper_commit": "c437995ffb659b16740c675b5c5f03ac313c2c8e",
+  "recipe": "4ce6b48e2a9ed1699dd35c4df8e815e5de4ef62292daadc2077aa4d5725f57bd",
   "source_repository": "smokkelaar/nocturne-personal",
-  "source_commit": "9698963856c9118268fe8bd44574ce79e22ff6f2",
+  "source_commit": "4e2ec5cdbb32922e4fb390dc7b2a85b622913627",
   "architectures": [
     "amd64",
     "arm64"
   ],
   "runtime_pins": {
     "amd64": {
-      "api": "sha256:92cb1eadc462fac72cf7816d66bd546290cc270446d2f11d943f4934f6769c8e"
+      "api": "sha256:2aa570f996d571419fc67cc883498272ef142727394942afa5cef2c54135a272"
     },
     "arm64": {
-      "api": "sha256:c749df8daa46fa1b2a5e44d00c4a53abf133a5c3eb7ac648fffd5f10ceed82f9"
+      "api": "sha256:0e374127cdb58da9b38cddfae9d19433b1f944eca2af6c96afa1fd6cb73e1fbd"
     }
   },
   "config": {
     "name": "Nocturne Test A",
-    "version": "1.0.45001",
+    "version": "1.0.48601",
     "slug": "nocturne_test_a",
     "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Google Health PR #1293 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
@@ -74,7 +74,7 @@
   },
   "previous_config": {
     "name": "Nocturne Test A",
-    "version": "1.0.43901",
+    "version": "1.0.45001",
     "slug": "nocturne_test_a",
     "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Google Health PR #1293 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
@@ -125,7 +125,7 @@
     "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-a-{arch}"
   },
   "digests": {
-    "amd64": "sha256:d6e7faa874d712fd5bca3cc4826d3ef12e05220a2aab9681ed4d95e1725e979b",
-    "aarch64": "sha256:2586931a30125adafffbaef24427c82bdcf937e154cd258d9efb155ddf6c4115"
+    "amd64": "sha256:12e0517ef0e6f3296d05f88cdfbd95b096c4392663b2418ad703cbeb903addc4",
+    "aarch64": "sha256:e3adbaf2ab7eee5908f830e413831984169b7aa2d0ce41897e8edef8bbea7413"
   }
 }

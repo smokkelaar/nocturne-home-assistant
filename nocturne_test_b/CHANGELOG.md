@@ -1,8 +1,10 @@
-## Unreleased source candidate
+## 1.0.48601
+
+- New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
+- Existing app identity, options, private data and Nocturne source remain intact.
 
 - Updated source `ef8850840c349fa9519a7f3022599ec9adddff82` on upstream main `ef8850840c349fa9519a7f3022599ec9adddff82`. PR #2031 is merged; this is a current-main regression channel.
 - Preserve channel identity, private data, ports, options and cookie namespace. Native startup and upgrade checks precede publication.
-
 ## 1.0.45001
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
