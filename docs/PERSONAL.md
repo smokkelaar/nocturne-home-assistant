@@ -156,7 +156,7 @@ installation can continue after phase 7.
 
 The HA interface distinguishes the wrapper version, Personal feature version, and
 approved Nocturne Daily commit. HA packages add a delivery suffix, such as
-`0.3.27-p1`. The `p` identifies Personal, like `a`, `b` and `c` for the test
+`0.3.27-p1`. These hyphenated package numbers are historical examples from before prebuilt distribution; current packages use the separate plain 1.0.x series. The `p` identifies Personal, like `a`, `b` and `c` for the test
 channels. The package base is temporarily ahead of the actual Personal feature
 version: feature `0.3.26` is delivered as package `0.3.27-p1` to rank above the
 installed `0.3.26-9` and the failed same-base `0.3.26-p11` migration.

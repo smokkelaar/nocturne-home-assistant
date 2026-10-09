@@ -36,8 +36,8 @@ This repository is **Nocturne only**. It contains the HA wrapper, its small upst
 **Personal extensions:** choose **Nocturne Personal Release** as a separate third
 installation, default port **8450**. It starts with its own empty database/account
 and compiles [the Personal fork](https://github.com/smokkelaar/nocturne-personal).
-Personal 0.2.0 adds Google Health login/import for steps, heart rate and weight,
-plus a separate medication log (including Mounjaro-style medications, without dosing advice).
+Personal 0.3.28 includes Google Health imports for steps, heart rate, weight and sleep,
+plus the Personal HbA1c method-comparison extensions.
 Your own Google OAuth client and consent are required; real Google account access remains a user test.
 [Personal installation, feature setup and daily updates](docs/PERSONAL.md).
 

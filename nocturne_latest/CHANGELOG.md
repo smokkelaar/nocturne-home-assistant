@@ -1,7 +1,7 @@
 ## 1.0.49001
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
-- Existing app identity, options, private data and Nocturne source remain intact.
+- Existing app identity, options and private data are retained. The upgraded Nocturne source is pinned below.
 
 - Latest source prepared: `df000c33e15d3809591261d78a22135bb0176ffd`. 
 - Latest source prepared: `ef8850840c349fa9519a7f3022599ec9adddff82`. 

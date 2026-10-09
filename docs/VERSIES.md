@@ -1,5 +1,21 @@
 # Eén wrapperversie, twee Nocturne-keuzes
 
+## Published HA packages — 2026-10-09
+
+All development packages passed native AMD64/ARM64 runtime and upgrade checks.
+Official retains its existing package and Nocturne 0.2.7 release.
+
+| Channel | HA package | Source / feature version | Source commit |
+|---|---|---|---|
+| Nocturne Official Release | 1.0.45001 | 0.2.7 | `d9e143097` |
+| Nocturne Latest Release | 1.0.49001 | main@df000c3 | `df000c33e` |
+| Nocturne Personal Release | 1.0.49001 | 0.3.28 | `51e2c1de5` |
+| Nocturne Test A | 1.0.49001 | main@df000c3 + PR #1293 | `dd2b02774` |
+| Nocturne Test B | 1.0.49001 | main@df000c3 | `df000c33e` |
+| Nocturne Test C | 1.0.49001 | main@df000c3 | `df000c33e` |
+
+[Native publication and upgrade evidence](https://github.com/smokkelaar/nocturne-home-assistant/actions/runs/37923030926) · [Protected store-promotion checks](https://github.com/smokkelaar/nocturne-home-assistant/actions/runs/37925418539) · [Promotion PR #113](https://github.com/smokkelaar/nocturne-home-assistant/pull/113).
+
 ## Main synchronization — 2026-10-09
 
 The common compiled upstream base is `df000c33e15d3809591261d78a22135bb0176ffd` (2026-10-09T09:16:08Z).
