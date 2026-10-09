@@ -1,20 +1,20 @@
 {
   "app": "0.1.13",
   "package": "1.0.45001",
-  "nocturne": "main@8e1de90 + PR #2031",
+  "nocturne": "main@ef88508",
   "repository": "smokkelaar/nocturne-personal",
-  "source_commit": "4554d318d909e1d73851ce584bcac1f1f946cfc4",
-  "commit_at": "2026-10-05T17:18:52Z",
-  "base": "Nocturne main + PR #2031",
-  "base_commit": "8e1de90706cf0dc0a99fb64628a5c8cc8a3e5ae1",
-  "release": "Hypo comparison PR #2031",
+  "source_commit": "ef8850840c349fa9519a7f3022599ec9adddff82",
+  "commit_at": "2026-10-09T17:48:03+11:00",
+  "base": "Nocturne main",
+  "base_commit": "ef8850840c349fa9519a7f3022599ec9adddff82",
+  "release": "Hypo comparison PR #2031 (merged into main)",
   "release_url": "https://github.com/nightscout/nocturne/pull/2031",
-  "purpose": "Hypo Duration en Hypo Events tussen twee periodes vergelijken, naast de bestaande hyperinformatie.",
+  "purpose": "Hypo Duration en Hypo Events tussen twee periodes vergelijken, naast de bestaande hyperinformatie. De oorspronkelijke PR is gemerged; dit kanaal valideert nu de actuele main.",
   "purpose_url": "https://github.com/nightscout/nocturne/pull/2031",
   "test_plan": "Open Reports \u2192 Comparison; kies twee periodes met metingen en controleer Hypo Duration (uren), Hypo Events en het verschil. Test ook nul hypo's, een periode zonder data, wisselen van periodes en print. Laag en zeer laag binnen \u00e9\u00e9n episode mogen niet dubbel tellen.",
   "test_url": "https://github.com/smokkelaar/nocturne-home-assistant",
   "name": "Nocturne Test B",
   "default_public_url": "https://homeassistant.local:8452",
   "cookie_namespace": "NocturneTestB_",
-  "source_at": "2026-10-08T12:39:16Z"
+  "source_at": "2026-10-09T17:48:03+11:00"
 }

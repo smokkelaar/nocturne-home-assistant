@@ -1,12 +1,12 @@
 {
   "app": "0.1.13",
   "package": "1.0.45001",
-  "nocturne": "main@b515516 + PR #1293",
+  "nocturne": "main@ef88508 + PR #1293",
   "repository": "smokkelaar/nocturne-personal",
-  "source_commit": "9698963856c9118268fe8bd44574ce79e22ff6f2",
-  "commit_at": "2026-10-05T00:37:57Z",
+  "source_commit": "4e2ec5cdbb32922e4fb390dc7b2a85b622913627",
+  "commit_at": "2026-10-09T17:48:03+11:00",
   "base": "Nocturne main + PR #1293",
-  "base_commit": "b515516d40f11c11ca7f45cba027083cbd2e2ca0",
+  "base_commit": "ef8850840c349fa9519a7f3022599ec9adddff82",
   "release": "Google Health PR #1293",
   "release_url": "https://github.com/nightscout/nocturne/pull/1293",
   "purpose": "Google Health PR #1293 testen v\u00f3\u00f3r merge, op een ge\u00efsoleerde Test A-instantie.",
@@ -16,5 +16,5 @@
   "name": "Nocturne Test A",
   "default_public_url": "https://homeassistant.local:8451",
   "cookie_namespace": "NocturneTestA_",
-  "source_at": "2026-10-05T06:16:01Z"
+  "source_at": "2026-10-09T10:54:20+02:00"
 }

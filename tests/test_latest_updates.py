@@ -24,6 +24,8 @@ class LatestUpdateTests(unittest.TestCase):
     def candidate(self):
         value = copy.deepcopy(self.lock)
         value['commit'] = 'b' * 40
+        for kind in ('api', 'web'):
+            value[kind]['tag'] = 'main-' + value['commit'][:7]
         value['workflow_run'] += 1
         value['commit_at'] = '2026-09-01T06:52:58Z'
         value['published_at'] = '2026-09-01T06:53:00Z'
@@ -134,8 +136,9 @@ class LatestUpdateTests(unittest.TestCase):
             ({'os': 'linux', 'architecture': 'amd64', 'config': {
                 'Env': ['GIT_COMMIT=' + commit]}}, config_digest),
         ]
-        with patch.object(updater, 'fetch', side_effect=responses):
+        with patch.object(updater, 'fetch', side_effect=responses) as fetch:
             self.assertEqual(selected, updater.resolve_image('api', commit)['digest'])
+            self.assertTrue(fetch.call_args_list[1].args[0].endswith('/manifests/main-aaaaaaa'))
 
     def test_split_publish_requires_both_images_and_manifest_report(self):
         commit = 'a' * 40

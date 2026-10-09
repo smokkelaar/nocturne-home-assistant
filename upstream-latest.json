@@ -1,15 +1,23 @@
 {
   "channel": "main",
-  "commit": "8635bd530e6f8b792c3f2442cd3198ec7104fa96",
-  "workflow_run": 36280434799,
-  "commit_at": "2026-09-26T23:45:27Z",
-  "published_at": "2026-09-26T23:45:30Z",
+  "commit": "ef8850840c349fa9519a7f3022599ec9adddff82",
+  "workflow_run": 37895441854,
+  "commit_at": "2026-10-09T06:48:03Z",
+  "published_at": "2026-10-09T06:48:06Z",
   "api": {
-    "tag": "latest",
-    "digest": "sha256:92cb1eadc462fac72cf7816d66bd546290cc270446d2f11d943f4934f6769c8e"
+    "tag": "main-ef88508",
+    "digest": "sha256:2aa570f996d571419fc67cc883498272ef142727394942afa5cef2c54135a272",
+    "platforms": {
+      "amd64": "sha256:2aa570f996d571419fc67cc883498272ef142727394942afa5cef2c54135a272",
+      "arm64": "sha256:0e374127cdb58da9b38cddfae9d19433b1f944eca2af6c96afa1fd6cb73e1fbd"
+    }
   },
   "web": {
-    "tag": "latest",
-    "digest": "sha256:1e998d9f8b058b62dd1698373adbe17b312e00a986a8f45f9fd8874f0f76c23e"
+    "tag": "main-ef88508",
+    "digest": "sha256:0133cec7e21ac528bd4d1772ce9a8a8cbadd326ca53e6bcd85b2d8528428ac3b",
+    "platforms": {
+      "amd64": "sha256:0133cec7e21ac528bd4d1772ce9a8a8cbadd326ca53e6bcd85b2d8528428ac3b",
+      "arm64": "sha256:4559902999f6b58ab886d823c94f9cfe9c9e99074a4f128c6ea1f4be68b29519"
+    }
   }
 }

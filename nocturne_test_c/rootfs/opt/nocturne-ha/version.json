@@ -1,20 +1,20 @@
 {
   "app": "0.1.13",
   "package": "1.0.45001",
-  "nocturne": "main@0198225 + PR #2007",
+  "nocturne": "main@ef88508",
   "repository": "smokkelaar/nocturne-personal",
-  "source_commit": "e17d9ee806a44e613d93dd7e191c2693f5b27729",
-  "commit_at": "2026-10-04T10:44:51Z",
-  "base": "Nocturne main + PR #2007",
-  "base_commit": "019822557fefb002ef79ccc601d4a72713fa971b",
-  "release": "Clock face units PR #2007",
+  "source_commit": "ef8850840c349fa9519a7f3022599ec9adddff82",
+  "commit_at": "2026-10-09T17:48:03+11:00",
+  "base": "Nocturne main",
+  "base_commit": "ef8850840c349fa9519a7f3022599ec9adddff82",
+  "release": "Clock face units PR #2007 (merged into main)",
   "release_url": "https://github.com/nightscout/nocturne/pull/2007",
-  "purpose": "Klokface-eenheden en tijdnotatie per face testen: dezelfde weergave voor eigenaar, andere ingelogde kijkers en publieke kloklinks.",
+  "purpose": "Klokface-eenheden en tijdnotatie per face testen: dezelfde weergave voor eigenaar, andere ingelogde kijkers en publieke kloklinks. De oorspronkelijke PR is gemerged; dit kanaal valideert nu de actuele main.",
   "purpose_url": "https://github.com/nightscout/nocturne/pull/2007",
   "test_plan": "Maak of reset een klokface en kies per face mg/dL of mmol/L en 12/24 uur; open de face als eigenaar, als ingelogde kijker met andere voorkeuren en via de publieke kloklink; controleer de builder-preview en dat oude faces mg/dL en 12 uur tonen.",
   "test_url": "https://github.com/smokkelaar/nocturne-home-assistant",
   "name": "Nocturne Test C",
   "default_public_url": "https://homeassistant.local:8453",
   "cookie_namespace": "NocturneTestC_",
-  "source_at": "2026-10-04T22:25:11Z"
+  "source_at": "2026-10-09T17:48:03+11:00"
 }

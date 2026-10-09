@@ -1,7 +1,7 @@
 # API and frontend are paired by upstream-latest.json and pinned by OCI digest.
-FROM ghcr.io/nightscout/nocturne/nocturne-web@sha256:1e998d9f8b058b62dd1698373adbe17b312e00a986a8f45f9fd8874f0f76c23e AS web
+FROM ghcr.io/nightscout/nocturne/nocturne-web@sha256:0133cec7e21ac528bd4d1772ce9a8a8cbadd326ca53e6bcd85b2d8528428ac3b AS web
 FROM node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d AS node
-FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:92cb1eadc462fac72cf7816d66bd546290cc270446d2f11d943f4934f6769c8e
+FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:2aa570f996d571419fc67cc883498272ef142727394942afa5cef2c54135a272
 
 USER root
 ARG BUILD_VERSION=1.0.45001

@@ -155,7 +155,7 @@ class ChannelTests(unittest.TestCase):
             self.assertIn('@sha256:', image)
             self.assertNotRegex(image, r':latest(?:\s|$)')
         lock = json.loads((ROOT / 'upstream-latest.json').read_text())
-        self.assertEqual({'latest'}, {lock[kind]['tag'] for kind in ('api', 'web')})
+        self.assertEqual({'main-' + lock['commit'][:7]}, {lock[kind]['tag'] for kind in ('api', 'web')})
         for kind in ('api', 'web'):
             self.assertIn('@' + lock[kind]['digest'], dockerfile)
 

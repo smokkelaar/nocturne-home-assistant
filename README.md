@@ -1,5 +1,7 @@
 # Nocturne for Home Assistant
 
+[Current main synchronization, source versions and publication metadata](docs/VERSIES.md).
+
 **Nieuwe 1.x-distributie:** alle zes varianten krijgen vooraf gebouwde GHCR-images
 voor AMD64 en ARM64. HAOS downloadt de geteste image in plaats van Nocturne lokaal
 te compileren. Bestaande slugs, poorten en data blijven behouden. De appstore krijgt
@@ -14,7 +16,7 @@ For the **Stable and Main distribution with prebuilt images**, use [nocturne-hom
 [![Official release check](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/upstream.yml/badge.svg)](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/upstream.yml)
 [![Latest daily](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/latest.yml/badge.svg)](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/latest.yml)
 
-Three **experimental, unofficial Home Assistant apps** that each run [Nocturne](https://github.com/nightscout/nocturne), PostgreSQL and an HTTPS gateway in one container. Official and Latest remain unchanged; the separate [Personal app](docs/PERSONAL.md) builds your extension fork on the approved Daily base.
+Six **experimental, unofficial Home Assistant apps** that each run [Nocturne](https://github.com/nightscout/nocturne), PostgreSQL and an HTTPS gateway in one container. Official and Latest remain unchanged; the separate [Personal app](docs/PERSONAL.md) builds your extension fork on the approved Daily base.
 
 This repository is **Nocturne only**. It contains the HA wrapper, its small upstream compatibility patches, tests and contributor documentation; it is not a fork of the entire Nocturne application. Upstream Nocturne remains the source of the API and web interface. [Compare the two channels](docs/CHANNELS.md).
 
@@ -27,7 +29,7 @@ This repository is **Nocturne only**. It contains the HA wrapper, its small upst
 [![Add repository to Home Assistant](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fsmokkelaar%2Fnocturne-home-assistant)
 
 1. Add this repository to the **Home Assistant app store** (formerly add-on store).
-2. Choose **Nocturne Official Release** or **Nocturne Latest Release**. Both can be installed; they have separate data. The initial installation builds a container locally and can take several minutes.
+2. Choose **Nocturne Official Release** or **Nocturne Latest Release**. Both can be installed; they have separate data. HA downloads prebuilt AMD64 or ARM64 images after native validation.
 3. Configure a stable HTTPS hostname and trusted certificate. Official defaults to host port 8448; Latest to 8449.
 4. Open its HA web interface for service status, the Nocturne link and the extra gateway access code. Complete Nocturne's own passkey setup in the separate tab. From wrapper 0.1.4 an existing configured instance can [safely opt out of only that extra popup](docs/GATEWAY.md); Nocturne's passkey login stays enabled.
 
@@ -39,7 +41,7 @@ plus a separate medication log (including Mounjaro-style medications, without do
 Your own Google OAuth client and consent are required; real Google account access remains a user test.
 [Personal installation, feature setup and daily updates](docs/PERSONAL.md).
 
-Read the [Official installation reference](nocturne_local/DOCS.md) or [Latest reference](nocturne_latest/DOCS.md) first. Requirements: **Home Assistant OS / Supervisor, amd64**, enough free storage/memory for a local build and PostgreSQL, and working local DNS/trusted HTTPS for passkeys. ARM64 and Home Assistant Container/Core without Supervisor are not supported by this wrapper yet.
+Read the [Official installation reference](nocturne_local/DOCS.md) or [Latest reference](nocturne_latest/DOCS.md) first. Requirements: **Home Assistant OS / Supervisor, amd64**, enough free storage/memory for a local build and PostgreSQL, and working local DNS/trusted HTTPS for passkeys. AMD64 and ARM64 are supported; Home Assistant Container/Core without Supervisor is not supported.
 
 **Command-line diagnostics:** all six app channels package a read-only `nocturne-ha` CLI. See [examples and safety boundaries](docs/CLI.md).
 
@@ -55,8 +57,8 @@ maintenance password. New builds check their recovery source contract automatica
 so unrelated source updates remain compatible. Unknown recovery contracts disable
 only new owner-recovery codes. [Dutch step-by-step recovery guide](docs/PERSONAL-MAINTENANCE.md).
 
-All six apps use **one shared functional HA-wrapper version** (currently 0.1.12).
-Official pairs it with Nocturne 0.2.4; Latest pairs it with a pinned main snapshot.
+All six apps use **one shared functional HA-wrapper version** (currently 0.1.13).
+Official pairs it with Nocturne 0.2.7; Latest pairs it with a pinned main snapshot.
 HA's technical package version adds a delivery counter, e.g. `0.1.5-1`.
 Daily upstream updates change that counter, not wrapper functionality.
 [Version numbers explained](docs/VERSIES.md).

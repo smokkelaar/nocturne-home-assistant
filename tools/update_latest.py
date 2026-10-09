@@ -1,6 +1,7 @@
 """Promote a tested Nocturne main snapshot into the separate Latest HA app.
 
-The upstream ``latest`` tags are used only for discovery. The generated HA
+The upstream ``main-<sha7>`` tags identify the exact main build; ``latest`` is
+reserved for official releases. The generated HA
 Dockerfile always uses immutable OCI digests and records the exact source
 commit plus the successful upstream build job that produced the pair.
 """
@@ -64,8 +65,8 @@ def validate_lock(lock):
         if parsed.tzinfo is None:
             raise ValueError(f'Invalid upstream {label} timestamp')
     for kind in ('api', 'web'):
-        if lock.get(kind, {}).get('tag') != 'latest':
-            raise ValueError('Latest discovery tags must remain paired')
+        if lock.get(kind, {}).get('tag') not in ('latest', 'main-' + lock['commit'][:7]):
+            raise ValueError('Main image tags must match the source commit or legacy Latest pins')
         if not re.fullmatch(r'sha256:[0-9a-f]{64}', lock[kind].get('digest', '')):
             raise ValueError('Invalid immutable image digest')
 
@@ -74,7 +75,8 @@ def resolve_image(kind, commit):
     repository = f'{PROJECT}/nocturne-{kind}'
     auth, _ = fetch(f'https://ghcr.io/token?service=ghcr.io&scope=repository:{repository}:pull')
     headers = {'Authorization': 'Bearer ' + auth['token'], 'Accept': ACCEPT}
-    manifest, digest = fetch(f'https://ghcr.io/v2/{repository}/manifests/latest', headers)
+    tag = 'main-' + commit[:7]
+    manifest, digest = fetch(f'https://ghcr.io/v2/{repository}/manifests/{tag}', headers)
     platforms = {}
     if 'manifests' in manifest:
         for platform in ('amd64', 'arm64'):
@@ -106,7 +108,7 @@ def resolve_image(kind, commit):
     # accepted only from the same completed build-and-push job below.
     if (kind == 'api' and revision != commit) or (revision and revision != commit):
         raise NotReady('Published latest image does not match current main')
-    result = {'tag': 'latest', 'digest': digest}
+    result = {'tag': tag, 'digest': digest}
     if platforms:
         result['platforms'] = platforms
     return result

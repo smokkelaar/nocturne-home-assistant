@@ -134,6 +134,11 @@ def files():
             runtime["base"] = "Nocturne main + PR #1293"
             runtime["nocturne"] = "main@" + source["base_commit"][:7] + " + PR #1293"
             runtime["release"] = "Google Health PR #1293"
+        if letter in ("b", "c") and source["commit"] == source["base_commit"]:
+            label += " (merged into main)"
+            description = f"Nocturne main {base_commit[:7]} · {label}"
+            runtime.update(base="Nocturne main", nocturne="main@" + base_commit[:7], release=label)
+            purpose += " De oorspronkelijke PR is gemerged; dit kanaal valideert nu de actuele main."
         runtime["release_url"] = source["pull_request_url"]
         runtime.update(purpose=purpose, purpose_url=runtime["release_url"],
                        test_plan=("Open Reports → Comparison; kies twee periodes met metingen en controleer Hypo Duration (uren), Hypo Events en het verschil. Test ook nul hypo's, een periode zonder data, wisselen van periodes en print. Laag en zeer laag binnen één episode mogen niet dubbel tellen."

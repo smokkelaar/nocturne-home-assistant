@@ -47,7 +47,7 @@ class PersonalTests(unittest.TestCase):
             root = Path(temporary)
             directory = root / 'nocturne_personal'
             directory.mkdir()
-            (root / 'upstream-personal.json').write_text(json.dumps(self.lock))
+            (root / 'upstream-personal.json').write_text(json.dumps({**self.lock, 'version': '0.3.26'}))
             (directory / 'config.json').write_text('{"version":"0.3.27-p2"}')
             (directory / 'CHANGELOG.md').write_text('Existing history\n')
             candidate = {**self.lock, 'version': '0.3.27'}
@@ -186,7 +186,9 @@ class PersonalTests(unittest.TestCase):
         self.assertTrue(updater.published_number(test_c['version']) or test_c['version'].startswith('0.3.25-'))
         self.assertEqual(test_c['version'], test_runtime['package'])
         test_c_changelog = (ROOT / 'nocturne_test_c/CHANGELOG.md').read_text()
-        self.assertTrue(test_c_changelog.startswith(f"## {test_c['version']}\n"))
+        self.assertTrue(test_c_changelog.startswith(f"## {test_c['version']}\n") or
+                        test_c_changelog.startswith("## Unreleased source candidate\n"))
+        self.assertIn(f"## {test_c['version']}\n", test_c_changelog)
         changelog_versions = [
             int(version) for version in re.findall(
                 r'(?m)^#{1,2} 0\.3\.25-c(\d+)$', test_c_changelog)
