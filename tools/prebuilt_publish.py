@@ -11,7 +11,6 @@ import re
 import shutil
 import subprocess
 import urllib.request
-from awesomeversion import AwesomeVersion
 import registry
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -32,6 +31,7 @@ def write(path, value):
 
 
 def require_upgrade(candidate, previous=None):
+    from awesomeversion import AwesomeVersion
     if not re.fullmatch(r'[1-9]\d*\.(0|[1-9]\d*)\.(0|[1-9]\d*)', candidate):
         raise ValueError('Prebuilt packages require plain MAJOR.MINOR.PATCH at or above 1.0.0')
     if previous and not AwesomeVersion(candidate) > AwesomeVersion(previous):
