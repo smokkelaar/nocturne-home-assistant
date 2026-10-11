@@ -2,30 +2,15 @@
 
 ## Actuele ontwikkelomgeving
 
-Test A (poort 8451), versie **0.3.26-a13**, bouwt nu PR #1293 op exact commit
-`969896385` met main-basis `b515516d4`. `upstream-test-a.json` bevat de bronpin
-en checksum. De app-identiteit, opties en private opslag blijven behouden.
-Test B test nu de hypo-vergelijking uit [PR #2031](https://github.com/nightscout/nocturne/pull/2031) op actuele main, zonder de Google Health PR-wijzigingen. Personal blijft op zijn eigen
-bron; de Personal-uitbreidingen zijn geen onderdeel van deze Test A-build.
+Latest, Personal en Test A/B/C gebruiken dezelfde ongewijzigde upstream main:
+`5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`. Google Health PR #1293 is gemerged;
+er zijn geen aparte Google Health-, hypo-vergelijkings- of klokface-patches meer.
+Personal bevat geen eigen uitbreidingen. Stable blijft ongewijzigd.
 
-Deze versie lost de mergeconflicten met main op en verwerkt de reviewfix voor
-tijdelijke Google-fouten tijdens het koppelen. Slaapimports behouden bestaande
-ID's en aanmaakdatums, met de nieuwe bescherming tegen dubbele imports en het
-opnieuw importeren van handmatig verwijderde sessies.
-De writer slaat handmatig verwijderde slaaprecords over en gaat verder met de
-import. Slaaprecords die bij Google verdwenen zijn, krijgen een systeemverwijdering
-en kunnen later terugkomen bij herimport. Expliciet wissen (purge) blijft definitief.
-
-Main voegt databasekolommen en niet-unieke indexen toe zonder bestaande gegevens
-te verwijderen. Maak een
-back-up en hertest recente en historische imports, slaapfasen, herimport zonder
-duplicaten, verwijderen gevolgd door synchroniseren en opnieuw verbinden/herstarten.
-De bronreviews staan op [PR #1293](https://github.com/nightscout/nocturne/pull/1293)
-en de bouw- en opstartcontroles op [HA PR #95](https://github.com/smokkelaar/nocturne-home-assistant/pull/95).
-
-Test C (poort 8453) is geen Google Health-omgeving meer; die test nu
-[Nightscout PR #2007](https://github.com/nightscout/nocturne/pull/2007)
-(klokface-eenheden en tijdnotatie). Google Health wordt op Test A getest.
+De vijf apps houden hun eigen poorten, opties en private opslag. Google Health
+kan op elk van deze ontwikkelkanalen worden getest; Test A is hiervoor niet langer
+een speciale bronbuild. Exacte bronpins en checksums staan in de upstream-locks.
+Zie [de main-basis en publicatieprocedure](PERSONAL.md).
 
 ## Eerdere test checklist voor Personal 0.3.26-2 / Test A 0.3.26-a2
 

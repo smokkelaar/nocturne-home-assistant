@@ -131,16 +131,9 @@ or reimport history to address this rendering error.
    Official/Latest logins are not imported.
 4. Confirm sign-in, reload and restart work, then check the connector and report.
 
-Personal compiles the API, web application and native alert library locally. This
-takes more time, memory and temporary storage than installing the other channels.
-Home Assistant Supervisor may keep **Installing (0%)** visible throughout this build.
-The wrapper cannot make that native percentage advance evenly.
-
-Open **Settings -> System -> Logs -> Supervisor** and look for
-`Nocturne build phase X/7`: build tools, source unpacking, web dependencies and bridge,
-API compilation, alert engine, API publishing, and web application build. These are
-named build stages, not equal-duration percentage estimates; container assembly and
-installation can continue after phase 7.
+GitHub compiles the API, web application and native alert library from the pinned
+source. Home Assistant downloads the prebuilt image. Build progress and the seven
+source-build phases are visible in GitHub Actions, rather than in Supervisor logs.
 
 ## Versions and release checks
 
@@ -157,20 +150,21 @@ Legacy numeric suffixes are read only as migration input and trigger a one-time
 base bump. Source pins and the actual feature version stay unchanged for this fix.
 Official and Latest keep their own package versions.
 
-The source fork's `personal` branch and `.personal/version.json` identify the feature
-version and approved Daily base. The HA promotion records the exact source commit,
+For a clean main baseline, the fork's `personal` branch has the same file tree as
+upstream main. No `.personal/version.json` is needed or added. The resolver verifies
+the tree, uses the canonical approved main source and carries the previous numeric
+Personal version for delivery compatibility; that number does not imply extensions.
+While the branch remains a clean baseline, promotion can follow a newer approved
+Daily source without restoring former Personal code.
+
+Future extension commits with a different file tree require `.personal/version.json`
+to identify their feature version and approved Daily base. Those source commits
+must descend from that base. The HA lock records their exact source commit,
 archive SHA-256 and approved runtime image digests in `upstream-personal.json`.
-Both API and web are built from that pinned source; a release tag alone does not
-publish an HA update.
+A release tag alone does not publish an HA update.
 
-Source synchronization checks the approved Daily base at 07:13 UTC, and HA promotion
-runs at 07:43 UTC. Both workflows can also be started manually; scheduled runs may
-be delayed. Conflicts stop source synchronization instead of discarding fork changes.
-Source tests cover Google Health behavior and browser interactions, but do not replace
-the HA build checks.
-
-Personal promotion is driven by `.personal/version.json` on the fork's `personal`
-branch, not by the upstream contribution branch alone.
+HA Personal promotion runs at 07:43 UTC and can also be started manually. The old
+Personal source-sync workflow was removed when the fork returned to upstream main.
 
 The HA update proposal must pass **Unit tests** and **Container smoke test** before
 protected automatic merge. For Personal changes, validation builds the pinned source,
