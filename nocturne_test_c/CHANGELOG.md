@@ -1,3 +1,7 @@
+## Unreleased source candidate
+
+All development channels now use unmodified upstream main `5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`. Personal extensions and former PR test pins are removed from this build. Existing app identity and data are retained.
+
 ## 1.0.49001
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.

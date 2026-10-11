@@ -1,33 +1,23 @@
 # Nocturne Personal Release
 
-## Main synchronization — 2026-10-09
+## Clean main baseline — 2026-10-11
 
-The common compiled upstream base is `df000c33e15d3809591261d78a22135bb0176ffd` (2026-10-09T09:16:08Z).
-It includes dashboard/chart refresh fixes (#2019), v3 deletion/history fixes
-(#1825), and temporary basal uploader-origin handling (#1570), in addition to
-the previously merged clock-face and hypo-comparison changes.
-Upstream's later `d106f6085` commit only synchronizes translations and skips
-image publication. Daily therefore selects the newest verified published main
-ancestor; all five channels use that same compiled base.
+Latest, Personal and Test A/B/C all use unmodified upstream main `5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`.
+The Personal fork's `main` and `personal` branches have exactly the same files as that commit;
+there are no Personal extensions or additional PR patches in this baseline.
+History-preserving reset commits keep branch protection intact. The former tips are also retained as archive tags.
 
-Official remains Nocturne **0.2.7**. The functional wrapper remains **0.1.13**.
-HA package versions are separate and become available only after both native
-architectures, runtime/upgrade checks and anonymous image verification pass.
+Official / Stable remains Nocturne **0.2.7**. The functional HA wrapper remains
+**0.1.13**. Each app keeps its own slug, ports, options, cookies and private data.
 
-| Channel | Source | Upstream base | Additional code |
-|---|---|---|---|
-| Daily / Latest | `df000c3` | `df000c3` | None |
-| Personal 0.3.28 | `51e2c1d` | `df000c3` | Personal extensions, including Google Health and HbA1c method comparison |
-| Test A | `dd2b027` | `df000c3` | Google Health PR #1293, still unmerged |
-| Test B | `df000c3` | `df000c3` | Hypo comparison PR #2031 is merged into main |
-| Test C | `df000c3` | `df000c3` | Clock-face settings PR #2007 are merged into main |
+API and web are pinned together to the successful upstream publication:
+[main build](https://github.com/nightscout/nocturne/actions/runs/38097589610).
+HA package versions become available after native AMD64/ARM64 builds, startup,
+cold restore, upgrade and anonymous image checks. Home Assistant installations
+receive an offered update; this repository does not restart a live installation.
 
-Images are resolved through the immutable `main-df000c3` tags and OCI digests.
-`latest` denotes upstream's official release and is not the Daily discovery tag.
-[Upstream publication](https://github.com/nightscout/nocturne/actions/runs/37910180933).
-Published package versions and image digests are in each channel's `config.json`
-and `provenance.json`; runtime source and feature versions are in
-`rootfs/opt/nocturne-ha/version.json`. These files must agree before HA is updated.
+The Google Health instructions below describe functionality now present upstream,
+not an additional Personal extension.
 
 Personal is an independent Home Assistant app that builds the Personal source fork
 on the approved Nocturne Daily base. It has its own database, configuration, sessions
