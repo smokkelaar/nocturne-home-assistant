@@ -1,33 +1,23 @@
 # Nocturne Personal Release
 
-## Main synchronization — 2026-10-09
+## Clean main baseline — 2026-10-11
 
-The common compiled upstream base is `df000c33e15d3809591261d78a22135bb0176ffd` (2026-10-09T09:16:08Z).
-It includes dashboard/chart refresh fixes (#2019), v3 deletion/history fixes
-(#1825), and temporary basal uploader-origin handling (#1570), in addition to
-the previously merged clock-face and hypo-comparison changes.
-Upstream's later `d106f6085` commit only synchronizes translations and skips
-image publication. Daily therefore selects the newest verified published main
-ancestor; all five channels use that same compiled base.
+Latest, Personal and Test A/B/C all use unmodified upstream main `5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`.
+The Personal fork's `main` and `personal` branches have exactly the same files as that commit;
+there are no Personal extensions or additional PR patches in this baseline.
+History-preserving reset commits keep branch protection intact. The former tips are also retained as archive tags.
 
-Official remains Nocturne **0.2.7**. The functional wrapper remains **0.1.13**.
-HA package versions are separate and become available only after both native
-architectures, runtime/upgrade checks and anonymous image verification pass.
+Official / Stable remains Nocturne **0.2.7**. The functional HA wrapper remains
+**0.1.13**. Each app keeps its own slug, ports, options, cookies and private data.
 
-| Channel | Source | Upstream base | Additional code |
-|---|---|---|---|
-| Daily / Latest | `df000c3` | `df000c3` | None |
-| Personal 0.3.28 | `51e2c1d` | `df000c3` | Personal extensions, including Google Health and HbA1c method comparison |
-| Test A | `dd2b027` | `df000c3` | Google Health PR #1293, still unmerged |
-| Test B | `df000c3` | `df000c3` | Hypo comparison PR #2031 is merged into main |
-| Test C | `df000c3` | `df000c3` | Clock-face settings PR #2007 are merged into main |
+API and web are pinned together to the successful upstream publication:
+[main build](https://github.com/nightscout/nocturne/actions/runs/38097589610).
+HA package versions become available after native AMD64/ARM64 builds, startup,
+cold restore, upgrade and anonymous image checks. Home Assistant installations
+receive an offered update; this repository does not restart a live installation.
 
-Images are resolved through the immutable `main-df000c3` tags and OCI digests.
-`latest` denotes upstream's official release and is not the Daily discovery tag.
-[Upstream publication](https://github.com/nightscout/nocturne/actions/runs/37910180933).
-Published package versions and image digests are in each channel's `config.json`
-and `provenance.json`; runtime source and feature versions are in
-`rootfs/opt/nocturne-ha/version.json`. These files must agree before HA is updated.
+The Google Health instructions below describe functionality now present upstream,
+not an additional Personal extension.
 
 Personal is an independent Home Assistant app that builds the Personal source fork
 on the approved Nocturne Daily base. It has its own database, configuration, sessions
@@ -141,16 +131,9 @@ or reimport history to address this rendering error.
    Official/Latest logins are not imported.
 4. Confirm sign-in, reload and restart work, then check the connector and report.
 
-Personal compiles the API, web application and native alert library locally. This
-takes more time, memory and temporary storage than installing the other channels.
-Home Assistant Supervisor may keep **Installing (0%)** visible throughout this build.
-The wrapper cannot make that native percentage advance evenly.
-
-Open **Settings -> System -> Logs -> Supervisor** and look for
-`Nocturne build phase X/7`: build tools, source unpacking, web dependencies and bridge,
-API compilation, alert engine, API publishing, and web application build. These are
-named build stages, not equal-duration percentage estimates; container assembly and
-installation can continue after phase 7.
+GitHub compiles the API, web application and native alert library from the pinned
+source. Home Assistant downloads the prebuilt image. Build progress and the seven
+source-build phases are visible in GitHub Actions, rather than in Supervisor logs.
 
 ## Versions and release checks
 
@@ -167,20 +150,21 @@ Legacy numeric suffixes are read only as migration input and trigger a one-time
 base bump. Source pins and the actual feature version stay unchanged for this fix.
 Official and Latest keep their own package versions.
 
-The source fork's `personal` branch and `.personal/version.json` identify the feature
-version and approved Daily base. The HA promotion records the exact source commit,
+For a clean main baseline, the fork's `personal` branch has the same file tree as
+upstream main. No `.personal/version.json` is needed or added. The resolver verifies
+the tree, uses the canonical approved main source and carries the previous numeric
+Personal version for delivery compatibility; that number does not imply extensions.
+While the branch remains a clean baseline, promotion can follow a newer approved
+Daily source without restoring former Personal code.
+
+Future extension commits with a different file tree require `.personal/version.json`
+to identify their feature version and approved Daily base. Those source commits
+must descend from that base. The HA lock records their exact source commit,
 archive SHA-256 and approved runtime image digests in `upstream-personal.json`.
-Both API and web are built from that pinned source; a release tag alone does not
-publish an HA update.
+A release tag alone does not publish an HA update.
 
-Source synchronization checks the approved Daily base at 07:13 UTC, and HA promotion
-runs at 07:43 UTC. Both workflows can also be started manually; scheduled runs may
-be delayed. Conflicts stop source synchronization instead of discarding fork changes.
-Source tests cover Google Health behavior and browser interactions, but do not replace
-the HA build checks.
-
-Personal promotion is driven by `.personal/version.json` on the fork's `personal`
-branch, not by the upstream contribution branch alone.
+HA Personal promotion runs at 07:43 UTC and can also be started manually. The old
+Personal source-sync workflow was removed when the fork returned to upstream main.
 
 The HA update proposal must pass **Unit tests** and **Container smoke test** before
 protected automatic merge. For Personal changes, validation builds the pinned source,

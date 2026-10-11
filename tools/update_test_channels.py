@@ -17,6 +17,17 @@ def read(path):
 
 
 def validate_test_pr_source(source, channel="Test B"):
+    if source.get("channel") == "main":
+        latest = read("upstream-latest.json")
+        if (source.get("repository") != update_personal.REPO or
+                source.get("commit") != latest["commit"] or
+                source.get("base_commit") != latest["commit"] or
+                source.get("commit_at") != latest["commit_at"] or
+                source.get("base_commit_at") != latest["commit_at"] or
+                not re.fullmatch(r"[0-9a-f]{64}", source.get("archive_sha256", "")) or
+                "pull_request" in source or "pull_request_url" in source):
+            raise ValueError(f"Invalid {channel} main baseline")
+        return
     pr = source.get("pull_request")
     if (source.get("channel") != "test-pr" or
             source.get("repository") != update_personal.REPO or
@@ -47,6 +58,8 @@ def files():
     if personal["upstream"] != latest:
         raise ValueError("All development channels must use the approved Latest base")
     validate_test_b_source(test_b)
+    if test_a.get("channel") == "main":
+        validate_test_pr_source(test_a, "Test A")
     validate_test_pr_source(test_c, "Test C")
     generated = {}
     for letter, port, source in (("a", 8451, test_a), ("b", 8452, test_b), ("c", 8453, test_c)):
@@ -78,7 +91,7 @@ def files():
         version = config["version"]
         name = "Nocturne Test " + letter.upper()
         if letter in ("a", "b", "c"):
-            if letter == "a" and (source.get("channel") != "google-health-pr" or
+            if letter == "a" and source.get("channel") != "main" and (source.get("channel") != "google-health-pr" or
                     source.get("repository") != update_personal.REPO or
                     source.get("pull_request") != 1293):
                 raise ValueError("Unexpected Google Health PR source")
@@ -107,7 +120,19 @@ def files():
                        source_commit=source["commit"], source_at=source.get("commit_at"),
                        base_commit=base_commit, commit_at=base_at,
                        nocturne="main@" + base_commit[:7])
-        if letter == "b":
+        if source.get("channel") == "main":
+            purpose = "Ongewijzigde Nocturne main testen als basis voor nieuwe ontwikkeling."
+            description = f"Nocturne main {base_commit[:7]}"
+            runtime.pop("personal", None)
+            runtime.update(base="Nocturne main", release="Nocturne main")
+            generated[package + "/README.md"] = (
+                f"# {name}\n\nUnmodified upstream main `{base_commit}`, without additional PR patches. "
+                f"Default host port {port}, separate data and cookies.\n\n"
+                "[Installation and source baseline](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n")
+            docs = (ROOT / "nocturne_latest/DOCS.md").read_text(encoding="utf-8")
+            docs = docs.replace("Nocturne Latest Release", name).replace("8449", str(port))
+            generated[package + "/DOCS.md"] = docs + f"\nThis isolated channel uses unmodified upstream main `{base_commit}`, without additional PR patches.\n"
+        elif letter == "b":
             label = f"Hypo comparison PR #{source['pull_request']}"
             purpose = "Hypo Duration en Hypo Events tussen twee periodes vergelijken, naast de bestaande hyperinformatie."
             description = f"{label} {source['commit'][:7]} · main {source['base_commit'][:7]}"
@@ -134,18 +159,20 @@ def files():
             runtime["base"] = "Nocturne main + PR #1293"
             runtime["nocturne"] = "main@" + source["base_commit"][:7] + " + PR #1293"
             runtime["release"] = "Google Health PR #1293"
-        if letter in ("b", "c") and source["commit"] == source["base_commit"]:
+        if source.get("channel") != "main" and letter in ("b", "c") and source["commit"] == source["base_commit"]:
             label += " (merged into main)"
             description = f"Nocturne main {base_commit[:7]} · {label}"
             runtime.update(base="Nocturne main", nocturne="main@" + base_commit[:7], release=label)
             purpose += " De oorspronkelijke PR is gemerged; dit kanaal valideert nu de actuele main."
-        runtime["release_url"] = source["pull_request_url"]
+        runtime["release_url"] = source.get("pull_request_url") or f"https://github.com/nightscout/nocturne/tree/{base_commit}"
         runtime.update(purpose=purpose, purpose_url=runtime["release_url"],
                        test_plan=("Open Reports → Comparison; kies twee periodes met metingen en controleer Hypo Duration (uren), Hypo Events en het verschil. Test ook nul hypo's, een periode zonder data, wisselen van periodes en print. Laag en zeer laag binnen één episode mogen niet dubbel tellen."
                                   if letter == "b" else "Open Settings → Connectors → Google Health, autoriseer Google, test paging en herstel vanaf een datum voor steps, heart rate, weight en sleep."
                                   if letter == "a" else
                                   "Maak of reset een klokface en kies per face mg/dL of mmol/L en 12/24 uur; open de face als eigenaar, als ingelogde kijker met andere voorkeuren en via de publieke kloklink; controleer de builder-preview en dat oude faces mg/dL en 12 uur tonen."),
                        test_url="https://github.com/smokkelaar/nocturne-home-assistant")
+        if source.get("channel") == "main":
+            runtime["test_plan"] = "Basiswerking, containerstart en upgrade van de bestaande testinstantie controleren."
         if not publication_mode(ROOT):
             config["description"] = f"HA wrapper {runtime['app']} · {description}. Isolated test instance; not for clinical use."
         generated[package + "/config.json"] = json.dumps(config, indent=2) + "\n"

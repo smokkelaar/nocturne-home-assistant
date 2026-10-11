@@ -57,7 +57,23 @@ def resolve():
     approved = json.loads((ROOT / 'upstream-latest.json').read_text())
     head = github('commits/personal')
     commit = head['sha']
-    meta = github(f'contents/.personal/version.json?ref={commit}', raw=True)
+    previous = json.loads((ROOT / 'upstream-personal.json').read_text())
+    if commit != approved['commit'] and head['commit'].get('tree'):
+        canonical = github(f"commits/{approved['commit']}")
+        baseline = canonical
+        if previous['commit'] == previous['upstream']['commit'] and previous['commit'] != approved['commit']:
+            baseline = github(f"commits/{previous['commit']}")
+        if head['commit']['tree']['sha'] in (canonical['commit']['tree']['sha'], baseline['commit']['tree']['sha']):
+            head = canonical
+            commit = head['sha']
+    if commit == previous['commit'] == previous['upstream']['commit'] and commit != approved['commit']:
+        head = github(f"commits/{approved['commit']}")
+        commit = head['sha']
+    if commit == approved['commit']:
+        meta = {'base_commit': commit,
+                'version': previous['version']}
+    else:
+        meta = github(f'contents/.personal/version.json?ref={commit}', raw=True)
     if meta['base_commit'] != approved['commit']:
         raise ValueError('Personal has not yet merged the currently approved Daily base')
     comparison = github(f'compare/{approved["commit"]}...{commit}')
@@ -88,6 +104,8 @@ def validate_transition(old, new):
     if tuple(map(int, new['version'].split('.'))) < tuple(map(int, old['version'].split('.'))):
         raise ValueError('Personal extension version cannot move backwards')
     if old['commit'] != new['commit']:
+        if new['commit'] == new['upstream']['commit']:
+            return
         comparison = github(f'compare/{old["commit"]}...{new["commit"]}')
         if comparison['status'] != 'ahead' or comparison['merge_base_commit']['sha'] != old['commit']:
             raise ValueError('Personal source must preserve the previously published source history')
@@ -145,9 +163,13 @@ def files(lock, delivery, maintenance=True):
     docs = docs.replace('Leave the Latest host port', 'Leave the Personal host port')
     docs = docs.replace('isolated from Official even', 'isolated from Official and Latest even')
     features = f"Personal {lock['version']} includes Google Health imports for steps, heart rate, weight and sleep. Progress refreshes while the connector page is open; the percentage estimates data-type stages, not remaining time. No dosing advice or insulin/IOB changes."
+    if lock['commit'] == lock['upstream']['commit']:
+        features = 'Personal uses unmodified upstream main, without Personal extensions.'
     source_note = f"Personal source `{lock['commit']}` follows upstream main `{lock['upstream']['commit']}`. API and web are compiled together on GitHub, then delivered as tested prebuilt AMD64 and ARM64 images. Home Assistant downloads the image; it does not compile Nocturne locally."
     generated['DOCS.md'] = docs + '\n' + source_note + ' ' + features + ' [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
     generated['README.md'] = '# Nocturne Personal Release\n\nIndependent Personal fork on the tested Daily base. Default host port 8450, separate data and cookies.\n\n' + features + '\n\n[Installation and updates](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
+    if lock['commit'] == lock['upstream']['commit']:
+        generated['README.md'] = generated['README.md'].replace('Independent Personal fork', 'Clean Personal development channel')
     runtime = dict(app=wrapper, package=delivery, personal=lock['version'],
                    repository=lock['repository'],
                    source_commit=lock['commit'], source_at=lock['commit_at'],
@@ -161,6 +183,10 @@ def files(lock, delivery, maintenance=True):
                    test_url='https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md',
                    name=config['name'],
                    default_public_url=config['options']['public_url'], cookie_namespace='NocturnePersonal_')
+    if lock['commit'] == lock['upstream']['commit']:
+        runtime.update(release='Nocturne main',
+                       purpose='Ongewijzigde Nocturne main als schone basis voor nieuwe ontwikkeling.',
+                       test_plan='Basiswerking en upgrade van de bestaande Personal-instantie controleren.')
     generated['rootfs/opt/nocturne-ha/version.json'] = json.dumps(runtime, indent=2) + '\n'
     settings = (latest / 'rootfs/opt/nocturne-ha/settings.py').read_text(encoding='utf-8')
     settings = settings.replace("('NocturneOfficial_', 'NocturneLatest_')",

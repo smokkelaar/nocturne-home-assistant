@@ -72,7 +72,7 @@ class PersonalTests(unittest.TestCase):
             self.assertEqual(expected, (ROOT / path).read_bytes(), path)
 
     def test_generated_feature_docs_follow_extension_version(self):
-        lock = {**self.lock, 'version': '0.2.99'}
+        lock = {**self.lock, 'version': '0.2.99', 'commit': 'a' * 40}
         generated = updater.files(lock, '0.2.99-p1')
         for path in ('DOCS.md', 'README.md'):
             self.assertIn(b'Personal 0.2.99 includes Google Health imports for steps, heart rate, weight and sleep', generated[path])
@@ -109,29 +109,6 @@ class PersonalTests(unittest.TestCase):
         self.assertEqual('cold', self.config['backup'])
         self.assertNotIn('host_network', self.config)
 
-    def test_test_a_pins_pr1293_independently_with_a_distinct_runtime_identity(self):
-        test_a = json.loads((ROOT / 'nocturne_test_a/config.json').read_text())
-        test_runtime = json.loads((ROOT / 'nocturne_test_a/rootfs/opt/nocturne-ha/version.json').read_text())
-        self.assertNotEqual(self.config['slug'], test_a['slug'])
-        self.assertTrue(updater.published_number(test_a['version']) or test_a['version'].startswith(self.lock['version'] + '-'))
-        source = json.loads((ROOT / 'upstream-test-a.json').read_text())
-        self.assertEqual(source['commit'], test_runtime['source_commit'])
-        self.assertEqual(source['base_commit'], test_runtime['base_commit'])
-        self.assertEqual(source['pull_request_url'], test_runtime['release_url'])
-        self.assertNotIn('personal', test_runtime)
-        test_recipe = (ROOT / 'nocturne_test_a/Dockerfile').read_text()
-        self.assertIn('--checksum=sha256:' + source['archive_sha256'], test_recipe)
-        self.assertIn(source['commit'], test_recipe)
-        self.assertIn('Google Health PR #1293', test_a['description'])
-        self.assertEqual(test_a['version'], test_runtime['package'])
-        self.assertEqual('Nocturne Test A', test_a['name'])
-        self.assertEqual('NocturneTestA_', test_runtime['cookie_namespace'])
-        self.assertEqual('https://homeassistant.local:8451', test_runtime['default_public_url'])
-        test_settings = (ROOT / 'nocturne_test_a/rootfs/opt/nocturne-ha/settings.py').read_text()
-        self.assertIn("('NocturneTestA_',)", test_settings)
-        test_cookies = (ROOT / 'nocturne_test_a/rootfs/opt/nocturne-ha/cookies.mjs').read_text()
-        self.assertIn("'NocturneTestA_'", test_cookies)
-
     def test_test_b_rejects_invalid_provenance(self):
         source = json.loads((ROOT / 'upstream-test-b.json').read_text())
         for field, value in [('repository', 'untrusted/repo'), ('commit', 'main'),
@@ -141,36 +118,36 @@ class PersonalTests(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(ValueError):
                 update_test_channels.validate_test_b_source({**source, field: value})
 
-    def test_test_b_pins_hypo_comparison_with_a_distinct_runtime_identity(self):
-        test_b = json.loads((ROOT / 'nocturne_test_b/config.json').read_text())
-        test_runtime = json.loads((ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/version.json').read_text())
-        self.assertNotEqual(self.config['slug'], test_b['slug'])
-        self.assertTrue(updater.published_number(test_b['version']) or test_b['version'].startswith('0.3.25-'))
-        self.assertEqual(test_b['version'], test_runtime['package'])
-        self.assertEqual('Nocturne Test B', test_b['name'])
-        self.assertEqual('NocturneTestB_', test_runtime['cookie_namespace'])
-        self.assertEqual('https://homeassistant.local:8452', test_runtime['default_public_url'])
-        pr = json.loads((ROOT / 'upstream-test-b.json').read_text())
-        self.assertEqual(pr['commit'], test_runtime['source_commit'])
-        self.assertEqual(pr['base_commit'], test_runtime['base_commit'])
-        self.assertEqual(pr['repository'], test_runtime['repository'])
-        self.assertEqual(pr['pull_request_url'], test_runtime['release_url'])
-        test_b_recipe = (ROOT / 'nocturne_test_b/Dockerfile').read_text()
-        self.assertIn(pr['commit'], test_b_recipe)
-        self.assertIn('--checksum=sha256:' + pr['archive_sha256'], test_b_recipe)
-        self.assertIn('codeload.github.com', test_b_recipe)
-        self.assertIn(f'ARG BUILD_VERSION={test_b["version"]}', test_b_recipe)
-        self.assertIn(f"Hypo comparison PR #{pr['pull_request']}", test_runtime['release'])
-        self.assertIn('Hypo Duration', test_runtime['purpose'])
-        self.assertIn('Hypo Events', test_runtime['test_plan'])
-        self.assertNotIn('Google Health', test_runtime['purpose'])
-        self.assertNotIn('Google Health', test_b['description'])
-        test_settings = (ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/settings.py').read_text()
-        self.assertIn("('NocturneTestB_',)", test_settings)
-        test_cookies = (ROOT / 'nocturne_test_b/rootfs/opt/nocturne-ha/cookies.mjs').read_text()
-        self.assertIn("'NocturneTestB_'", test_cookies)
-        self.assertNotEqual(test_b['ports']['8448/tcp'],
-                             json.loads((ROOT / 'nocturne_test_a/config.json').read_text())['ports']['8448/tcp'])
+    def test_test_channels_use_main_with_distinct_runtime_identities(self):
+        latest = json.loads((ROOT / 'upstream-latest.json').read_text())
+        for letter, port in zip('abc', (8451, 8452, 8453)):
+            with self.subTest(channel=letter):
+                package = ROOT / ('nocturne_test_' + letter)
+                config = json.loads((package / 'config.json').read_text())
+                runtime = json.loads((package / 'rootfs/opt/nocturne-ha/version.json').read_text())
+                source = json.loads((ROOT / f'upstream-test-{letter}.json').read_text())
+                self.assertEqual('main', source['channel'])
+                self.assertEqual(latest['commit'], source['commit'])
+                self.assertEqual(source['commit'], source['base_commit'])
+                self.assertEqual(source['commit'], runtime['source_commit'])
+                self.assertEqual(source['base_commit'], runtime['base_commit'])
+                self.assertEqual(source['repository'], runtime['repository'])
+                self.assertEqual(config['version'], runtime['package'])
+                self.assertEqual('Nocturne Test ' + letter.upper(), config['name'])
+                self.assertEqual('NocturneTest' + letter.upper() + '_', runtime['cookie_namespace'])
+                self.assertEqual(port, config['ports']['8448/tcp'])
+                self.assertEqual(f'https://homeassistant.local:{port}', runtime['default_public_url'])
+                self.assertEqual('Nocturne main', runtime['release'])
+                self.assertNotIn('personal', runtime)
+                self.assertNotIn('PR #', runtime['purpose'])
+                self.assertNotIn('pull_request', source)
+                self.assertEqual('https://github.com/nightscout/nocturne/tree/' + latest['commit'], runtime['release_url'])
+                recipe = (package / 'Dockerfile').read_text()
+                self.assertIn('--checksum=sha256:' + source['archive_sha256'], recipe)
+                self.assertIn(source['commit'], recipe)
+                self.assertIn(f'ARG BUILD_VERSION={config["version"]}', recipe)
+                self.assertIn("('NocturneTest" + letter.upper() + "_',)", (package / 'rootfs/opt/nocturne-ha/settings.py').read_text())
+                self.assertIn("'NocturneTest" + letter.upper() + "_'", (package / 'rootfs/opt/nocturne-ha/cookies.mjs').read_text())
 
     def test_test_c_rejects_invalid_provenance(self):
         source = json.loads((ROOT / 'upstream-test-c.json').read_text())
@@ -181,45 +158,49 @@ class PersonalTests(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(ValueError):
                 update_test_channels.validate_test_pr_source({**source, field: value}, 'Test C')
 
-    def test_test_c_pins_clock_face_pr_with_a_distinct_runtime_identity(self):
-        test_c = json.loads((ROOT / 'nocturne_test_c/config.json').read_text())
-        test_runtime = json.loads((ROOT / 'nocturne_test_c/rootfs/opt/nocturne-ha/version.json').read_text())
-        self.assertNotEqual(self.config['slug'], test_c['slug'])
-        self.assertTrue(updater.published_number(test_c['version']) or test_c['version'].startswith('0.3.25-'))
-        self.assertEqual(test_c['version'], test_runtime['package'])
-        test_c_changelog = (ROOT / 'nocturne_test_c/CHANGELOG.md').read_text()
-        self.assertTrue(test_c_changelog.startswith(f"## {test_c['version']}\n") or
-                        test_c_changelog.startswith("## Unreleased source candidate\n"))
-        self.assertIn(f"## {test_c['version']}\n", test_c_changelog)
-        changelog_versions = [
-            int(version) for version in re.findall(
-                r'(?m)^#{1,2} 0\.3\.25-c(\d+)$', test_c_changelog)
-        ]
-        self.assertEqual(len(changelog_versions), len(set(changelog_versions)))
-        self.assertEqual(sorted(changelog_versions, reverse=True), changelog_versions)
-        self.assertEqual('Nocturne Test C', test_c['name'])
-        self.assertEqual('NocturneTestC_', test_runtime['cookie_namespace'])
-        self.assertEqual('https://homeassistant.local:8453', test_runtime['default_public_url'])
-        pr = json.loads((ROOT / 'upstream-test-c.json').read_text())
-        self.assertEqual(pr['commit'], test_runtime['source_commit'])
-        self.assertEqual(pr['base_commit'], test_runtime['base_commit'])
-        self.assertEqual(pr['repository'], test_runtime['repository'])
-        self.assertEqual(pr['pull_request_url'], test_runtime['release_url'])
-        test_recipe = (ROOT / 'nocturne_test_c/Dockerfile').read_text()
-        self.assertIn(pr['commit'], test_recipe)
-        self.assertIn('--checksum=sha256:' + pr['archive_sha256'], test_recipe)
-        self.assertIn('codeload.github.com', test_recipe)
-        self.assertIn(f'ARG BUILD_VERSION={test_c["version"]}', test_recipe)
-        self.assertIn('Clock face units PR #2007', test_c['description'])
-        self.assertNotIn('Google Health', test_runtime['purpose'])
-        self.assertNotIn('Google Health', test_c['description'])
-        self.assertNotIn('RUN_GOOGLE_HEALTH_TESTS', test_recipe)
-        test_settings = (ROOT / 'nocturne_test_c/rootfs/opt/nocturne-ha/settings.py').read_text()
-        self.assertIn("('NocturneTestC_',)", test_settings)
-        test_cookies = (ROOT / 'nocturne_test_c/rootfs/opt/nocturne-ha/cookies.mjs').read_text()
-        self.assertIn("'NocturneTestC_'", test_cookies)
-        self.assertNotEqual(test_c['ports']['8448/tcp'],
-                            json.loads((ROOT / 'nocturne_test_b/config.json').read_text())['ports']['8448/tcp'])
+    def test_clean_personal_main_does_not_advertise_extensions(self):
+        generated = updater.files(self.lock, self.config['version'])
+        self.assertEqual(self.lock['upstream']['commit'], self.lock['commit'])
+        for path in ('DOCS.md', 'README.md'):
+            self.assertIn(b'unmodified upstream main, without Personal extensions', generated[path])
+            self.assertNotIn(b'Personal 0.3.28 includes', generated[path])
+        runtime = json.loads(generated['rootfs/opt/nocturne-ha/version.json'])
+        self.assertEqual('Nocturne main', runtime['release'])
+
+    def test_clean_main_can_replace_previous_personal_history(self):
+        old = {**self.lock, 'commit': 'a' * 40}
+        with patch.object(updater, 'github') as github:
+            updater.validate_transition(old, self.lock)
+        github.assert_not_called()
+
+    def test_clean_personal_resolves_without_extension_metadata(self):
+        head = {'sha': self.lock['commit'], 'commit': {'committer': {'date': self.lock['commit_at']}}}
+        comparison = {'status': 'identical', 'merge_base_commit': {'sha': self.lock['commit']}}
+        class Archive:
+            def __enter__(self): return self
+            def __exit__(self, *args): pass
+            def read(self, size): return b''
+        with patch.object(updater, 'github', side_effect=[head, comparison]) as github, \
+             patch.object(updater.urllib.request, 'urlopen', return_value=Archive()):
+            resolved = updater.resolve()
+        self.assertEqual(self.lock['commit'], resolved['commit'])
+        self.assertEqual(self.lock['version'], resolved['version'])
+        self.assertEqual(['commits/personal', f"compare/{self.lock['commit']}...{self.lock['commit']}"],
+                         [call.args[0] for call in github.call_args_list])
+
+    def test_history_preserving_reset_resolves_exact_upstream_source(self):
+        canonical = {'sha': self.lock['commit'], 'commit': {
+            'tree': {'sha': 'b' * 40}, 'committer': {'date': self.lock['commit_at']}}}
+        reset = {**canonical, 'sha': 'a' * 40}
+        comparison = {'status': 'identical', 'merge_base_commit': {'sha': self.lock['commit']}}
+        class Archive:
+            def __enter__(self): return self
+            def __exit__(self, *args): pass
+            def read(self, size): return b''
+        with patch.object(updater, 'github', side_effect=[reset, canonical, comparison]), \
+             patch.object(updater.urllib.request, 'urlopen', return_value=Archive()):
+            resolved = updater.resolve()
+        self.assertEqual(self.lock['commit'], resolved['commit'])
 
     def test_personal_source_replaces_both_api_and_web(self):
         recipe = (self.directory / 'Dockerfile').read_text()
@@ -244,7 +225,7 @@ class PersonalTests(unittest.TestCase):
         self.assertEqual('https://homeassistant.local:8450', options['public_url'])
         page = settings.status_page(options, {}, '', True)
         self.assertIn('Nocturne Personal Release', page)
-        self.assertIn('Personal ' + self.lock['version'], page)
+        self.assertIn('Nocturne main', page)
         self.assertIn(self.lock['commit'][:12], page)
         options['cookie_namespace'] = 'NocturneLatest_'
         with self.assertRaises(ValueError):

@@ -16,7 +16,7 @@ For the **Stable and Main distribution with prebuilt images**, use [nocturne-hom
 [![Official release check](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/upstream.yml/badge.svg)](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/upstream.yml)
 [![Latest daily](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/latest.yml/badge.svg)](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/latest.yml)
 
-Six **experimental, unofficial Home Assistant apps** that each run [Nocturne](https://github.com/nightscout/nocturne), PostgreSQL and an HTTPS gateway in one container. Official and Latest remain unchanged; the separate [Personal app](docs/PERSONAL.md) builds your extension fork on the approved Daily base.
+Six **experimental, unofficial Home Assistant apps** that each run [Nocturne](https://github.com/nightscout/nocturne), PostgreSQL and an HTTPS gateway in one container. Official remains on its existing release; the separate [Personal app](docs/PERSONAL.md) uses the same unmodified upstream main as Latest and Test A/B/C.
 
 This repository is **Nocturne only**. It contains the HA wrapper, its small upstream compatibility patches, tests and contributor documentation; it is not a fork of the entire Nocturne application. Upstream Nocturne remains the source of the API and web interface. [Compare the two channels](docs/CHANNELS.md).
 
@@ -33,11 +33,11 @@ This repository is **Nocturne only**. It contains the HA wrapper, its small upst
 3. Configure a stable HTTPS hostname and trusted certificate. Official defaults to host port 8448; Latest to 8449.
 4. Open its HA web interface for service status, the Nocturne link and the extra gateway access code. Complete Nocturne's own passkey setup in the separate tab. From wrapper 0.1.4 an existing configured instance can [safely opt out of only that extra popup](docs/GATEWAY.md); Nocturne's passkey login stays enabled.
 
-**Personal extensions:** choose **Nocturne Personal Release** as a separate third
+**Personal development channel:** choose **Nocturne Personal Release** as a separate third
 installation, default port **8450**. It starts with its own empty database/account
 and compiles [the Personal fork](https://github.com/smokkelaar/nocturne-personal).
-Personal 0.3.28 includes Google Health imports for steps, heart rate, weight and sleep,
-plus the Personal HbA1c method-comparison extensions.
+Personal now uses unmodified upstream main, without Personal extensions.
+Latest and Test A/B/C use the same source baseline.
 Your own Google OAuth client and consent are required; real Google account access remains a user test.
 [Personal installation, feature setup and daily updates](docs/PERSONAL.md).
 

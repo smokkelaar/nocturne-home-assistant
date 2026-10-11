@@ -2,30 +2,30 @@
   "channel": "personal",
   "repository": "smokkelaar/nocturne-personal",
   "version": "0.3.28",
-  "commit": "51e2c1de50d01a75ac3029c08b30254ef655447c",
-  "commit_at": "2026-10-09T11:16:30Z",
+  "commit": "5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca",
+  "commit_at": "2026-10-11T00:11:32Z",
   "upstream": {
     "channel": "main",
-    "commit": "df000c33e15d3809591261d78a22135bb0176ffd",
-    "workflow_run": 37910180933,
-    "commit_at": "2026-10-09T09:16:08Z",
-    "published_at": "2026-10-09T09:16:12Z",
+    "commit": "5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca",
+    "workflow_run": 38097589610,
+    "commit_at": "2026-10-11T00:11:32Z",
+    "published_at": "2026-10-11T00:11:35Z",
     "api": {
-      "tag": "main-df000c3",
-      "digest": "sha256:729f3a44bff93c0109e61012db2c0776307552aaab2f76c1bfa407ddbbb29e65",
+      "tag": "main-5ad70cb",
+      "digest": "sha256:7d597387c42986be03921054461e604e623157a19dad0edef4ef18c6082bb3ee",
       "platforms": {
-        "amd64": "sha256:729f3a44bff93c0109e61012db2c0776307552aaab2f76c1bfa407ddbbb29e65",
-        "arm64": "sha256:0afd2b7caef2ddd379828ac73bc04193265a61e9ee98d35f461f4ec83c733068"
+        "amd64": "sha256:7d597387c42986be03921054461e604e623157a19dad0edef4ef18c6082bb3ee",
+        "arm64": "sha256:56328c4e15bcce43fff1101ad16dff7ca484eef05b33081d34ce11b21376ad6a"
       }
     },
     "web": {
-      "tag": "main-df000c3",
-      "digest": "sha256:4830363cf8057b852d20d9d992f8b56ecbda60c1247649750fda7696331cf76e",
+      "tag": "main-5ad70cb",
+      "digest": "sha256:6c16e2d1ad05f8941b0a9623281b8444ce20f54ed30a7073715b7b155f485375",
       "platforms": {
-        "amd64": "sha256:4830363cf8057b852d20d9d992f8b56ecbda60c1247649750fda7696331cf76e",
-        "arm64": "sha256:8045e38f672bca1ad00349687b30f31265bf7e62275fd8369fcfe240e6db6a44"
+        "amd64": "sha256:6c16e2d1ad05f8941b0a9623281b8444ce20f54ed30a7073715b7b155f485375",
+        "arm64": "sha256:d67f8c70399a3792b80bd70c08ad7914300f12190fb021d3a8fd3c44cbafbff0"
       }
     }
   },
-  "archive_sha256": "43662fb581cb330a41a005957c3491381de4775dbc6e43f342bad6760756ad87"
+  "archive_sha256": "e39a5098d3994067195b2c3b16516114b35e957c8f17c0fb41f087d2bd77577a"
 }
