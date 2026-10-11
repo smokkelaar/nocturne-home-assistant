@@ -1,36 +1,5 @@
 # Nocturne Test C
 
-## Main synchronization — 2026-10-09
+Unmodified upstream main `5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`, without additional PR patches. Default host port 8453, separate data and cookies.
 
-The common compiled upstream base is `df000c33e15d3809591261d78a22135bb0176ffd` (2026-10-09T09:16:08Z).
-It includes dashboard/chart refresh fixes (#2019), v3 deletion/history fixes
-(#1825), and temporary basal uploader-origin handling (#1570), in addition to
-the previously merged clock-face and hypo-comparison changes.
-Upstream's later `d106f6085` commit only synchronizes translations and skips
-image publication. Daily therefore selects the newest verified published main
-ancestor; all five channels use that same compiled base.
-
-Official remains Nocturne **0.2.7**. The functional wrapper remains **0.1.13**.
-HA package versions are separate and become available only after both native
-architectures, runtime/upgrade checks and anonymous image verification pass.
-
-| Channel | Source | Upstream base | Additional code |
-|---|---|---|---|
-| Daily / Latest | `df000c3` | `df000c3` | None |
-| Personal 0.3.28 | `51e2c1d` | `df000c3` | Personal extensions, including Google Health and HbA1c method comparison |
-| Test A | `dd2b027` | `df000c3` | Google Health PR #1293, still unmerged |
-| Test B | `df000c3` | `df000c3` | Hypo comparison PR #2031 is merged into main |
-| Test C | `df000c3` | `df000c3` | Clock-face settings PR #2007 are merged into main |
-
-Images are resolved through the immutable `main-df000c3` tags and OCI digests.
-`latest` denotes upstream's official release and is not the Daily discovery tag.
-[Upstream publication](https://github.com/nightscout/nocturne/actions/runs/37910180933).
-Published package versions and image digests are in each channel's `config.json`
-and `provenance.json`; runtime source and feature versions are in
-`rootfs/opt/nocturne-ha/version.json`. These files must agree before HA is updated.
-
-Isolated Nocturne main build with upstream [PR #2007](https://github.com/nightscout/nocturne/pull/2007) (a clock face carries its own glucose units and time format) now merged upstream, for regression verification on current main. Default host port 8453, separate data and cookies.
-
-The source is the exact upstream main commit, pinned with its archive checksum in `upstream-test-c.json`. This channel verifies clock-face display settings on the complete current main snapshot; it does not provide dosing advice.
-
-[Installation and updates](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/UPDATES.md).
+[Installation and source baseline](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).

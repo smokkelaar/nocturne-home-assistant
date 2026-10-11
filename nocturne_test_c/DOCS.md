@@ -1,12 +1,12 @@
 # Nocturne Test C — installation and operation
 
-> This is an isolated Nocturne main test app with upstream [PR #2007](https://github.com/nightscout/nocturne/pull/2007) (per-clock-face glucose units and time format) now merged upstream, for regression verification on current main. It is a separate HA app with its own data and default host port **8453**. Never copy `/data`, accounts or keys between test instances.
+> This is the frequently updated upstream-`main` channel. It is a separate HA app with its own data and default host port **8453**. For the manually promoted stable channel choose **Nocturne Official Release**. Never copy `/data`, accounts or keys between them.
 
 > **Nederlands, met afbeeldingen en exacte stappen:** [Volledige visuele installatiehandleiding](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md), van repository toevoegen tot dashboard en herstarttest. [Domein, certificaat en lokale DNS](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/HTTPS-EN-DNS.md) is apart uitgewerkt. These absolute links also work from Home Assistant's Documentation tab.
 
 ## Requirements
 
-**Upgrading to wrapper 0.1.5:** session cookies are now isolated from Official and Latest even
+**Upgrading to wrapper 0.1.5:** session cookies are now isolated from Official even
 on the same hostname. Sign in once again with your existing passkey; do not
 recreate the account or change its URL. [Cookie isolation and browser checklist](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/COOKIES.md).
 
@@ -31,13 +31,23 @@ No router port-forwarding is required or recommended for this test. A publicly r
 
    `example.net` is documentation-only. Put the real certificate and private key in HA's `/ssl` directory. Options accept filenames directly inside that directory, not `/ssl/...` paths. This app mounts `/ssl` read-only. Never publish those files.
 
-4. Leave the Test C host port at `8453` (container port `8448/tcp`), or ensure the externally configured port matches `public_url`. Do not expose API, PostgreSQL or ingress ports.
+4. Leave the Latest host port at `8453` (container port `8448/tcp`), or ensure the externally configured port matches `public_url`. Do not expose API, PostgreSQL or ingress ports.
 5. Start the app and open **Web interface**. Wait for PostgreSQL, API, web and HTTPS readiness. “Listening” is not proof of a successful account login.
 6. Open the Nocturne link. By default, if the browser asks for HTTP Basic credentials, use username `nocturne` and the random gateway code shown in the protected HA page. This is **not** your HA login or your Nocturne account password.
 7. Complete Nocturne's own setup and create a passkey. Skip Nightscout/data connections in this initial test.
 8. Verify dashboard access, sign out/in, then restart **only this app** and verify it opens without repeating setup.
 
 Changing options requires restarting the app. There is no need to restart all of HA for ordinary app option changes.
+
+## Read-only command-line diagnostics
+
+The container includes `nocturne-ha doctor`, `nocturne-ha status`, and
+`nocturne-ha api /api/v3/version` for diagnosis from the app's container
+console. The API command is GET-only and limited to the local Nocturne API.
+API output can contain private information; do not paste it into public reports.
+See [CLI diagnostics](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/CLI.md)
+for access and examples. Personal keeps its separate opt-in maintenance
+interface and recovery commands.
 
 ## Test certificate vs trusted HTTPS
 
@@ -57,7 +67,7 @@ CI now rehearses a full cold-data copy, restore into a different disposable volu
 
 Do not assume downgrading an image reverses a database migration. Restoring a coordinated pre-upgrade database/key backup may be required. PostgreSQL major upgrades are explicitly refused; there is no automatic database reset.
 
-Automatic app updates are optional per app in HA. Keep automatic updates off for **Nocturne Test C**: it is pinned to PR #2007 at a specific commit for manual verification and must not silently track a moving branch. Keep Official's switch off too. See the repository's `docs/UPDATES.md` for both update processes.
+Automatic app updates are optional per app in HA. Enable them only for **Nocturne Test C** if its data is replaceable and you deliberately accept daily tested development snapshots. Keep Official's switch off. See the repository's `docs/UPDATES.md` for both update processes.
 
 ## Known boundaries
 
@@ -67,9 +77,9 @@ Automatic app updates are optional per app in HA. Keep automatic updates off for
 - No clinical reliability, automatic dosing, external data connectors or internet-facing deployment has been validated.
 - Never paste full logs, keys, recovery codes or health data into public issues. Report only a sanitized relevant excerpt with the app/Nocturne versions.
 
-This build uses the approved Nocturne runtime basis and compiles the API and web application from the pinned PR #2007 head commit. Builds need more time and resources than Latest. Home Assistant Supervisor currently keeps the update dialog at 0% during this local Docker build; this does not mean the build is stuck. Follow the named `Nocturne build phase` entries in **Settings → System → Logs → Supervisor** for live detail. Create or reset a clock face, choose its glucose units (mg/dL or mmol/L) and 12/24-hour time format, then open it as the owner, as a signed-in viewer with different personal preferences and through its public clock link; all should show the same face settings. Existing faces should show mg/dL and 12-hour time. This build changes clock display only; it makes no dosing advice or insulin/IOB changes. [Update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/UPDATES.md).
-
 From wrapper **0.1.10**, all six variants offer **Consciously skip gateway check** (`skip_gateway_check`, default false). Only effective with `gateway_auth: false`; save and restart this app. It skips only the wrapper authentication probe; Nocturne access/share permissions and TLS/host checks still apply. The helper prominently shows `GATEWAY_SKIPPED`. Test A now uses the same visible settings: migrate old `verify_native_auth: false` to `skip_gateway_check: true`, remove the old YAML key, save and restart. The canonical option takes precedence; restore the guard with `skip_gateway_check: false`. [Configuration and rollback](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/GATEWAY.md).
+
+This isolated channel uses unmodified upstream main `5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`, without additional PR patches.
 
 ## Experimental maintenance
 

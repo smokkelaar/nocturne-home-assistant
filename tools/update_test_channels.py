@@ -125,6 +125,13 @@ def files():
             description = f"Nocturne main {base_commit[:7]}"
             runtime.pop("personal", None)
             runtime.update(base="Nocturne main", release="Nocturne main")
+            generated[package + "/README.md"] = (
+                f"# {name}\n\nUnmodified upstream main `{base_commit}`, without additional PR patches. "
+                f"Default host port {port}, separate data and cookies.\n\n"
+                "[Installation and source baseline](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n")
+            docs = (ROOT / "nocturne_latest/DOCS.md").read_text(encoding="utf-8")
+            docs = docs.replace("Nocturne Latest Release", name).replace("8449", str(port))
+            generated[package + "/DOCS.md"] = docs + f"\nThis isolated channel uses unmodified upstream main `{base_commit}`, without additional PR patches.\n"
         elif letter == "b":
             label = f"Hypo comparison PR #{source['pull_request']}"
             purpose = "Hypo Duration en Hypo Events tussen twee periodes vergelijken, naast de bestaande hyperinformatie."
