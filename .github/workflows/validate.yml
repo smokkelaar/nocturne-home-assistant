@@ -1,7 +1,5 @@
 name: Validate
 on:
-  push:
-    branches: [main]
   pull_request:
   workflow_dispatch:
     inputs:
@@ -9,8 +7,12 @@ on:
         description: Publish tested native prebuilt images and prepare the store promotion
         type: boolean
         default: false
+      channels:
+        description: "changed, all, or comma-separated: official,latest,personal,test-a,test-b,test-c"
+        type: string
+        default: changed
       force:
-        description: Rebuild all six channels, even if source fingerprints are unchanged
+        description: Rebuild selected channels even if their fingerprints are unchanged
         type: boolean
         default: false
 permissions:
@@ -41,26 +43,13 @@ jobs:
       - run: python tools/update_upstream.py --check
       - run: python tools/update_latest.py --check
       - run: python tools/update_test_channels.py --check
-  test-a:
-    name: Test A container smoke test
-    needs: unit
-    runs-on: ubuntu-24.04
-    timeout-minutes: 45
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Compile and smoke-test the pinned PR on Test A
-        run: |
-          docker build --platform linux/amd64 --tag nocturne-test-a:ci nocturne_test_a
-          python3 tools/smoke.py --image nocturne-test-a:ci
   maintenance:
     name: Maintenance recovery and ingress (${{ matrix.channel }})
     strategy:
       fail-fast: false
-      matrix:
-        channel: [nocturne_local, nocturne_latest, nocturne_personal, nocturne_test_a, nocturne_test_b, nocturne_test_c]
-    needs: unit
+      matrix: ${{ fromJSON(needs.prebuilt-select.outputs.maintenance) }}
+    needs: prebuilt-select
+    if: needs.prebuilt-select.outputs.changed == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -75,95 +64,9 @@ jobs:
           docker run -d --name maintenance-test --cap-add NET_ADMIN -v "$RUNNER_TEMP/maintenance-data:/data" nocturne-maintenance:ci
           trap 'docker rm -f maintenance-test >/dev/null' EXIT
           docker exec -i maintenance-test python3 - < tools/personal-maintenance/container_probe.py
-  google-health:
-    name: Test C container smoke test
-    needs: unit
-    runs-on: ubuntu-24.04
-    timeout-minutes: 45
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Compile and smoke-test the Test C PR source
-        run: |
-          docker build --platform linux/amd64 --tag nocturne-test-c:ci nocturne_test_c
-          python3 tools/smoke.py --image nocturne-test-c:ci
-  container:
-    name: Core container smoke tests
-    needs: unit
-    runs-on: ubuntu-24.04
-    timeout-minutes: 95
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Detect Personal changes without changing Daily promotion requirements
-        id: personal
-        env:
-          BEFORE: ${{ github.event.before }}
-          BASE: ${{ github.event.pull_request.base.sha }}
-        run: |
-          git fetch --no-tags origin main:refs/remotes/origin/main
-          base="${BASE:-${BEFORE:-origin/main}}"
-          if ! git cat-file -e "$base^{commit}" 2>/dev/null; then
-            git fetch --no-tags origin "$base"
-            git cat-file -e "$base^{commit}"
-          fi
-          if git diff --quiet "$base" HEAD -- nocturne_personal upstream-personal.json tools/update_personal.py tools/cookie_smoke.py tools/personal_feature_probe.py tests/test_personal.py tests/test_personal_cookies.mjs tests/test_cookie_probe.py .github/workflows/personal.yml .github/workflows/validate.yml; then
-            echo 'changed=false' >> "$GITHUB_OUTPUT"
-          else
-            echo 'changed=true' >> "$GITHUB_OUTPUT"
-          fi
-      - name: Compile and smoke-test exact Personal source
-        if: steps.personal.outputs.changed == 'true'
-        run: |
-          python3 tools/update_personal.py --check
-          docker build --platform linux/amd64 --tag nocturne-personal:ci nocturne_personal
-          python3 tools/smoke.py --image nocturne-personal:ci
-      - name: Personal features and restart (fail fast before baseline builds)
-        if: steps.personal.outputs.changed == 'true'
-        run: python3 tools/cookie_smoke.py --personal nocturne-personal:ci
-      - name: Build and smoke-test Official channel
-        run: |
-          docker build --platform linux/amd64 --tag nocturne-official:ci nocturne_local
-          python3 tools/smoke.py --image nocturne-official:ci
-      - name: Build and smoke-test Latest channel
-        run: |
-          docker build --platform linux/amd64 --tag nocturne-latest:ci nocturne_latest
-          python3 tools/smoke.py --image nocturne-latest:ci
-      - name: Build and smoke-test Test B runtime identity
-        run: |
-          docker build --platform linux/amd64 --tag nocturne-test-b:ci nocturne_test_b
-          python3 tools/smoke.py --image nocturne-test-b:ci
-      - name: Check out immutable Official baseline release 0.1.2
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: 5a1958a6c91991039950d1e3ea7bb28fd3ada35f
-          path: .ci-baseline
-          persist-credentials: false
-      - run: docker build --platform linux/amd64 --tag nocturne-official:baseline .ci-baseline/nocturne_local
-      - run: python3 tools/recovery_smoke.py --image nocturne-official:ci --baseline nocturne-official:baseline
-      - name: Same-host Official and Latest session isolation
-        run: python3 tools/cookie_smoke.py --official nocturne-official:ci --latest nocturne-latest:ci
-      - name: Personal cold restore and previous Personal upgrade
-        if: steps.personal.outputs.changed == 'true'
-        run: |
-          if git cat-file -e origin/main:nocturne_personal/config.json 2>/dev/null; then
-            mkdir -p "$RUNNER_TEMP/personal-baseline"
-            git archive origin/main nocturne_personal | tar -x -C "$RUNNER_TEMP/personal-baseline"
-            docker build --platform linux/amd64 --tag nocturne-personal:baseline "$RUNNER_TEMP/personal-baseline/nocturne_personal"
-          else
-            docker tag nocturne-personal:ci nocturne-personal:baseline
-            echo 'First Personal delivery: same-version cold restore; no earlier Personal exists.'
-          fi
-          python3 tools/recovery_smoke.py --image nocturne-personal:ci --baseline nocturne-personal:baseline
-      - name: Three real instances share a browser without sharing credentials
-        if: steps.personal.outputs.changed == 'true'
-        run: python3 tools/cookie_smoke.py --official nocturne-official:ci --latest nocturne-latest:ci --personal nocturne-personal:ci
   container-gate:
     name: Container smoke test
-    needs: [unit, test-a, google-health, container, maintenance, prebuilt, prebuilt-release, prebuilt-select]
+    needs: [unit, maintenance, prebuilt, prebuilt-release, prebuilt-select, session-isolation]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-24.04
     timeout-minutes: 2
@@ -171,21 +74,26 @@ jobs:
       - name: Require every container check before promotion
         env:
           UNIT_RESULT: ${{ needs.unit.result }}
-          GOOGLE_RESULT: ${{ needs.google-health.result }}
-          CORE_RESULT: ${{ needs.container.result }}
           MAINTENANCE_RESULT: ${{ needs.maintenance.result }}
-          TEST_A_RESULT: ${{ needs.test-a.result }}
           PREBUILT_RESULT: ${{ needs.prebuilt.result }}
           RELEASE_RESULT: ${{ needs.prebuilt-release.result }}
           PREBUILT_CHANGED: ${{ needs.prebuilt-select.outputs.changed }}
           SELECT_RESULT: ${{ needs.prebuilt-select.result }}
+          SESSION_RESULT: ${{ needs.session-isolation.result }}
+          COOKIE_REQUIRED: ${{ needs.prebuilt-select.outputs.cookies }}
           PUBLISH: ${{ github.event_name == 'workflow_dispatch' && inputs.publish }}
         run: |
-          test "$UNIT_RESULT" = success && test "$GOOGLE_RESULT" = success && test "$CORE_RESULT" = success && test "$MAINTENANCE_RESULT" = success && test "$TEST_A_RESULT" = success && test "$SELECT_RESULT" = success
+          test "$UNIT_RESULT" = success && test "$SELECT_RESULT" = success
           if [ "$PREBUILT_CHANGED" = true ]; then
+            test "$MAINTENANCE_RESULT" = success
             if [ "$PUBLISH" = true ]; then test "$RELEASE_RESULT" = success; else test "$PREBUILT_RESULT" = success; fi
           else
-            test "$PREBUILT_RESULT" = skipped && test "$RELEASE_RESULT" = skipped
+            test "$PREBUILT_RESULT" = skipped && test "$RELEASE_RESULT" = skipped && test "$MAINTENANCE_RESULT" = skipped
+          fi
+          if [ "$PUBLISH" = true ] && [ "$COOKIE_REQUIRED" = true ]; then
+            test "$SESSION_RESULT" = success
+          else
+            test "$SESSION_RESULT" = skipped
           fi
   prebuilt-select:
     name: Select prebuilt candidates
@@ -195,6 +103,8 @@ jobs:
     outputs:
       matrix: ${{ steps.prepare.outputs.matrix }}
       changed: ${{ steps.prepare.outputs.changed }}
+      maintenance: ${{ steps.prepare.outputs.maintenance }}
+      cookies: ${{ steps.prepare.outputs.cookies }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -210,16 +120,23 @@ jobs:
           RUN_NUMBER: ${{ github.run_number }}
           RUN_ATTEMPT: ${{ github.run_attempt }}
           PR_BASE: ${{ github.event.pull_request.base.sha }}
-          FORCE: ${{ inputs.force || github.event_name == 'pull_request' }}
+          FORCE: ${{ inputs.force || false }}
+          CHANNELS: ${{ inputs.channels || 'changed' }}
         shell: bash
         run: |
           git fetch --no-tags origin main:refs/remotes/origin/main
           base="${PR_BASE:-$(git rev-parse origin/main)}"
+          if ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+            git fetch --no-tags origin "$base"
+            git cat-file -e "$base^{commit}"
+          fi
           extra=()
           mkdir -p work
           if [ "$FORCE" = true ]; then extra+=(--force); fi
-          python tools/prebuilt_publish.py prepare --output work/prebuilt --wrapper-commit "$WRAPPER_SHA" --run-number "$RUN_NUMBER" --attempt "$RUN_ATTEMPT" --baseline-ref "$base" "${extra[@]}" > work/prebuilt-matrix.json
+          python tools/prebuilt_publish.py prepare --output work/prebuilt --wrapper-commit "$WRAPPER_SHA" --run-number "$RUN_NUMBER" --attempt "$RUN_ATTEMPT" --baseline-ref "$base" --channels "$CHANNELS" "${extra[@]}" > work/prebuilt-matrix.json
           echo "matrix=$(cat work/prebuilt-matrix.json)" >> "$GITHUB_OUTPUT"
+          echo "maintenance=$(python -c 'import json; m=json.load(open("work/prebuilt-matrix.json")); print(json.dumps({"include":[{"channel":p} for p in sorted({i["package"] for i in m["include"]})]}))')" >> "$GITHUB_OUTPUT"
+          echo "cookies=$(python -c 'import json; m=json.load(open("work/prebuilt-matrix.json")); print(str(any(i["channel"] in ("official","latest","personal") for i in m["include"])).lower())')" >> "$GITHUB_OUTPUT"
           echo "changed=$(python -c 'import json; print(str(bool(json.load(open("work/prebuilt-matrix.json"))["include"])).lower())')" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -268,6 +185,37 @@ jobs:
       baseline: ${{ matrix.baseline }}
       legacy_baseline_ref: ${{ matrix.legacy_baseline_ref }}
       publish: true
+  session-isolation:
+    name: Session isolation using selected images and published peers
+    needs: [prebuilt-release, prebuilt-select]
+    if: ${{ !cancelled() && needs.prebuilt-release.result == 'success' && needs.prebuilt-select.outputs.cookies == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: prebuilt-candidates
+          path: work/prebuilt
+      - name: Check all selected cookie channels together without rebuilding peers
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+          sys.path.insert(0, 'tools')
+          import selected_cookie_smoke as probe
+          from prebuilt_publish import read, baseline
+          root = Path.cwd()
+          candidates = read(root / 'work/prebuilt/candidates.json')
+          channel = next(c for c in ('official', 'latest', 'personal') if c in candidates)
+          reference = baseline(candidates[channel]['config'], channel, 'amd64', read(root / 'publication.json')['repository'])
+          images = probe.references(root, channel, reference, candidates)
+          for image in set(images.values()):
+              probe.docker('pull', image)
+          probe.cookie_smoke.main(**images)
+          PY
   prebuilt-promote:
     name: Verify public images and prepare HA store promotion
     needs: [container-gate, prebuilt-select]
@@ -316,4 +264,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-        run: gh workflow run validate.yml --ref automation/prebuilt-store -f publish=false -f force=true
+        run: gh workflow run validate.yml --ref automation/prebuilt-store -f publish=false -f channels=changed

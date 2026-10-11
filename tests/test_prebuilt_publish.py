@@ -5,6 +5,7 @@ from pathlib import Path
 import shutil
 import sys
 import tempfile
+import subprocess
 import unittest
 from unittest.mock import patch
 from awesomeversion import AwesomeVersion
@@ -25,6 +26,62 @@ def inspected(repository, reference, arch, revision=None, labels=None):
 
 
 class PrebuiltTests(unittest.TestCase):
+    def test_ci_only_edits_preserve_legacy_fingerprints_but_runtime_changes_do_not(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fixture(root)
+            def git(*args):
+                return subprocess.check_output(['git', *args], cwd=root).decode().strip()
+            git('init', '-q')
+            git('add', '.')
+            git('-c', 'user.name=CI', '-c', 'user.email=ci@example.invalid', 'commit', '-qm', 'published fixture')
+            revision = git('rev-parse', 'HEAD')
+            builder = (root / 'tools/prebuilt_publish.py').read_bytes()
+            proof = {'wrapper_commit': revision, 'recipe': publisher.recipe_hash(root, 'nocturne_personal', builder)}
+            (root / 'tools/prebuilt_publish.py').write_bytes(b'Changed orchestration only')
+            self.assertTrue(publisher.recipe_matches(root, 'nocturne_personal', proof))
+            runtime = root / 'nocturne_personal/rootfs/opt/nocturne-ha/version.json'
+            runtime.write_bytes(runtime.read_bytes() + b' ')
+            # JSON normalization ignores whitespace; a real runtime input must invalidate it.
+            value = publisher.read(runtime)
+            value['personal'] = '0.3.99'
+            publisher.write(runtime, value)
+            self.assertFalse(publisher.recipe_matches(root, 'nocturne_personal', proof))
+
+    def test_explicit_channel_selections_build_one_four_or_six_channels(self):
+        for selection, expected in [('personal', {'personal'}), ('official,latest,personal,test-c', {'official', 'latest', 'personal', 'test-c'}), ('all', set(publisher.CHANNELS))]:
+            with self.subTest(selection=selection), tempfile.TemporaryDirectory() as temporary, patch.object(publisher.registry, 'image', side_effect=inspected):
+                matrix = publisher.prepare(ROOT, Path(temporary), 'd' * 40, 1, 1, 'e' * 40, channels=selection)
+                self.assertEqual(expected, {item['channel'] for item in matrix['include']})
+                self.assertEqual(len(expected) * 2, len(matrix['include']))
+
+    def test_invalid_channels_fail_before_network_access_or_creating_output(self):
+        for selection in ('', 'personal,', 'all,personal', 'personal;echo', 'unknown'):
+            with self.subTest(selection=selection), tempfile.TemporaryDirectory() as temporary, patch.object(publisher.registry, 'image') as image:
+                target = Path(temporary) / 'candidate'
+                with self.assertRaises(ValueError):
+                    publisher.prepare(ROOT, target, 'd' * 40, 1, 1, 'e' * 40, channels=selection)
+                image.assert_not_called()
+                self.assertFalse(target.exists())
+
+    def test_automatic_selection_builds_only_a_changed_channel_and_skips_docs(self):
+        with tempfile.TemporaryDirectory() as temporary, patch.object(publisher.registry, 'image', side_effect=inspected):
+            root = Path(temporary)
+            self.fixture(root)
+            for name in ('upstream.json', 'upstream-latest.json', 'upstream-personal.json'):
+                shutil.copyfile(ROOT / name, root / name)
+            first = root / 'work/first'
+            publisher.prepare(root, first, 'd' * 40, 1, 1, 'e' * 40, channels='all')
+            publisher.promote(root, first / 'candidates.json')
+            (root / 'README.md').write_text('Documentation only')
+            self.assertEqual([], publisher.prepare(root, root / 'work/none', 'f' * 40, 2, 1, 'e' * 40)['include'])
+            runtime = root / 'nocturne_personal/rootfs/opt/nocturne-ha/version.json'
+            value = publisher.read(runtime)
+            value['personal'] = '0.3.99'
+            publisher.write(runtime, value)
+            matrix = publisher.prepare(root, root / 'work/personal', 'f' * 40, 2, 1, 'e' * 40)
+            self.assertEqual(['personal', 'personal'], [item['channel'] for item in matrix['include']])
+
     def test_license_is_a_build_input_and_fingerprint_is_platform_independent(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

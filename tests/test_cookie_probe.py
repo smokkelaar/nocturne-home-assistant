@@ -70,9 +70,8 @@ class CookieProbeTests(unittest.TestCase):
                 docker.assert_not_called()
 
     def test_workflow_keeps_three_instance_and_recovery_gates(self):
-        workflow = (Path(__file__).resolve().parents[1] / '.github/workflows/validate.yml').read_text()
-        fast = workflow.index('python3 tools/cookie_smoke.py --personal nocturne-personal:ci')
-        baseline = workflow.index('Check out immutable Official baseline')
-        self.assertLess(fast, baseline)
-        self.assertIn('--official nocturne-official:ci --latest nocturne-latest:ci --personal nocturne-personal:ci', workflow)
-        self.assertIn('python3 tools/recovery_smoke.py --image nocturne-personal:ci --baseline nocturne-personal:baseline', workflow)
+        root = Path(__file__).resolve().parents[1]
+        workflow = (root / '.github/workflows/native-prebuilt.yml').read_text()
+        self.assertIn('python tools/selected_cookie_smoke.py', workflow)
+        self.assertIn('python tools/recovery_smoke.py --image "$IMAGE" --baseline "$BASELINE"', workflow)
+        self.assertLess(workflow.index('Three-instance session isolation'), workflow.index('docker push "$IMAGE"'))
