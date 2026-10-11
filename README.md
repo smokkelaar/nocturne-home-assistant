@@ -7,6 +7,7 @@ voor AMD64 en ARM64. HAOS downloadt de geteste image in plaats van Nocturne loka
 te compileren. Bestaande slugs, poorten en data blijven behouden. De appstore krijgt
 pas nieuwe imageverwijzingen na native tests en anonieme downloadcontrole.
 [Overstap, publicatie en versienummering](docs/PREBUILT.md).
+[Build one, several or all six channels](docs/BUILDS.md).
 
 This is **smokkelaar's personal development and testing repository**. Its builds are primarily used by smokkelaar to test changes, investigate problems and try ideas before suitable changes are carried over to [nocturne-home-assistant-upstream](https://github.com/smokkelaar/nocturne-home-assistant-upstream).
 

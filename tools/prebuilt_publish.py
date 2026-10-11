@@ -60,15 +60,19 @@ def image_name(repository, channel, hass_arch='{arch}'):
     return f'ghcr.io/{repository}/nocturne-{channel}-{hass_arch}'
 
 
-def recipe_hash(root, package):
+def recipe_hash(root, package, legacy_builder=None):
+    # CI selection is not an image input. Material context-generation changes
+    # must bump publication.json's format to invalidate existing images.
     hashed = hashlib.sha256()
     paths = list((root / package / 'rootfs').rglob('*')) + list((root / package / 'build').rglob('*'))
     paths += [root / package / 'Dockerfile', root / package / 'config.json', root / 'LICENSE', root / 'build-platforms.json',
-              root / 'publication.json', root / 'tools/prebuilt_publish.py']
+              root / 'publication.json']
+    if legacy_builder is not None:
+        paths.append(root / 'tools/prebuilt_publish.py')
     for path in sorted(paths, key=lambda item: item.relative_to(root).as_posix()):
         if not path.is_file() or '__pycache__' in path.parts:
             continue
-        raw = path.read_bytes().replace(b'\r\n', b'\n')
+        raw = (legacy_builder if path == root / 'tools/prebuilt_publish.py' else path.read_bytes()).replace(b'\r\n', b'\n')
         if path.name == 'Dockerfile':
             raw = re.sub(rb'ARG BUILD_VERSION=\S+', b'ARG BUILD_VERSION=@PUBLISHED@', raw)
         elif path.name == 'config.json':
@@ -83,6 +87,17 @@ def recipe_hash(root, package):
             raw = json.dumps(value, sort_keys=True).encode()
         hashed.update(path.relative_to(root).as_posix().encode() + b'\0' + raw)
     return hashed.hexdigest()
+
+
+def recipe_matches(root, package, proof):
+    if proof.get('recipe') == recipe_hash(root, package):
+        return True
+    revision = proof.get('wrapper_commit', '')
+    if not re.fullmatch('[0-9a-f]{40}', revision):
+        return False
+    previous = subprocess.run(['git', 'show', revision + ':tools/prebuilt_publish.py'],
+                              cwd=root, capture_output=True, check=False)
+    return previous.returncode == 0 and proof.get('recipe') == recipe_hash(root, package, previous.stdout)
 
 
 def runtime_pin(lock, kind, arch, tools):
@@ -111,7 +126,17 @@ def baseline(config, channel, arch, repo):
     return image_name(repo, channel, hass_arch) + ':' + config['version']
 
 
-def prepare(root, destination, wrapper_commit, run_number, attempt, baseline_ref, force=False):
+def selected_channels(value):
+    if value in ('changed', 'all'):
+        return list(CHANNELS)
+    selected = [part.strip() for part in value.split(',')]
+    if not selected or any(channel not in CHANNELS for channel in selected):
+        raise ValueError('Choose changed, all, or comma-separated channels: ' + ', '.join(CHANNELS))
+    return [channel for channel in CHANNELS if channel in selected]
+
+
+def prepare(root, destination, wrapper_commit, run_number, attempt, baseline_ref, force=False, channels='changed'):
+    selected = selected_channels(channels)
     policy, tools = read(root / 'publication.json'), read(root / 'build-platforms.json')
     repo = policy['repository']
     if policy['architectures'] != list(PLATFORMS) or not re.fullmatch('[0-9a-f]{40}', wrapper_commit):
@@ -122,10 +147,12 @@ def prepare(root, destination, wrapper_commit, run_number, attempt, baseline_ref
     matrix = []
     proofs = {}
     for channel, package in CHANNELS.items():
+        if channel not in selected:
+            continue
         config = configs[channel]
         recipe = recipe_hash(root, package)
         previous_proof = root / package / 'provenance.json'
-        if not force and previous_proof.is_file() and read(previous_proof).get('recipe') == recipe:
+        if channels == 'changed' and not force and previous_proof.is_file() and recipe_matches(root, package, read(previous_proof)):
             continue
         require_upgrade(version, config['version'])
         metadata = read(root / package / 'rootfs/opt/nocturne-ha/version.json')
@@ -195,7 +222,7 @@ def promote(root, candidates):
         package = CHANNELS[channel]
         current = read(root / package / 'config.json')
         require_upgrade(proof['version'], current['version'])
-        if current != proof['previous_config'] or recipe_hash(root, package) != proof['recipe']:
+        if current != proof['previous_config'] or not recipe_matches(root, package, proof):
             raise ValueError('Source/store changed while images were being built; rerun publication')
         if proof['architectures'] != list(PLATFORMS) or proof['config']['image'] != image_name(proof['repository'], channel):
             raise ValueError('Incomplete or wrong image publication')
@@ -236,11 +263,12 @@ if __name__ == '__main__':
     p.add_argument('--attempt', type=int, required=True)
     p.add_argument('--baseline-ref', required=True)
     p.add_argument('--force', action='store_true')
+    p.add_argument('--channels', default='changed')
     p = sub.add_parser('promote')
     p.add_argument('--candidates', type=Path, required=True)
     args = parser.parse_args()
     if args.command == 'prepare':
-        result = prepare(ROOT, args.output, args.wrapper_commit, args.run_number, args.attempt, args.baseline_ref, args.force)
+        result = prepare(ROOT, args.output, args.wrapper_commit, args.run_number, args.attempt, args.baseline_ref, args.force, args.channels)
         print(json.dumps(result, separators=(',', ':')))
     else:
         promote(ROOT, args.candidates)

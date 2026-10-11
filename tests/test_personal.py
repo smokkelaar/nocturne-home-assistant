@@ -262,7 +262,7 @@ class PersonalTests(unittest.TestCase):
 
     def test_required_container_job_does_not_skip_missing_comparison_base(self):
         workflow = (ROOT / '.github/workflows/validate.yml').read_text()
-        container = workflow.split('  container:', 1)[1]
+        container = workflow.split('  prebuilt-select:', 1)[1]
         self.assertIn('fetch-depth: 0', container)
         missing = container.split('if ! git cat-file', 1)[1].split('fi', 1)[0]
         self.assertIn('git fetch --no-tags origin "$base"', missing)

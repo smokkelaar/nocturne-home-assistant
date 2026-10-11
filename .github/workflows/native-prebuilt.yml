@@ -77,6 +77,12 @@ jobs:
             BASELINE="$IMAGE"
           fi
           python tools/recovery_smoke.py --image "$IMAGE" --baseline "$BASELINE"
+      - name: Three-instance session isolation with published peers
+        if: ${{ !inputs.publish && inputs.arch == 'amd64' && (inputs.channel == 'official' || inputs.channel == 'latest' || inputs.channel == 'personal') }}
+        env:
+          CHANNEL: ${{ inputs.channel }}
+          IMAGE: ${{ inputs.image }}
+        run: python tools/selected_cookie_smoke.py --channel "$CHANNEL" --image "$IMAGE"
       - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
         if: inputs.publish && github.repository == 'smokkelaar/nocturne-home-assistant'
         with:
