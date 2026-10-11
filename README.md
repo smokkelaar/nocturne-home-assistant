@@ -36,7 +36,7 @@ This repository is **Nocturne only**. It contains the HA wrapper, its small upst
 **Personal development channel:** choose **Nocturne Personal Release** as a separate third
 installation, default port **8450**. It starts with its own empty database/account
 and compiles [the Personal fork](https://github.com/smokkelaar/nocturne-personal).
-Personal 0.3.29 adds searchable page help, a library icon and a help visibility setting.
+Personal 0.3.30 shows searchable help in the normal page area, using the existing sidebar and a book button to switch back.
 Latest and Test A/B/C keep their existing source baseline.
 Your own Google OAuth client and consent are required; real Google account access remains a user test.
 [Personal installation, feature setup and daily updates](docs/PERSONAL.md).

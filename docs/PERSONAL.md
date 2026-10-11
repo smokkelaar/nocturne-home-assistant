@@ -1,15 +1,18 @@
 # Nocturne Personal Release
 
-## Contextual documentation — Personal 0.3.29
+## Contextual documentation — Personal 0.3.30
 
 Personal adds searchable in-app documentation to the approved upstream main base
 `5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`. Latest and Test A/B/C keep their existing
 source pins; Official / Stable remains on its existing release.
 
-Use the help bar at the top of any app page to open its guide. Documentation uses
-Nocturne's navigation and can be closed without losing your current page. Steps,
+Use the book beside Nocturne to switch between your page and its guide. Help
+replaces the normal page area and uses the existing sidebar; there is no popup
+or duplicate menu. Click the book again or press Escape to return to your
+original page, filters and scroll position. Steps,
 Heart Rate, Connectors & Apps, Google Health and Appearance have starter content.
-Minimize the bar to the library icon, or hide and restore help under
+The library icon is the default. An optional help bar and hiding/restoring help
+can be configured under
 **Settings → Appearance → Documentation & help**. The visibility preference is
 saved per browser. The collapsed sidebar keeps both controls accessible; hidden
 help does not flash before the saved preference is loaded.
