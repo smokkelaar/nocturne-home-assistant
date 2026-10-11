@@ -1,11 +1,13 @@
-## Unreleased source candidate
+## 1.0.57201
+
+- New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
+- Existing app identity, options, private data and Nocturne source remain intact.
 
 - Replace popup documentation with help in the normal page area and one shared sidebar.
 - Toggle with the book beside Nocturne; preserve the original page, filters and scroll position.
 - Default to the compact icon and fill blank Dutch help labels.
 
 Personal 0.3.30; source `079c4408aaf9527f1a278d6dc73f1b24919ddccd`; Daily base `5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`.
-
 ## 1.0.56201
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
