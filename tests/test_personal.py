@@ -61,6 +61,8 @@ class PersonalTests(unittest.TestCase):
 
     def setUp(self):
         self.lock = json.loads((ROOT / 'upstream-personal.json').read_text())
+        self.clean_lock = {**self.lock, 'commit': self.lock['upstream']['commit'],
+                           'commit_at': self.lock['upstream']['commit_at']}
         self.directory = ROOT / 'nocturne_personal'
         self.config = json.loads((self.directory / 'config.json').read_text())
 
@@ -159,8 +161,8 @@ class PersonalTests(unittest.TestCase):
                 update_test_channels.validate_test_pr_source({**source, field: value}, 'Test C')
 
     def test_clean_personal_main_does_not_advertise_extensions(self):
-        generated = updater.files(self.lock, self.config['version'])
-        self.assertEqual(self.lock['upstream']['commit'], self.lock['commit'])
+        generated = updater.files(self.clean_lock, self.config['version'])
+        self.assertEqual(self.clean_lock['upstream']['commit'], self.clean_lock['commit'])
         for path in ('DOCS.md', 'README.md'):
             self.assertIn(b'unmodified upstream main, without Personal extensions', generated[path])
             self.assertNotIn(b'Personal 0.3.28 includes', generated[path])
@@ -168,14 +170,14 @@ class PersonalTests(unittest.TestCase):
         self.assertEqual('Nocturne main', runtime['release'])
 
     def test_clean_main_can_replace_previous_personal_history(self):
-        old = {**self.lock, 'commit': 'a' * 40}
+        old = {**self.clean_lock, 'commit': 'a' * 40}
         with patch.object(updater, 'github') as github:
-            updater.validate_transition(old, self.lock)
+            updater.validate_transition(old, self.clean_lock)
         github.assert_not_called()
 
     def test_clean_personal_resolves_without_extension_metadata(self):
-        head = {'sha': self.lock['commit'], 'commit': {'committer': {'date': self.lock['commit_at']}}}
-        comparison = {'status': 'identical', 'merge_base_commit': {'sha': self.lock['commit']}}
+        head = {'sha': self.clean_lock['commit'], 'commit': {'committer': {'date': self.clean_lock['commit_at']}}}
+        comparison = {'status': 'identical', 'merge_base_commit': {'sha': self.clean_lock['commit']}}
         class Archive:
             def __enter__(self): return self
             def __exit__(self, *args): pass
@@ -183,16 +185,16 @@ class PersonalTests(unittest.TestCase):
         with patch.object(updater, 'github', side_effect=[head, comparison]) as github, \
              patch.object(updater.urllib.request, 'urlopen', return_value=Archive()):
             resolved = updater.resolve()
-        self.assertEqual(self.lock['commit'], resolved['commit'])
-        self.assertEqual(self.lock['version'], resolved['version'])
-        self.assertEqual(['commits/personal', f"compare/{self.lock['commit']}...{self.lock['commit']}"],
+        self.assertEqual(self.clean_lock['commit'], resolved['commit'])
+        self.assertEqual(self.clean_lock['version'], resolved['version'])
+        self.assertEqual(['commits/personal', f"compare/{self.clean_lock['commit']}...{self.clean_lock['commit']}"],
                          [call.args[0] for call in github.call_args_list])
 
     def test_history_preserving_reset_resolves_exact_upstream_source(self):
-        canonical = {'sha': self.lock['commit'], 'commit': {
-            'tree': {'sha': 'b' * 40}, 'committer': {'date': self.lock['commit_at']}}}
+        canonical = {'sha': self.clean_lock['commit'], 'commit': {
+            'tree': {'sha': 'b' * 40}, 'committer': {'date': self.clean_lock['commit_at']}}}
         reset = {**canonical, 'sha': 'a' * 40}
-        comparison = {'status': 'identical', 'merge_base_commit': {'sha': self.lock['commit']}}
+        comparison = {'status': 'identical', 'merge_base_commit': {'sha': self.clean_lock['commit']}}
         class Archive:
             def __enter__(self): return self
             def __exit__(self, *args): pass
@@ -200,7 +202,7 @@ class PersonalTests(unittest.TestCase):
         with patch.object(updater, 'github', side_effect=[reset, canonical, comparison]), \
              patch.object(updater.urllib.request, 'urlopen', return_value=Archive()):
             resolved = updater.resolve()
-        self.assertEqual(self.lock['commit'], resolved['commit'])
+        self.assertEqual(self.clean_lock['commit'], resolved['commit'])
 
     def test_personal_source_replaces_both_api_and_web(self):
         recipe = (self.directory / 'Dockerfile').read_text()

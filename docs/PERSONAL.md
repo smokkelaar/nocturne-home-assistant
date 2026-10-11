@@ -1,20 +1,23 @@
 # Nocturne Personal Release
 
-## Clean main baseline — 2026-10-11
+## Contextual documentation — Personal 0.3.29
 
-Latest, Personal and Test A/B/C all use unmodified upstream main `5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`.
-The Personal fork's `main` and `personal` branches have exactly the same files as that commit;
-there are no Personal extensions or additional PR patches in this baseline.
-History-preserving reset commits keep branch protection intact. The former tips are also retained as archive tags.
+Personal adds searchable in-app documentation to the approved upstream main base
+`5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`. Latest and Test A/B/C keep their existing
+source pins; Official / Stable remains on its existing release.
 
-Official / Stable remains Nocturne **0.2.7**. The functional HA wrapper remains
-**0.1.13**. Each app keeps its own slug, ports, options, cookies and private data.
+Use the help bar at the top of any app page to open its guide. Documentation uses
+Nocturne's navigation and can be closed without losing your current page. Steps,
+Heart Rate, Connectors & Apps, Google Health and Appearance have starter content.
+Minimize the bar to the library icon, or hide and restore help under
+**Settings → Appearance → Documentation & help**. The visibility preference is
+saved per browser. The collapsed sidebar keeps both controls accessible; hidden
+help does not flash before the saved preference is loaded.
 
-API and web are pinned together to the successful upstream publication:
-[main build](https://github.com/nightscout/nocturne/actions/runs/38097589610).
-HA package versions become available after native AMD64/ARM64 builds, startup,
-cold restore, upgrade and anonymous image checks. Home Assistant installations
-receive an offered update; this repository does not restart a live installation.
+The functional HA wrapper remains **0.1.13**. Personal keeps its existing slug,
+port, options, cookie namespace and private data. HA package versions become
+available once the AMD64 and ARM64 images have been built and published. This
+repository offers an update; it does not restart a running HA installation.
 
 The Google Health instructions below describe functionality now present upstream,
 not an additional Personal extension.
@@ -143,7 +146,7 @@ approved Nocturne Daily commit. HA packages add a delivery suffix, such as
 channels. The package base is temporarily ahead of the actual Personal feature
 version: feature `0.3.26` is delivered as package `0.3.27-p1` to rank above the
 installed `0.3.26-9` and the failed same-base `0.3.26-p11` migration.
-Subsequent deliveries keep this published base and increment `p1` → `p2`.
+Subsequent deliveries keep this published base and increment `p1` â†’ `p2`.
 When the feature reaches `0.3.27`, the counter continues; it must not reset to p1.
 Only a feature version above the current package base starts a new base at p1.
 Legacy numeric suffixes are read only as migration input and trigger a one-time
