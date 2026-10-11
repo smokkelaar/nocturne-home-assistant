@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 import unittest
+import subprocess
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -9,6 +10,10 @@ import selected_cookie_smoke as selected
 
 
 class SelectedCookieTests(unittest.TestCase):
+    def test_cookie_runner_imports_without_the_versioning_dependency(self):
+        command = "import sys; sys.path.insert(0, 'tools'); import selected_cookie_smoke; assert 'awesomeversion' not in sys.modules"
+        subprocess.run([sys.executable, '-S', '-c', command], cwd=ROOT, check=True)
+
     def test_publication_tests_selected_channels_together_with_their_new_versions(self):
         candidates = {}
         for channel in ('latest', 'personal'):
