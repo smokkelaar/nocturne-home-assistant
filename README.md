@@ -16,7 +16,7 @@ For the **Stable and Main distribution with prebuilt images**, use [nocturne-hom
 [![Official release check](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/upstream.yml/badge.svg)](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/upstream.yml)
 [![Latest daily](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/latest.yml/badge.svg)](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/latest.yml)
 
-Six **experimental, unofficial Home Assistant apps** that each run [Nocturne](https://github.com/nightscout/nocturne), PostgreSQL and an HTTPS gateway in one container. Official remains on its existing release; the separate [Personal app](docs/PERSONAL.md) uses the same unmodified upstream main as Latest and Test A/B/C.
+Six **experimental, unofficial Home Assistant apps** that each run [Nocturne](https://github.com/nightscout/nocturne), PostgreSQL and an HTTPS gateway in one container. Official remains on its existing release; the separate [Personal app](docs/PERSONAL.md) adds contextual documentation on the approved upstream main base used by Latest and Test A/B/C.
 
 This repository is **Nocturne only**. It contains the HA wrapper, its small upstream compatibility patches, tests and contributor documentation; it is not a fork of the entire Nocturne application. Upstream Nocturne remains the source of the API and web interface. [Compare the two channels](docs/CHANNELS.md).
 
@@ -24,7 +24,7 @@ This repository is **Nocturne only**. It contains the HA wrapper, its small upst
 
 ## Install
 
-**Start here: [Visuele Nederlandse installatiehandleiding — van repository tot werkend dashboard](docs/INSTALLATIE.md).** Eight numbered steps, diagrams, DNS/certificate setup, passkey registration and a restart checklist. [English installation reference](nocturne_local/DOCS.md).
+**Start here: [Visuele Nederlandse installatiehandleiding â€” van repository tot werkend dashboard](docs/INSTALLATIE.md).** Eight numbered steps, diagrams, DNS/certificate setup, passkey registration and a restart checklist. [English installation reference](nocturne_local/DOCS.md).
 
 [![Add repository to Home Assistant](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fsmokkelaar%2Fnocturne-home-assistant)
 
@@ -36,8 +36,8 @@ This repository is **Nocturne only**. It contains the HA wrapper, its small upst
 **Personal development channel:** choose **Nocturne Personal Release** as a separate third
 installation, default port **8450**. It starts with its own empty database/account
 and compiles [the Personal fork](https://github.com/smokkelaar/nocturne-personal).
-Personal now uses unmodified upstream main, without Personal extensions.
-Latest and Test A/B/C use the same source baseline.
+Personal 0.3.29 adds searchable page help, a library icon and a help visibility setting.
+Latest and Test A/B/C keep their existing source baseline.
 Your own Google OAuth client and consent are required; real Google account access remains a user test.
 [Personal installation, feature setup and daily updates](docs/PERSONAL.md).
 
@@ -63,9 +63,9 @@ HA's technical package version adds a delivery counter, e.g. `0.1.5-1`.
 Daily upstream updates change that counter, not wrapper functionality.
 [Version numbers explained](docs/VERSIES.md).
 
-**Official:** manually started release check → paired image/source pins → full tests → reviewed pull request → manual publication.
+**Official:** manually started release check â†’ paired image/source pins â†’ full tests â†’ reviewed pull request â†’ manual publication.
 
-**Latest:** daily upstream-`main` check → successful upstream paired-image job → immutable digests → container and previous-Latest upgrade tests → protected pull request checks → automatic merge. A user's HA installation updates automatically only when automatic updates are enabled for **Latest itself**.
+**Latest:** daily upstream-`main` check â†’ successful upstream paired-image job â†’ immutable digests â†’ container and previous-Latest upgrade tests â†’ protected pull request checks â†’ automatic merge. A user's HA installation updates automatically only when automatic updates are enabled for **Latest itself**.
 
 After an update is merged, HA's store refresh can offer the new app version. Users may enable HA's app auto-update option; keep it off during experimental use until backup/restore and upgrade behavior have been verified. This repository does not remotely update anyone's HA installation.
 
