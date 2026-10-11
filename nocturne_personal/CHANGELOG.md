@@ -1,10 +1,12 @@
-## Unreleased source candidate
+## 1.0.56201
+
+- New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
+- Existing app identity, options, private data and Nocturne source remain intact.
 
 - Add contextual documentation, full-text search, connector guides and three persistent help visibility modes.
 - Fix guide location wording, collapsed sidebar controls and the hidden-help flash before hydration.
 
 Personal 0.3.29; source `de9952c947da88f2730241d32e26438119ec7d64`; Daily base `5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`.
-
 ## 1.0.54601
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
