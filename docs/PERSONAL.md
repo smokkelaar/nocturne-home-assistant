@@ -1,6 +1,6 @@
 # Nocturne Personal Release
 
-## Contextual documentation â€” Personal 0.3.30
+## Contextual documentation — Personal 0.3.30
 
 Personal adds searchable in-app documentation to the approved upstream main base
 `5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`. Latest and Test A/B/C keep their existing
@@ -13,7 +13,7 @@ original page, filters and scroll position. Steps,
 Heart Rate, Connectors & Apps, Google Health and Appearance have starter content.
 The library icon is the default. An optional help bar and hiding/restoring help
 can be configured under
-**Settings â†’ Appearance â†’ Documentation & help**. The visibility preference is
+**Settings → Appearance → Documentation & help**. The visibility preference is
 saved per browser. The collapsed sidebar keeps both controls accessible; hidden
 help does not flash before the saved preference is loaded.
 
@@ -149,7 +149,7 @@ approved Nocturne Daily commit. HA packages add a delivery suffix, such as
 channels. The package base is temporarily ahead of the actual Personal feature
 version: feature `0.3.26` is delivered as package `0.3.27-p1` to rank above the
 installed `0.3.26-9` and the failed same-base `0.3.26-p11` migration.
-Subsequent deliveries keep this published base and increment `p1` Ã¢â€ â€™ `p2`.
+Subsequent deliveries keep this published base and increment `p1` â†’ `p2`.
 When the feature reaches `0.3.27`, the counter continues; it must not reset to p1.
 Only a feature version above the current package base starts a new base at p1.
 Legacy numeric suffixes are read only as migration input and trigger a one-time
