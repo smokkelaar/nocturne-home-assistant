@@ -1,21 +1,31 @@
 # Nocturne Personal Release
 
-## Contextual documentation — Personal 0.3.30
+## Contextual documentation — Personal 0.3.34
 
-Personal adds searchable in-app documentation to the approved upstream main base
-`5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`. Latest and Test A/B/C keep their existing
-source pins; Official / Stable remains on its existing release.
+Personal follows the approved upstream main base
+`5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`. Other channels keep their existing
+source pins and app identities.
 
-Use the book beside Nocturne to switch between your page and its guide. Help
-replaces the normal page area and uses the existing sidebar; there is no popup
-or duplicate menu. Click the book again or press Escape to return to your
-original page, filters and scroll position. Steps,
-Heart Rate, Connectors & Apps, Google Health and Appearance have starter content.
-The library icon is the default. An optional help bar and hiding/restoring help
-can be configured under
-**Settings → Appearance → Documentation & help**. The visibility preference is
-saved per browser. The collapsed sidebar keeps both controls accessible; hidden
-help does not flash before the saved preference is loaded.
+Open the book beside Nocturne for help about the current page. Documentation
+navigation does not change the underlying page. Close it with the book, Close,
+or Escape to return to the same page, inputs, filters and scroll position.
+
+- Main pages and connectors have concise reading tips and links to their settings.
+- Themed visual reading aids explain the page's core purpose. Source details and
+  limitations are expandable; examples contain no personal measurements.
+- Glucose ranges have one central reference guide using the running application's
+  values. Report guides link there instead of repeating the limits.
+- Google Health starts with installing the app and checking source data, then
+  walks through Google's Cloud/OAuth setup, test users, permissions and import
+  verification. Official provider and Play Store links are included.
+- Help scrolls independently; background wheel/touch scrolling is blocked while
+  it is open. Active application dialogs remain scrollable.
+
+Choose Navigation drawer, Right drawer, Side by side or Replace page under
+**Settings → Appearance → Documentation & help**. Transparency and blur can also
+be adjusted from **Display options** while help is open. Documentation preferences
+are saved in this browser. The icon is the default; the help bar is optional, and
+hidden help can be enabled again from Appearance.
 
 The functional HA wrapper remains **0.1.13**. Personal keeps its existing slug,
 port, options, cookie namespace and private data. HA package versions become
