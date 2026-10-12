@@ -1,4 +1,7 @@
-## Unreleased source candidate
+## 1.0.61101
+
+- New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
+- Existing app identity, options, private data and Nocturne source remain intact.
 
 - Open help with a two-second book animation over the existing navigation and page.
 - Restore the open-book icon, with a small close badge while documentation is open.
@@ -6,7 +9,6 @@
 - Preserve original navigation, scroll position, page URL and unsaved inputs; keep the layer aligned across screen sizes.
 
 Personal 0.3.32; source `f62d61a4bc14e23f675f78827b80e3cd08e9269c`; Daily base `5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`.
-
 ## 1.0.60401
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
