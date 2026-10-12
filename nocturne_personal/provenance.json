@@ -2,12 +2,12 @@
   "format": 1,
   "channel": "personal",
   "package": "nocturne_personal",
-  "version": "1.0.61901",
+  "version": "1.0.62801",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "e9ce91c3fd50ec794e5c9d3087068d3f1e6fd196",
-  "recipe": "0f06b9876d44326226cdd3f487a6885fd58f26dc6e4494fbe53374b96b4dac6b",
+  "wrapper_commit": "399ff48169ed536ca425bda3d6d510bdf6cf05f6",
+  "recipe": "69a10b97e4314c985b017eb8280a292bebaa862579d972ccb85b2524e8c7446a",
   "source_repository": "smokkelaar/nocturne-personal",
-  "source_commit": "3baf226adde00b86a99196864e2de89988cd1734",
+  "source_commit": "8f12373e0187b9116dfec3e33a1760898c8f835d",
   "architectures": [
     "amd64",
     "arm64"
@@ -21,6 +21,58 @@
     }
   },
   "config": {
+    "name": "Nocturne Personal Release",
+    "version": "1.0.62801",
+    "slug": "nocturne_personal",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal 0.3.34 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+    "url": "https://github.com/smokkelaar/nocturne-home-assistant",
+    "arch": [
+      "amd64",
+      "aarch64"
+    ],
+    "startup": "application",
+    "boot": "manual",
+    "init": false,
+    "timeout": 120,
+    "ingress": true,
+    "ingress_port": 8099,
+    "panel_icon": "mdi:heart-pulse",
+    "panel_title": "Nocturne Personal",
+    "panel_admin": true,
+    "ports": {
+      "8448/tcp": 8450
+    },
+    "ports_description": {
+      "8448/tcp": "Nocturne HTTPS - alleen lokaal gebruiken; extra toegangscode staat in de HA-webinterface"
+    },
+    "map": [
+      {
+        "type": "ssl",
+        "read_only": true
+      }
+    ],
+    "backup": "cold",
+    "options": {
+      "public_url": "https://homeassistant.local:8450",
+      "certificate": "",
+      "private_key": "",
+      "gateway_auth": true,
+      "skip_gateway_check": false,
+      "maintenance_enabled": false,
+      "maintenance_password": ""
+    },
+    "schema": {
+      "public_url": "url",
+      "certificate": "str",
+      "private_key": "str",
+      "gateway_auth": "bool",
+      "skip_gateway_check": "bool",
+      "maintenance_enabled": "bool",
+      "maintenance_password": "password"
+    },
+    "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-personal-{arch}"
+  },
+  "previous_config": {
     "name": "Nocturne Personal Release",
     "version": "1.0.61901",
     "slug": "nocturne_personal",
@@ -72,60 +124,8 @@
     },
     "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-personal-{arch}"
   },
-  "previous_config": {
-    "name": "Nocturne Personal Release",
-    "version": "1.0.61101",
-    "slug": "nocturne_personal",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal 0.3.32 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
-    "url": "https://github.com/smokkelaar/nocturne-home-assistant",
-    "arch": [
-      "amd64",
-      "aarch64"
-    ],
-    "startup": "application",
-    "boot": "manual",
-    "init": false,
-    "timeout": 120,
-    "ingress": true,
-    "ingress_port": 8099,
-    "panel_icon": "mdi:heart-pulse",
-    "panel_title": "Nocturne Personal",
-    "panel_admin": true,
-    "ports": {
-      "8448/tcp": 8450
-    },
-    "ports_description": {
-      "8448/tcp": "Nocturne HTTPS - alleen lokaal gebruiken; extra toegangscode staat in de HA-webinterface"
-    },
-    "map": [
-      {
-        "type": "ssl",
-        "read_only": true
-      }
-    ],
-    "backup": "cold",
-    "options": {
-      "public_url": "https://homeassistant.local:8450",
-      "certificate": "",
-      "private_key": "",
-      "gateway_auth": true,
-      "skip_gateway_check": false,
-      "maintenance_enabled": false,
-      "maintenance_password": ""
-    },
-    "schema": {
-      "public_url": "url",
-      "certificate": "str",
-      "private_key": "str",
-      "gateway_auth": "bool",
-      "skip_gateway_check": "bool",
-      "maintenance_enabled": "bool",
-      "maintenance_password": "password"
-    },
-    "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-personal-{arch}"
-  },
   "digests": {
-    "amd64": "sha256:04b607c629d2e343e27cd851d1cc57aa3bb7efd094aacd42c3d5a9163d32a599",
-    "aarch64": "sha256:756c5d137bb211578cb73f767f5d23728d9fcba61fb6f9aba19868c831999a8e"
+    "amd64": "sha256:874ef080a741627ede2aab67e9c4a21d22c039caf618e8570fab986700782905",
+    "aarch64": "sha256:03c85b736519b1f148379cbd855b8e95934188ac292ded9b8f470dceb880f1fc"
   }
 }
