@@ -1,3 +1,12 @@
+## Unreleased source candidate
+
+- Choose Navigation drawer, Right drawer, Side by side or Replace page in Appearance settings.
+- Keep the original page and unsaved inputs while navigating documentation independently.
+- Distinct opening/closing book icons, tooltips, an explicit close button and mobile drawer support.
+- Includes the upstream translation-test, authentication-cookie and Tandem profile fixes merged into Personal.
+
+Personal 0.3.31; source `7eeb3eb77470268e87e720ff911267fc09300230`; Daily base `5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`.
+
 ## 1.0.57201
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
