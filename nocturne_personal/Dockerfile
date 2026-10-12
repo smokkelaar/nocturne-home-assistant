@@ -11,7 +11,7 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@11.5.0
-ADD --checksum=sha256:12baa8080856627ef142a4dbef82546c10a939b82ffc344cb9c74b2c840d50b5 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/079c4408aaf9527f1a278d6dc73f1b24919ddccd /tmp/source.tar.gz
+ADD --checksum=sha256:36b92162bf42d43b8b7b51a654b44dda6537e6a117d070d952a0748a6e348e18 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/7eeb3eb77470268e87e720ff911267fc09300230 /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
 WORKDIR /src/src/Web
