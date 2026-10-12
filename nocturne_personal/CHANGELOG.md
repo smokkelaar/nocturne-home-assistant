@@ -1,4 +1,7 @@
-## Unreleased source candidate
+## 1.0.60401
+
+- New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
+- Existing app identity, options, private data and Nocturne source remain intact.
 
 - Choose Navigation drawer, Right drawer, Side by side or Replace page in Appearance settings.
 - Keep the original page and unsaved inputs while navigating documentation independently.
@@ -7,7 +10,6 @@
 - Includes the upstream translation-test, authentication-cookie and Tandem profile fixes merged into Personal.
 
 Personal 0.3.31; source `a93b944ef94d55aeaaf13e5a25a55e12cbcd82c4`; Daily base `5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`.
-
 ## 1.0.57201
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
