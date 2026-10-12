@@ -1,9 +1,9 @@
 {
   "channel": "personal",
   "repository": "smokkelaar/nocturne-personal",
-  "version": "0.3.32",
-  "commit": "f62d61a4bc14e23f675f78827b80e3cd08e9269c",
-  "commit_at": "2026-10-12T14:09:26Z",
+  "version": "0.3.33",
+  "commit": "3baf226adde00b86a99196864e2de89988cd1734",
+  "commit_at": "2026-10-12T16:07:23Z",
   "upstream": {
     "channel": "main",
     "commit": "5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca",
@@ -27,5 +27,5 @@
       }
     }
   },
-  "archive_sha256": "7c6b809bbdd0757a4b0f1535c36eda0bcad8df44db50ca7d4791d839d4dce7be"
+  "archive_sha256": "43f33e40b0c77451899634591ad57d7320ed367c2bc18c77479e3f717d6b6aca"
 }
