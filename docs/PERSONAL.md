@@ -1,6 +1,6 @@
 # Nocturne Personal Release
 
-## Contextual documentation — Personal 0.3.34
+## Interactive dashboard documentation — Personal 0.3.35
 
 Personal follows the approved upstream main base
 `5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`. Other channels keep their existing
@@ -10,6 +10,9 @@ Open the book beside Nocturne for help about the current page. Documentation
 navigation does not change the underlying page. Close it with the book, Close,
 or Escape to return to the same page, inputs, filters and scroll position.
 
+- Dashboard help shows every available widget, including widgets hidden on your own dashboard, with fictional data.
+- Open one explanation at a time below the selected widget row. Select complete example situations to compare states.
+- Practise chart periods, zoom and legend controls; explanation buttons are separate. Real settings links open in a new tab.
 - Main pages and connectors have concise reading tips and links to their settings.
 - Themed visual reading aids explain the page's core purpose. Source details and
   limitations are expandable; examples contain no personal measurements.
