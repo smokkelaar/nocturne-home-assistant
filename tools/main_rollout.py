@@ -22,10 +22,14 @@ def load(root, channel):
 def metadata(original, rollout):
     return {**original, 'repository': rollout['repository'],
             'source_commit': rollout['commit'], 'commit_at': rollout['commit_at'],
+            'base_commit': rollout['commit'],
             'nocturne': 'fork-main@' + rollout['commit'][:7],
             'base': 'Pinned fork main with temporary basal serialization fix',
             'release': 'Main snapshot with temporary basal fix',
             'release_url': f"https://github.com/{rollout['repository']}/tree/{rollout['commit']}",
+            'purpose': 'Use pinned main with the temporary basal serialization fix.',
+            'purpose_url': f"https://github.com/{rollout['repository']}/tree/{rollout['commit']}",
+            'test_url': f"https://github.com/{rollout['repository']}/pull/55",
             'source_rollout': rollout}
 
 
