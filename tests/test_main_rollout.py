@@ -1,0 +1,57 @@
+import json
+from pathlib import Path
+import sys
+import tempfile
+import unittest
+from unittest.mock import patch
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'tools'))
+import main_rollout
+import prebuilt_publish
+
+
+class MainRolloutTests(unittest.TestCase):
+    def test_all_selected_images_compile_the_pinned_fix_and_preserve_storage_identity(self):
+        def inspect(repository, reference, arch, *args):
+            return {'digest': reference if reference.startswith('sha256:') else 'sha256:' + 'a' * 64}
+
+        with tempfile.TemporaryDirectory() as temporary, patch.object(prebuilt_publish.registry, 'image', side_effect=inspect):
+            destination = Path(temporary)
+            result = prebuilt_publish.prepare(ROOT, destination, 'd' * 40, 1000, 1, 'e' * 40, channels='all')
+            self.assertEqual(12, len(result['include']))
+            for item in result['include']:
+                context = Path(item['context'])
+                original = prebuilt_publish.read(ROOT / item['package'] / 'config.json')
+                config = prebuilt_publish.read(context / 'config.json')
+                for field in ('slug', 'ports', 'options'):
+                    self.assertEqual(original[field], config[field])
+                metadata = prebuilt_publish.read(context / 'rootfs/opt/nocturne-ha/version.json')
+                recipe = (context / 'Dockerfile').read_text()
+                rollout = main_rollout.load(ROOT, item['channel'])
+                if rollout:
+                    self.assertEqual(rollout['commit'], metadata['source_commit'])
+                    self.assertEqual(rollout['repository'], metadata['repository'])
+                    self.assertIn('--checksum=sha256:' + rollout['archive_sha256'], recipe)
+                    self.assertIn('/tar.gz/' + rollout['commit'], recipe)
+                    self.assertIn('COPY --from=source /out/api/ /app/', recipe)
+                    self.assertIn('COPY --from=source /out/web/', recipe)
+                    previous = prebuilt_publish.read(ROOT / item['package'] / 'rootfs/opt/nocturne-ha/version.json')
+                    self.assertEqual(previous['cookie_namespace'], metadata['cookie_namespace'])
+                    self.assertEqual(previous['default_public_url'], metadata['default_public_url'])
+                else:
+                    self.assertEqual('personal', item['channel'])
+                    self.assertEqual('0.3.36', metadata['personal'])
+
+    def test_invalid_source_cannot_enter_a_build(self):
+        manifest = json.loads((ROOT / 'main-rollout.json').read_text())
+        for field, value in [('commit', 'main'), ('archive_sha256', 'unchecked'), ('repository', 'other/repository')]:
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as temporary:
+                path = Path(temporary)
+                (path / 'main-rollout.json').write_text(json.dumps({**manifest, field: value}))
+                with self.assertRaises(ValueError):
+                    main_rollout.load(path, 'latest')
+
+    def test_other_channels_keep_their_source_policy(self):
+        self.assertIsNone(main_rollout.load(ROOT, 'personal'))
+        self.assertIsNone(main_rollout.load(ROOT, 'unknown'))

@@ -1,7 +1,13 @@
+## 1.0.68801
+
+- New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
+- Existing app identity, options, ports and private data remain intact.
+- API and web use fixed fork-main `613c5f10423a0f1f0ea7777598229ab62705014a`; temporary basals no longer expose relative bolus insulin.
+
 ## 1.0.54601
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
-- Existing app identity, options, private data and Nocturne source remain intact.
+- Existing app identity, options, ports and private data remain intact.
 
 All development channels now use unmodified upstream main `5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`. Personal extensions and former PR test pins are removed from this build. Existing app identity and data are retained.
 ## 1.0.49001
@@ -15,12 +21,12 @@ All development channels now use unmodified upstream main `5ad70cbffb8e9cf5f4e9e
 ## 1.0.45001
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
-- Existing app identity, options, private data and Nocturne source remain intact.
+- Existing app identity, options, ports and private data remain intact.
 
 ## 1.0.43901
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
-- Existing app identity, options, private data and Nocturne source remain intact.
+- Existing app identity, options, ports and private data remain intact.
 
 ## 0.3.26-a16
 
