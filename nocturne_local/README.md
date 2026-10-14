@@ -2,7 +2,7 @@
 
 **[Nederlandse visuele installatiehandleiding: van repository tot dashboard](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/INSTALLATIE.md)**
 
-The manually promoted official-release channel: self-contained Nocturne API/web + PostgreSQL 17 + HTTPS gateway for Home Assistant OS on amd64. Its existing `nocturne_local` identity is retained for safe updates from wrapper 0.1.x.
+This installation uses the same verified official Nightscout main API/web images as Latest, without Personal source changes. It includes PostgreSQL 17 and the HTTPS gateway for Home Assistant OS on AMD64 and ARM64. Its existing `nocturne_local` identity is retained for updates from wrapper 0.1.x.
 
 Use the **Documentation** tab before installing. This is an unofficial experimental app, not a HACS integration or a medically validated service.
 

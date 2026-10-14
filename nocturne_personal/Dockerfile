@@ -11,7 +11,7 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@11.5.0
-ADD --checksum=sha256:15d7edca9056426ca841a75683c723c7d788a645465a1395335f613e66577c5d https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/369b1eaaea9ea738841da2c5211216148a5ff0a2 /tmp/source.tar.gz
+ADD --checksum=sha256:6f6da7d2bd2e5328768a79c830c363ccd9700bf951d1157f91520706c0ef8ee9 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/945790ed14d69a21690fbfa00716e2a8648e5165 /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
 WORKDIR /src/src/Web
@@ -39,7 +39,7 @@ RUN mkdir -p /out/web/packages/app /out/web/packages/bridge \
     && cp packages/bridge/package.json /out/web/packages/bridge/ \
     && cp -r packages/bridge/dist /out/web/packages/bridge/
 # Use the matching approved Daily runtime/OS; replace its application with our source build.
-FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:7d597387c42986be03921054461e604e623157a19dad0edef4ef18c6082bb3ee
+FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:24fea7a0a02579b880527b842b288d9f808a97c3bf892699a97c299747dd486c
 USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /out/api-build-date /opt/nocturne-ha/api-build-date

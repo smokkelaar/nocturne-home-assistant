@@ -1,30 +1,26 @@
 # Nocturne Official en Latest naast elkaar
 
-## Main synchronization — 2026-10-09
+## Main synchronization — 2026-10-14
 
-The common compiled upstream base is `df000c33e15d3809591261d78a22135bb0176ffd` (2026-10-09T09:16:08Z).
-It includes dashboard/chart refresh fixes (#2019), v3 deletion/history fixes
-(#1825), and temporary basal uploader-origin handling (#1570), in addition to
-the previously merged clock-face and hypo-comparison changes.
-Upstream's later `d106f6085` commit only synchronizes translations and skips
-image publication. Daily therefore selects the newest verified published main
-ancestor; all five channels use that same compiled base.
+The common upstream base is `2efc0d66e12ff9ad1dc10767075092eca78efb32`
+(2026-10-14T20:21:30Z), including the AAPS temporary-basal fix #2033 and A1c
+display preferences #1977. Later translation-only commits skip image publication;
+the installers use the newest verified published main ancestor.
 
-Official remains Nocturne **0.2.7**. The functional wrapper remains **0.1.13**.
+Official and Latest both use the official Nightscout main API/web image pair,
+without Personal source changes. The functional wrapper remains **0.1.13**.
 HA package versions are separate and become available only after both native
 architectures, runtime/upgrade checks and anonymous image verification pass.
 
 | Channel | Source | Upstream base | Additional code |
 |---|---|---|---|
-| Daily / Latest | `df000c3` | `df000c3` | None |
-| Personal 0.3.28 | `51e2c1d` | `df000c3` | Personal extensions, including Google Health and HbA1c method comparison |
-| Test A | `dd2b027` | `df000c3` | Google Health PR #1293, still unmerged |
-| Test B | `df000c3` | `df000c3` | Hypo comparison PR #2031 is merged into main |
-| Test C | `df000c3` | `df000c3` | Clock-face settings PR #2007 are merged into main |
+| Official / Latest | Approved official main | `2efc0d6` | None |
+| Personal 0.3.37 | Exact approved Personal source | `2efc0d6` | Personal extensions and the additional relative-field reporting guard |
+| Test A / B / C | Same source as Personal | `2efc0d6` | Same Personal extensions, isolated data and cookies |
 
-Images are resolved through the immutable `main-df000c3` tags and OCI digests.
+Images are resolved through the immutable `main-2efc0d6` tags and OCI digests.
 `latest` denotes upstream's official release and is not the Daily discovery tag.
-[Upstream publication](https://github.com/nightscout/nocturne/actions/runs/37910180933).
+[Upstream publication](https://github.com/nightscout/nocturne/actions/runs/38631381085).
 Published package versions and image digests are in each channel's `config.json`
 and `provenance.json`; runtime source and feature versions are in
 `rootfs/opt/nocturne-ha/version.json`. These files must agree before HA is updated.
@@ -33,13 +29,13 @@ Na één keer toevoegen van deze repository toont Home Assistant twee losse apps
 
 | Eigenschap | Nocturne Official Release | Nocturne Latest Release |
 |---|---|---|
-| Doel | Handmatig bevorderde officiële Nocturne-release | Vaak bijgewerkte momentopname van upstream `main` |
+| Doel | Officiële main in de bestaande Official-installatie | Dezelfde geverifieerde upstream `main` |
 | HA-slug / gegevensidentiteit | `nocturne_local` — bestaande 0.1.x-installaties blijven hier | `nocturne_latest` — volledig eigen `/data` |
 | Standaard hostpoort | 8448 | 8449 |
 | Standaard URL | `https://homeassistant.local:8448` | `https://homeassistant.local:8449` |
-| Upstream-selectie | Semantische release, momenteel 0.2.7 | Exacte geteste `main`-commit |
-| Imagegebruik | API/web op exacte OCI-digests | `latest` alleen ontdekken; HA bouwt daarna op exacte OCI-digests |
-| Repository-update | Alleen handmatig gestarte controle, review en merge | Dagelijkse controle; auto-merge uitsluitend na verplichte tests |
+| Upstream-selectie | Dezelfde goedgekeurde main-lock als Latest | Exacte geteste `main`-commit |
+| Imagegebruik | Officiële API/web op exacte OCI-digests | Dezelfde officiële API/web op exacte OCI-digests |
+| Repository-update | Volgt de goedgekeurde Latest-bron via `main-rollout.json` | Dagelijkse controle; auto-merge uitsluitend na verplichte tests |
 | HA-installatie-update | Handmatig aanbevolen | Kan automatisch als je alleen bij deze app **Automatisch bijwerken** aanzet |
 | Risico | Experimenteel | Zeer experimenteel; onaf werk en frequente migraties mogelijk |
 
@@ -64,7 +60,9 @@ nodig; accounts/passkeys blijven behouden. Displayvoorkeuren kunnen gedeeld
 blijven. [Werking, grenzen en browsercontrole](COOKIES.md).
 Oudere wrappers hebben deze scheiding niet: gebruik daarvoor aparte browserprofielen.
 
-Official wijzigt alleen nadat iemand de workflow **Check Official Nocturne release manually** start, de gegenereerde wijziging controleert en samenvoegt.
+De effectieve Official-main-bron volgt `upstream-latest.json` via de expliciete
+main-policy. `upstream.json` bewaart de oude releasebasis voor de generator;
+de gepubliceerde `provenance.json` en runtimeversie tonen de werkelijk gebruikte main-bron.
 
 Latest controleert dagelijks of upstream `main` een nieuwer commit heeft waarvoor de officiële `build-and-push`-job volledig is geslaagd. De updater controleert de API-broncommit, kiest precies één linux/amd64-manifest, zet API en web vast op digest en sluit races met veranderende tags uit. Daarna moeten unit-tests, beide container-smoketests en een vorige-Latest-naar-kandidaat-herstelproef slagen. Branchbeveiliging blokkeert auto-merge zolang verplichte controles niet groen zijn.
 

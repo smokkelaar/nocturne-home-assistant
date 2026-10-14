@@ -1,5 +1,3 @@
 # Nocturne Test B
 
-Unmodified upstream main `5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca`, without additional PR patches. Default host port 8452, separate data and cookies.
-
-[Installation and source baseline](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).
+Personal 0.3.37, exact source `945790ed14d69a21690fbfa00716e2a8648e5165`, based on official Nocturne main `2efc0d66e12ff9ad1dc10767075092eca78efb32`. Default host port 8452, separate data and cookies.
