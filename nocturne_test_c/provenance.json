@@ -2,12 +2,12 @@
   "format": 1,
   "channel": "test-c",
   "package": "nocturne_test_c",
-  "version": "1.0.54601",
+  "version": "1.0.68801",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "e22e4c09120a910bc7c6709cd1e88e989f8cf480",
-  "recipe": "2995e8296951ab27831688b1642e930cb4848213eb78e90b8fa9cbd9a3ad3aba",
+  "wrapper_commit": "cf1e02e19044d9a2f84024d0c8417ee4ea1571d0",
+  "recipe": "f012a0235f53f3253ae3ab585da9424c66de55d075e2c5ea6ecd8c61be70631a",
   "source_repository": "smokkelaar/nocturne-personal",
-  "source_commit": "5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca",
+  "source_commit": "613c5f10423a0f1f0ea7777598229ab62705014a",
   "architectures": [
     "amd64",
     "arm64"
@@ -21,6 +21,58 @@
     }
   },
   "config": {
+    "name": "Nocturne Test C",
+    "version": "1.0.68801",
+    "slug": "nocturne_test_c",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Main snapshot with temporary basal fix \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+    "url": "https://github.com/smokkelaar/nocturne-home-assistant",
+    "arch": [
+      "amd64",
+      "aarch64"
+    ],
+    "startup": "application",
+    "boot": "manual",
+    "init": false,
+    "timeout": 120,
+    "ingress": true,
+    "ingress_port": 8099,
+    "panel_icon": "mdi:heart-pulse",
+    "panel_title": "Nocturne Test C",
+    "panel_admin": true,
+    "ports": {
+      "8448/tcp": 8453
+    },
+    "ports_description": {
+      "8448/tcp": "Nocturne HTTPS - alleen lokaal gebruiken; extra toegangscode staat in de HA-webinterface"
+    },
+    "map": [
+      {
+        "type": "ssl",
+        "read_only": true
+      }
+    ],
+    "backup": "cold",
+    "options": {
+      "public_url": "https://homeassistant.local:8453",
+      "certificate": "",
+      "private_key": "",
+      "gateway_auth": true,
+      "skip_gateway_check": false,
+      "maintenance_enabled": false,
+      "maintenance_password": ""
+    },
+    "schema": {
+      "public_url": "url",
+      "certificate": "str",
+      "private_key": "str",
+      "gateway_auth": "bool",
+      "skip_gateway_check": "bool",
+      "maintenance_enabled": "bool",
+      "maintenance_password": "password"
+    },
+    "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-c-{arch}"
+  },
+  "previous_config": {
     "name": "Nocturne Test C",
     "version": "1.0.54601",
     "slug": "nocturne_test_c",
@@ -72,60 +124,8 @@
     },
     "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-c-{arch}"
   },
-  "previous_config": {
-    "name": "Nocturne Test C",
-    "version": "1.0.49001",
-    "slug": "nocturne_test_c",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Clock face units PR #2007 (merged into main) \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
-    "url": "https://github.com/smokkelaar/nocturne-home-assistant",
-    "arch": [
-      "amd64",
-      "aarch64"
-    ],
-    "startup": "application",
-    "boot": "manual",
-    "init": false,
-    "timeout": 120,
-    "ingress": true,
-    "ingress_port": 8099,
-    "panel_icon": "mdi:heart-pulse",
-    "panel_title": "Nocturne Test C",
-    "panel_admin": true,
-    "ports": {
-      "8448/tcp": 8453
-    },
-    "ports_description": {
-      "8448/tcp": "Nocturne HTTPS - alleen lokaal gebruiken; extra toegangscode staat in de HA-webinterface"
-    },
-    "map": [
-      {
-        "type": "ssl",
-        "read_only": true
-      }
-    ],
-    "backup": "cold",
-    "options": {
-      "public_url": "https://homeassistant.local:8453",
-      "certificate": "",
-      "private_key": "",
-      "gateway_auth": true,
-      "skip_gateway_check": false,
-      "maintenance_enabled": false,
-      "maintenance_password": ""
-    },
-    "schema": {
-      "public_url": "url",
-      "certificate": "str",
-      "private_key": "str",
-      "gateway_auth": "bool",
-      "skip_gateway_check": "bool",
-      "maintenance_enabled": "bool",
-      "maintenance_password": "password"
-    },
-    "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-c-{arch}"
-  },
   "digests": {
-    "amd64": "sha256:7dbe7f1548a1a33849be5b5909b26db594c70122a79b0b779225418865c1f5f2",
-    "aarch64": "sha256:349153292d3706d2191ffa4f9af5d6f65f4c6f78820e3d33795f3aacb16360f3"
+    "amd64": "sha256:c8b431cba332334b3fb280910fa58291142ae8bba24382fdf32ffdfbe6f87d67",
+    "aarch64": "sha256:8a3d01774587c899bd7cbc7fa27695eaf783d0683a87c22a52e31555d49f06dc"
   }
 }
