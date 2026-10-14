@@ -1,0 +1,13 @@
+{
+  "repository": "smokkelaar/nocturne-personal",
+  "commit": "613c5f10423a0f1f0ea7777598229ab62705014a",
+  "commit_at": "2026-10-14T11:39:07Z",
+  "archive_sha256": "0024d33f42849f4c8cf996095834127c85e8daf12bbaf0fc9267ec5a4dbb1a13",
+  "channels": [
+    "official",
+    "latest",
+    "test-a",
+    "test-b",
+    "test-c"
+  ]
+}
