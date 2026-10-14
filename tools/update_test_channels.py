@@ -211,11 +211,24 @@ def files():
             for path, data in generated.items()}
 
 
+def follow_personal():
+    personal = read('upstream-personal.json')
+    update_personal.validate(personal)
+    data = (json.dumps(personal, indent=2) + '\n').encode('utf-8')
+    for letter in 'abc':
+        (ROOT / f'upstream-test-{letter}.json').write_bytes(data)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--update", action="store_true")
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--follow-personal", action="store_true")
     args = parser.parse_args()
+    if args.follow_personal:
+        if not args.update:
+            parser.error('--follow-personal requires --update')
+        follow_personal()
     for path, expected in files().items():
         target = ROOT / path
         if args.update:

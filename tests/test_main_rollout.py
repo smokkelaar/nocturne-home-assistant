@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 import main_rollout
 import prebuilt_publish
+import update_test_channels
 
 
 class MainRolloutTests(unittest.TestCase):
@@ -64,3 +65,23 @@ class MainRolloutTests(unittest.TestCase):
     def test_other_channels_keep_their_source_policy(self):
         self.assertIsNone(main_rollout.load(ROOT, 'personal'))
         self.assertIsNone(main_rollout.load(ROOT, 'unknown'))
+
+    def test_personal_promotion_updates_all_four_installers_together(self):
+        personal = prebuilt_publish.read(ROOT / 'upstream-personal.json')
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'upstream-personal.json').write_text(json.dumps(personal))
+            for letter in 'abc':
+                (root / f'upstream-test-{letter}.json').write_text('{"commit":"old"}')
+            with patch.object(update_test_channels, 'ROOT', root):
+                update_test_channels.follow_personal()
+            for letter in 'abc':
+                self.assertEqual(personal, prebuilt_publish.read(root / f'upstream-test-{letter}.json'))
+        workflow = (ROOT / '.github/workflows/personal.yml').read_text()
+        self.assertIn('update_test_channels.py --follow-personal --update', workflow)
+        paths = workflow.split('add-paths:', 1)[1].split('body:', 1)[0]
+        for name in ('upstream-personal.json', 'nocturne_personal'):
+            self.assertIn(name, paths)
+        for letter in 'abc':
+            self.assertIn(f'upstream-test-{letter}.json', paths)
+            self.assertIn(f'nocturne_test_{letter}', paths)

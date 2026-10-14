@@ -25,7 +25,9 @@ jobs:
       - name: Resolve exact Personal source following the approved Daily
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python tools/update_personal.py --update
+        run: |
+          python tools/update_personal.py --update
+          python tools/update_test_channels.py --follow-personal --update
       - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1
         id: proposal
         with:
@@ -36,8 +38,14 @@ jobs:
           add-paths: |
             upstream-personal.json
             nocturne_personal
+            upstream-test-a.json
+            upstream-test-b.json
+            upstream-test-c.json
+            nocturne_test_a
+            nocturne_test_b
+            nocturne_test_c
           body: |
-            Personal-only source promotion, following the Daily base already accepted here.
+            Personal and Test A/B/C source promotion, following the Daily base already accepted here.
             API and web are compiled from the same exact fork commit and archive checksum.
             This proposal is not a passing build: required Validate includes the
             Personal source build and upgrade before protected auto-merge.
