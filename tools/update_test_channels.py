@@ -17,6 +17,11 @@ def read(path):
 
 
 def validate_test_pr_source(source, channel="Test B"):
+    if source.get("channel") == "personal":
+        personal = read("upstream-personal.json")
+        if source != personal:
+            raise ValueError(f"{channel} must use the exact approved Personal source")
+        return
     if source.get("channel") == "main":
         latest = read("upstream-latest.json")
         if (source.get("repository") != update_personal.REPO or
@@ -58,7 +63,7 @@ def files():
     if personal["upstream"] != latest:
         raise ValueError("All development channels must use the approved Latest base")
     validate_test_b_source(test_b)
-    if test_a.get("channel") == "main":
+    if test_a.get("channel") in ("main", "personal"):
         validate_test_pr_source(test_a, "Test A")
     validate_test_pr_source(test_c, "Test C")
     generated = {}
@@ -91,20 +96,21 @@ def files():
         version = config["version"]
         name = "Nocturne Test " + letter.upper()
         if letter in ("a", "b", "c"):
-            if letter == "a" and source.get("channel") != "main" and (source.get("channel") != "google-health-pr" or
+            if letter == "a" and source.get("channel") not in ("main", "personal") and (source.get("channel") != "google-health-pr" or
                     source.get("repository") != update_personal.REPO or
                     source.get("pull_request") != 1293):
                 raise ValueError("Unexpected Google Health PR source")
             source_lock = {**personal, "commit": source["commit"],
                            "commit_at": source["commit_at"],
                            "archive_sha256": source["archive_sha256"],
-                           "upstream": {**latest, "commit": source["base_commit"],
-                                        "commit_at": source["base_commit_at"]}}
+                           "upstream": source["upstream"] if source.get("channel") == "personal" else
+                               {**latest, "commit": source["base_commit"],
+                                "commit_at": source["base_commit_at"]}}
             recipe = update_personal.files(source_lock, personal["version"] + "-p1", maintenance=False)["Dockerfile"].decode()
         else:
             recipe = (ROOT / "nocturne_personal" / "Dockerfile").read_text(encoding="utf-8")
         recipe = recipe.replace("Nocturne Personal Release", name).replace("Nocturne Latest Release", name)
-        if letter == "a":
+        if letter == "a" and source.get("channel") != "personal":
             recipe = recipe.replace("checksum-verified Personal source", "checksum-verified Google Health source")
         recipe = re.sub(r"ARG BUILD_VERSION=\S+", "ARG BUILD_VERSION=" + version, recipe)
         generated[package + "/Dockerfile"] = recipe
@@ -120,7 +126,20 @@ def files():
                        source_commit=source["commit"], source_at=source.get("commit_at"),
                        base_commit=base_commit, commit_at=base_at,
                        nocturne="main@" + base_commit[:7])
-        if source.get("channel") == "main":
+        if source.get("channel") == "personal":
+            label = "Personal " + personal["version"]
+            purpose = "Dezelfde bijgewerkte Personal-bron testen met een eigen database en sessie."
+            description = label + " · main " + base_commit[:7]
+            runtime.update(personal=personal["version"], base="Nocturne main + Personal",
+                           nocturne=label, release=label, commit_at=source["commit_at"])
+            generated[package + "/README.md"] = (
+                f"# {name}\n\n{label}, exact source `{source['commit']}`, "
+                f"based on official Nocturne main `{base_commit}`. "
+                f"Default host port {port}, separate data and cookies.\n")
+            docs = (ROOT / "nocturne_latest/DOCS.md").read_text(encoding="utf-8")
+            generated[package + "/DOCS.md"] = docs.replace("Nocturne Latest Release", name).replace("8449", str(port)) + (
+                f"\nThis isolated channel uses the same source as Personal {personal['version']}: `{source['commit']}`.\n")
+        elif source.get("channel") == "main":
             purpose = "Ongewijzigde Nocturne main testen als basis voor nieuwe ontwikkeling."
             description = f"Nocturne main {base_commit[:7]}"
             runtime.pop("personal", None)
@@ -159,19 +178,21 @@ def files():
             runtime["base"] = "Nocturne main + PR #1293"
             runtime["nocturne"] = "main@" + source["base_commit"][:7] + " + PR #1293"
             runtime["release"] = "Google Health PR #1293"
-        if source.get("channel") != "main" and letter in ("b", "c") and source["commit"] == source["base_commit"]:
+        if source.get("channel") not in ("main", "personal") and letter in ("b", "c") and source["commit"] == source["base_commit"]:
             label += " (merged into main)"
             description = f"Nocturne main {base_commit[:7]} · {label}"
             runtime.update(base="Nocturne main", nocturne="main@" + base_commit[:7], release=label)
             purpose += " De oorspronkelijke PR is gemerged; dit kanaal valideert nu de actuele main."
-        runtime["release_url"] = source.get("pull_request_url") or f"https://github.com/nightscout/nocturne/tree/{base_commit}"
+        runtime["release_url"] = (f"https://github.com/{source['repository']}/tree/{source['commit']}"
+                                  if source.get("channel") == "personal" else
+                                  source.get("pull_request_url") or f"https://github.com/nightscout/nocturne/tree/{base_commit}")
         runtime.update(purpose=purpose, purpose_url=runtime["release_url"],
                        test_plan=("Open Reports → Comparison; kies twee periodes met metingen en controleer Hypo Duration (uren), Hypo Events en het verschil. Test ook nul hypo's, een periode zonder data, wisselen van periodes en print. Laag en zeer laag binnen één episode mogen niet dubbel tellen."
                                   if letter == "b" else "Open Settings → Connectors → Google Health, autoriseer Google, test paging en herstel vanaf een datum voor steps, heart rate, weight en sleep."
                                   if letter == "a" else
                                   "Maak of reset een klokface en kies per face mg/dL of mmol/L en 12/24 uur; open de face als eigenaar, als ingelogde kijker met andere voorkeuren en via de publieke kloklink; controleer de builder-preview en dat oude faces mg/dL en 12 uur tonen."),
                        test_url="https://github.com/smokkelaar/nocturne-home-assistant")
-        if source.get("channel") == "main":
+        if source.get("channel") in ("main", "personal"):
             runtime["test_plan"] = "Basiswerking, containerstart en upgrade van de bestaande testinstantie controleren."
         if not publication_mode(ROOT):
             config["description"] = f"HA wrapper {runtime['app']} · {description}. Isolated test instance; not for clinical use."
@@ -190,11 +211,24 @@ def files():
             for path, data in generated.items()}
 
 
+def follow_personal():
+    personal = read('upstream-personal.json')
+    update_personal.validate(personal)
+    data = (json.dumps(personal, indent=2) + '\n').encode('utf-8')
+    for letter in 'abc':
+        (ROOT / f'upstream-test-{letter}.json').write_bytes(data)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--update", action="store_true")
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--follow-personal", action="store_true")
     args = parser.parse_args()
+    if args.follow_personal:
+        if not args.update:
+            parser.error('--follow-personal requires --update')
+        follow_personal()
     for path, expected in files().items():
         target = ROOT / path
         if args.update:

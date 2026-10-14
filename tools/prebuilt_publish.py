@@ -70,7 +70,7 @@ def recipe_hash(root, package, legacy_builder=None):
               root / 'publication.json']
     channel = next((key for key, value in CHANNELS.items() if value == package), None)
     if main_rollout.load(root, channel):
-        paths += [root / 'main-rollout.json', root / 'tools/main_rollout.py', root / 'nocturne_personal/Dockerfile']
+        paths += [root / 'main-rollout.json', root / 'tools/main_rollout.py', root / 'upstream-latest.json']
     if legacy_builder is not None:
         paths.append(root / 'tools/prebuilt_publish.py')
     for path in sorted(paths, key=lambda item: item.relative_to(root).as_posix()):
@@ -165,10 +165,14 @@ def prepare(root, destination, wrapper_commit, run_number, attempt, baseline_ref
             metadata = main_rollout.metadata(metadata, rollout)
         lock = locks['official' if channel == 'official' else 'latest']
         # Source-built variants use Personal's separately approved runtime base.
-        if channel not in ('official', 'latest') or rollout:
+        if rollout:
+            lock = read(root / 'upstream-latest.json')
+            if lock['commit'] != rollout['commit']:
+                raise ValueError('Official main metadata and runtime images must match')
+        elif channel not in ('official', 'latest'):
             lock = read(root / 'upstream-personal.json')['upstream']
         pins = {arch: {kind: runtime_pin(lock, kind, arch, tools)
-                      for kind in (('api', 'web') if channel in ('official', 'latest') and not rollout else ('api',))}
+                      for kind in (('api', 'web') if channel in ('official', 'latest') else ('api',))}
                 for arch in PLATFORMS}
         config.update(version=version, image=image_name(repo, channel), arch=['amd64', 'aarch64'],
                       description=f"Vooraf gebouwd 1.x · AMD64/ARM64 · {metadata.get('release', metadata['nocturne'])} · HA wrapper {metadata['app']}. Experimental; not for clinical use.")
@@ -184,8 +188,6 @@ def prepare(root, destination, wrapper_commit, run_number, attempt, baseline_ref
             context = destination / f'{channel}-{arch}'
             shutil.copytree(root / package, context, ignore=shutil.ignore_patterns('__pycache__', 'provenance.json'), dirs_exist_ok=True)
             recipe_text = (context / 'Dockerfile').read_text(encoding='utf-8')
-            if rollout:
-                recipe_text = main_rollout.recipe(root, config['name'], rollout)
             for kind, digest in pins[arch].items():
                 recipe_text = re.sub(rf'FROM ghcr.io/nightscout/nocturne/nocturne-{kind}@sha256:[0-9a-f]{{64}}',
                                      f'FROM ghcr.io/nightscout/nocturne/nocturne-{kind}@{digest}', recipe_text)

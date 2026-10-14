@@ -9,10 +9,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 import main_rollout
 import prebuilt_publish
+import update_test_channels
 
 
 class MainRolloutTests(unittest.TestCase):
-    def test_all_selected_images_compile_the_pinned_fix_and_preserve_storage_identity(self):
+    def test_official_images_and_four_personal_sources_preserve_storage_identity(self):
         def inspect(repository, reference, arch, *args):
             return {'digest': reference if reference.startswith('sha256:') else 'sha256:' + 'a' * 64}
 
@@ -32,20 +33,29 @@ class MainRolloutTests(unittest.TestCase):
                 if rollout:
                     self.assertEqual(rollout['commit'], metadata['source_commit'])
                     self.assertEqual(rollout['repository'], metadata['repository'])
-                    self.assertIn('--checksum=sha256:' + rollout['archive_sha256'], recipe)
-                    self.assertIn('/tar.gz/' + rollout['commit'], recipe)
-                    self.assertIn('COPY --from=source /out/api/ /app/', recipe)
-                    self.assertIn('COPY --from=source /out/web/', recipe)
+                    self.assertNotIn('codeload.github.com/smokkelaar', recipe)
+                    self.assertNotIn('COPY --from=source', recipe)
+                    self.assertEqual({'api', 'web'}, set(prebuilt_publish.read(destination / 'candidates.json')['official']['runtime_pins'][item['arch']]))
                     previous = prebuilt_publish.read(ROOT / item['package'] / 'rootfs/opt/nocturne-ha/version.json')
                     self.assertEqual(previous['cookie_namespace'], metadata['cookie_namespace'])
                     self.assertEqual(previous['default_public_url'], metadata['default_public_url'])
+                elif item['channel'] == 'latest':
+                    approved = prebuilt_publish.read(ROOT / 'upstream-latest.json')
+                    self.assertEqual('nightscout/nocturne', metadata['repository'])
+                    self.assertEqual(approved['commit'], metadata['source_commit'])
+                    self.assertNotIn('COPY --from=source', recipe)
                 else:
-                    self.assertEqual('personal', item['channel'])
-                    self.assertEqual('0.3.36', metadata['personal'])
+                    personal = prebuilt_publish.read(ROOT / 'upstream-personal.json')
+                    self.assertEqual(personal['version'], metadata['personal'])
+                    self.assertEqual(personal['commit'], metadata['source_commit'])
+                    self.assertEqual(personal['repository'], metadata['repository'])
+                    self.assertIn('/tar.gz/' + personal['commit'], recipe)
+                    self.assertIn('COPY --from=source /out/api/ /app/', recipe)
+                    self.assertIn('COPY --from=source /out/web/', recipe)
 
     def test_invalid_source_cannot_enter_a_build(self):
         manifest = json.loads((ROOT / 'main-rollout.json').read_text())
-        for field, value in [('commit', 'main'), ('archive_sha256', 'unchecked'), ('repository', 'other/repository')]:
+        for field, value in [('source', 'unverified'), ('channels', ['latest']), ('repository', 'smokkelaar/nocturne-personal')]:
             with self.subTest(field=field), tempfile.TemporaryDirectory() as temporary:
                 path = Path(temporary)
                 (path / 'main-rollout.json').write_text(json.dumps({**manifest, field: value}))
@@ -55,3 +65,23 @@ class MainRolloutTests(unittest.TestCase):
     def test_other_channels_keep_their_source_policy(self):
         self.assertIsNone(main_rollout.load(ROOT, 'personal'))
         self.assertIsNone(main_rollout.load(ROOT, 'unknown'))
+
+    def test_personal_promotion_updates_all_four_installers_together(self):
+        personal = prebuilt_publish.read(ROOT / 'upstream-personal.json')
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'upstream-personal.json').write_text(json.dumps(personal))
+            for letter in 'abc':
+                (root / f'upstream-test-{letter}.json').write_text('{"commit":"old"}')
+            with patch.object(update_test_channels, 'ROOT', root):
+                update_test_channels.follow_personal()
+            for letter in 'abc':
+                self.assertEqual(personal, prebuilt_publish.read(root / f'upstream-test-{letter}.json'))
+        workflow = (ROOT / '.github/workflows/personal.yml').read_text()
+        self.assertIn('update_test_channels.py --follow-personal --update', workflow)
+        paths = workflow.split('add-paths:', 1)[1].split('body:', 1)[0]
+        for name in ('upstream-personal.json', 'nocturne_personal'):
+            self.assertIn(name, paths)
+        for letter in 'abc':
+            self.assertIn(f'upstream-test-{letter}.json', paths)
+            self.assertIn(f'nocturne_test_{letter}', paths)

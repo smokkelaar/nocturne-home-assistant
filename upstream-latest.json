@@ -1,23 +1,23 @@
 {
   "channel": "main",
-  "commit": "5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca",
-  "workflow_run": 38097589610,
-  "commit_at": "2026-10-11T00:11:32Z",
-  "published_at": "2026-10-11T00:11:35Z",
+  "commit": "2efc0d66e12ff9ad1dc10767075092eca78efb32",
+  "workflow_run": 38631381085,
+  "commit_at": "2026-10-14T20:21:30Z",
+  "published_at": "2026-10-14T20:21:33Z",
   "api": {
-    "tag": "main-5ad70cb",
-    "digest": "sha256:7d597387c42986be03921054461e604e623157a19dad0edef4ef18c6082bb3ee",
+    "tag": "main-2efc0d6",
+    "digest": "sha256:24fea7a0a02579b880527b842b288d9f808a97c3bf892699a97c299747dd486c",
     "platforms": {
-      "amd64": "sha256:7d597387c42986be03921054461e604e623157a19dad0edef4ef18c6082bb3ee",
-      "arm64": "sha256:56328c4e15bcce43fff1101ad16dff7ca484eef05b33081d34ce11b21376ad6a"
+      "amd64": "sha256:24fea7a0a02579b880527b842b288d9f808a97c3bf892699a97c299747dd486c",
+      "arm64": "sha256:b76bfad5fb252f66183976b3dc0e4b4b0d5bfd9a6105865f67bbae2a6d63f1df"
     }
   },
   "web": {
-    "tag": "main-5ad70cb",
-    "digest": "sha256:6c16e2d1ad05f8941b0a9623281b8444ce20f54ed30a7073715b7b155f485375",
+    "tag": "main-2efc0d6",
+    "digest": "sha256:1879271896ebbee6b7b940eb0c76a45a6fc5fabe5ce79bf1190e07c85f41225f",
     "platforms": {
-      "amd64": "sha256:6c16e2d1ad05f8941b0a9623281b8444ce20f54ed30a7073715b7b155f485375",
-      "arm64": "sha256:d67f8c70399a3792b80bd70c08ad7914300f12190fb021d3a8fd3c44cbafbff0"
+      "amd64": "sha256:1879271896ebbee6b7b940eb0c76a45a6fc5fabe5ce79bf1190e07c85f41225f",
+      "arm64": "sha256:4273db7836c507729e43bc73e9e03224a1e060370f0a87b6113b4e3f63476243"
     }
   }
 }

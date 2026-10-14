@@ -1,4 +1,4 @@
-# Both API and web are compiled from the same checksum-verified Google Health source.
+# Both API and web are compiled from the same checksum-verified Personal source.
 FROM node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d AS node
 FROM rust@sha256:4673f78db88b71f09d5451bbc404734807918161241215ba0a50bbbe9b448117 AS rust
 FROM mcr.microsoft.com/dotnet/sdk@sha256:0e53453ccfc8ff2d51319fe80c678971c6d0f8008dff3565fa88e15840b69854 AS source
@@ -11,7 +11,7 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@11.5.0
-ADD --checksum=sha256:e39a5098d3994067195b2c3b16516114b35e957c8f17c0fb41f087d2bd77577a https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/5ad70cbffb8e9cf5f4e9e03133a3c68718b90dca /tmp/source.tar.gz
+ADD --checksum=sha256:6f6da7d2bd2e5328768a79c830c363ccd9700bf951d1157f91520706c0ef8ee9 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/945790ed14d69a21690fbfa00716e2a8648e5165 /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
 WORKDIR /src/src/Web
@@ -39,7 +39,7 @@ RUN mkdir -p /out/web/packages/app /out/web/packages/bridge \
     && cp packages/bridge/package.json /out/web/packages/bridge/ \
     && cp -r packages/bridge/dist /out/web/packages/bridge/
 # Use the matching approved Daily runtime/OS; replace its application with our source build.
-FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:7d597387c42986be03921054461e604e623157a19dad0edef4ef18c6082bb3ee
+FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:24fea7a0a02579b880527b842b288d9f808a97c3bf892699a97c299747dd486c
 USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /out/api-build-date /opt/nocturne-ha/api-build-date
