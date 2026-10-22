@@ -4,7 +4,7 @@ FROM node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd3
 FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:24fea7a0a02579b880527b842b288d9f808a97c3bf892699a97c299747dd486c
 
 USER root
-ARG BUILD_VERSION=1.0.74301
+ARG BUILD_VERSION=1.0.84101
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Latest Release - Home Assistant app" \
