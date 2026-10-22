@@ -18,6 +18,22 @@ spec.loader.exec_module(updater)
 
 
 class LatestUpdateTests(unittest.TestCase):
+    def test_publishing_runs_use_the_resolved_workflow_id(self):
+        with patch.object(updater, 'fetch', side_effect=[
+            ({'id': 207514855}, ''), ({'workflow_runs': []}, '')
+        ]) as fetch:
+            self.assertEqual({'workflow_runs': []}, updater.github(
+                'actions/workflows/docker-publish.yml/runs?branch=main&event=push&per_page=50'))
+        self.assertEqual(
+            'https://api.github.com/repos/nightscout/nocturne/actions/workflows/207514855/runs?branch=main&event=push&per_page=50',
+            fetch.call_args.args[0])
+
+    def test_invalid_publishing_workflow_id_is_rejected(self):
+        for value in (None, '207514855', True, 0):
+            with self.subTest(value=value), patch.object(updater, 'fetch', return_value=({'id': value}, '')):
+                with self.assertRaises(ValueError):
+                    updater.github('actions/workflows/docker-publish.yml/runs?branch=main')
+
     def setUp(self):
         self.lock = json.loads((ROOT / 'upstream-latest.json').read_text(encoding='utf-8'))
 

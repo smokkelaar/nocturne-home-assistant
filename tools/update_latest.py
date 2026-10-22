@@ -48,6 +48,13 @@ def fetch(url, headers=None, expected_digest=None):
 def github(path):
     token = os.environ.get('GH_TOKEN') or os.environ.get('GITHUB_TOKEN')
     headers = {'Authorization': 'Bearer ' + token} if token else {}
+    workflow = 'actions/workflows/docker-publish.yml'
+    if path.startswith(workflow + '/runs?'):
+        metadata = fetch('https://api.github.com/repos/' + PROJECT + '/' + workflow, headers)[0]
+        workflow_id = metadata.get('id')
+        if type(workflow_id) is not int or workflow_id <= 0:
+            raise ValueError('Invalid upstream publishing workflow identity')
+        path = path.replace(workflow, f'actions/workflows/{workflow_id}', 1)
     return fetch('https://api.github.com/repos/' + PROJECT + '/' + path, headers)[0]
 
 
