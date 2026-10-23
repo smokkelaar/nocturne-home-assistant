@@ -53,6 +53,17 @@ def source_url(lock):
     return f'https://codeload.github.com/{REPO}/tar.gz/{lock["commit"]}'
 
 
+def require_merged_base(approved, base, commit):
+    if not re.fullmatch(r'[0-9a-f]{40}', base):
+        raise ValueError('Invalid Personal upstream base')
+    if base == approved:
+        return
+    for ancestor, descendant in ((approved, base), (base, commit)):
+        comparison = github(f'compare/{ancestor}...{descendant}')
+        if comparison.get('status') not in ('ahead', 'identical') or comparison.get('merge_base_commit', {}).get('sha') != ancestor:
+            raise ValueError('Personal upstream base must preserve approved source history')
+
+
 def resolve():
     approved = json.loads((ROOT / 'upstream-latest.json').read_text())
     head = github('commits/personal')
@@ -74,8 +85,7 @@ def resolve():
                 'version': previous['version']}
     else:
         meta = github(f'contents/.personal/version.json?ref={commit}', raw=True)
-    if meta['base_commit'] != approved['commit']:
-        raise ValueError('Personal has not yet merged the currently approved Daily base')
+    require_merged_base(approved['commit'], meta['base_commit'], commit)
     comparison = github(f'compare/{approved["commit"]}...{commit}')
     if comparison['status'] not in ('ahead', 'identical') or comparison['merge_base_commit']['sha'] != approved['commit']:
         raise ValueError('Personal does not descend from the approved Daily commit')
@@ -154,7 +164,7 @@ def files(lock, delivery, maintenance=True):
         config['arch'] = current_config['arch']
     config['options']['public_url'] = 'https://homeassistant.local:8450'
     stamp = datetime.fromisoformat(lock['upstream']['commit_at'].replace('Z', '+00:00')).strftime('%Y-%m-%d %H:%M UTC')
-    config['description'] = f"HA wrapper {wrapper} · Personal {lock['version']} · Daily {lock['upstream']['commit'][:7]} - {stamp}. Experimental; not for clinical use. Local build: HA may show 0% until it finishes."
+    config['description'] = f"HA wrapper {wrapper} Â· Personal {lock['version']} Â· Daily {lock['upstream']['commit'][:7]} - {stamp}. Experimental; not for clinical use. Local build: HA may show 0% until it finishes."
     if publication_mode(ROOT):
         config['description'] = current_config['description']
     generated['config.json'] = json.dumps(config, indent=2) + '\n'
