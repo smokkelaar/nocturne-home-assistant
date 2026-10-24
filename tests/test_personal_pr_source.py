@@ -1,8 +1,8 @@
-import copy
 import json
 from pathlib import Path
 import sys
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
@@ -11,7 +11,10 @@ import update_test_channels
 
 class PersonalPrSourceTests(unittest.TestCase):
     def source(self):
-        return json.loads((ROOT / "upstream-test-a.json").read_text(encoding="utf-8"))
+        return {"channel": "personal-pr", "repository": "smokkelaar/nocturne-personal",
+                "pull_request": 63, "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/63",
+                "commit": "a" * 40, "base_commit": "b" * 40, "archive_sha256": "c" * 64,
+                "commit_at": "2026-10-24T07:35:02Z", "base_commit_at": "2026-10-23T21:52:07Z"}
 
     def test_accepts_exact_personal_pr_for_test_a_only(self):
         source = self.source()
@@ -29,7 +32,10 @@ class PersonalPrSourceTests(unittest.TestCase):
                 update_test_channels.validate_test_pr_source({**self.source(), field: value}, "Test A")
 
     def test_generated_test_a_identifies_the_pr_and_admin_test_plan(self):
-        generated = update_test_channels.files()
+        read = update_test_channels.read
+        with patch.object(update_test_channels, "read", side_effect=lambda path:
+                          self.source() if path == "upstream-test-a.json" else read(path)):
+            generated = update_test_channels.files()
         runtime = json.loads(generated["nocturne_test_a/rootfs/opt/nocturne-ha/version.json"])
         self.assertEqual(self.source()["commit"], runtime["source_commit"])
         self.assertEqual(self.source()["pull_request_url"], runtime["release_url"])

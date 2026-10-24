@@ -129,9 +129,8 @@ class PersonalTests(unittest.TestCase):
                 config = json.loads((package / 'config.json').read_text())
                 runtime = json.loads((package / 'rootfs/opt/nocturne-ha/version.json').read_text())
                 source = json.loads((ROOT / f'upstream-test-{letter}.json').read_text())
-                if letter == 'a':
+                if source['channel'] == 'personal-pr':
                     update_test_channels.validate_test_pr_source(source, 'Test A')
-                    self.assertEqual('personal-pr', source['channel'])
                 else:
                     self.assertEqual(personal, source)
                 self.assertEqual(source['commit'], runtime['source_commit'])
@@ -142,10 +141,10 @@ class PersonalTests(unittest.TestCase):
                 self.assertEqual('NocturneTest' + letter.upper() + '_', runtime['cookie_namespace'])
                 self.assertEqual(port, config['ports']['8448/tcp'])
                 self.assertEqual(f'https://homeassistant.local:{port}', runtime['default_public_url'])
-                self.assertEqual('Personal PR #' + str(source['pull_request']) if letter == 'a' else 'Personal ' + personal['version'], runtime['release'])
+                self.assertEqual('Personal PR #' + str(source['pull_request']) if source['channel'] == 'personal-pr' else 'Personal ' + personal['version'], runtime['release'])
                 self.assertEqual(personal['version'], runtime['personal'])
                 self.assertNotIn('PR #', runtime['purpose'])
-                if letter != 'a':
+                if source['channel'] != 'personal-pr':
                     self.assertNotIn('pull_request', source)
                 self.assertEqual(source.get('pull_request_url', 'https://github.com/' + personal['repository'] + '/tree/' + personal['commit']), runtime['release_url'])
                 recipe = (package / 'Dockerfile').read_text()
