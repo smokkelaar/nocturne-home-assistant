@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 import sys
 import unittest
+import tempfile
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -45,3 +46,16 @@ class PersonalPrSourceTests(unittest.TestCase):
         for letter in "bc":
             expected = (ROOT / f"nocturne_test_{letter}/rootfs/opt/nocturne-ha/version.json").read_bytes()
             self.assertEqual(expected, generated[f"nocturne_test_{letter}/rootfs/opt/nocturne-ha/version.json"])
+
+    def test_daily_personal_promotion_keeps_the_explicit_test_a_pr_pin(self):
+        personal = json.loads((ROOT / "upstream-personal.json").read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name, value in (("upstream-personal.json", personal), ("upstream-test-a.json", self.source()),
+                                ("upstream-test-b.json", personal), ("upstream-test-c.json", personal)):
+                (root / name).write_text(json.dumps(value), encoding="utf-8")
+            with patch.object(update_test_channels, "ROOT", root):
+                update_test_channels.follow_personal()
+            self.assertEqual(self.source(), json.loads((root / "upstream-test-a.json").read_text()))
+            for letter in "bc":
+                self.assertEqual(personal, json.loads((root / f"upstream-test-{letter}.json").read_text()))

@@ -253,6 +253,8 @@ def follow_personal():
     update_personal.validate(personal)
     data = (json.dumps(personal, indent=2) + '\n').encode('utf-8')
     for letter in 'abc':
+        if read(f'upstream-test-{letter}.json').get('channel') == 'personal-pr':
+            continue
         (ROOT / f'upstream-test-{letter}.json').write_bytes(data)
 
 
