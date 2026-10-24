@@ -1,31 +1,11 @@
 {
-  "channel": "personal",
+  "channel": "personal-pr",
   "repository": "smokkelaar/nocturne-personal",
-  "version": "0.3.39",
-  "commit": "959682dab50c9a4484ec21f64f7b16ee7dc0b7dc",
-  "commit_at": "2026-10-23T21:29:29Z",
-  "upstream": {
-    "channel": "main",
-    "commit": "971dd4a78e2aa89a64f910719bb3bf0ca079b1cd",
-    "workflow_run": 39904278202,
-    "commit_at": "2026-10-23T05:10:14Z",
-    "published_at": "2026-10-23T05:10:18Z",
-    "api": {
-      "tag": "main-971dd4a",
-      "digest": "sha256:81c6490eb40492e1700a80d88a883a8fcd8d4fadf47373cf9d2a4f722e2e2c53",
-      "platforms": {
-        "amd64": "sha256:81c6490eb40492e1700a80d88a883a8fcd8d4fadf47373cf9d2a4f722e2e2c53",
-        "arm64": "sha256:6c1024c1c1efbd8c1cb34aa4cf3a1dd5f5ee80ab8f0b863d7417279d4dd1cd1f"
-      }
-    },
-    "web": {
-      "tag": "main-971dd4a",
-      "digest": "sha256:58af5aa4b62b6a86136f1fed18025c87fb3e2596e25aed5d86afa6319545a8a1",
-      "platforms": {
-        "amd64": "sha256:58af5aa4b62b6a86136f1fed18025c87fb3e2596e25aed5d86afa6319545a8a1",
-        "arm64": "sha256:6f12cad7a7a0c79d4467f8771d2c3fefb30ff5ba9688f26ec6558e3b86ddf687"
-      }
-    }
-  },
-  "archive_sha256": "02d1e8d60269030c8c2dc28a467e86b565dca631b9afa65293fe58aa6541ab37"
+  "pull_request": 63,
+  "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/63",
+  "commit": "967ee3fc5890dd3ca09c10a50e8106b55431aefe",
+  "commit_at": "2026-10-24T07:35:02Z",
+  "base_commit": "3d6a7277fb18f0776fed4886e00bb09a6a17693b",
+  "base_commit_at": "2026-10-23T21:52:07Z",
+  "archive_sha256": "4b402f499fa31806fa91d3bafb075670f84571d5b1669b0186d1e972b8b8a626"
 }

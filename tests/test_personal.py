@@ -120,7 +120,7 @@ class PersonalTests(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(ValueError):
                 update_test_channels.validate_test_b_source({**source, field: value})
 
-    def test_test_channels_use_the_exact_personal_source_with_distinct_runtime_identities(self):
+    def test_test_channels_use_their_pinned_source_with_distinct_runtime_identities(self):
         latest = json.loads((ROOT / 'upstream-latest.json').read_text())
         personal = json.loads((ROOT / 'upstream-personal.json').read_text())
         for letter, port in zip('abc', (8451, 8452, 8453)):
@@ -129,20 +129,25 @@ class PersonalTests(unittest.TestCase):
                 config = json.loads((package / 'config.json').read_text())
                 runtime = json.loads((package / 'rootfs/opt/nocturne-ha/version.json').read_text())
                 source = json.loads((ROOT / f'upstream-test-{letter}.json').read_text())
-                self.assertEqual(personal, source)
+                if letter == 'a':
+                    update_test_channels.validate_test_pr_source(source, 'Test A')
+                    self.assertEqual('personal-pr', source['channel'])
+                else:
+                    self.assertEqual(personal, source)
                 self.assertEqual(source['commit'], runtime['source_commit'])
-                self.assertEqual(latest['commit'], runtime['base_commit'])
+                self.assertEqual(source.get('base_commit', latest['commit']), runtime['base_commit'])
                 self.assertEqual(source['repository'], runtime['repository'])
                 self.assertEqual(config['version'], runtime['package'])
                 self.assertEqual('Nocturne Test ' + letter.upper(), config['name'])
                 self.assertEqual('NocturneTest' + letter.upper() + '_', runtime['cookie_namespace'])
                 self.assertEqual(port, config['ports']['8448/tcp'])
                 self.assertEqual(f'https://homeassistant.local:{port}', runtime['default_public_url'])
-                self.assertEqual('Personal ' + personal['version'], runtime['release'])
+                self.assertEqual('Personal PR #' + str(source['pull_request']) if letter == 'a' else 'Personal ' + personal['version'], runtime['release'])
                 self.assertEqual(personal['version'], runtime['personal'])
                 self.assertNotIn('PR #', runtime['purpose'])
-                self.assertNotIn('pull_request', source)
-                self.assertEqual('https://github.com/' + personal['repository'] + '/tree/' + personal['commit'], runtime['release_url'])
+                if letter != 'a':
+                    self.assertNotIn('pull_request', source)
+                self.assertEqual(source.get('pull_request_url', 'https://github.com/' + personal['repository'] + '/tree/' + personal['commit']), runtime['release_url'])
                 recipe = (package / 'Dockerfile').read_text()
                 self.assertIn('--checksum=sha256:' + source['archive_sha256'], recipe)
                 self.assertIn(source['commit'], recipe)

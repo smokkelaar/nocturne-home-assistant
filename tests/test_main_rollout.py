@@ -47,9 +47,10 @@ class MainRolloutTests(unittest.TestCase):
                 else:
                     personal = prebuilt_publish.read(ROOT / 'upstream-personal.json')
                     self.assertEqual(personal['version'], metadata['personal'])
-                    self.assertEqual(personal['commit'], metadata['source_commit'])
+                    source = prebuilt_publish.read(ROOT / 'upstream-test-a.json') if item['channel'] == 'test-a' else personal
+                    self.assertEqual(source['commit'], metadata['source_commit'])
                     self.assertEqual(personal['repository'], metadata['repository'])
-                    self.assertIn('/tar.gz/' + personal['commit'], recipe)
+                    self.assertIn('/tar.gz/' + source['commit'], recipe)
                     self.assertIn('COPY --from=source /out/api/ /app/', recipe)
                     self.assertIn('COPY --from=source /out/web/', recipe)
 
