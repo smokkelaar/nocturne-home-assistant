@@ -1,6 +1,6 @@
 {
   "name": "Nocturne Test B",
-  "version": "1.0.89801",
+  "version": "1.0.91501",
   "slug": "nocturne_test_b",
   "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal PR #68 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
   "url": "https://github.com/smokkelaar/nocturne-home-assistant",

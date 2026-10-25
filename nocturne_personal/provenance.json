@@ -2,10 +2,10 @@
   "format": 1,
   "channel": "personal",
   "package": "nocturne_personal",
-  "version": "1.0.88301",
+  "version": "1.0.91501",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "d02508332aac3aaeb1f5bbdf1eccb0b8047d35e8",
-  "recipe": "8916cbcb5d90e16c8fe9cdb1995a657a4396da783ddeaa008ee6b64eccd89adf",
+  "wrapper_commit": "30c5feaa32ded15cd52e6610acee2fc17a3a6163",
+  "recipe": "8c7c01127d1c519734603da75d2b2e5f8da57da45294383b5bc15ebf07973579",
   "source_repository": "smokkelaar/nocturne-personal",
   "source_commit": "47d4182e87f4bb1e775fb1036594a481c19522ee",
   "architectures": [
@@ -22,7 +22,7 @@
   },
   "config": {
     "name": "Nocturne Personal Release",
-    "version": "1.0.88301",
+    "version": "1.0.91501",
     "slug": "nocturne_personal",
     "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal 0.3.41 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
@@ -74,9 +74,9 @@
   },
   "previous_config": {
     "name": "Nocturne Personal Release",
-    "version": "1.0.85801",
+    "version": "1.0.88301",
     "slug": "nocturne_personal",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal 0.3.39 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal 0.3.41 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
       "amd64",
@@ -125,7 +125,7 @@
     "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-personal-{arch}"
   },
   "digests": {
-    "amd64": "sha256:ad6a459688ede638733b70fa706ee941f3ea37339227d64066542fe0992daa87",
-    "aarch64": "sha256:9a3a1d456be6c9edc78d7a11a199096991277dd320750b13106e0513387cbd4c"
+    "amd64": "sha256:7d4344f778f3be67c4d8294f0f63f415ca984fae53a90de04a4208317f0a0042",
+    "aarch64": "sha256:321d439fb794de3b3f248347194e3a2bc83d13a7a6775635d6fcb307fa4d3814"
   }
 }
