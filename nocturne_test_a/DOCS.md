@@ -79,7 +79,7 @@ Automatic app updates are optional per app in HA. Enable them only for **Nocturn
 
 From wrapper **0.1.10**, all six variants offer **Consciously skip gateway check** (`skip_gateway_check`, default false). Only effective with `gateway_auth: false`; save and restart this app. It skips only the wrapper authentication probe; Nocturne access/share permissions and TLS/host checks still apply. The helper prominently shows `GATEWAY_SKIPPED`. Test A now uses the same visible settings: migrate old `verify_native_auth: false` to `skip_gateway_check: true`, remove the old YAML key, save and restart. The canonical option takes precedence; restore the guard with `skip_gateway_check: false`. [Configuration and rollback](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/GATEWAY.md).
 
-This isolated channel tests [Personal PR #63](https://github.com/smokkelaar/nocturne-personal/pull/63) at `17f9de9f1c332e2f44ac3a0fe51011266314413e`. Configure Google Health under Settings → Admin → Integrations; its former environment settings are no longer used.
+This isolated channel tests [Personal PR #63](https://github.com/smokkelaar/nocturne-personal/pull/63) at `c60d18b5995528f190b4739e3e49eaf56a24454b`. Configure Google Health under Settings → Admin → Integrations; its former environment settings are no longer used.
 
 ## Experimental maintenance
 

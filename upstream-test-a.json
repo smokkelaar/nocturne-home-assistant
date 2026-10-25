@@ -3,9 +3,9 @@
   "repository": "smokkelaar/nocturne-personal",
   "pull_request": 63,
   "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/63",
-  "commit": "17f9de9f1c332e2f44ac3a0fe51011266314413e",
-  "commit_at": "2026-10-24T07:41:58Z",
-  "base_commit": "3d6a7277fb18f0776fed4886e00bb09a6a17693b",
-  "base_commit_at": "2026-10-23T21:52:07Z",
-  "archive_sha256": "146a4f4f422002e1349165f683f5ba88e0ffa00f5bf36478cbf61919dd3869c0"
+  "commit": "c60d18b5995528f190b4739e3e49eaf56a24454b",
+  "commit_at": "2026-10-25T11:53:00Z",
+  "base_commit": "08ec3b9ac0704b9dce0a1d09f05250c0f12437a1",
+  "base_commit_at": "2026-10-25T10:13:54Z",
+  "archive_sha256": "ecd4b816ebf065aa63314ec7a529e7eb9b7413e794b00cca45604ab05081a90d"
 }

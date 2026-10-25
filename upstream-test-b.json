@@ -1,31 +1,31 @@
 {
   "channel": "personal",
   "repository": "smokkelaar/nocturne-personal",
-  "version": "0.3.39",
-  "commit": "959682dab50c9a4484ec21f64f7b16ee7dc0b7dc",
-  "commit_at": "2026-10-23T21:29:29Z",
+  "version": "0.3.41",
+  "commit": "47d4182e87f4bb1e775fb1036594a481c19522ee",
+  "commit_at": "2026-10-25T11:50:33Z",
   "upstream": {
     "channel": "main",
-    "commit": "971dd4a78e2aa89a64f910719bb3bf0ca079b1cd",
-    "workflow_run": 39904278202,
-    "commit_at": "2026-10-23T05:10:14Z",
-    "published_at": "2026-10-23T05:10:18Z",
+    "commit": "3caa43cbe614b194cfe6c764714845cd24fc65f6",
+    "workflow_run": 40147188351,
+    "commit_at": "2026-10-25T00:33:52Z",
+    "published_at": "2026-10-25T00:33:55Z",
     "api": {
-      "tag": "main-971dd4a",
-      "digest": "sha256:81c6490eb40492e1700a80d88a883a8fcd8d4fadf47373cf9d2a4f722e2e2c53",
+      "tag": "main-3caa43c",
+      "digest": "sha256:eb6c38c252abdfecab469e0cdc9b12d9f939ac5df608d3b2965c18a202860d99",
       "platforms": {
-        "amd64": "sha256:81c6490eb40492e1700a80d88a883a8fcd8d4fadf47373cf9d2a4f722e2e2c53",
-        "arm64": "sha256:6c1024c1c1efbd8c1cb34aa4cf3a1dd5f5ee80ab8f0b863d7417279d4dd1cd1f"
+        "amd64": "sha256:eb6c38c252abdfecab469e0cdc9b12d9f939ac5df608d3b2965c18a202860d99",
+        "arm64": "sha256:f8969b40b1847b21960c174f9de5c86d9fffaa8c613f1804210c182b5608a331"
       }
     },
     "web": {
-      "tag": "main-971dd4a",
-      "digest": "sha256:58af5aa4b62b6a86136f1fed18025c87fb3e2596e25aed5d86afa6319545a8a1",
+      "tag": "main-3caa43c",
+      "digest": "sha256:956de2131fecc5edffaef004ebbab70de35e6f060836d73129b4260ce79a6eae",
       "platforms": {
-        "amd64": "sha256:58af5aa4b62b6a86136f1fed18025c87fb3e2596e25aed5d86afa6319545a8a1",
-        "arm64": "sha256:6f12cad7a7a0c79d4467f8771d2c3fefb30ff5ba9688f26ec6558e3b86ddf687"
+        "amd64": "sha256:956de2131fecc5edffaef004ebbab70de35e6f060836d73129b4260ce79a6eae",
+        "arm64": "sha256:9eb834b4208938679f2bbf6decb2c1a76d0525b9830d8bbeb5571dd7e9973223"
       }
     }
   },
-  "archive_sha256": "02d1e8d60269030c8c2dc28a467e86b565dca631b9afa65293fe58aa6541ab37"
+  "archive_sha256": "5c69fc448d20202be024348808a8f2a88790d77554764e8be57515955789e26d"
 }

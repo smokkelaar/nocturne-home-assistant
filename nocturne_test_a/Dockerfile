@@ -7,11 +7,11 @@ COPY --from=node /usr/local/ /usr/local/
 COPY --from=rust /usr/local/cargo/ /usr/local/cargo/
 COPY --from=rust /usr/local/rustup/ /usr/local/rustup/
 ENV CARGO_HOME=/usr/local/cargo RUSTUP_HOME=/usr/local/rustup PATH=/usr/local/cargo/bin:$PATH
-ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
+ENV CI=true DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@11.5.0
-ADD --checksum=sha256:146a4f4f422002e1349165f683f5ba88e0ffa00f5bf36478cbf61919dd3869c0 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/17f9de9f1c332e2f44ac3a0fe51011266314413e /tmp/source.tar.gz
+ADD --checksum=sha256:ecd4b816ebf065aa63314ec7a529e7eb9b7413e794b00cca45604ab05081a90d https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/c60d18b5995528f190b4739e3e49eaf56a24454b /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
 WORKDIR /src/src/Web
@@ -39,7 +39,7 @@ RUN mkdir -p /out/web/packages/app /out/web/packages/bridge \
     && cp packages/bridge/package.json /out/web/packages/bridge/ \
     && cp -r packages/bridge/dist /out/web/packages/bridge/
 # Use the matching approved Daily runtime/OS; replace its application with our source build.
-FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:81c6490eb40492e1700a80d88a883a8fcd8d4fadf47373cf9d2a4f722e2e2c53
+FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:eb6c38c252abdfecab469e0cdc9b12d9f939ac5df608d3b2965c18a202860d99
 USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /out/api-build-date /opt/nocturne-ha/api-build-date

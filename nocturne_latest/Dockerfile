@@ -1,7 +1,7 @@
 # API and frontend are paired by upstream-latest.json and pinned by OCI digest.
-FROM ghcr.io/nightscout/nocturne/nocturne-web@sha256:58af5aa4b62b6a86136f1fed18025c87fb3e2596e25aed5d86afa6319545a8a1 AS web
+FROM ghcr.io/nightscout/nocturne/nocturne-web@sha256:956de2131fecc5edffaef004ebbab70de35e6f060836d73129b4260ce79a6eae AS web
 FROM node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d AS node
-FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:81c6490eb40492e1700a80d88a883a8fcd8d4fadf47373cf9d2a4f722e2e2c53
+FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:eb6c38c252abdfecab469e0cdc9b12d9f939ac5df608d3b2965c18a202860d99
 
 USER root
 ARG BUILD_VERSION=1.0.85801
@@ -33,7 +33,7 @@ COPY build/ /opt/nocturne-ha-build/
 WORKDIR /opt/nocturne-web
 RUN python3 /opt/nocturne-ha-build/prepare_web.py /opt/nocturne-web \
     && find . -type d -name node_modules -prune -exec rm -rf '{}' + \
-    && npm install -g pnpm@10.13.1 \
+    && npm install -g pnpm@11.5.0 \
     && pnpm install --prod --frozen-lockfile --filter @nocturne/app... \
     && chown -R nocturne-web:nocturne-web /opt/nocturne-web
 # Upstream enables a global virtual store. The guarded patch disables it so no
