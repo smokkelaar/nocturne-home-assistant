@@ -138,7 +138,7 @@ jobs:
           echo "maintenance=$(python -c 'import json; m=json.load(open("work/prebuilt-matrix.json")); print(json.dumps({"include":[{"channel":p} for p in sorted({i["package"] for i in m["include"]})]}))')" >> "$GITHUB_OUTPUT"
           echo "cookies=$(python -c 'import json; m=json.load(open("work/prebuilt-matrix.json")); print(str(any(i["channel"] in ("official","latest","personal") for i in m["include"])).lower())')" >> "$GITHUB_OUTPUT"
           echo "changed=$(python -c 'import json; print(str(bool(json.load(open("work/prebuilt-matrix.json"))["include"])).lower())')" >> "$GITHUB_OUTPUT"
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: prebuilt-candidates
           path: work/prebuilt
