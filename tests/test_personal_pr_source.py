@@ -17,12 +17,12 @@ class PersonalPrSourceTests(unittest.TestCase):
                 "commit": "a" * 40, "base_commit": "b" * 40, "archive_sha256": "c" * 64,
                 "commit_at": "2026-10-24T07:35:02Z", "base_commit_at": "2026-10-23T21:52:07Z"}
 
-    def test_accepts_exact_personal_pr_for_test_a_and_b_only(self):
+    def test_accepts_exact_personal_pr_for_each_test_channel_only(self):
         source = self.source()
-        update_test_channels.validate_test_pr_source(source, "Test A")
-        update_test_channels.validate_test_pr_source(source, "Test B")
+        for channel in ("Test A", "Test B", "Test C"):
+            update_test_channels.validate_test_pr_source(source, channel)
         with self.assertRaises(ValueError):
-            update_test_channels.validate_test_pr_source(source, "Test C")
+            update_test_channels.validate_test_pr_source(source, "Personal")
 
     def test_personal_pr_source_overrides_purpose_plan_docs_and_version(self):
         source = {**self.source(), "pull_request": 68,

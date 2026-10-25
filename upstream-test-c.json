@@ -1,31 +1,15 @@
 {
-  "channel": "personal",
+  "channel": "personal-pr",
   "repository": "smokkelaar/nocturne-personal",
-  "version": "0.3.41",
-  "commit": "47d4182e87f4bb1e775fb1036594a481c19522ee",
-  "commit_at": "2026-10-25T11:50:33Z",
-  "upstream": {
-    "channel": "main",
-    "commit": "3caa43cbe614b194cfe6c764714845cd24fc65f6",
-    "workflow_run": 40147188351,
-    "commit_at": "2026-10-25T00:33:52Z",
-    "published_at": "2026-10-25T00:33:55Z",
-    "api": {
-      "tag": "main-3caa43c",
-      "digest": "sha256:eb6c38c252abdfecab469e0cdc9b12d9f939ac5df608d3b2965c18a202860d99",
-      "platforms": {
-        "amd64": "sha256:eb6c38c252abdfecab469e0cdc9b12d9f939ac5df608d3b2965c18a202860d99",
-        "arm64": "sha256:f8969b40b1847b21960c174f9de5c86d9fffaa8c613f1804210c182b5608a331"
-      }
-    },
-    "web": {
-      "tag": "main-3caa43c",
-      "digest": "sha256:956de2131fecc5edffaef004ebbab70de35e6f060836d73129b4260ce79a6eae",
-      "platforms": {
-        "amd64": "sha256:956de2131fecc5edffaef004ebbab70de35e6f060836d73129b4260ce79a6eae",
-        "arm64": "sha256:9eb834b4208938679f2bbf6decb2c1a76d0525b9830d8bbeb5571dd7e9973223"
-      }
-    }
-  },
-  "archive_sha256": "5c69fc448d20202be024348808a8f2a88790d77554764e8be57515955789e26d"
+  "pull_request": 72,
+  "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/72",
+  "personal_version": "0.3.41",
+  "commit": "76cec62d23bbe54d31dcea3c6202a8e369c2e7b2",
+  "commit_at": "2026-10-25T18:44:50Z",
+  "base_commit": "47d4182e87f4bb1e775fb1036594a481c19522ee",
+  "base_commit_at": "2026-10-25T11:50:33Z",
+  "archive_sha256": "a08e876ce8135ac40096eea68fb0792a3ea2285635bb742d208ae0d05b4ca576",
+  "purpose": "De nieuwe help-artikelen voor instellingen en beheer testen: kloppende uitleg per instellingenpagina, details in uitklapblokken, en nieuwe help bij Administratie, App autoriseren en Apparaat koppelen.",
+  "docs_note": "Personal 0.3.41 with the rewritten help for the settings and administration pages.",
+  "test_plan": "Open de help (boekje) op Settings → Account, Patient record, Appearance, Therapy, Data quality, Notifications & trackers, Active access, Sharing & privacy, Audit log, Data migration en Translations. Controleer dat de uitleg klopt met de pagina en dat details standaard ingeklapt zijn. Open als platformbeheerder Administration, Tenant management en Access requests. Zoek in de help op 'audit' als gewoon lid. Teksten zijn nog Engels; de Nederlandse vertaling volgt."
 }

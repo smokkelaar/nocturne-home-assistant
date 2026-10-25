@@ -19,7 +19,7 @@ def read(path):
 def validate_test_pr_source(source, channel="Test B"):
     if source.get("channel") == "personal-pr":
         pr = source.get("pull_request")
-        if (channel not in ("Test A", "Test B") or source.get("repository") != update_personal.REPO or
+        if (channel not in ("Test A", "Test B", "Test C") or source.get("repository") != update_personal.REPO or
                 type(pr) is not int or pr <= 0 or
                 source.get("pull_request_url") != f"https://github.com/{update_personal.REPO}/pull/{pr}" or
                 not re.fullmatch(r"[0-9a-f]{64}", source.get("archive_sha256", ""))):

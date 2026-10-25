@@ -1,3 +1,3 @@
 # Nocturne Test C
 
-Personal 0.3.41, exact source `47d4182e87f4bb1e775fb1036594a481c19522ee`, based on official Nocturne main `3caa43cbe614b194cfe6c764714845cd24fc65f6`. Default host port 8453, separate data and cookies.
+Personal PR #72, exact source `76cec62d23bbe54d31dcea3c6202a8e369c2e7b2`. [Review the change](https://github.com/smokkelaar/nocturne-personal/pull/72). Default host port 8453, separate data and cookies.
