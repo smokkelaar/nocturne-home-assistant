@@ -2,12 +2,12 @@
   "format": 1,
   "channel": "test-c",
   "package": "nocturne_test_c",
-  "version": "1.0.91501",
+  "version": "1.0.92301",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "30c5feaa32ded15cd52e6610acee2fc17a3a6163",
-  "recipe": "ce5e29f2aa8335188707aa9a51741abc60a780beaad40a6f40c4187a40b8e7a8",
+  "wrapper_commit": "e886784b1fc7bccfd25337c850ce387f07e5c9fc",
+  "recipe": "22c4fa65f70d9a2dd3a0b282d1dbec9aefdd590da6ced1cc1cc97c4f0ac6b012",
   "source_repository": "smokkelaar/nocturne-personal",
-  "source_commit": "fe9d204840b5c14fe2054159ebb92096da52a5c3",
+  "source_commit": "c66082bacf5dbdc11d4b9aa82fb208b8c810ae69",
   "architectures": [
     "amd64",
     "arm64"
@@ -21,6 +21,58 @@
     }
   },
   "config": {
+    "name": "Nocturne Test C",
+    "version": "1.0.92301",
+    "slug": "nocturne_test_c",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal PR #75 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+    "url": "https://github.com/smokkelaar/nocturne-home-assistant",
+    "arch": [
+      "amd64",
+      "aarch64"
+    ],
+    "startup": "application",
+    "boot": "manual",
+    "init": false,
+    "timeout": 120,
+    "ingress": true,
+    "ingress_port": 8099,
+    "panel_icon": "mdi:heart-pulse",
+    "panel_title": "Nocturne Test C",
+    "panel_admin": true,
+    "ports": {
+      "8448/tcp": 8453
+    },
+    "ports_description": {
+      "8448/tcp": "Nocturne HTTPS - alleen lokaal gebruiken; extra toegangscode staat in de HA-webinterface"
+    },
+    "map": [
+      {
+        "type": "ssl",
+        "read_only": true
+      }
+    ],
+    "backup": "cold",
+    "options": {
+      "public_url": "https://homeassistant.local:8453",
+      "certificate": "",
+      "private_key": "",
+      "gateway_auth": true,
+      "skip_gateway_check": false,
+      "maintenance_enabled": false,
+      "maintenance_password": ""
+    },
+    "schema": {
+      "public_url": "url",
+      "certificate": "str",
+      "private_key": "str",
+      "gateway_auth": "bool",
+      "skip_gateway_check": "bool",
+      "maintenance_enabled": "bool",
+      "maintenance_password": "password"
+    },
+    "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-c-{arch}"
+  },
+  "previous_config": {
     "name": "Nocturne Test C",
     "version": "1.0.91501",
     "slug": "nocturne_test_c",
@@ -72,60 +124,8 @@
     },
     "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-c-{arch}"
   },
-  "previous_config": {
-    "name": "Nocturne Test C",
-    "version": "1.0.88301",
-    "slug": "nocturne_test_c",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal 0.3.41 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
-    "url": "https://github.com/smokkelaar/nocturne-home-assistant",
-    "arch": [
-      "amd64",
-      "aarch64"
-    ],
-    "startup": "application",
-    "boot": "manual",
-    "init": false,
-    "timeout": 120,
-    "ingress": true,
-    "ingress_port": 8099,
-    "panel_icon": "mdi:heart-pulse",
-    "panel_title": "Nocturne Test C",
-    "panel_admin": true,
-    "ports": {
-      "8448/tcp": 8453
-    },
-    "ports_description": {
-      "8448/tcp": "Nocturne HTTPS - alleen lokaal gebruiken; extra toegangscode staat in de HA-webinterface"
-    },
-    "map": [
-      {
-        "type": "ssl",
-        "read_only": true
-      }
-    ],
-    "backup": "cold",
-    "options": {
-      "public_url": "https://homeassistant.local:8453",
-      "certificate": "",
-      "private_key": "",
-      "gateway_auth": true,
-      "skip_gateway_check": false,
-      "maintenance_enabled": false,
-      "maintenance_password": ""
-    },
-    "schema": {
-      "public_url": "url",
-      "certificate": "str",
-      "private_key": "str",
-      "gateway_auth": "bool",
-      "skip_gateway_check": "bool",
-      "maintenance_enabled": "bool",
-      "maintenance_password": "password"
-    },
-    "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-c-{arch}"
-  },
   "digests": {
-    "amd64": "sha256:98de748bfdc572e1ea55fd9f438c7521142d6ae87be8d2a971206a8e60fcc59a",
-    "aarch64": "sha256:208b9797e3f155196aeed7665f6c95d95f2ad105c0d98870cf3538bcc302d6b4"
+    "amd64": "sha256:5bcec3b04b536787f6c142517a39c2da825c4113f0131933629b353ffa551c14",
+    "aarch64": "sha256:7269750f58ca3ce4fa4ad3cf8d98e48f3ab01c1d19ca3e4fb47207ba72361a4b"
   }
 }
