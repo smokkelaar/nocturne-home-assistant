@@ -1,31 +1,15 @@
 {
-  "channel": "personal",
+  "channel": "personal-pr",
   "repository": "smokkelaar/nocturne-personal",
-  "version": "0.3.41",
-  "commit": "47d4182e87f4bb1e775fb1036594a481c19522ee",
-  "commit_at": "2026-10-25T11:50:33Z",
-  "upstream": {
-    "channel": "main",
-    "commit": "3caa43cbe614b194cfe6c764714845cd24fc65f6",
-    "workflow_run": 40147188351,
-    "commit_at": "2026-10-25T00:33:52Z",
-    "published_at": "2026-10-25T00:33:55Z",
-    "api": {
-      "tag": "main-3caa43c",
-      "digest": "sha256:eb6c38c252abdfecab469e0cdc9b12d9f939ac5df608d3b2965c18a202860d99",
-      "platforms": {
-        "amd64": "sha256:eb6c38c252abdfecab469e0cdc9b12d9f939ac5df608d3b2965c18a202860d99",
-        "arm64": "sha256:f8969b40b1847b21960c174f9de5c86d9fffaa8c613f1804210c182b5608a331"
-      }
-    },
-    "web": {
-      "tag": "main-3caa43c",
-      "digest": "sha256:956de2131fecc5edffaef004ebbab70de35e6f060836d73129b4260ce79a6eae",
-      "platforms": {
-        "amd64": "sha256:956de2131fecc5edffaef004ebbab70de35e6f060836d73129b4260ce79a6eae",
-        "arm64": "sha256:9eb834b4208938679f2bbf6decb2c1a76d0525b9830d8bbeb5571dd7e9973223"
-      }
-    }
-  },
-  "archive_sha256": "5c69fc448d20202be024348808a8f2a88790d77554764e8be57515955789e26d"
+  "pull_request": 70,
+  "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/70",
+  "personal_version": "0.3.41",
+  "commit": "fe9d204840b5c14fe2054159ebb92096da52a5c3",
+  "commit_at": "2026-10-25T18:41:35Z",
+  "base_commit": "47d4182e87f4bb1e775fb1036594a481c19522ee",
+  "base_commit_at": "2026-10-25T11:50:33Z",
+  "archive_sha256": "a16be1c0a9a965fa591ef4cb51e736cf9b1bb789e7296eb9ca67d172e7ec7b65",
+  "purpose": "Nieuwe helpteksten voor dagelijks gebruik en meldingen bekijken: dashboard, kalender, tijdspannes, klok, voeding, maaltijden, inpakken, meldingsregels, simulator, geschiedenis, Niet storen, notificaties, tenants, setup en compatibiliteit.",
+  "docs_note": "Personal PR #70 rewrites the page guides for daily use and alerts, checked against how each page works, with collapsed detail sections and own guides for the alert rule editor and clock builder.",
+  "test_plan": "Open op elke pagina het helpboek (boekpictogram): Dashboard, Calendar, Time spans, Clock en de klokbouwer, Food, Meals, Tools → Packing en de paklijst, Alerts (Rules, Simulator, Do not disturb, History) en een bestaande regel in de editor, Settings → Setup en Dev tools → Compatibility. Controleer of de tekst klopt met wat je op de pagina ziet, of de uitklapblokken werken en of zoeken in de help de nieuwe pagina's vindt (bijvoorbeeld 'snooze', 'paklijst'/'packing', 'webhook')."
 }
