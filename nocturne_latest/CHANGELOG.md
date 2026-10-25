@@ -1,7 +1,9 @@
-## Unreleased source candidate
+## 1.0.88301
 
-- Latest source prepared: `3caa43cbe614b194cfe6c764714845cd24fc65f6`. The existing published image remains advertised until registry promotion.
+- New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
+- Existing app identity, options, private data and Nocturne source remain intact.
 
+- Latest source prepared: `3caa43cbe614b194cfe6c764714845cd24fc65f6`. 
 ## 1.0.85801
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
