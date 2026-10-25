@@ -19,18 +19,18 @@ def read(path):
 def validate_test_pr_source(source, channel="Test B"):
     if source.get("channel") == "personal-pr":
         pr = source.get("pull_request")
-        if (channel != "Test A" or source.get("repository") != update_personal.REPO or
+        if (channel not in ("Test A", "Test B") or source.get("repository") != update_personal.REPO or
                 type(pr) is not int or pr <= 0 or
                 source.get("pull_request_url") != f"https://github.com/{update_personal.REPO}/pull/{pr}" or
                 not re.fullmatch(r"[0-9a-f]{64}", source.get("archive_sha256", ""))):
-            raise ValueError("Invalid Test A Personal PR source")
+            raise ValueError(f"Invalid {channel} Personal PR source")
         for field in ("commit", "base_commit"):
             if not re.fullmatch(r"[0-9a-f]{40}", source.get(field, "")):
-                raise ValueError("Invalid Test A Personal PR commit")
+                raise ValueError(f"Invalid {channel} Personal PR commit")
         for field in ("commit_at", "base_commit_at"):
             stamp = datetime.fromisoformat(source.get(field, "").replace("Z", "+00:00"))
             if stamp.tzinfo is None:
-                raise ValueError("Test A Personal PR timestamps must include a timezone")
+                raise ValueError(f"{channel} Personal PR timestamps must include a timezone")
         return
     if source.get("channel") == "personal":
         personal = read("upstream-personal.json")
@@ -164,6 +164,22 @@ def files():
             docs = (ROOT / "nocturne_latest/DOCS.md").read_text(encoding="utf-8")
             docs = docs.replace("Nocturne Latest Release", name).replace("8449", str(port))
             generated[package + "/DOCS.md"] = docs + f"\nThis isolated channel uses unmodified upstream main `{base_commit}`, without additional PR patches.\n"
+        elif source.get("channel") == "personal-pr":
+            label = f"Personal PR #{source['pull_request']}"
+            purpose = source.get("purpose", "Google Health instellen via Admin testen, inclusief toegang voor uitsluitend platformbeheerders.")
+            description = f"{label} {source['commit'][:7]}"
+            runtime.update(personal=source.get("personal_version", personal["version"]), base="Nocturne Personal + PR",
+                           nocturne=label, release=label, commit_at=source["commit_at"])
+            generated[package + "/README.md"] = (
+                f"# {name}\n\n{label}, exact source `{source['commit']}`. "
+                f"[Review the change]({source['pull_request_url']}). "
+                f"Default host port {port}, separate data and cookies.\n")
+            docs = (ROOT / "nocturne_latest/DOCS.md").read_text(encoding="utf-8")
+            generated[package + "/DOCS.md"] = docs.replace("Nocturne Latest Release", name).replace("8449", str(port)) + (
+                f"\nThis isolated channel tests [Personal PR #{source['pull_request']}]({source['pull_request_url']}) "
+                f"at `{source['commit']}`. " + source.get(
+                    "docs_note", "Configure Google Health under Settings → Admin → Integrations; "
+                    "its former environment settings are no longer used.") + "\n")
         elif letter == "b":
             label = f"Hypo comparison PR #{source['pull_request']}"
             purpose = "Hypo Duration en Hypo Events tussen twee periodes vergelijken, naast de bestaande hyperinformatie."
@@ -184,21 +200,6 @@ def files():
             runtime["release"] = label
             recipe = recipe.replace("checksum-verified Personal source", "checksum-verified clock face units source")
             generated[package + "/Dockerfile"] = recipe
-        elif source.get("channel") == "personal-pr":
-            label = f"Personal PR #{source['pull_request']}"
-            purpose = "Google Health instellen via Admin testen, inclusief toegang voor uitsluitend platformbeheerders."
-            description = f"{label} {source['commit'][:7]}"
-            runtime.update(personal=personal["version"], base="Nocturne Personal + PR",
-                           nocturne=label, release=label, commit_at=source["commit_at"])
-            generated[package + "/README.md"] = (
-                f"# {name}\n\n{label}, exact source `{source['commit']}`. "
-                f"[Review the change]({source['pull_request_url']}). "
-                f"Default host port {port}, separate data and cookies.\n")
-            docs = (ROOT / "nocturne_latest/DOCS.md").read_text(encoding="utf-8")
-            generated[package + "/DOCS.md"] = docs.replace("Nocturne Latest Release", name).replace("8449", str(port)) + (
-                f"\nThis isolated channel tests [Personal PR #{source['pull_request']}]({source['pull_request_url']}) "
-                f"at `{source['commit']}`. Configure Google Health under Settings → Admin → Integrations; "
-                "its former environment settings are no longer used.\n")
         elif letter == "a":
             purpose = f"Google Health PR #1293 testen vóór merge, op een geïsoleerde Test {letter.upper()}-instantie."
             description = f"Google Health PR #1293 {source['commit'][:7]} · main {source['base_commit'][:7]}"
@@ -221,12 +222,12 @@ def files():
                                   "Maak of reset een klokface en kies per face mg/dL of mmol/L en 12/24 uur; open de face als eigenaar, als ingelogde kijker met andere voorkeuren en via de publieke kloklink; controleer de builder-preview en dat oude faces mg/dL en 12 uur tonen."),
                        test_url="https://github.com/smokkelaar/nocturne-home-assistant")
         if source.get("channel") == "personal-pr":
-            runtime["test_plan"] = (
+            runtime["test_plan"] = source.get("test_plan", (
                 "Open Settings → Admin → Integrations → Google Health als platformbeheerder. "
                 "Controleer client ID, gemaskeerd secret en exacte callback-URL. Sla op en verbind Google zonder herstart. "
                 "Controleer dat een gewone gebruiker en tenantbeheerder geen toegang hebben tot Admin of de instellingen-API. "
                 "Lege velden moeten bestaande sleutels behouden; wisselen van client ID moet opnieuw verbinden vragen. "
-                "Test uitschakelen, herstart en opnieuw inschakelen; geïmporteerde data moet behouden blijven.")
+                "Test uitschakelen, herstart en opnieuw inschakelen; geïmporteerde data moet behouden blijven."))
         if source.get("channel") in ("main", "personal"):
             runtime["test_plan"] = "Basiswerking, containerstart en upgrade van de bestaande testinstantie controleren."
         if not publication_mode(ROOT):

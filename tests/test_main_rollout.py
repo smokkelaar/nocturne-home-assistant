@@ -46,8 +46,11 @@ class MainRolloutTests(unittest.TestCase):
                     self.assertNotIn('COPY --from=source', recipe)
                 else:
                     personal = prebuilt_publish.read(ROOT / 'upstream-personal.json')
-                    self.assertEqual(personal['version'], metadata['personal'])
-                    source = prebuilt_publish.read(ROOT / 'upstream-test-a.json') if item['channel'] == 'test-a' else personal
+                    source = (prebuilt_publish.read(ROOT / f"upstream-{item['channel']}.json")
+                              if item['channel'].startswith('test-') else personal)
+                    if source.get('channel') != 'personal-pr':
+                        source = personal
+                    self.assertEqual(source.get('personal_version', personal['version']), metadata['personal'])
                     self.assertEqual(source['commit'], metadata['source_commit'])
                     self.assertEqual(personal['repository'], metadata['repository'])
                     self.assertIn('/tar.gz/' + source['commit'], recipe)
