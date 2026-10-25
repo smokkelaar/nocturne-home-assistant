@@ -33,7 +33,7 @@ COPY build/ /opt/nocturne-ha-build/
 WORKDIR /opt/nocturne-web
 RUN python3 /opt/nocturne-ha-build/prepare_web.py /opt/nocturne-web \
     && find . -type d -name node_modules -prune -exec rm -rf '{}' + \
-    && npm install -g pnpm@10.13.1 \
+    && npm install -g pnpm@11.5.0 \
     && pnpm install --prod --frozen-lockfile --filter @nocturne/app... \
     && chown -R nocturne-web:nocturne-web /opt/nocturne-web
 # Upstream enables a global virtual store. The guarded patch disables it so no
