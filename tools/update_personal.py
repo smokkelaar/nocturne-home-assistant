@@ -246,7 +246,9 @@ RUN printf '\\n=== Nocturne build phase 6/7: publish API ===\\n' \\
 WORKDIR /src/src/Web
 ENV PUBLIC_API_URL=http://localhost:1612 PUBLIC_WEBSOCKET_RECONNECT_ATTEMPTS=5 PUBLIC_WEBSOCKET_RECONNECT_DELAY=1000
 ENV PUBLIC_WEBSOCKET_MAX_RECONNECT_DELAY=30000 PUBLIC_WEBSOCKET_PING_TIMEOUT=15000 PUBLIC_WEBSOCKET_PING_INTERVAL=20000
+# The web build only reads the translation catalogs; a string they do not hold yet renders empty.
 RUN printf '\\n=== Nocturne build phase 7/7: build web application ===\\n' \\
+    && pnpm run translations:sync \\
     && pnpm --filter @nocturne/bot run build && pnpm --filter @nocturne/app run build
 RUN mkdir -p /out/web/packages/app /out/web/packages/bridge \\
     && cp package.json pnpm-lock.yaml pnpm-workspace.yaml /out/web/ \\
