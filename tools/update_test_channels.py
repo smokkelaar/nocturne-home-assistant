@@ -178,7 +178,7 @@ def files():
             generated[package + "/DOCS.md"] = docs.replace("Nocturne Latest Release", name).replace("8449", str(port)) + (
                 f"\nThis isolated channel tests [Personal PR #{source['pull_request']}]({source['pull_request_url']}) "
                 f"at `{source['commit']}`. " + source.get(
-                    "docs_note", "Configure Google Health under Settings → Admin → Integrations; "
+                    "docs_note", "Configure Google Health under Settings → Administration → Integrations; "
                     "its former environment settings are no longer used.") + "\n")
         elif letter == "b":
             label = f"Hypo comparison PR #{source['pull_request']}"
@@ -223,7 +223,7 @@ def files():
                        test_url="https://github.com/smokkelaar/nocturne-home-assistant")
         if source.get("channel") == "personal-pr":
             runtime["test_plan"] = source.get("test_plan", (
-                "Open Settings → Admin → Integrations → Google Health als platformbeheerder. "
+                "Open Settings → Administration → Integrations → Google Health als platformbeheerder. "
                 "Controleer client ID, gemaskeerd secret en exacte callback-URL. Sla op en verbind Google zonder herstart. "
                 "Controleer dat een gewone gebruiker en tenantbeheerder geen toegang hebben tot Admin of de instellingen-API. "
                 "Lege velden moeten bestaande sleutels behouden; wisselen van client ID moet opnieuw verbinden vragen. "
