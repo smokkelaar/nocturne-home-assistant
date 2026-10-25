@@ -2,10 +2,10 @@
   "format": 1,
   "channel": "test-b",
   "package": "nocturne_test_b",
-  "version": "1.0.89801",
+  "version": "1.0.91501",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "cd161c93f062ffd20bb22f82c174837bbaf415e6",
-  "recipe": "afa3e88f9a98184380852d491b702f7030dcef8a58574a2d1fe2dd9e1fb02aeb",
+  "wrapper_commit": "30c5feaa32ded15cd52e6610acee2fc17a3a6163",
+  "recipe": "b39f72a342fe7997ba9180fa78fc2cbf5232f11a426f243e15847e06aed6ce4b",
   "source_repository": "smokkelaar/nocturne-personal",
   "source_commit": "5a71ef43c4252257142a022a37b91cef0c1817c1",
   "architectures": [
@@ -22,7 +22,7 @@
   },
   "config": {
     "name": "Nocturne Test B",
-    "version": "1.0.89801",
+    "version": "1.0.91501",
     "slug": "nocturne_test_b",
     "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal PR #68 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
@@ -74,9 +74,9 @@
   },
   "previous_config": {
     "name": "Nocturne Test B",
-    "version": "1.0.88301",
+    "version": "1.0.89801",
     "slug": "nocturne_test_b",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal 0.3.41 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal PR #68 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
       "amd64",
@@ -125,7 +125,7 @@
     "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-b-{arch}"
   },
   "digests": {
-    "amd64": "sha256:dedf5da85d89e5442b544a4b08d1c180eba720d6c64babf625c9c63e14effeaa",
-    "aarch64": "sha256:460d7e08e5ee89e13bbed05687a55c1f7f191c4cb702a922a1780ec209ee1076"
+    "amd64": "sha256:f50cb00ca92f3bd525177b10459df676f396680be3b4605fe5869e2cb431d5d3",
+    "aarch64": "sha256:8c287d5131c508026c8f853a57f10eb6cd2bd9e5f4403a37d19cd1d51b38f6a9"
   }
 }
