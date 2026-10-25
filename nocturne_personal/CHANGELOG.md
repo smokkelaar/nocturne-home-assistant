@@ -1,11 +1,10 @@
-## Unreleased source candidate
+## 1.0.88301
+
+- New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
+- Existing app identity, options, private data and Nocturne source remain intact.
 
 Personal 0.3.41; source `47d4182e87f4bb1e775fb1036594a481c19522ee`; Daily base `3caa43cbe614b194cfe6c764714845cd24fc65f6`.
-
-## Unreleased source candidate
-
 Personal 0.3.41; source `b8a007a8f4062f555ddb897db67080ff75fdaa8c`; Daily base `3caa43cbe614b194cfe6c764714845cd24fc65f6`.
-
 ## 1.0.85801
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.

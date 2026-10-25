@@ -1,8 +1,8 @@
 {
   "name": "Nocturne Official Release",
-  "version": "1.0.85801",
+  "version": "1.0.88301",
   "slug": "nocturne_local",
-  "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Official main 971dd4a \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+  "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Official main 3caa43c \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
   "url": "https://github.com/smokkelaar/nocturne-home-assistant",
   "arch": [
     "amd64",
