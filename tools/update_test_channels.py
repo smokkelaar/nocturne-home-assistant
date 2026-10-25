@@ -111,10 +111,8 @@ def files():
         version = config["version"]
         name = "Nocturne Test " + letter.upper()
         if letter in ("a", "b", "c"):
-            if letter == "a" and source.get("channel") not in ("main", "personal", "personal-pr") and (source.get("channel") != "google-health-pr" or
-                    source.get("repository") != update_personal.REPO or
-                    source.get("pull_request") != 1293):
-                raise ValueError("Unexpected Google Health PR source")
+            if letter == "a" and source.get("channel") not in ("main", "personal", "personal-pr"):
+                raise ValueError("Unexpected Test A source")
             source_lock = {**personal, "commit": source["commit"],
                            "commit_at": source["commit_at"],
                            "archive_sha256": source["archive_sha256"],
