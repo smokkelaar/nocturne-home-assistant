@@ -2,7 +2,7 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 26 oktober 2026, 19:50 (NL-tijd)
+**Bijgewerkt:** 26 oktober 2026, 22:20 (NL-tijd)
 
 Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Controleren op updates.
 
@@ -17,10 +17,14 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 
 | # | Waar | Wat | Status |
 |---|---|---|---|
-| 1 | Test C (8453) | Helpboek op elke pagina controleren | Wacht op merge van [HA #172](https://github.com/smokkelaar/nocturne-home-assistant/pull/172), daarna op jou |
-| 2 | Test A (8451) | Google Health instellen via beheer | Wacht op merge van [HA #176](https://github.com/smokkelaar/nocturne-home-assistant/pull/176), daarna op jou |
-| 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | Wacht op build via [HA #175](https://github.com/smokkelaar/nocturne-home-assistant/pull/175) |
+| 1 | Test C (8453) | Helpboek op elke pagina controleren | Bronwijziging #172 gemerged; publicatie loopt |
+| 2 | Test A (8451) | Google Health instellen via beheer | Bronwijziging #176 gemerged; publicatie loopt |
+| 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | Bronwijziging #175 gemerged; publicatie loopt |
 | 4 | Personal (8450) | Jaaroverzicht-kleuren en HbA1c-precisie (0.3.43) | 0.3.43 wordt gebouwd |
+
+## Voorbereiding voor dinsdag 27 oktober
+
+HA #176 (A), #175 (B) en #172 (C) zijn op 26 oktober samengevoegd na geslaagde validatie op AMD64 en ARM64. De publicatie draait via [Actions](https://github.com/smokkelaar/nocturne-home-assistant/actions/runs/40403185802). De nieuwe images moeten daarna nog via de storepromotie worden aangeboden. De hieronder genoemde store-versies zijn nog de vorige publicaties. Installatie en werking op de eigen HA zijn hiermee niet bevestigd.
 
 ## Per instantie
 
@@ -33,7 +37,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
   2. Vul Client ID, Client secret en Callback URL in, zet Enabled aan en kies Save. Het secret moet na opslaan gemaskeerd zijn.
   3. Koppel Google Health zonder herstart en controleer dat er data binnenkomt.
   4. Herstart de app. De instellingen moeten blijven staan.
-- **Status:** wacht op merge van #176.
+- **Status:** #176 is gemerged; de nieuwe store-versie wacht op geslaagde publicatie.
 
 ### Test B (poort 8452)
 
@@ -51,7 +55,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 - **Store-versie:** 1.0.92301
 - **Wat erop staat:** Personal PR [#75](https://github.com/smokkelaar/nocturne-personal/pull/75), help-testbuild die alle open help-PR's combineert: dagelijks gebruik en meldingen (#70), instellingen en beheer (#72), connectors met Google Health (#63/#73), op `personal` dat de rapport-help (#71) al bevat.
 - **Basis:** `personal` met meerdere features tegelijk. ⚠ Afwijking van de spelregel. Dit is bewust gedaan om alle help samen te bekijken; bevestig dat dit zo mag blijven.
-- **Wacht klaar:** [HA #172](https://github.com/smokkelaar/nocturne-home-assistant/pull/172) zet Test C op #75 `e7a4e04`: help-testbuild op de nieuwste `personal` (0.3.43) met #70, #72, #77 en #63/#73. Elke pagina begint met een open blok "Wat je ziet en wat het betekent" (kleuren, percentages, drempels, routes voor stappen, hartslag en slaap), nu ook voor instellingen, beheer en koppelingen. De help is in het Nederlands vertaald. CI van #75 is groen op de vorige build; de nieuwe build draait.
+- **Gemerged, publicatie loopt:** [HA #172](https://github.com/smokkelaar/nocturne-home-assistant/pull/172) zet Test C op #75 `e7a4e04`: help-testbuild op de nieuwste `personal` (0.3.43) met #70, #72, #77 en #63/#73. Elke pagina begint met een open blok "Wat je ziet en wat het betekent" (kleuren, percentages, drempels, routes voor stappen, hartslag en slaap), nu ook voor instellingen, beheer en koppelingen. De help is in het Nederlands vertaald. CI van #75 is groen op de vorige build; de nieuwe build draait.
 - **Testen:**
   1. Open op elke pagina het helpboek (boekpictogram).
   2. Klopt de tekst met wat je ziet? Werken de uitklapblokken? Vindt zoeken in de help de pagina?
