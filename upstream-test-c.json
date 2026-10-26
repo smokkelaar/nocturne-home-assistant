@@ -3,13 +3,13 @@
   "repository": "smokkelaar/nocturne-personal",
   "pull_request": 75,
   "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/75",
-  "personal_version": "0.3.41",
-  "commit": "c66082bacf5dbdc11d4b9aa82fb208b8c810ae69",
-  "commit_at": "2026-10-25T21:00:28Z",
-  "base_commit": "5c6c4079fb1b6644921be2fa4cac5dea2d5852ca",
-  "base_commit_at": "2026-10-25T20:26:13Z",
-  "archive_sha256": "709700d31d176357e444cdb83ec0e2bab67a53fd4114479ef61975d37e9e657e",
-  "purpose": "Alle nieuwe helpteksten samen bekijken: dagelijks gebruik en meldingen (#70), instellingen en beheer (#72), rapporten (#71) en connectors met Google Health (#63/#73).",
-  "docs_note": "Personal draft PR #75 combines the open help PRs (#70, #72, #63 with connector help #73) on top of personal, which already holds the report help (#71). It is a test build only and is not merged.",
-  "test_plan": "Open op elke pagina het helpboek (boekpictogram) en controleer of de tekst klopt met wat je ziet, of de uitklapblokken werken en of zoeken in de help de pagina vindt. Dagelijks: Dashboard, Calendar, Time spans, Clock en de klokbouwer, Food, Meals, Tools → Packing, Alerts (Rules, Simulator, Do not disturb, History) en een regel in de editor. Instellingen en beheer: Settings (Profile, Appearance, Members, Setup) en Dev tools → Compatibility. Rapporten: Reports en de vijf Loop analysis-pagina's. Connectors: Settings → Connectors en de Google Health-instellingen. Zoek ook op 'snooze', 'packing', 'webhook' en 'Google Health'."
+  "personal_version": "0.3.43",
+  "commit": "e7a4e04059cf438e1b0a011a102c6be85a21e659",
+  "commit_at": "2026-10-26T18:38:42Z",
+  "base_commit": "3b72219718f496265b22e79ef3bd51fdaf95f3de",
+  "base_commit_at": "2026-10-26T18:10:09Z",
+  "archive_sha256": "42cb7ab547965c75eb085fe2f9275b320dbb75487e63c2742a0539a148969aaf",
+  "purpose": "Helptekst met echte inhoud bekijken: elke pagina begint met een open blok Wat je ziet en wat het betekent (kleuren, percentages, drempels, routes voor stappen/hartslag/slaap), nu ook voor instellingen, beheer en koppelingen, op de nieuwste personal. De help is in het Nederlands vertaald.",
+  "docs_note": "Personal draft PR #75 combines the open help PRs (#70, #72, #77, #63 with connector help #73) on top of current personal. It is a test build only and is not merged.",
+  "test_plan": "Zet de interfacetaal op Nederlands (Settings → Appearance). Open het helpboek op Dashboard, Calendar, Time spans, Clock, Food, Meals, Tools → Packing, Alerts (Rules, History, Do not disturb, Simulator, een regel), Notifications, de rapporten (onder andere AGP, Executive summary, Steps, Heart rate en Sleep) en enkele instellingen (Therapy, Appearance, Connectors & Apps, een koppeling). Controleer dat bovenaan Wat je ziet en wat het betekent open staat met uitleg die klopt met de pagina. Zoek in de help op Health Connect, Garmin en snooze."
 }
