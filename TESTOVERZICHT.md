@@ -2,7 +2,7 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 26 oktober 2026, 22:20 (NL-tijd)
+**Bijgewerkt:** 26 oktober 2026, 22:41 (NL-tijd)
 
 Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Controleren op updates.
 
@@ -17,54 +17,59 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 
 | # | Waar | Wat | Status |
 |---|---|---|---|
-| 1 | Test C (8453) | Helpboek op elke pagina controleren | Bronwijziging #172 gemerged; publicatie loopt |
-| 2 | Test A (8451) | Google Health instellen via beheer | Bronwijziging #176 gemerged; publicatie loopt |
-| 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | Bronwijziging #175 gemerged; publicatie loopt |
+| 1 | Test C (8453) | Helpboek op elke pagina controleren | 1.0.95701 beschikbaar; wacht op jouw test |
+| 2 | Test A (8451) | Google Health instellen via beheer | 1.0.95701 beschikbaar; wacht op jouw test |
+| 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | 1.0.95701 beschikbaar; wacht op jouw test |
 | 4 | Personal (8450) | Jaaroverzicht-kleuren en HbA1c-precisie (0.3.43) | 0.3.43 wordt gebouwd |
 
 ## Voorbereiding voor dinsdag 27 oktober
 
-HA #176 (A), #175 (B) en #172 (C) zijn op 26 oktober samengevoegd na geslaagde validatie op AMD64 en ARM64. De publicatie draait via [Actions](https://github.com/smokkelaar/nocturne-home-assistant/actions/runs/40403185802). De nieuwe images moeten daarna nog via de storepromotie worden aangeboden. De hieronder genoemde store-versies zijn nog de vorige publicaties. Installatie en werking op de eigen HA zijn hiermee niet bevestigd.
+HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https://github.com/smokkelaar/nocturne-home-assistant/actions/runs/40403185802) zijn geslaagd voor alle drie de kanalen op AMD64 en ARM64, inclusief opstarten, accountherstel, cold restore en upgraden vanaf de vorige versie. Publieke beschikbaarheid en image-labels zijn gecontroleerd. [Storepromotie #177](https://github.com/smokkelaar/nocturne-home-assistant/pull/177) is gemerged.
+
+**Alle drie staan nu op store-versie 1.0.95701.** Vernieuw de HA-store en update Test A, B en C. Installatie en werking op de eigen HA zijn vanuit deze sessie niet gecontroleerd; dit overzicht bevestigt de gepubliceerde pakketten.
 
 ## Per instantie
 
 ### Test A (poort 8451)
 
-- **Store-versie:** 1.0.93301, nog met Personal PR [#63](https://github.com/smokkelaar/nocturne-personal/pull/63) op `personal`.
-- **Komt eraan:** [HA #176](https://github.com/smokkelaar/nocturne-home-assistant/pull/176) zet Test A op Personal PR [#69](https://github.com/smokkelaar/nocturne-personal/pull/69) `c6a0571`: schone nightscout main `bd59934` met alleen de Google Health OAuth-instellingen in instantiebeheer. Daarmee volgt Test A de spelregel.
-- **Testen zodra #176 in de store staat:**
-  1. Ga naar Instellingen → Administratie → Integraties → Google Health.
-  2. Vul Client ID, Client secret en Callback URL in, zet Enabled aan en kies Save. Het secret moet na opslaan gemaskeerd zijn.
+- **Store-versie:** 1.0.95701.
+- **Bron:** [Personal PR #69](https://github.com/smokkelaar/nocturne-personal/pull/69), commit `c6a05714b17ac353374257b6b8832509398a887b`.
+- **Basis:** schone nightscout main `bd59934` met alleen Google Health OAuth-instellingen in instantiebeheer; vervangt de eerdere #63-build op Personal.
+- **Testen:**
+  1. Open Instellingen → Administratie → Integraties → Google Health als platformbeheerder.
+  2. Vul Client ID, Client secret en Callback URL in, zet Enabled aan en sla op. Het secret blijft daarna gemaskeerd.
   3. Koppel Google Health zonder herstart en controleer dat er data binnenkomt.
-  4. Herstart de app. De instellingen moeten blijven staan.
-- **Status:** #176 is gemerged; de nieuwe store-versie wacht op geslaagde publicatie.
+  4. Herstart de app: de instellingen blijven staan.
+  5. Controleer dat een gewone gebruiker en tenantbeheerder geen toegang hebben tot de beheerinstellingen of de instellingen-API.
+- **Status:** gepubliceerd; wacht op jouw test.
 
 ### Test B (poort 8452)
 
-- **Store-versie:** 1.0.91501 met Personal PR [#68](https://github.com/smokkelaar/nocturne-personal/pull/68). Die is achterhaald: #68 zit al in Personal 0.3.42.
-- **Komt eraan:** [HA #175](https://github.com/smokkelaar/nocturne-home-assistant/pull/175) zet Test B op Personal PR [#78](https://github.com/smokkelaar/nocturne-personal/pull/78), interactieve grafiekvoorbeelden in de help.
-- **Basis:** `personal`. #78 is een aangepaste versie van #76 voor Personal en is al gemerged in `personal`.
-- **Testen zodra #175 in de store staat:**
+- **Store-versie:** 1.0.95701.
+- **Bron:** [Personal PR #78](https://github.com/smokkelaar/nocturne-personal/pull/78), commit `012348422c25dc16f95aac290a1951de2c898975`.
+- **Doel:** interactieve grafiekvoorbeelden in de help, plus Snel starten en Problemen oplossen. Vervangt de achterhaalde #68-test.
+- **Basis:** Personal; #78 is de op Personal aangepaste variant van #76. Dit is geen schone-main-test voor upstream.
+- **Testen:**
   1. Open het helpboek bij AGP, Dagprofiel, Voorspelnauwkeurigheid, CGM-vergelijking, IDP en Slaap.
-  2. Het voorbeeld is een echte, interactieve grafiek met fictieve gegevens in plaats van een schets. Hover en wissel tussen licht en donker thema.
-  3. Bekijk de nieuwe gidsen "Snel starten" en "Problemen oplossen", in het Nederlands en het Engels.
-- **Status:** wacht op build.
+  2. Controleer het blok Verken de grafiek: knoppen wisselen uitleg, hover en pijltjestoetsen tonen waarden; eenheden en licht/donker thema volgen de instellingen.
+  3. Klik in het slaapvoorbeeld op een nacht: je blijft in de help.
+  4. Bekijk Snel starten en Problemen oplossen in het Nederlands en Engels; zoek op ontbrekende gegevens.
+  5. De voorbeelden gebruiken fictieve gegevens; je eigen gegevens en voorkeuren blijven behouden.
+- **Status:** gepubliceerd; wacht op jouw test.
 
 ### Test C (poort 8453)
 
-- **Store-versie:** 1.0.92301
-- **Wat erop staat:** Personal PR [#75](https://github.com/smokkelaar/nocturne-personal/pull/75), help-testbuild die alle open help-PR's combineert: dagelijks gebruik en meldingen (#70), instellingen en beheer (#72), connectors met Google Health (#63/#73), op `personal` dat de rapport-help (#71) al bevat.
-- **Basis:** `personal` met meerdere features tegelijk. ⚠ Afwijking van de spelregel. Dit is bewust gedaan om alle help samen te bekijken; bevestig dat dit zo mag blijven.
-- **Gemerged, publicatie loopt:** [HA #172](https://github.com/smokkelaar/nocturne-home-assistant/pull/172) zet Test C op #75 `e7a4e04`: help-testbuild op de nieuwste `personal` (0.3.43) met #70, #72, #77 en #63/#73. Elke pagina begint met een open blok "Wat je ziet en wat het betekent" (kleuren, percentages, drempels, routes voor stappen, hartslag en slaap), nu ook voor instellingen, beheer en koppelingen. De help is in het Nederlands vertaald. CI van #75 is groen op de vorige build; de nieuwe build draait.
+- **Store-versie:** 1.0.95701.
+- **Bron:** [Personal PR #75](https://github.com/smokkelaar/nocturne-personal/pull/75), commit `e7a4e04059cf438e1b0a011a102c6be85a21e659`.
+- **Doel:** Nederlandse paginahulp met bovenaan het open blok Wat je ziet en wat het betekent.
+- **Basis:** bestaande gecombineerde help-testbuild op Personal 0.3.43, met #70, #72, #77 en #63/#73. Dit is geen geïsoleerde schone-main-test. De bron-PR #75 blijft een testbuild en is niet gemerged.
 - **Testen:**
-  1. Open op elke pagina het helpboek (boekpictogram).
-  2. Klopt de tekst met wat je ziet? Werken de uitklapblokken? Vindt zoeken in de help de pagina?
-  3. Dagelijks: Dashboard, Calendar, Time spans, Clock en klokbouwer, Food, Meals, Tools → Packing, Alerts (Rules, Simulator, Do not disturb, History), Notifications. Zet de interfacetaal op Nederlands en controleer het open blok bovenaan.
-  4. Instellingen: Profile, Appearance, Members, Setup, Dev tools → Compatibility.
-  5. Rapporten: Reports en de vijf Loop analysis-pagina's.
-  6. Connectors: Settings → Connectors en Google Health.
-  7. Zoek op "snooze", "packing", "webhook" en "Google Health". Bekijk het in het Nederlands en het Engels.
-- **Status:** wacht op test.
+  1. Zet de interfacetaal op Nederlands en open het helpboek op Dashboard, Calendar, Time spans, Clock, Food, Meals, Packing, Alerts en Notifications.
+  2. Controleer ook rapporten zoals AGP, Executive summary, Steps, Heart rate en Sleep, plus Therapy, Appearance, Connectors & Apps en een koppeling.
+  3. Bovenaan staat Wat je ziet en wat het betekent open; uitleg over kleuren, percentages en drempels moet kloppen met de pagina.
+  4. Controleer uitklapblokken en zoek op Health Connect, Garmin, snooze, packing, webhook en Google Health.
+  5. Bekijk de teksten in het Nederlands en Engels.
+- **Status:** gepubliceerd; wacht op jouw test.
 
 ### Personal (poort 8450)
 
