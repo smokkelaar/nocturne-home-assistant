@@ -140,10 +140,18 @@ def successful_build(commit):
     raise NotReady('Current main has no successful paired-image publishing run yet')
 
 
-def resolve_candidate(current):
+def resolve_candidate(current, target='main'):
     validate_lock(current)
-    head = github('commits/main')
+    head = github(f'commits/{target}')
     branch_commit = head['sha']
+    if target != 'main':
+        # Personal must descend from Latest, so Latest stops at the main commit Personal builds on.
+        on_main = github(f'compare/{branch_commit}...main')
+        if on_main.get('status') not in ('ahead', 'identical'):
+            raise ValueError('Latest target is not part of upstream main')
+        behind = github(f"compare/{current['commit']}...{branch_commit}")
+        if behind.get('status') == 'behind':
+            raise NotReady('Latest target is older than the current Latest snapshot')
     try:
         run = successful_build(branch_commit)
     except NotReady:
@@ -175,7 +183,7 @@ def resolve_candidate(current):
     }
     # Close the race where main or the floating discovery tag changes while
     # manifests are being inspected. Nothing is written unless both stay put.
-    if github('commits/main')['sha'] != branch_commit or resolve_image('api', commit) != candidate['api']:
+    if github(f'commits/{target}')['sha'] != branch_commit or resolve_image('api', commit) != candidate['api']:
         raise NotReady('Upstream main/images changed during resolution; retry later')
     validate_lock(candidate)
     return candidate
@@ -263,7 +271,10 @@ def main():
     mode.add_argument('--check', action='store_true', help='Offline: verify Latest lock/generated files')
     mode.add_argument('--check-upstream', action='store_true', help='Online read-only: compare tested main')
     mode.add_argument('--update', action='store_true', help='Online: prepare a newer tested main snapshot')
+    parser.add_argument('--target', default='main', help='Newest main commit Latest may move to (default: main)')
     args = parser.parse_args()
+    if args.target != 'main' and not re.fullmatch(r'[0-9a-f]{40}', args.target):
+        raise ValueError('Latest target must be main or a full commit hash')
     current = json.loads((ROOT / 'upstream-latest.json').read_text(encoding='utf-8'))
     validate_lock(current)
     if args.check:
@@ -276,7 +287,7 @@ def main():
         print('Latest source and image pins are consistent.')
         return
     try:
-        candidate = resolve_candidate(current)
+        candidate = resolve_candidate(current, args.target)
     except NotReady as error:
         print('No promotable Latest snapshot: ' + str(error))
         return
