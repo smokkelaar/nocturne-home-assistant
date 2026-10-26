@@ -17,7 +17,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 
 | # | Waar | Wat | Status |
 |---|---|---|---|
-| 1 | Test C (8453) | Helpboek op elke pagina controleren | Wacht op jou, nieuwere build klaar in [HA #172](https://github.com/smokkelaar/nocturne-home-assistant/pull/172) |
+| 1 | Test C (8453) | Helpboek op elke pagina controleren | Wacht op merge van [HA #172](https://github.com/smokkelaar/nocturne-home-assistant/pull/172), daarna op jou |
 | 2 | Test A (8451) | Google Health instellen via beheer | Wacht op jou, zie waarschuwing bij Test A |
 | 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | Wacht op build via [HA #175](https://github.com/smokkelaar/nocturne-home-assistant/pull/175) |
 | 4 | Personal (8450) | Jaaroverzicht-kleuren en HbA1c-precisie (0.3.43) | 0.3.43 wordt gebouwd |
@@ -52,11 +52,11 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 - **Store-versie:** 1.0.92301
 - **Wat erop staat:** Personal PR [#75](https://github.com/smokkelaar/nocturne-personal/pull/75), help-testbuild die alle open help-PR's combineert: dagelijks gebruik en meldingen (#70), instellingen en beheer (#72), connectors met Google Health (#63/#73), op `personal` dat de rapport-help (#71) al bevat.
 - **Basis:** `personal` met meerdere features tegelijk. ⚠ Afwijking van de spelregel. Dit is bewust gedaan om alle help samen te bekijken; bevestig dat dit zo mag blijven.
-- **Wacht klaar:** [HA #172](https://github.com/smokkelaar/nocturne-home-assistant/pull/172) zet Test C op een nieuwere #75 met het open blok "Wat je ziet en wat het betekent" (#70 en #77) en Nederlandse help.
+- **Wacht klaar:** [HA #172](https://github.com/smokkelaar/nocturne-home-assistant/pull/172) zet Test C op #75 `e7a4e04`: help-testbuild op de nieuwste `personal` (0.3.43) met #70, #72, #77 en #63/#73. Elke pagina begint met een open blok "Wat je ziet en wat het betekent" (kleuren, percentages, drempels, routes voor stappen, hartslag en slaap), nu ook voor instellingen, beheer en koppelingen. De help is in het Nederlands vertaald. CI van #75 is groen op de vorige build; de nieuwe build draait.
 - **Testen:**
   1. Open op elke pagina het helpboek (boekpictogram).
   2. Klopt de tekst met wat je ziet? Werken de uitklapblokken? Vindt zoeken in de help de pagina?
-  3. Dagelijks: Dashboard, Calendar, Time spans, Clock en klokbouwer, Food, Meals, Tools → Packing, Alerts (Rules, Simulator, Do not disturb, History).
+  3. Dagelijks: Dashboard, Calendar, Time spans, Clock en klokbouwer, Food, Meals, Tools → Packing, Alerts (Rules, Simulator, Do not disturb, History), Notifications. Zet de interfacetaal op Nederlands en controleer het open blok bovenaan.
   4. Instellingen: Profile, Appearance, Members, Setup, Dev tools → Compatibility.
   5. Rapporten: Reports en de vijf Loop analysis-pagina's.
   6. Connectors: Settings → Connectors en Google Health.
