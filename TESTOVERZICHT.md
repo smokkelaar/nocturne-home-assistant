@@ -18,7 +18,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 | # | Waar | Wat | Status |
 |---|---|---|---|
 | 1 | Test C (8453) | Helpboek op elke pagina controleren | Wacht op merge van [HA #172](https://github.com/smokkelaar/nocturne-home-assistant/pull/172), daarna op jou |
-| 2 | Test A (8451) | Google Health instellen via beheer | Wacht op jou, zie waarschuwing bij Test A |
+| 2 | Test A (8451) | Google Health instellen via beheer | Wacht op merge van [HA #176](https://github.com/smokkelaar/nocturne-home-assistant/pull/176), daarna op jou |
 | 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | Wacht op build via [HA #175](https://github.com/smokkelaar/nocturne-home-assistant/pull/175) |
 | 4 | Personal (8450) | Jaaroverzicht-kleuren en HbA1c-precisie (0.3.43) | 0.3.43 wordt gebouwd |
 
@@ -26,15 +26,14 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 
 ### Test A (poort 8451)
 
-- **Store-versie:** 1.0.93301
-- **Wat erop staat:** Personal PR [#63](https://github.com/smokkelaar/nocturne-personal/pull/63), Google Health OAuth-instellingen verhuizen van ENV naar instantiebeheer.
-- **Basis:** `personal`, niet schone main. ⚠ Dit is tegen de spelregel. De schone variant bestaat al: Personal PR [#69](https://github.com/smokkelaar/nocturne-personal/pull/69) (nightscout main `bd59934` + alleen deze feature). Advies: Test A omzetten naar #69.
-- **Testen:**
+- **Store-versie:** 1.0.93301, nog met Personal PR [#63](https://github.com/smokkelaar/nocturne-personal/pull/63) op `personal`.
+- **Komt eraan:** [HA #176](https://github.com/smokkelaar/nocturne-home-assistant/pull/176) zet Test A op Personal PR [#69](https://github.com/smokkelaar/nocturne-personal/pull/69) `c6a0571`: schone nightscout main `bd59934` met alleen de Google Health OAuth-instellingen in instantiebeheer. Daarmee volgt Test A de spelregel.
+- **Testen zodra #176 in de store staat:**
   1. Ga naar Instellingen → Administratie → Integraties → Google Health.
-  2. Vul client ID, secret en callback-URL in. Het secret moet na opslaan gemaskeerd zijn.
+  2. Vul Client ID, Client secret en Callback URL in, zet Enabled aan en kies Save. Het secret moet na opslaan gemaskeerd zijn.
   3. Koppel Google Health zonder herstart en controleer dat er data binnenkomt.
   4. Herstart de app. De instellingen moeten blijven staan.
-- **Status:** wacht op test.
+- **Status:** wacht op merge van #176.
 
 ### Test B (poort 8452)
 
