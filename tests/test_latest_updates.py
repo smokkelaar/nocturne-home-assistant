@@ -213,5 +213,46 @@ class LatestUpdateTests(unittest.TestCase):
                 updater.resolve_candidate(self.lock)
 
 
+    def test_target_caps_latest_at_the_commit_personal_builds_on(self):
+        target = 'c' * 40
+        head = {'sha': target, 'commit': {'committer': {'date': '2026-10-09T09:16:08Z'}}}
+        run = {'id': 9, 'created_at': '2026-10-09T09:16:12Z'}
+        api = {'tag': 'main-' + target[:7], 'digest': 'sha256:' + 'd' * 64}
+        web = {'tag': 'main-' + target[:7], 'digest': 'sha256:' + 'e' * 64}
+        responses = [head, {'status': 'ahead'}, {'status': 'ahead', 'behind_by': 0},
+                     {'status': 'ahead', 'behind_by': 0}, head]
+        with patch.object(updater, 'github', side_effect=responses) as github, \
+             patch.object(updater, 'successful_build', return_value=run), \
+             patch.object(updater, 'resolve_image', side_effect=[api, web, api]):
+            result = updater.resolve_candidate(self.lock, target)
+        self.assertEqual(target, result['commit'])
+        self.assertEqual(f'commits/{target}', github.call_args_list[0].args[0])
+        self.assertEqual(f'compare/{target}...main', github.call_args_list[1].args[0])
+
+    def test_target_off_main_is_refused_and_older_target_waits(self):
+        target = 'c' * 40
+        with patch.object(updater, 'github', side_effect=[{'sha': target}, {'status': 'diverged'}]):
+            with self.assertRaises(ValueError):
+                updater.resolve_candidate(self.lock, target)
+        with patch.object(updater, 'github', side_effect=[{'sha': target}, {'status': 'ahead'}, {'status': 'behind'}]):
+            with self.assertRaises(updater.NotReady):
+                updater.resolve_candidate(self.lock, target)
+
+
+    def test_unpublished_target_lists_runs_up_to_its_push_and_builds_by_sha(self):
+        target = 'c' * 40
+        head = {'sha': target, 'commit': {'committer': {'date': '2026-10-25T11:50:33Z'}}}
+        with patch.object(updater, 'successful_build', side_effect=updater.NotReady()), \
+             patch.object(updater, 'github', side_effect=[head, {'status': 'ahead'}, {'status': 'ahead'},
+                                                          {'workflow_runs': []}]) as github:
+            with self.assertRaises(updater.NotReady):
+                updater.resolve_candidate(self.lock, target)
+        self.assertTrue(github.call_args_list[3].args[0].endswith('&created=%3C%3D2026-10-25T11:50:33Z'))
+        with patch.object(updater, 'github', return_value={'workflow_runs': []}) as github:
+            with self.assertRaises(updater.NotReady):
+                updater.successful_build(target)
+        self.assertIn('&head_sha=' + target, github.call_args.args[0])
+
+
 if __name__ == '__main__':
     unittest.main()
