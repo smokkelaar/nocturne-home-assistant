@@ -1,3 +1,7 @@
+## Unreleased source candidate
+
+Personal 0.3.43; source `3b72219718f496265b22e79ef3bd51fdaf95f3de`; Daily base `3caa43cbe614b194cfe6c764714845cd24fc65f6`.
+
 ## 1.0.93301
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
