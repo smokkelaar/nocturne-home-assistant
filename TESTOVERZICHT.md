@@ -2,7 +2,7 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 26 oktober 2026, 19:45 (NL-tijd)
+**Bijgewerkt:** 26 oktober 2026, 19:50 (NL-tijd)
 
 Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Controleren op updates.
 
@@ -19,7 +19,8 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 |---|---|---|---|
 | 1 | Test C (8453) | Helpboek op elke pagina controleren | Wacht op jou, nieuwere build klaar in [HA #172](https://github.com/smokkelaar/nocturne-home-assistant/pull/172) |
 | 2 | Test A (8451) | Google Health instellen via beheer | Wacht op jou, zie waarschuwing bij Test A |
-| 3 | Personal (8450) | Jaaroverzicht-kleuren en HbA1c-precisie (0.3.43) | Nog niet in de store, komt met de volgende Personal-update |
+| 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | Wacht op build via [HA #175](https://github.com/smokkelaar/nocturne-home-assistant/pull/175) |
+| 4 | Personal (8450) | Jaaroverzicht-kleuren en HbA1c-precisie (0.3.43) | 0.3.43 wordt gebouwd |
 
 ## Per instantie
 
@@ -37,10 +38,14 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 
 ### Test B (poort 8452)
 
-- **Store-versie:** 1.0.91501
-- **Wat erop staat:** Personal PR [#68](https://github.com/smokkelaar/nocturne-personal/pull/68), Personal 0.3.42.
-- **Status:** achterhaald. #68 is gemerged en zit al in Personal 0.3.42 (store 1.0.93301). Het vervolg (#79, jaaroverzicht-bolletjes en HbA1c-precisie) is ook al gemerged in `personal` als 0.3.43. Hier hoef je niets meer te testen.
-- **Vrij voor:** de volgende feature. Kandidaat: de help-grafiekvoorbeelden (#78 zit al in Personal) of een andere feature op schone main.
+- **Store-versie:** 1.0.91501 met Personal PR [#68](https://github.com/smokkelaar/nocturne-personal/pull/68). Die is achterhaald: #68 zit al in Personal 0.3.42.
+- **Komt eraan:** [HA #175](https://github.com/smokkelaar/nocturne-home-assistant/pull/175) zet Test B op Personal PR [#78](https://github.com/smokkelaar/nocturne-personal/pull/78), interactieve grafiekvoorbeelden in de help.
+- **Basis:** `personal`. #78 is een aangepaste versie van #76 voor Personal en is al gemerged in `personal`.
+- **Testen zodra #175 in de store staat:**
+  1. Open het helpboek bij AGP, Dagprofiel, Voorspelnauwkeurigheid, CGM-vergelijking, IDP en Slaap.
+  2. Het voorbeeld is een echte, interactieve grafiek met fictieve gegevens in plaats van een schets. Hover en wissel tussen licht en donker thema.
+  3. Bekijk de nieuwe gidsen "Snel starten" en "Problemen oplossen", in het Nederlands en het Engels.
+- **Status:** wacht op build.
 
 ### Test C (poort 8453)
 
@@ -68,7 +73,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
   1. Rapporten → Jaaroverzicht: versleep de buitenste bolletjes. Het palet loopt alleen tussen de bolletjes, waarden erbuiten krijgen de eindkleur en worden gedimd.
   2. Rapporten → eHbA1c: waarden tonen 2 decimalen in % en 1 in mmol/mol. Voer een lab-waarde in met die precisie en controleer de streefwaardecheck.
   3. Open de help bij AGP en Slaap: het voorbeeld is interactief.
-- **Status:** wacht op build.
+- **Status:** 0.3.43 wordt gebouwd.
 
 ### Latest (poort 8449)
 
