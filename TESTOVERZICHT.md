@@ -2,7 +2,7 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 26 oktober 2026, 22:41 (NL-tijd)
+**Bijgewerkt:** 26 oktober 2026, 23:55 (NL-tijd)
 
 Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Controleren op updates.
 
@@ -20,7 +20,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 | 1 | Test C (8453) | Helpboek op elke pagina controleren | 1.0.95701 beschikbaar; wacht op jouw test |
 | 2 | Test A (8451) | Google Health instellen via beheer | 1.0.95701 beschikbaar; wacht op jouw test |
 | 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | 1.0.95701 beschikbaar; wacht op jouw test |
-| 4 | Personal (8450) | Jaaroverzicht-kleuren en HbA1c-precisie (0.3.43) | 0.3.43 wordt gebouwd |
+| 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen (hertest van Test B-feedback), HbA1c-precisie en tooltip | 0.3.43 wordt gebouwd; tooltip-fix in [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) (0.3.44) open |
 
 ## Voorbereiding voor dinsdag 27 oktober
 
@@ -77,9 +77,12 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 - **In `personal`, nog niet in de store:** 0.3.43 met
   - [#78](https://github.com/smokkelaar/nocturne-personal/pull/78): interactieve grafiekvoorbeelden in de help (AGP, Dagprofiel, Voorspelnauwkeurigheid, CGM-vergelijking, IDP, Slaap).
   - [#79](https://github.com/smokkelaar/nocturne-personal/pull/79): jaaroverzicht, de twee buitenste bolletjes versmallen het kleurbereik (ook glucose); HbA1c met één decimaal extra (6,54% en 50,3 mmol/mol), ook bij lab-invoer.
+- **Open, wordt 0.3.44:** [#82](https://github.com/smokkelaar/nocturne-personal/pull/82): de eHbA1c-tooltip toont een labwaarde al als de muis binnen 12 px van het driehoekje staat.
+- **Waarom hier en niet op Test A/B/C:** dit zijn Personal-wensen, en Test A, B en C zijn bezet. De Test B-build van #68 (26 okt) had #79 nog niet; daarom kon je de buitenste kleuren daar niet verplaatsen.
 - **Testen zodra 0.3.43 in de store staat:**
   1. Rapporten → Jaaroverzicht: versleep de buitenste bolletjes. Het palet loopt alleen tussen de bolletjes, waarden erbuiten krijgen de eindkleur en worden gedimd.
   2. Rapporten → eHbA1c: waarden tonen 2 decimalen in % en 1 in mmol/mol. Voer een lab-waarde in met die precisie en controleer de streefwaardecheck.
+  2b. (0.3.44) Beweeg de muis vlak naast een lab-driehoekje: de tooltip toont de labwaarde zonder precies te mikken.
   3. Open de help bij AGP en Slaap: het voorbeeld is interactief.
 - **Status:** 0.3.43 wordt gebouwd.
 
@@ -104,4 +107,5 @@ Hier komt wat je getest en goedgekeurd hebt, met datum.
 
 | Datum | Instantie | Feature | Uitkomst |
 |---|---|---|---|
-| | | | |
+| 26 okt 2026 | Test B (8452) | Personal #68: jaaroverzicht-kleuren | Crasht niet meer, extra kleuren terug. Buitenste kleuren niet verplaatsbaar: opgelost in #79, hertest op Personal 0.3.43 |
+| 26 okt 2026 | Test B (8452) | Personal #68: HbA1c | Werkt; tooltip vraagt precieze muis: verruimd in #82 (0.3.44) |
