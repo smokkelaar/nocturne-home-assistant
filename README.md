@@ -1,5 +1,7 @@
 # Nocturne for Home Assistant
 
+**[Testoverzicht](TESTOVERZICHT.md):** wat er op Personal en Test A/B/C staat en wat nog getest moet worden.
+
 [Current main synchronization, source versions and publication metadata](docs/VERSIES.md).
 
 **Nieuwe 1.x-distributie:** alle zes varianten krijgen vooraf gebouwde GHCR-images
