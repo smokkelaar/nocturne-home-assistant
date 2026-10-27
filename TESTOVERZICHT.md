@@ -18,7 +18,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 | # | Waar | Wat | Status |
 |---|---|---|---|
 | 1 | Test C (8453) | Helpboek op elke pagina controleren | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
-| 2 | Test A (8451) | Google Health-reset met begindatum (#80, op #69) | Klaar om te testen in 1.0.97601. Tenanttoegang van #69 blijft later oppakken |
+| 2 | Test A (8451) | Google Health-reset met begindatum (#80, op #69) | Klaar om te testen in 1.0.98601. Eerste start kan 10-30 min duren (databasemigratie); niet herstarten. Tenanttoegang van #69 blijft later oppakken |
 | 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
 | 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed. Buitenste bolletjes nog niet versleepbaar, tooltip vraagt nog steeds extreem precies mikken, help-icoon ontbreekt. Bolletjes en tooltip opgelost in [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) (0.3.44, open, nog niet in de store); help-icoon wordt apart uitgezocht |
 
@@ -26,13 +26,13 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 
 HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https://github.com/smokkelaar/nocturne-home-assistant/actions/runs/40403185802) zijn geslaagd voor alle drie de kanalen op AMD64 en ARM64, inclusief opstarten, accountherstel, cold restore en upgraden vanaf de vorige versie. Publieke beschikbaarheid en image-labels zijn gecontroleerd. [Storepromotie #177](https://github.com/smokkelaar/nocturne-home-assistant/pull/177) is gemerged.
 
-**Alle drie staan nu op store-versie 1.0.95701.** Vernieuw de HA-store en update Test A, B en C. Installatie en werking op de eigen HA zijn vanuit deze sessie niet gecontroleerd; dit overzicht bevestigt de gepubliceerde pakketten.
+**Alle drie staan nu op store-versie 1.0.98601.** Vernieuw de HA-store en update Test A, B en C. 1.0.98601 wacht bij de start tot een uur op databasemigraties (alleen de wrapper is gewijzigd). Installatie en werking op de eigen HA zijn vanuit deze sessie niet gecontroleerd; dit overzicht bevestigt de gepubliceerde pakketten.
 
 ## Per instantie
 
 ### Test A (poort 8451)
 
-- **Store-versie:** 1.0.97601 (#69 + #80 op nightscout main `970031f`). Vernieuw de HA-store en update Test A.
+- **Store-versie:** 1.0.98601 (#69 + #80 op nightscout main `970031f`). Vernieuw de HA-store en update Test A. De eerste start voert een eenmalige databasemigratie uit (upstream #2842) die bij veel glucosedata 10 tot 30 minuten kan duren; het log meldt elke minuut dat de start nog loopt. Niet herstarten.
 - **Bron (nieuw):** [Personal PR #83](https://github.com/smokkelaar/nocturne-personal/pull/83), commit `02ad690f465a1a82b3795777db0736e46998db27`. Testbuild, wordt niet gemerged.
 - **Basis:** schone nightscout main `970031f` met alleen [#69](https://github.com/smokkelaar/nocturne-personal/pull/69) (Google Health-instellingen in instantiebeheer) en [#80](https://github.com/smokkelaar/nocturne-personal/pull/80) (reset met begindatum in stukken lezen). Bewust gecombineerd (keuze 27 okt): zonder #69 kan de HA-app Google Health op schone main niet koppelen.
 - **Testen:**
@@ -50,7 +50,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Test B (poort 8452)
 
-- **Store-versie:** 1.0.95701.
+- **Store-versie:** 1.0.98601 (alleen wrapper bijgewerkt).
 - **Bron:** [Personal PR #78](https://github.com/smokkelaar/nocturne-personal/pull/78), commit `012348422c25dc16f95aac290a1951de2c898975`.
 - **Doel:** interactieve grafiekvoorbeelden in de help, plus Snel starten en Problemen oplossen. Vervangt de achterhaalde #68-test.
 - **Basis:** Personal; #78 is de op Personal aangepaste variant van #76. Dit is geen schone-main-test voor upstream.
@@ -64,7 +64,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Test C (poort 8453)
 
-- **Store-versie:** 1.0.95701.
+- **Store-versie:** 1.0.98601 (alleen wrapper bijgewerkt).
 - **Bron:** [Personal PR #75](https://github.com/smokkelaar/nocturne-personal/pull/75), commit `e7a4e04059cf438e1b0a011a102c6be85a21e659`.
 - **Doel:** Nederlandse paginahulp met bovenaan het open blok Wat je ziet en wat het betekent.
 - **Basis:** bestaande gecombineerde help-testbuild op Personal 0.3.43, met #70, #72, #77 en #63/#73. Dit is geen geïsoleerde schone-main-test. De bron-PR #75 blijft een testbuild en is niet gemerged.
@@ -78,7 +78,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Personal (poort 8450)
 
-- **Store-versie:** 1.0.96501 = Personal 0.3.43 (commit `3b72219`), Latest-basis nightscout main `3caa43c`.
+- **Store-versie:** 1.0.98601 = Personal 0.3.43 (commit `3b72219`), Latest-basis nightscout main `3caa43c`.
 - **Nieuw in 0.3.43:**
   - [#78](https://github.com/smokkelaar/nocturne-personal/pull/78): interactieve grafiekvoorbeelden in de help (AGP, Dagprofiel, Voorspelnauwkeurigheid, CGM-vergelijking, IDP, Slaap).
   - [#79](https://github.com/smokkelaar/nocturne-personal/pull/79): jaaroverzicht, de twee buitenste bolletjes versmallen het kleurbereik (ook glucose); HbA1c met één decimaal extra (6,54% en 50,3 mmol/mol), ook bij lab-invoer.
