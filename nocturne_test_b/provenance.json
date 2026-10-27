@@ -2,10 +2,10 @@
   "format": 1,
   "channel": "test-b",
   "package": "nocturne_test_b",
-  "version": "1.0.95701",
+  "version": "1.0.98601",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "0d573e9d32625062a0f9414db62c8bc0d433bc14",
-  "recipe": "cb3402ee4aca1a2ea4f6a99d936031e6eccbe84ec0abf155c421323be71649cd",
+  "wrapper_commit": "8825091ea5d9195dda4e75b0b92bc14006e756c6",
+  "recipe": "c2f49b57310d314c28ffdbbefc9062fb83a42e264fd1eafb1202e8cd735a7a6b",
   "source_repository": "smokkelaar/nocturne-personal",
   "source_commit": "012348422c25dc16f95aac290a1951de2c898975",
   "architectures": [
@@ -22,7 +22,7 @@
   },
   "config": {
     "name": "Nocturne Test B",
-    "version": "1.0.95701",
+    "version": "1.0.98601",
     "slug": "nocturne_test_b",
     "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal PR #78 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
@@ -74,9 +74,9 @@
   },
   "previous_config": {
     "name": "Nocturne Test B",
-    "version": "1.0.91501",
+    "version": "1.0.95701",
     "slug": "nocturne_test_b",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal PR #68 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal PR #78 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
       "amd64",
@@ -125,7 +125,7 @@
     "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-b-{arch}"
   },
   "digests": {
-    "amd64": "sha256:35d206efb2f2a121d6a37bccd6193d6ef9e806d26dfda52766958708118a2c0d",
-    "aarch64": "sha256:bfe80276333e2855559f5b8c6b8d38acd6c2a1e22ee6d438845967540af1d432"
+    "amd64": "sha256:081ad98a308ddba488cda877a8341987787d127ddc17bab4e7ecfcdc88a3fca5",
+    "aarch64": "sha256:61cb3704884d4d7a805195ec22106995cca8155f06aa3a4466ce63cdf9ba4b85"
   }
 }
