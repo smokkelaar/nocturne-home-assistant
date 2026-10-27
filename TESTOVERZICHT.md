@@ -17,7 +17,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 
 | # | Waar | Wat | Status |
 |---|---|---|---|
-| 1 | Test C (8453) | Helpboek op elke pagina controleren | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
+| 1 | Test C (8453) | Helpboek op elke pagina controleren | Oorzaak gevonden en hersteld: de merge van nightscout main in Personal (`4512ff8`) liet het help-icoon vallen. Fix in Personal PR [#70](https://github.com/smokkelaar/nocturne-personal/pull/70); nieuwe Test C-build wacht op merge van de HA-PR |
 | 2 | Test A (8451) | Google Health: toegang voor tenantbeheerders | Rest getest en goed (27 okt). Tenants nu niet testbaar door beperkingen van het testsysteem; later oppakken |
 | 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
 | 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed. Buitenste bolletjes nog niet versleepbaar, tooltip vraagt nog steeds extreem precies mikken, help-icoon ontbreekt. Wordt uitgezocht; tooltip-fix [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) (0.3.44) nog niet in de store |
@@ -55,7 +55,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   3. Klik in het slaapvoorbeeld op een nacht: je blijft in de help.
   4. Bekijk Snel starten en Problemen oplossen in het Nederlands en Engels; zoek op ontbrekende gegevens.
   5. De voorbeelden gebruiken fictieve gegevens; je eigen gegevens en voorkeuren blijven behouden.
-- **Status:** geblokkeerd (27 okt): het help-icoon linksboven ontbreekt in deze versie, dus de help is niet te openen. Wordt uitgezocht.
+- **Status:** geblokkeerd op 1.0.95701 (27 okt): het help-icoon ontbrak. Oorzaak: de merge van nightscout main bd59934 in Personal (`4512ff8`) nam AppSidebar en MobileHeader van main over. Hersteld in #70 (`5bdcf11`) en testbuild #75 (`c9390fc`); Test C wordt daarop vastgezet. Na de nieuwe store-versie eerst controleren dat het boekpictogram linksboven staat (ook ingeklapt en op de telefoon). Personal en Test B krijgen het herstel pas als #70 in Personal gemerged is.
 
 ### Test C (poort 8453)
 
@@ -69,7 +69,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   3. Bovenaan staat Wat je ziet en wat het betekent open; uitleg over kleuren, percentages en drempels moet kloppen met de pagina.
   4. Controleer uitklapblokken en zoek op Health Connect, Garmin, snooze, packing, webhook en Google Health.
   5. Bekijk de teksten in het Nederlands en Engels.
-- **Status:** geblokkeerd (27 okt): het help-icoon linksboven ontbreekt in deze versie, dus de help is niet te openen. Wordt uitgezocht.
+- **Status:** geblokkeerd op 1.0.95701 (27 okt): het help-icoon ontbrak. Oorzaak: de merge van nightscout main bd59934 in Personal (`4512ff8`) nam AppSidebar en MobileHeader van main over. Hersteld in #70 (`5bdcf11`) en testbuild #75 (`c9390fc`); Test C wordt daarop vastgezet. Na de nieuwe store-versie eerst controleren dat het boekpictogram linksboven staat (ook ingeklapt en op de telefoon). Personal en Test B krijgen het herstel pas als #70 in Personal gemerged is.
 
 ### Personal (poort 8450)
 
