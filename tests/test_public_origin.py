@@ -2,6 +2,7 @@
 import importlib.util
 import json
 from pathlib import Path
+import re
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -51,7 +52,14 @@ class PublicOriginTests(unittest.TestCase):
             with self.subTest(package=package):
                 self.assertEqual('mynocturne.duckdns.org', options['hostname'])
                 if package == 'nocturne_test_a':
-                    self.assertIn('server_name mynocturne.duckdns.org *.share.mynocturne.duckdns.org;', config)
+                    self.assertIn('server_name mynocturne.duckdns.org *.mynocturne.duckdns.org;', config)
+                    tenant = '~^[a-z0-9][a-z0-9-]*\\.mynocturne\\.duckdns\\.org$ 1;'
+                    self.assertIn(tenant, config)
+                    pattern = re.compile(tenant[1:-3])
+                    self.assertTrue(pattern.match('testa2.mynocturne.duckdns.org'))
+                    for host in ('mynocturne.duckdns.org', 'a.b.mynocturne.duckdns.org',
+                                 'testa.mynocturne.duckdns.org.evil.test', 'testamynocturne.duckdns.org'):
+                        self.assertFalse(pattern.match(host), host)
                     self.assertIn('"mynocturne.duckdns.org" 1;', config)
                     self.assertIn('~^[a-z0-9]+\\.share\\.mynocturne\\.duckdns\\.org$ 1;', config)
                     self.assertIn('if ($ha_allowed_host = 0) { return 421; }', config)

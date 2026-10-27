@@ -149,6 +149,7 @@ http {{
         default 0;
         "{options['hostname']}" 1;
         ~^[a-z0-9]+\\.share\\.{re.escape(options['hostname'])}$ 1;
+        ~^[a-z0-9][a-z0-9-]*\\.{re.escape(options['hostname'])}$ 1;
     }}
   access_log off;
   client_max_body_size 20m;
@@ -164,7 +165,7 @@ http {{
   server {{
     set $ha_cookie_namespace "{namespace}";
     listen 8448 ssl;
-    server_name {options['hostname']} *.share.{options['hostname']};
+    server_name {options['hostname']} *.{options['hostname']};
     ssl_certificate {cert_path};
     ssl_certificate_key {key_path};
     ssl_protocols TLSv1.2 TLSv1.3;
