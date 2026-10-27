@@ -11,9 +11,10 @@ ENV CI=true DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@11.5.0
-ADD --checksum=sha256:d47edf69fe7874b30572d0dfb15c9bd92c53a39e77f424cacb7b90839f115fa3 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/ad791074b6dba9da70b21177ab8a0a20dfc047da /tmp/source.tar.gz
+ADD --checksum=sha256:ac7ac82bb9bc11b347b71d7011be5933b1248ba8f46ba2d4c21ca496442890a2 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/02ad690f465a1a82b3795777db0736e46998db27 /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
+ADD --keep-git-dir=false https://github.com/ryceg/water-ui.git#30918ec89bd1f400a86cc427c95d7679dc2eed4a /src/src/Web/vendor/water-ui
 WORKDIR /src/src/Web
 RUN printf '\n=== Nocturne build phase 3/7: install web dependencies and build bridge ===\n' \
     && pnpm install --frozen-lockfile && pnpm --filter @nocturne/bridge run build
@@ -46,7 +47,7 @@ USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /out/api-build-date /opt/nocturne-ha/api-build-date
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so
-ARG BUILD_VERSION=1.0.93301
+ARG BUILD_VERSION=1.0.97601
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Test A - Home Assistant app" \

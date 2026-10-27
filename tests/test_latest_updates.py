@@ -239,5 +239,20 @@ class LatestUpdateTests(unittest.TestCase):
                 updater.resolve_candidate(self.lock, target)
 
 
+    def test_unpublished_target_lists_runs_up_to_its_push_and_builds_by_sha(self):
+        target = 'c' * 40
+        head = {'sha': target, 'commit': {'committer': {'date': '2026-10-25T11:50:33Z'}}}
+        with patch.object(updater, 'successful_build', side_effect=updater.NotReady()), \
+             patch.object(updater, 'github', side_effect=[head, {'status': 'ahead'}, {'status': 'ahead'},
+                                                          {'workflow_runs': []}]) as github:
+            with self.assertRaises(updater.NotReady):
+                updater.resolve_candidate(self.lock, target)
+        self.assertTrue(github.call_args_list[3].args[0].endswith('&created=%3C%3D2026-10-25T11:50:33Z'))
+        with patch.object(updater, 'github', return_value={'workflow_runs': []}) as github:
+            with self.assertRaises(updater.NotReady):
+                updater.successful_build(target)
+        self.assertIn('&head_sha=' + target, github.call_args.args[0])
+
+
 if __name__ == '__main__':
     unittest.main()
