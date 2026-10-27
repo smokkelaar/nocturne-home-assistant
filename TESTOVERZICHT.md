@@ -2,7 +2,7 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 27 oktober 2026, 12:10 (NL-tijd)
+**Bijgewerkt:** 27 oktober 2026, 13:50 (NL-tijd)
 
 Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Controleren op updates.
 
@@ -45,6 +45,8 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 - **Status:** wacht op build.
 
 **Wacht op een vrije testinstantie:** [Personal PR #81](https://github.com/smokkelaar/nocturne-personal/pull/81), op de resetpagina per connector kiezen wat opnieuw wordt opgehaald. Schone main `970031f` + alleen deze feature, CI groen.
+
+**Wacht ook op een vrije testinstantie (keuze 27 okt):** [Personal PR #84](https://github.com/smokkelaar/nocturne-personal/pull/84), ImageSharp 3.1.12 naar 3.2.0 met de Six Labors community-licentie (`sixlabors.lic`, geldig tot 25 jan 2028). Schone main `970031f` + alleen deze upgrade; bedoeld om later zelf naar nightscout/nocturne te sturen. Test: na de update start de app, en een profielfoto uploaden (PNG, JPEG, WebP) werkt.
 
 ### Test B (poort 8452)
 
