@@ -18,7 +18,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 | # | Waar | Wat | Status |
 |---|---|---|---|
 | 1 | Test C (8453) | Helpboek op elke pagina controleren | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
-| 2 | Test A (8451) | Google Health-reset met begindatum (#80, op #69) | Klaar om te testen in 1.0.99301. Eerste start blijft hangen in de migratie van upstream #2842 (oorzaak in onderzoek); stuur de voortgangsregels uit het log. Tenanttoegang van #69 blijft later oppakken |
+| 2 | Test A (8451) | Google Health-reset met begindatum (#80, op #69) | Klaar om te testen in 1.0.99901, met de herschreven migratiestap van upstream #2842 (1.0.99301 bleef daarin hangen); stuur de voortgangsregels uit het log van de eerste start. Tenanttoegang van #69 blijft later oppakken |
 | 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
 | 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed. Buitenste bolletjes nog niet versleepbaar, tooltip vraagt nog steeds extreem precies mikken, help-icoon ontbreekt. Bolletjes en tooltip opgelost in [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) (0.3.44, open, nog niet in de store); help-icoon wordt apart uitgezocht |
 
@@ -26,13 +26,13 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 
 HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https://github.com/smokkelaar/nocturne-home-assistant/actions/runs/40403185802) zijn geslaagd voor alle drie de kanalen op AMD64 en ARM64, inclusief opstarten, accountherstel, cold restore en upgraden vanaf de vorige versie. Publieke beschikbaarheid en image-labels zijn gecontroleerd. [Storepromotie #177](https://github.com/smokkelaar/nocturne-home-assistant/pull/177) is gemerged.
 
-**Alle drie staan nu op store-versie 1.0.99301.** Vernieuw de HA-store en update Test A, B en C. 1.0.99301 wacht bij de start op databasemigraties en logt hun voortgang (alleen de wrapper is gewijzigd). Installatie en werking op de eigen HA zijn vanuit deze sessie niet gecontroleerd; dit overzicht bevestigt de gepubliceerde pakketten.
+**Test A staat op store-versie 1.0.99901, Test B en C op 1.0.99301.** Vernieuw de HA-store en update Test A, B en C. 1.0.99301 wacht bij de start op databasemigraties en logt hun voortgang (alleen de wrapper is gewijzigd). Installatie en werking op de eigen HA zijn vanuit deze sessie niet gecontroleerd; dit overzicht bevestigt de gepubliceerde pakketten.
 
 ## Per instantie
 
 ### Test A (poort 8451)
 
-- **Store-versie:** 1.0.99301 (#69 + #80 op nightscout main `970031f`). Vernieuw de HA-store en update Test A. De eerste start voert een eenmalige databasemigratie uit (upstream #2842) die bij veel glucosedata 10 tot 30 minuten kan duren; het log meldt elke minuut dat de start nog loopt. Niet herstarten.
+- **Store-versie:** 1.0.99901 (#69 + #80 op nightscout main `970031f`, met de herschreven migratiestap). Vernieuw de HA-store en update Test A. De eerste start voert een eenmalige databasemigratie uit (upstream #2842) die bij veel glucosedata enkele minuten kan duren; het log meldt elke minuut dat de start nog loopt. Niet herstarten.
 - **Bron (nieuw):** [Personal PR #83](https://github.com/smokkelaar/nocturne-personal/pull/83), commit `4500f692ff57feebbe6c8c29315b8a79946b2823`. Testbuild, wordt niet gemerged.
 - **Basis:** schone nightscout main `970031f` met alleen [#69](https://github.com/smokkelaar/nocturne-personal/pull/69) (Google Health-instellingen in instantiebeheer) en [#80](https://github.com/smokkelaar/nocturne-personal/pull/80) (reset met begindatum in stukken lezen). Bewust gecombineerd (keuze 27 okt): zonder #69 kan de HA-app Google Health op schone main niet koppelen.
 - **Afwijking van schone main:** de migratie `RepairThirtyTwoHexEntryLegacyIds` (upstream #2842) verzamelt de dubbele metingen eerst in een geanalyseerde tijdelijke tabel. De oorspronkelijke query bleef op deze database ruim een uur rekenen zonder iets te schrijven. Uitkomst is gelijk.
