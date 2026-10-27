@@ -33,8 +33,9 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 ### Test A (poort 8451)
 
 - **Store-versie:** 1.0.99301 (#69 + #80 op nightscout main `970031f`). Vernieuw de HA-store en update Test A. De eerste start voert een eenmalige databasemigratie uit (upstream #2842) die bij veel glucosedata 10 tot 30 minuten kan duren; het log meldt elke minuut dat de start nog loopt. Niet herstarten.
-- **Bron (nieuw):** [Personal PR #83](https://github.com/smokkelaar/nocturne-personal/pull/83), commit `02ad690f465a1a82b3795777db0736e46998db27`. Testbuild, wordt niet gemerged.
+- **Bron (nieuw):** [Personal PR #83](https://github.com/smokkelaar/nocturne-personal/pull/83), commit `4500f692ff57feebbe6c8c29315b8a79946b2823`. Testbuild, wordt niet gemerged.
 - **Basis:** schone nightscout main `970031f` met alleen [#69](https://github.com/smokkelaar/nocturne-personal/pull/69) (Google Health-instellingen in instantiebeheer) en [#80](https://github.com/smokkelaar/nocturne-personal/pull/80) (reset met begindatum in stukken lezen). Bewust gecombineerd (keuze 27 okt): zonder #69 kan de HA-app Google Health op schone main niet koppelen.
+- **Afwijking van schone main:** de migratie `RepairThirtyTwoHexEntryLegacyIds` (upstream #2842) verzamelt de dubbele metingen eerst in een geanalyseerde tijdelijke tabel. De oorspronkelijke query bleef op deze database ruim een uur rekenen zonder iets te schrijven. Uitkomst is gelijk.
 - **Testen:**
   1. Ga naar Instellingen → Administratie → Reset connector cursors en kies je tenant.
   2. Kies een begindatum van een paar maanden terug (bijvoorbeeld 1 augustus) en start de reset.
