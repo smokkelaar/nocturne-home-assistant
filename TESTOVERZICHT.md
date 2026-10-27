@@ -2,7 +2,7 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 26 oktober 2026, 23:55 (NL-tijd)
+**Bijgewerkt:** 27 oktober 2026, 02:30 (NL-tijd)
 
 Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Controleren op updates.
 
@@ -18,9 +18,9 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 | # | Waar | Wat | Status |
 |---|---|---|---|
 | 1 | Test C (8453) | Helpboek op elke pagina controleren | 1.0.95701 beschikbaar; wacht op jouw test |
-| 2 | Test A (8451) | Google Health instellen via beheer | 1.0.95701 beschikbaar; wacht op jouw test |
+| 2 | Test A (8451) | Google Health instellen via beheer | 1.0.96501 beschikbaar (zelfde bron als 1.0.95701, opnieuw gebouwd); wacht op jouw test |
 | 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | 1.0.95701 beschikbaar; wacht op jouw test |
-| 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen (hertest van Test B-feedback), HbA1c-precisie en tooltip | 0.3.43 wordt gebouwd; tooltip-fix in [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) (0.3.44) open |
+| 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen (hertest van Test B-feedback), HbA1c-precisie en tooltip | 0.3.43 beschikbaar als 1.0.96501; tooltip-fix in [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) (0.3.44) open |
 
 ## Voorbereiding voor dinsdag 27 oktober
 
@@ -32,7 +32,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Test A (poort 8451)
 
-- **Store-versie:** 1.0.95701.
+- **Store-versie:** 1.0.96501 (opnieuw gebouwd met de Personal-ronde van 27 okt; bron ongewijzigd).
 - **Bron:** [Personal PR #69](https://github.com/smokkelaar/nocturne-personal/pull/69), commit `c6a05714b17ac353374257b6b8832509398a887b`.
 - **Basis:** schone nightscout main `bd59934` met alleen Google Health OAuth-instellingen in instantiebeheer; vervangt de eerdere #63-build op Personal.
 - **Testen:**
@@ -73,18 +73,18 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Personal (poort 8450)
 
-- **Store-versie:** 1.0.93301 = Personal 0.3.42 op nightscout main `3caa43c`.
-- **In `personal`, nog niet in de store:** 0.3.43 met
+- **Store-versie:** 1.0.96501 = Personal 0.3.43 (commit `3b72219`), Latest-basis nightscout main `3caa43c`.
+- **Nieuw in 0.3.43:**
   - [#78](https://github.com/smokkelaar/nocturne-personal/pull/78): interactieve grafiekvoorbeelden in de help (AGP, Dagprofiel, Voorspelnauwkeurigheid, CGM-vergelijking, IDP, Slaap).
   - [#79](https://github.com/smokkelaar/nocturne-personal/pull/79): jaaroverzicht, de twee buitenste bolletjes versmallen het kleurbereik (ook glucose); HbA1c met één decimaal extra (6,54% en 50,3 mmol/mol), ook bij lab-invoer.
 - **Open, wordt 0.3.44:** [#82](https://github.com/smokkelaar/nocturne-personal/pull/82): de eHbA1c-tooltip toont een labwaarde al als de muis binnen 12 px van het driehoekje staat.
 - **Waarom hier en niet op Test A/B/C:** dit zijn Personal-wensen, en Test A, B en C zijn bezet. De Test B-build van #68 (26 okt) had #79 nog niet; daarom kon je de buitenste kleuren daar niet verplaatsen.
-- **Testen zodra 0.3.43 in de store staat:**
+- **Testen:**
   1. Rapporten → Jaaroverzicht: versleep de buitenste bolletjes. Het palet loopt alleen tussen de bolletjes, waarden erbuiten krijgen de eindkleur en worden gedimd.
   2. Rapporten → eHbA1c: waarden tonen 2 decimalen in % en 1 in mmol/mol. Voer een lab-waarde in met die precisie en controleer de streefwaardecheck.
   2b. (0.3.44) Beweeg de muis vlak naast een lab-driehoekje: de tooltip toont de labwaarde zonder precies te mikken.
   3. Open de help bij AGP en Slaap: het voorbeeld is interactief.
-- **Status:** 0.3.43 wordt gebouwd.
+- **Status:** 0.3.43 gepubliceerd ([store-PR #178](https://github.com/smokkelaar/nocturne-home-assistant/pull/178)); wacht op jouw test. Stap 2b volgt met 0.3.44.
 
 ### Latest (poort 8449)
 
