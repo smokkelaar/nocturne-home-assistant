@@ -25,6 +25,8 @@ from tls import CertificateWatcher, peer_fingerprint, reload_nginx
 DATA = Path('/data')
 RUNTIME = Path('/run/nocturne')
 PG_BIN = '/usr/lib/postgresql/17/bin/'
+# A startup migration that is still working keeps the API wait open up to this limit.
+MAX_STARTUP_WAIT = 6 * 3600
 BASE = Path(__file__).parent
 
 
@@ -146,6 +148,29 @@ def psql(sql=None, database='postgres', stdin=None):
     if result.returncode:
         raise RuntimeError('PostgreSQL-bootstrapquery mislukt; gegevens zijn behouden')
     return result.stdout.strip()
+
+
+def database_progress():
+    """What the API's database connections are doing, for the startup wait log."""
+    try:
+        rows = psql("SELECT extract(epoch FROM now() - query_start)::int, "
+                    "coalesce(wait_event_type || '/' || wait_event, 'rekent'), "
+                    "cardinality(pg_blocking_pids(pid)), "
+                    "left(regexp_replace(query, '\\s+', ' ', 'g'), 160) "
+                    "FROM pg_stat_activity WHERE datname = 'nocturne' AND state <> 'idle' "
+                    "AND backend_type = 'client backend' AND pid <> pg_backend_pid() "
+                    "ORDER BY query_start")
+        size = psql("SELECT pg_size_pretty(pg_database_size('nocturne'))")
+    except (RuntimeError, OSError, subprocess.TimeoutExpired):
+        return False, ['databasestatus niet leesbaar']
+    lines = [f'database {size}']
+    busy = False
+    for row in filter(None, rows.splitlines()):
+        seconds, wait, blockers, query = row.split('|', 3)
+        busy = True
+        blocked = f', geblokkeerd door {blockers} andere verbinding(en)' if blockers != '0' else ''
+        lines.append(f'{seconds} s bezig ({wait}{blocked}): {query}')
+    return busy, lines
 
 
 def bootstrap_database(passwords):
@@ -312,7 +337,8 @@ class Supervisor:
                 self.status[name] = f'gestopt (code {process.returncode})'
                 raise RuntimeError(f'{name} is gestopt (code {process.returncode})')
 
-    def wait_for(self, name, probe, timeout=180, waiting=None):
+    def wait_for(self, name, probe, timeout=180, progress=None):
+        """`progress` returns (busy, lines): while busy, the deadline moves on to a minute away."""
         started = time.monotonic()
         deadline = started + timeout
         reported = started
@@ -322,9 +348,15 @@ class Supervisor:
                 self.status[name] = 'gereed'
                 log(f'{name}: gereed')
                 return
-            if waiting and time.monotonic() - reported >= 60:
+            if progress and time.monotonic() - reported >= 60:
                 reported = time.monotonic()
-                log(f'{name}: na {int(reported - started)} seconden nog niet gereed; {waiting}')
+                busy, lines = progress()
+                log(f'{name}: na {int(reported - started)} seconden nog niet gereed'
+                    + ('; databasewerk loopt, niet herstarten' if busy else ''))
+                for line in lines:
+                    log(f'{name}:   {line}')
+                if busy:
+                    deadline = max(deadline, min(reported + 120, started + MAX_STARTUP_WAIT))
             self.stop.wait(1)
         if self.stop.is_set():
             raise InterruptedError('Stop aangevraagd')
@@ -450,7 +482,7 @@ def main():
         # Startup migrations can rewrite whole tables on a large database; stopping the API rolls
         # them back, so a restart starts them again from the beginning.
         supervisor.wait_for('Nocturne API', lambda: api_reachable(options['hostname']), 3600,
-                            'databasemigraties kunnen lang duren; niet herstarten')
+                            database_progress)
         if not options['gateway_auth']:
             verify_native_auth(options)
             auth_check = (
