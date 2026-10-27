@@ -2,7 +2,7 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 27 oktober 2026, 02:30 (NL-tijd)
+**Bijgewerkt:** 27 oktober 2026, 11:15 (NL-tijd)
 
 Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Controleren op updates.
 
@@ -17,10 +17,10 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 
 | # | Waar | Wat | Status |
 |---|---|---|---|
-| 1 | Test C (8453) | Helpboek op elke pagina controleren | 1.0.95701 beschikbaar; wacht op jouw test |
-| 2 | Test A (8451) | Google Health instellen via beheer | 1.0.96501 beschikbaar (zelfde bron als 1.0.95701, opnieuw gebouwd); wacht op jouw test |
-| 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | 1.0.95701 beschikbaar; wacht op jouw test |
-| 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen (hertest van Test B-feedback), HbA1c-precisie en tooltip | 0.3.43 beschikbaar als 1.0.96501; tooltip-fix in [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) (0.3.44) open |
+| 1 | Test C (8453) | Helpboek op elke pagina controleren | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
+| 2 | Test A (8451) | Google Health: toegang voor tenantbeheerders | Rest getest en goed (27 okt). Tenants nu niet testbaar door beperkingen van het testsysteem; later oppakken |
+| 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
+| 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed. Buitenste bolletjes nog niet versleepbaar, tooltip vraagt nog steeds extreem precies mikken, help-icoon ontbreekt. Wordt uitgezocht; tooltip-fix [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) (0.3.44) nog niet in de store |
 
 ## Voorbereiding voor dinsdag 27 oktober
 
@@ -41,7 +41,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   3. Koppel Google Health zonder herstart en controleer dat er data binnenkomt.
   4. Herstart de app: de instellingen blijven staan.
   5. Controleer dat een gewone gebruiker en tenantbeheerder geen toegang hebben tot de beheerinstellingen of de instellingen-API.
-- **Status:** gepubliceerd; wacht op jouw test.
+- **Status:** getest op 1.0.96501 (27 okt): alles goed behalve de toegang voor tenants, die nu niet te testen is door beperkingen van het testsysteem. Later oppakken.
 
 ### Test B (poort 8452)
 
@@ -55,7 +55,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   3. Klik in het slaapvoorbeeld op een nacht: je blijft in de help.
   4. Bekijk Snel starten en Problemen oplossen in het Nederlands en Engels; zoek op ontbrekende gegevens.
   5. De voorbeelden gebruiken fictieve gegevens; je eigen gegevens en voorkeuren blijven behouden.
-- **Status:** gepubliceerd; wacht op jouw test.
+- **Status:** geblokkeerd (27 okt): het help-icoon linksboven ontbreekt in deze versie, dus de help is niet te openen. Wordt uitgezocht.
 
 ### Test C (poort 8453)
 
@@ -69,7 +69,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   3. Bovenaan staat Wat je ziet en wat het betekent open; uitleg over kleuren, percentages en drempels moet kloppen met de pagina.
   4. Controleer uitklapblokken en zoek op Health Connect, Garmin, snooze, packing, webhook en Google Health.
   5. Bekijk de teksten in het Nederlands en Engels.
-- **Status:** gepubliceerd; wacht op jouw test.
+- **Status:** geblokkeerd (27 okt): het help-icoon linksboven ontbreekt in deze versie, dus de help is niet te openen. Wordt uitgezocht.
 
 ### Personal (poort 8450)
 
@@ -84,7 +84,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   2. Rapporten → eHbA1c: waarden tonen 2 decimalen in % en 1 in mmol/mol. Voer een lab-waarde in met die precisie en controleer de streefwaardecheck.
   2b. (0.3.44) Beweeg de muis vlak naast een lab-driehoekje: de tooltip toont de labwaarde zonder precies te mikken.
   3. Open de help bij AGP en Slaap: het voorbeeld is interactief.
-- **Status:** 0.3.43 gepubliceerd ([store-PR #178](https://github.com/smokkelaar/nocturne-home-assistant/pull/178)); wacht op jouw test. Stap 2b volgt met 0.3.44.
+- **Status:** getest op 0.3.43 (27 okt). Stap 2 (decimalen) goed. Stap 1 (buitenste bolletjes) werkt niet: niet versleepbaar. Tooltip vraagt nog steeds extreem precies mikken; [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) zat nog niet in deze versie, en de vraag is of 12 px genoeg is (best practices en schermafhankelijkheid bekijken). Stap 3: help-icoon ontbreekt, help niet te openen. Wordt uitgezocht.
 
 ### Latest (poort 8449)
 
@@ -109,3 +109,5 @@ Hier komt wat je getest en goedgekeurd hebt, met datum.
 |---|---|---|---|
 | 26 okt 2026 | Test B (8452) | Personal #68: jaaroverzicht-kleuren | Crasht niet meer, extra kleuren terug. Buitenste kleuren niet verplaatsbaar: opgelost in #79, hertest op Personal 0.3.43 |
 | 26 okt 2026 | Test B (8452) | Personal #68: HbA1c | Werkt; tooltip vraagt precieze muis: verruimd in #82 (0.3.44) |
+| 27 okt 2026 | Test A (8451) | Personal #69: Google Health via instantiebeheer | Goed, behalve tenanttoegang: nu niet testbaar, later oppakken |
+| 27 okt 2026 | Personal (8450) | 0.3.43: HbA1c met extra decimaal | Goed |
