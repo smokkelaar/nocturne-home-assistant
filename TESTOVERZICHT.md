@@ -2,7 +2,7 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 27 oktober 2026, 11:45 (NL-tijd)
+**Bijgewerkt:** 27 oktober 2026, 12:10 (NL-tijd)
 
 Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Controleren op updates.
 
@@ -18,7 +18,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 | # | Waar | Wat | Status |
 |---|---|---|---|
 | 1 | Test C (8453) | Helpboek op elke pagina controleren | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
-| 2 | Test A (8451) | Google Health: toegang voor tenantbeheerders | Rest getest en goed (27 okt). Tenants nu niet testbaar door beperkingen van het testsysteem; later oppakken |
+| 2 | Test A (8451) | Google Health-reset met begindatum (#80, op #69) | Wacht op build via HA-PR van 27 okt. Tenanttoegang van #69 blijft later oppakken |
 | 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
 | 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed. Buitenste bolletjes nog niet versleepbaar, tooltip vraagt nog steeds extreem precies mikken, help-icoon ontbreekt. Bolletjes en tooltip opgelost in [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) (0.3.44, open, nog niet in de store); help-icoon wordt apart uitgezocht |
 
@@ -32,16 +32,19 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Test A (poort 8451)
 
-- **Store-versie:** 1.0.96501 (opnieuw gebouwd met de Personal-ronde van 27 okt; bron ongewijzigd).
-- **Bron:** [Personal PR #69](https://github.com/smokkelaar/nocturne-personal/pull/69), commit `c6a05714b17ac353374257b6b8832509398a887b`.
-- **Basis:** schone nightscout main `bd59934` met alleen Google Health OAuth-instellingen in instantiebeheer; vervangt de eerdere #63-build op Personal.
+- **Store-versie:** 1.0.96501 met #69; de nieuwe build met #83 komt eraan.
+- **Bron (nieuw):** [Personal PR #83](https://github.com/smokkelaar/nocturne-personal/pull/83), commit `02ad690f465a1a82b3795777db0736e46998db27`. Testbuild, wordt niet gemerged.
+- **Basis:** schone nightscout main `970031f` met alleen [#69](https://github.com/smokkelaar/nocturne-personal/pull/69) (Google Health-instellingen in instantiebeheer) en [#80](https://github.com/smokkelaar/nocturne-personal/pull/80) (reset met begindatum in stukken lezen). Bewust gecombineerd (keuze 27 okt): zonder #69 kan de HA-app Google Health op schone main niet koppelen.
 - **Testen:**
-  1. Open Instellingen → Administratie → Integraties → Google Health als platformbeheerder.
-  2. Vul Client ID, Client secret en Callback URL in, zet Enabled aan en sla op. Het secret blijft daarna gemaskeerd.
-  3. Koppel Google Health zonder herstart en controleer dat er data binnenkomt.
-  4. Herstart de app: de instellingen blijven staan.
-  5. Controleer dat een gewone gebruiker en tenantbeheerder geen toegang hebben tot de beheerinstellingen of de instellingen-API.
-- **Status:** getest op 1.0.96501 (27 okt): alles goed behalve de toegang voor tenants, die nu niet te testen is door beperkingen van het testsysteem. Later oppakken.
+  1. Ga naar Instellingen → Administratie → Reset connector cursors en kies je tenant.
+  2. Kies een begindatum van een paar maanden terug (bijvoorbeeld 1 augustus) en start de reset.
+  3. Google Health moet nu slagen in plaats van `google_unavailable:heart-rate` te geven. Het kan even duren.
+  4. Controleer daarna dat hartslag, stappen en slaap over die periode compleet zijn.
+  5. De Google Health-instellingen uit #69 blijven staan na de update.
+- **Eerder getest (#69, 1.0.96501, 27 okt):** alles goed behalve de toegang voor tenants, die nu niet te testen is door beperkingen van het testsysteem. Later oppakken.
+- **Status:** wacht op build.
+
+**Wacht op een vrije testinstantie:** [Personal PR #81](https://github.com/smokkelaar/nocturne-personal/pull/81), op de resetpagina per connector kiezen wat opnieuw wordt opgehaald. Schone main `970031f` + alleen deze feature, CI groen.
 
 ### Test B (poort 8452)
 

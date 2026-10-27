@@ -1,14 +1,14 @@
 {
   "channel": "personal-pr",
   "repository": "smokkelaar/nocturne-personal",
-  "pull_request": 69,
-  "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/69",
-  "commit": "c6a05714b17ac353374257b6b8832509398a887b",
-  "commit_at": "2026-10-25T18:39:34Z",
-  "base_commit": "bd599340af5cd6420b9ccc3e36f50b090861fb51",
-  "base_commit_at": "2026-10-25T14:51:13Z",
-  "archive_sha256": "62f45c36b3487e4cb4ad2f8e8f30711a9a4bf3d041c9ee97e3abbc5e6479ae62",
-  "purpose": "Google Health OAuth-instellingen in instantiebeheer testen op schone nightscout main bd59934 met alleen deze feature.",
-  "docs_note": "Nightscout main `bd59934` with only the Google Health OAuth settings moved from environment variables to instance administration.",
-  "test_plan": "Ga naar Instellingen → Administratie → Integraties → Google Health. Vul Client ID, Client secret en Callback URL in, zet Enabled aan en kies Save; het secret blijft daarna gemaskeerd. Koppel Google Health zonder herstart en controleer dat er data binnenkomt. Herstart de app: de instellingen blijven staan."
+  "pull_request": 83,
+  "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/83",
+  "commit": "02ad690f465a1a82b3795777db0736e46998db27",
+  "commit_at": "2026-10-27T10:53:21Z",
+  "base_commit": "970031f660b55fc5ba244e7210a18b0c8512c660",
+  "base_commit_at": "2026-10-26T14:30:49Z",
+  "archive_sha256": "ac7ac82bb9bc11b347b71d7011be5933b1248ba8f46ba2d4c21ca496442890a2",
+  "purpose": "Google Health-reset met een begindatum testen (#80) bovenop Google Health-instellingen in instantiebeheer (#69), op schone nightscout main 970031f.",
+  "docs_note": "Nightscout main `970031f` with only the Google Health OAuth settings in instance administration (#69) and the explicit sync window split for connector resets (#80).",
+  "test_plan": "Ga naar Instellingen → Administratie → Reset connector cursors, kies je tenant en een begindatum van een paar maanden terug, en start de reset. Google Health moet slagen in plaats van google_unavailable:heart-rate te geven. Controleer daarna of hartslag, stappen en slaap voor die periode compleet zijn."
 }
