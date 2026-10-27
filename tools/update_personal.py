@@ -104,6 +104,19 @@ def resolve():
     return lock
 
 
+def submodules(lock):
+    # Source archives omit submodules; each is pinned by its full commit id, which git verifies.
+    lines = ''
+    for module in lock.get('submodules', []):
+        if (not re.fullmatch(r'[0-9a-f]{40}', module['commit']) or
+                not re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', module['repository']) or
+                not re.fullmatch(r'[A-Za-z0-9_./-]+', module['path']) or '..' in module['path']):
+            raise ValueError('Invalid submodule pin')
+        lines += (f"ADD --keep-git-dir=false https://github.com/{module['repository']}.git#{module['commit']} "
+                  f"/src/{module['path']}\n")
+    return lines
+
+
 def replace_once(text, old, new):
     if text.count(old) != 1:
         raise ValueError('Personal wrapper compatibility signature changed')
@@ -231,7 +244,7 @@ RUN printf '\\n=== Nocturne build phase 1/7: install build tools ===\\n' \\
 ADD --checksum=sha256:{lock['archive_sha256']} {source_url(lock)} /tmp/source.tar.gz
 RUN printf '\\n=== Nocturne build phase 2/7: verify and unpack source ===\\n' \\
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
-WORKDIR /src/src/Web
+{submodules(lock)}WORKDIR /src/src/Web
 RUN printf '\\n=== Nocturne build phase 3/7: install web dependencies and build bridge ===\\n' \\
     && pnpm install --frozen-lockfile && pnpm --filter @nocturne/bridge run build
 WORKDIR /src
