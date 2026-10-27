@@ -3,8 +3,8 @@
   "package": "1.0.95701",
   "nocturne": "Personal PR #75",
   "repository": "smokkelaar/nocturne-personal",
-  "source_commit": "c9390fc3615d04b089f69487bae8acbda559ea8a",
-  "commit_at": "2026-10-27T10:13:31Z",
+  "source_commit": "6a497f3046dafb87e5f8b03050d0ba5145476216",
+  "commit_at": "2026-10-27T10:21:10Z",
   "base": "Nocturne Personal + PR",
   "base_commit": "3b72219718f496265b22e79ef3bd51fdaf95f3de",
   "release": "Personal PR #75",
@@ -16,6 +16,6 @@
   "name": "Nocturne Test C",
   "default_public_url": "https://homeassistant.local:8453",
   "cookie_namespace": "NocturneTestC_",
-  "source_at": "2026-10-27T10:13:31Z",
+  "source_at": "2026-10-27T10:21:10Z",
   "personal": "0.3.43"
 }

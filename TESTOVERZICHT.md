@@ -55,7 +55,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   3. Klik in het slaapvoorbeeld op een nacht: je blijft in de help.
   4. Bekijk Snel starten en Problemen oplossen in het Nederlands en Engels; zoek op ontbrekende gegevens.
   5. De voorbeelden gebruiken fictieve gegevens; je eigen gegevens en voorkeuren blijven behouden.
-- **Status:** geblokkeerd op 1.0.95701 (27 okt): het help-icoon ontbrak. Oorzaak: de merge van nightscout main bd59934 in Personal (`4512ff8`) nam AppSidebar en MobileHeader van main over. Hersteld in #70 (`5bdcf11`) en testbuild #75 (`c9390fc`); Test C wordt daarop vastgezet. Na de nieuwe store-versie eerst controleren dat het boekpictogram linksboven staat (ook ingeklapt en op de telefoon). Personal en Test B krijgen het herstel pas als #70 in Personal gemerged is.
+- **Status:** geblokkeerd op 1.0.95701 (27 okt): het help-icoon ontbrak. Oorzaak: de merge van nightscout main bd59934 in Personal (`4512ff8`) nam AppSidebar en MobileHeader van main over. Hersteld in #70 (`5bdcf11`) en testbuild #75 (`6a497f3`); Test C wordt daarop vastgezet. Na de nieuwe store-versie eerst controleren dat het boekpictogram linksboven staat (ook ingeklapt en op de telefoon). Personal en Test B krijgen het herstel pas als #70 in Personal gemerged is.
 
 ### Test C (poort 8453)
 
@@ -69,7 +69,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   3. Bovenaan staat Wat je ziet en wat het betekent open; uitleg over kleuren, percentages en drempels moet kloppen met de pagina.
   4. Controleer uitklapblokken en zoek op Health Connect, Garmin, snooze, packing, webhook en Google Health.
   5. Bekijk de teksten in het Nederlands en Engels.
-- **Status:** geblokkeerd op 1.0.95701 (27 okt): het help-icoon ontbrak. Oorzaak: de merge van nightscout main bd59934 in Personal (`4512ff8`) nam AppSidebar en MobileHeader van main over. Hersteld in #70 (`5bdcf11`) en testbuild #75 (`c9390fc`); Test C wordt daarop vastgezet. Na de nieuwe store-versie eerst controleren dat het boekpictogram linksboven staat (ook ingeklapt en op de telefoon). Personal en Test B krijgen het herstel pas als #70 in Personal gemerged is.
+- **Status:** geblokkeerd op 1.0.95701 (27 okt): het help-icoon ontbrak. Oorzaak: de merge van nightscout main bd59934 in Personal (`4512ff8`) nam AppSidebar en MobileHeader van main over. Hersteld in #70 (`5bdcf11`) en testbuild #75 (`6a497f3`); Test C wordt daarop vastgezet. Na de nieuwe store-versie eerst controleren dat het boekpictogram linksboven staat (ook ingeklapt en op de telefoon). Personal en Test B krijgen het herstel pas als #70 in Personal gemerged is.
 
 ### Personal (poort 8450)
 
