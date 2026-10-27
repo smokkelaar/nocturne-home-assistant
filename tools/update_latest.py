@@ -123,7 +123,7 @@ def resolve_image(kind, commit):
 
 
 def successful_build(commit):
-    runs = github('actions/workflows/docker-publish.yml/runs?branch=main&event=push&per_page=50')
+    runs = github(f'actions/workflows/docker-publish.yml/runs?branch=main&event=push&head_sha={commit}&per_page=50')
     matches = [run for run in runs.get('workflow_runs', [])
                if run.get('head_sha') == commit and run.get('status') == 'completed']
     for run in matches:
@@ -157,7 +157,11 @@ def resolve_candidate(current, target='main'):
     except NotReady:
         # Translation synchronization commits skip CI; only a published ancestor
         # with a verified API/web pair can be delivered as a main snapshot.
-        runs = github('actions/workflows/docker-publish.yml/runs?branch=main&event=push&per_page=50')
+        listing = 'actions/workflows/docker-publish.yml/runs?branch=main&event=push&per_page=100'
+        if target != 'main':
+            # Main moves on after the target; list only runs up to the target's push.
+            listing += '&created=%3C%3D' + head['commit']['committer']['date']
+        runs = github(listing)
         for previous in runs.get('workflow_runs', []):
             revision = previous.get('head_sha')
             if previous.get('status') != 'completed' or previous.get('conclusion') != 'success':
