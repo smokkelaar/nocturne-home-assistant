@@ -2,10 +2,10 @@
   "format": 1,
   "channel": "personal",
   "package": "nocturne_personal",
-  "version": "1.0.96501",
+  "version": "1.0.98601",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "814a4d5b49526da83d351a534aa1067f18d7d16f",
-  "recipe": "bb8bdfb6c9ea6d54e5771f2bfe701a700b0ada2e4c3028dba0b5b96332cea274",
+  "wrapper_commit": "8825091ea5d9195dda4e75b0b92bc14006e756c6",
+  "recipe": "77d978246f701207d7b73d415e036ec6d9a3a710650e3df72f87adce633872a8",
   "source_repository": "smokkelaar/nocturne-personal",
   "source_commit": "3b72219718f496265b22e79ef3bd51fdaf95f3de",
   "architectures": [
@@ -22,7 +22,7 @@
   },
   "config": {
     "name": "Nocturne Personal Release",
-    "version": "1.0.96501",
+    "version": "1.0.98601",
     "slug": "nocturne_personal",
     "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal 0.3.43 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
@@ -74,9 +74,9 @@
   },
   "previous_config": {
     "name": "Nocturne Personal Release",
-    "version": "1.0.93301",
+    "version": "1.0.96501",
     "slug": "nocturne_personal",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal 0.3.42 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal 0.3.43 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
       "amd64",
@@ -125,7 +125,7 @@
     "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-personal-{arch}"
   },
   "digests": {
-    "amd64": "sha256:98844cdfb8844e1d9a1ad9be68a101c253dca2495543ccae7a067efed195a590",
-    "aarch64": "sha256:fc567bb17b3434609ac82f29b507159abd571136af6886fdb2ececf487e9e4fa"
+    "amd64": "sha256:a416dfbe0061f72ac1ea6d3dd22c8fbe0d9e83f033685e6e455f8ffde44a1fcd",
+    "aarch64": "sha256:36a3bd82a9a0b0c9ec9f48cb6589804a25f9540350fd9894371b6cb759bd6340"
   }
 }

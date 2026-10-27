@@ -2,10 +2,10 @@
   "format": 1,
   "channel": "official",
   "package": "nocturne_local",
-  "version": "1.0.88301",
+  "version": "1.0.98601",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "d02508332aac3aaeb1f5bbdf1eccb0b8047d35e8",
-  "recipe": "4594e27d2ffb316c03592f08ea4350b812d5c5c6038486002bb5450e11bb3263",
+  "wrapper_commit": "8825091ea5d9195dda4e75b0b92bc14006e756c6",
+  "recipe": "b976bb8583b65c8a47972ad40bdcc9e58d9d53a6006844f993a2b15e89eaaca9",
   "source_repository": "nightscout/nocturne",
   "source_commit": "3caa43cbe614b194cfe6c764714845cd24fc65f6",
   "architectures": [
@@ -24,7 +24,7 @@
   },
   "config": {
     "name": "Nocturne Official Release",
-    "version": "1.0.88301",
+    "version": "1.0.98601",
     "slug": "nocturne_local",
     "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Official main 3caa43c \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
@@ -76,9 +76,9 @@
   },
   "previous_config": {
     "name": "Nocturne Official Release",
-    "version": "1.0.85801",
+    "version": "1.0.88301",
     "slug": "nocturne_local",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Official main 971dd4a \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Official main 3caa43c \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
       "amd64",
@@ -127,7 +127,7 @@
     "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-official-{arch}"
   },
   "digests": {
-    "amd64": "sha256:6eac9c9791a471b2d6cc0d1abc5e7c1c567fa6cba5476209592c86afac873928",
-    "aarch64": "sha256:8dcb3d43097427368fb007811cd2919df9a44eb3589e191d9675fd0e781ad16d"
+    "amd64": "sha256:bb200a312f1c722fe56b2a48d169afec3b1dee85da85f1b1293236090ab0fe69",
+    "aarch64": "sha256:07f979668b27e9493bc42e58fa22db462b0d2bcdd10b45cca2e96e3ed898ffac"
   }
 }
