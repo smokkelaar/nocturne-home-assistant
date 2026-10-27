@@ -312,14 +312,19 @@ class Supervisor:
                 self.status[name] = f'gestopt (code {process.returncode})'
                 raise RuntimeError(f'{name} is gestopt (code {process.returncode})')
 
-    def wait_for(self, name, probe, timeout=180):
-        deadline = time.monotonic() + timeout
+    def wait_for(self, name, probe, timeout=180, waiting=None):
+        started = time.monotonic()
+        deadline = started + timeout
+        reported = started
         while time.monotonic() < deadline and not self.stop.is_set():
             self.check_children()
             if probe():
                 self.status[name] = 'gereed'
                 log(f'{name}: gereed')
                 return
+            if waiting and time.monotonic() - reported >= 60:
+                reported = time.monotonic()
+                log(f'{name}: na {int(reported - started)} seconden nog niet gereed; {waiting}')
             self.stop.wait(1)
         if self.stop.is_set():
             raise InterruptedError('Stop aangevraagd')
@@ -442,7 +447,10 @@ def main():
         api_env, web_env = service_environments(options, passwords, os.environ.get('TZ', 'Europe/Amsterdam'))
         supervisor.start('Nocturne API', ['dotnet', '/app/Nocturne.API.dll'],
                          user='app', env=api_env, cwd='/app')
-        supervisor.wait_for('Nocturne API', lambda: api_reachable(options['hostname']), 300)
+        # Startup migrations can rewrite whole tables on a large database; stopping the API rolls
+        # them back, so a restart starts them again from the beginning.
+        supervisor.wait_for('Nocturne API', lambda: api_reachable(options['hostname']), 3600,
+                            'databasemigraties kunnen lang duren; niet herstarten')
         if not options['gateway_auth']:
             verify_native_auth(options)
             auth_check = (
