@@ -220,6 +220,24 @@ class PersonalTests(unittest.TestCase):
             if line.startswith('FROM '):
                 self.assertIn('@sha256:', line)
 
+    def test_submodules_are_added_at_their_pinned_commit(self):
+        module = {'path': 'src/Web/vendor/water-ui', 'repository': 'ryceg/water-ui', 'commit': 'a' * 40}
+        line = updater.submodules({'submodules': [module]})
+        self.assertEqual('ADD --keep-git-dir=false https://github.com/ryceg/water-ui.git#' + 'a' * 40 +
+                         ' /src/src/Web/vendor/water-ui\n', line)
+        self.assertEqual('', updater.submodules({}))
+        for bad in ({'commit': 'main'}, {'path': '../etc'}, {'repository': 'x y/z'}):
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                updater.submodules({'submodules': [{**module, **bad}]})
+
+    def test_test_a_recipe_adds_water_ui_after_unpacking_the_source(self):
+        recipe = (ROOT / 'nocturne_test_a/Dockerfile').read_text()
+        for module in json.loads((ROOT / 'upstream-test-a.json').read_text()).get('submodules', []):
+            add = f"https://github.com/{module['repository']}.git#{module['commit']} /src/{module['path']}"
+            self.assertIn(add, recipe)
+            self.assertLess(recipe.index('tar -xzf /tmp/source.tar.gz'), recipe.index(add))
+            self.assertLess(recipe.index(add), recipe.index('pnpm install --frozen-lockfile'))
+
     def test_settings_use_only_the_fixed_personal_namespace(self):
         path = self.directory / 'rootfs/opt/nocturne-ha/settings.py'
         spec = importlib.util.spec_from_file_location('personal_settings_test', path)

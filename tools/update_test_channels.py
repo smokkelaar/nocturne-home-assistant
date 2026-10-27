@@ -116,6 +116,7 @@ def files():
             source_lock = {**personal, "commit": source["commit"],
                            "commit_at": source["commit_at"],
                            "archive_sha256": source["archive_sha256"],
+                           "submodules": source.get("submodules", []),
                            "upstream": source["upstream"] if source.get("channel") == "personal" else
                                {**latest, "commit": source["base_commit"],
                                 "commit_at": source["base_commit_at"]}}
