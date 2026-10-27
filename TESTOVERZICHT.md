@@ -18,7 +18,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 | # | Waar | Wat | Status |
 |---|---|---|---|
 | 1 | Test C (8453) | Helpboek op elke pagina controleren | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
-| 2 | Test A (8451) | Google Health-reset met begindatum (#80, op #69) | Wacht op build via HA-PR van 27 okt. Tenanttoegang van #69 blijft later oppakken |
+| 2 | Test A (8451) | Google Health-reset met begindatum (#80, op #69) | Klaar om te testen in 1.0.97601. Tenanttoegang van #69 blijft later oppakken |
 | 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
 | 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed. Buitenste bolletjes nog niet versleepbaar, tooltip vraagt nog steeds extreem precies mikken, help-icoon ontbreekt. Bolletjes en tooltip opgelost in [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) (0.3.44, open, nog niet in de store); help-icoon wordt apart uitgezocht |
 
@@ -32,7 +32,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Test A (poort 8451)
 
-- **Store-versie:** 1.0.96501 met #69; de nieuwe build met #83 komt eraan.
+- **Store-versie:** 1.0.97601 (#69 + #80 op nightscout main `970031f`). Vernieuw de HA-store en update Test A.
 - **Bron (nieuw):** [Personal PR #83](https://github.com/smokkelaar/nocturne-personal/pull/83), commit `02ad690f465a1a82b3795777db0736e46998db27`. Testbuild, wordt niet gemerged.
 - **Basis:** schone nightscout main `970031f` met alleen [#69](https://github.com/smokkelaar/nocturne-personal/pull/69) (Google Health-instellingen in instantiebeheer) en [#80](https://github.com/smokkelaar/nocturne-personal/pull/80) (reset met begindatum in stukken lezen). Bewust gecombineerd (keuze 27 okt): zonder #69 kan de HA-app Google Health op schone main niet koppelen.
 - **Testen:**
