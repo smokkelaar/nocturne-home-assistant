@@ -85,7 +85,8 @@ class ChannelTests(unittest.TestCase):
         nginx = settings.nginx_config(options, '/cert', '/key')
         self.assertIn('if ($ha_allowed_host = 0) { return 421; }', nginx)
         self.assertIn('~^[a-z0-9]+\\.share\\.example\\.test$ 1;', nginx)
-        self.assertIn('server_name example.test *.share.example.test;', nginx)
+        self.assertIn('~^[a-z0-9][a-z0-9-]*\\.example\\.test$ 1;', nginx)
+        self.assertIn('server_name example.test *.example.test;', nginx)
         self.assertNotIn('auth_basic_user_file', nginx)
         self.assertIn('proxy_set_header X-Instance-Key "";', nginx)
         self.assertIn('proxy_set_header X-Instance-Service "";', nginx)
@@ -120,6 +121,31 @@ class ChannelTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'GATEWAY_AUTH'):
                 namespace['verify_native_auth']({'authority': 'example.test:8451'})
             connection.assert_called_once()
+
+    def test_test_a_checks_each_tenant_host_once_the_apex_has_several(self):
+        from unittest.mock import patch
+        tree = ast.parse((ROOT / 'nocturne_test_a/rootfs/opt/nocturne-ha/run.py').read_text())
+        helper = next(node for node in tree.body if isinstance(node, ast.FunctionDef)
+                      and node.name == 'tenant_authorities')
+        import re
+        import subprocess
+        options = {'authority': 'example.test:8451'}
+        for rows, expected in (
+            ('', ['example.test:8451']),
+            ('testa', ['example.test:8451']),
+            ('testa\ntesta2', ['testa.example.test:8451', 'testa2.example.test:8451']),
+        ):
+            with self.subTest(rows=rows):
+                namespace = {'re': re, 'subprocess': subprocess, 'psql': lambda *a, **k: rows}
+                exec(compile(ast.Module(body=[helper], type_ignores=[]), '<test-a-tenants>', 'exec'), namespace)
+                self.assertEqual(expected, namespace['tenant_authorities'](options))
+        namespace = {'re': re, 'subprocess': subprocess, 'psql': lambda *a, **k: 'a\nb.evil'}
+        exec(compile(ast.Module(body=[helper], type_ignores=[]), '<test-a-tenants>', 'exec'), namespace)
+        with self.assertRaisesRegex(ValueError, 'GATEWAY_AUTH'):
+            namespace['tenant_authorities'](options)
+        namespace['psql'] = lambda *a, **k: self.fail('skip must not read tenants')
+        self.assertEqual(['example.test:8451'],
+                         namespace['tenant_authorities'](dict(options, skip_gateway_check=True)))
 
     def test_test_b_is_a_distinct_personal_store_entry(self):
         self.assertEqual('Nocturne Test B', self.test_b['name'])
