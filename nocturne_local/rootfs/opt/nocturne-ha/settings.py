@@ -122,7 +122,7 @@ def nginx_config(options, cert_path, key_path):
     oauth_rule = ''
     if not options.get('gateway_auth', True):
         gate = ('auth_basic off;\n'
-                f'    if ($host != "{options["hostname"]}") {{ return 421; }}')
+                '    if ($ha_allowed_host = 0) { return 421; }')
         # Forward only caller-supplied Bearer credentials in guarded native mode.
         # Nocturne still validates their signature, expiry, tenant and scopes.
         oauth_rule = '"~*^Bearer [A-Za-z0-9._~+/-]+=*$" $http_authorization;'
@@ -138,6 +138,11 @@ events {{ worker_connections 256; }}
 http {{
   js_import ha_cookies from /opt/nocturne-ha/cookies.mjs;
   js_set $ha_upstream_cookie ha_cookies.requestCookies;
+  map $host $ha_allowed_host {{
+    default 0;
+    "{options['hostname']}" 1;
+    ~^[a-z0-9][a-z0-9-]*\\.{re.escape(options['hostname'])}$ 1;
+  }}
   access_log off;
   client_max_body_size 20m;
   map $http_upgrade $connection_upgrade {{ default upgrade; '' close; }}
@@ -152,7 +157,7 @@ http {{
   server {{
     set $ha_cookie_namespace "{namespace}";
     listen 8448 ssl;
-    server_name {options['hostname']};
+    server_name {options['hostname']} *.{options['hostname']};
     ssl_certificate {cert_path};
     ssl_certificate_key {key_path};
     ssl_protocols TLSv1.2 TLSv1.3;

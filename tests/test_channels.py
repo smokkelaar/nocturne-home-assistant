@@ -122,9 +122,14 @@ class ChannelTests(unittest.TestCase):
                 namespace['verify_native_auth']({'authority': 'example.test:8451'})
             connection.assert_called_once()
 
-    def test_test_a_checks_each_tenant_host_once_the_apex_has_several(self):
-        from unittest.mock import patch
-        tree = ast.parse((ROOT / 'nocturne_test_a/rootfs/opt/nocturne-ha/run.py').read_text())
+    def test_every_app_checks_each_tenant_host_once_the_apex_has_several(self):
+        for package in ('nocturne_local', 'nocturne_latest', 'nocturne_personal',
+                        'nocturne_test_a', 'nocturne_test_b', 'nocturne_test_c'):
+            with self.subTest(package=package):
+                self.check_tenant_authorities(package)
+
+    def check_tenant_authorities(self, package):
+        tree = ast.parse((ROOT / package / 'rootfs/opt/nocturne-ha/run.py').read_text())
         helper = next(node for node in tree.body if isinstance(node, ast.FunctionDef)
                       and node.name == 'tenant_authorities')
         import re
