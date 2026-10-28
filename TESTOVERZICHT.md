@@ -17,10 +17,10 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 
 | # | Waar | Wat | Status |
 |---|---|---|---|
-| 1 | Test C (8453) | Helpboek op elke pagina controleren | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
+| 1 | Test C (8453) | Helpboek op elke pagina controleren | Help-icoon hersteld via [#88](https://github.com/smokkelaar/nocturne-personal/pull/88) (testbuild #89 = #75 + #88). Wacht op de store-build |
 | 2 | Test A (8451) | Google Health-reset met begindatum (#80, op #69) | Tenants en Google in de tenants getest en goed (28 okt). Nog te testen: de reset met begindatum zelf. Zet `skip_gateway_check` weer uit als dat nog niet is gedaan |
-| 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
-| 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed. Buitenste bolletjes nog niet versleepbaar, tooltip vraagt nog steeds extreem precies mikken, help-icoon ontbreekt. Bolletjes en tooltip opgelost in [#82](https://github.com/smokkelaar/nocturne-personal/pull/82), gemerged 28 okt als 0.3.44; wacht op de store-build; help-icoon wordt apart uitgezocht |
+| 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) en het help-icoon (#88) | Help-icoon hersteld via [#88](https://github.com/smokkelaar/nocturne-personal/pull/88), bovenop Personal 0.3.43 (met #78). Wacht op de store-build |
+| 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed. Buitenste bolletjes nog niet versleepbaar, tooltip vraagt nog steeds extreem precies mikken, help-icoon ontbreekt. Bolletjes en tooltip opgelost in [#82](https://github.com/smokkelaar/nocturne-personal/pull/82), gemerged 28 okt als 0.3.44; wacht op de store-build; help-icoon hersteld in [#88](https://github.com/smokkelaar/nocturne-personal/pull/88), nog niet in personal |
 
 ## Voorbereiding voor dinsdag 27 oktober
 
@@ -53,30 +53,32 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 ### Test B (poort 8452)
 
 - **Store-versie:** 1.0.101201 (alleen wrapper bijgewerkt).
-- **Bron:** [Personal PR #78](https://github.com/smokkelaar/nocturne-personal/pull/78), commit `012348422c25dc16f95aac290a1951de2c898975`.
-- **Doel:** interactieve grafiekvoorbeelden in de help, plus Snel starten en Problemen oplossen. Vervangt de achterhaalde #68-test.
-- **Basis:** Personal; #78 is de op Personal aangepaste variant van #76. Dit is geen schone-main-test voor upstream.
+- **Bron (nieuw):** [Personal PR #88](https://github.com/smokkelaar/nocturne-personal/pull/88), commit `a7959d715baf544f840d4c51b78764a9c609fe4f`.
+- **Doel:** het help-icoon linksboven is terug (de merge van #68 had het weggehaald), zodat de interactieve grafiekvoorbeelden van #78 te testen zijn. #88 zet ook ImageSharp op 3.2 met de Six Labors-licentie.
+- **Basis:** Personal 0.3.43 (`3b72219`, bevat #78) + alleen #88. Dit is geen schone-main-test voor upstream.
 - **Testen:**
+  0. Het boekicoontje staat linksboven (desktop) en in de mobiele kop, en opent de help.
   1. Open het helpboek bij AGP, Dagprofiel, Voorspelnauwkeurigheid, CGM-vergelijking, IDP en Slaap.
   2. Controleer het blok Verken de grafiek: knoppen wisselen uitleg, hover en pijltjestoetsen tonen waarden; eenheden en licht/donker thema volgen de instellingen.
   3. Klik in het slaapvoorbeeld op een nacht: je blijft in de help.
   4. Bekijk Snel starten en Problemen oplossen in het Nederlands en Engels; zoek op ontbrekende gegevens.
   5. De voorbeelden gebruiken fictieve gegevens; je eigen gegevens en voorkeuren blijven behouden.
-- **Status:** geblokkeerd (27 okt): het help-icoon linksboven ontbreekt in deze versie, dus de help is niet te openen. Wordt uitgezocht.
+- **Status:** wacht op build (28 okt). Eerder (27 okt) geblokkeerd omdat het help-icoon ontbrak.
 
 ### Test C (poort 8453)
 
 - **Store-versie:** 1.0.101201 (alleen wrapper bijgewerkt).
-- **Bron:** [Personal PR #75](https://github.com/smokkelaar/nocturne-personal/pull/75), commit `e7a4e04059cf438e1b0a011a102c6be85a21e659`.
+- **Bron (nieuw):** [Personal draft PR #89](https://github.com/smokkelaar/nocturne-personal/pull/89), commit `227e18b7c83e021c94a0eb7431a1c141d4e672e5`: [#75](https://github.com/smokkelaar/nocturne-personal/pull/75) + [#88](https://github.com/smokkelaar/nocturne-personal/pull/88) (help-icoon terug). Testbuild, wordt niet gemerged.
 - **Doel:** Nederlandse paginahulp met bovenaan het open blok Wat je ziet en wat het betekent.
 - **Basis:** bestaande gecombineerde help-testbuild op Personal 0.3.43, met #70, #72, #77 en #63/#73. Dit is geen geïsoleerde schone-main-test. De bron-PR #75 blijft een testbuild en is niet gemerged.
 - **Testen:**
+  0. Het boekicoontje staat linksboven (desktop) en in de mobiele kop, en opent de help.
   1. Zet de interfacetaal op Nederlands en open het helpboek op Dashboard, Calendar, Time spans, Clock, Food, Meals, Packing, Alerts en Notifications.
   2. Controleer ook rapporten zoals AGP, Executive summary, Steps, Heart rate en Sleep, plus Therapy, Appearance, Connectors & Apps en een koppeling.
   3. Bovenaan staat Wat je ziet en wat het betekent open; uitleg over kleuren, percentages en drempels moet kloppen met de pagina.
   4. Controleer uitklapblokken en zoek op Health Connect, Garmin, snooze, packing, webhook en Google Health.
   5. Bekijk de teksten in het Nederlands en Engels.
-- **Status:** geblokkeerd (27 okt): het help-icoon linksboven ontbreekt in deze versie, dus de help is niet te openen. Wordt uitgezocht.
+- **Status:** wacht op build (28 okt). Eerder (27 okt) geblokkeerd omdat het help-icoon ontbrak.
 
 ### Personal (poort 8450)
 

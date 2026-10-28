@@ -1,15 +1,15 @@
 {
   "channel": "personal-pr",
   "repository": "smokkelaar/nocturne-personal",
-  "pull_request": 75,
-  "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/75",
+  "pull_request": 89,
+  "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/89",
   "personal_version": "0.3.43",
-  "commit": "e7a4e04059cf438e1b0a011a102c6be85a21e659",
-  "commit_at": "2026-10-26T18:38:42Z",
+  "commit": "227e18b7c83e021c94a0eb7431a1c141d4e672e5",
+  "commit_at": "2026-10-28T17:06:04Z",
   "base_commit": "3b72219718f496265b22e79ef3bd51fdaf95f3de",
   "base_commit_at": "2026-10-26T18:10:09Z",
-  "archive_sha256": "42cb7ab547965c75eb085fe2f9275b320dbb75487e63c2742a0539a148969aaf",
+  "archive_sha256": "ac44a0feda8f0d6982feddfc84c40a9b7a389062cf5afa10ba6eaa817b85d8d1",
   "purpose": "Helptekst met echte inhoud bekijken: elke pagina begint met een open blok Wat je ziet en wat het betekent (kleuren, percentages, drempels, routes voor stappen/hartslag/slaap), nu ook voor instellingen, beheer en koppelingen, op de nieuwste personal. De help is in het Nederlands vertaald.",
-  "docs_note": "Personal draft PR #75 combines the open help PRs (#70, #72, #77, #63 with connector help #73) on top of current personal. It is a test build only and is not merged.",
-  "test_plan": "Zet de interfacetaal op Nederlands (Settings → Appearance). Open het helpboek op Dashboard, Calendar, Time spans, Clock, Food, Meals, Tools → Packing, Alerts (Rules, History, Do not disturb, Simulator, een regel), Notifications, de rapporten (onder andere AGP, Executive summary, Steps, Heart rate en Sleep) en enkele instellingen (Therapy, Appearance, Connectors & Apps, een koppeling). Controleer dat bovenaan Wat je ziet en wat het betekent open staat met uitleg die klopt met de pagina. Zoek in de help op Health Connect, Garmin en snooze."
+  "docs_note": "Personal draft PR #89 combines help test build #75 (the open help PRs #70, #72, #77, #63 with connector help #73) with #88, which restores the help book icon. It is a test build only and is not merged.",
+  "test_plan": "Controleer eerst dat het boekicoontje linksboven (desktop) en in de mobiele kop zichtbaar is en de help opent. Zet de interfacetaal op Nederlands (Settings → Appearance). Open het helpboek op Dashboard, Calendar, Time spans, Clock, Food, Meals, Tools → Packing, Alerts (Rules, History, Do not disturb, Simulator, een regel), Notifications, de rapporten (onder andere AGP, Executive summary, Steps, Heart rate en Sleep) en enkele instellingen (Therapy, Appearance, Connectors & Apps, een koppeling). Controleer dat bovenaan Wat je ziet en wat het betekent open staat met uitleg die klopt met de pagina. Zoek in de help op Health Connect, Garmin en snooze."
 }

@@ -79,7 +79,7 @@ Automatic app updates are optional per app in HA. Enable them only for **Nocturn
 
 From wrapper **0.1.10**, all six variants offer **Consciously skip gateway check** (`skip_gateway_check`, default false). Only effective with `gateway_auth: false`; save and restart this app. It skips only the wrapper authentication probe; Nocturne access/share permissions and TLS/host checks still apply. The helper prominently shows `GATEWAY_SKIPPED`. Test A now uses the same visible settings: migrate old `verify_native_auth: false` to `skip_gateway_check: true`, remove the old YAML key, save and restart. The canonical option takes precedence; restore the guard with `skip_gateway_check: false`. [Configuration and rollback](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/GATEWAY.md).
 
-This isolated channel tests [Personal PR #78](https://github.com/smokkelaar/nocturne-personal/pull/78) at `012348422c25dc16f95aac290a1951de2c898975`. Personal PR #78 brings #76 onto personal: interactive chart examples in the help for AGP, Daily profile, Prediction accuracy, CGM comparison, IDP and Sleep, plus the Getting started and Troubleshooting guides. Fictional example data only.
+This isolated channel tests [Personal PR #88](https://github.com/smokkelaar/nocturne-personal/pull/88) at `a7959d715baf544f840d4c51b78764a9c609fe4f`. Personal PR #88 restores the help book icon in the sidebar and mobile header on top of Personal 0.3.43, which already contains #78 (interactive chart examples, Getting started and Troubleshooting guides). #88 also moves ImageSharp to 3.2 with the Six Labors community license. Fictional example data only.
 
 ## Experimental maintenance
 
