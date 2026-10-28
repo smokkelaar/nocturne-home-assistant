@@ -18,9 +18,8 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 | # | Waar | Wat | Status |
 |---|---|---|---|
 | 1 | Test C (8453) | Helpboek op elke pagina controleren | Help-icoon hersteld via [#88](https://github.com/smokkelaar/nocturne-personal/pull/88) (testbuild #89 = #75 + #88). Wacht op de store-build |
-| 2 | Test A (8451) | Google Health-reset met begindatum (#80, op #69) | Tenants en Google in de tenants getest en goed (28 okt). Nog te testen: de reset met begindatum zelf. Zet `skip_gateway_check` weer uit als dat nog niet is gedaan |
 | 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) en het help-icoon (#88) | Help-icoon hersteld via [#88](https://github.com/smokkelaar/nocturne-personal/pull/88), bovenop Personal 0.3.43 (met #78). Wacht op de store-build |
-| 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed. Buitenste bolletjes nog niet versleepbaar, tooltip vraagt nog steeds extreem precies mikken, help-icoon ontbreekt. Bolletjes en tooltip opgelost in [#82](https://github.com/smokkelaar/nocturne-personal/pull/82), gemerged 28 okt als 0.3.44; wacht op de store-build; help-icoon hersteld in [#88](https://github.com/smokkelaar/nocturne-personal/pull/88), nog niet in personal |
+| 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed, bolletjes en tooltip nog niet goed, help-icoon ontbrak. Personal 0.3.45 bevat de fixes van [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) en het help-icoon van [#88](https://github.com/smokkelaar/nocturne-personal/pull/88). Wacht op de store-build |
 
 ## Voorbereiding voor dinsdag 27 oktober
 
@@ -125,3 +124,4 @@ Hier komt wat je getest en goedgekeurd hebt, met datum.
 | 27 okt 2026 | Test A (8451) | Personal #69: Google Health via instantiebeheer | Goed, behalve tenanttoegang: nu niet testbaar, later oppakken |
 | 27 okt 2026 | Personal (8450) | 0.3.43: HbA1c met extra decimaal | Goed |
 | 28 okt 2026 | Test A (8451) | Personal #69: tenants (testa, testa2) en Google Health per tenant | Goed. Google werkt in elke tenant, met één Google-account door de beperkte toegang van de andere accounts. Jaaroverzicht mist nog functionaliteit: in de jaaroverzicht-thread |
+| 28 okt 2026 | Test A (8451) | Personal #80: Google Health-reset met begindatum, op #69 | Goed: Google werkt, tenants werken zoals verwacht |
