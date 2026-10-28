@@ -8,6 +8,7 @@ import http.server
 import http.client
 import json
 import os
+import re
 import signal
 import shutil
 import socket
@@ -260,6 +261,22 @@ def web_response_reachable(options):
         connection.close()
 
 
+def tenant_authorities(options):
+    """Where to check that Nocturne is private: the apex serves a tenant only while there is one."""
+    if options.get('skip_gateway_check', False):
+        return [options['authority']]
+    try:
+        slugs = psql('SELECT slug FROM tenants WHERE is_active AND NOT is_demo ORDER BY slug',
+                     database='nocturne').split()
+    except (RuntimeError, OSError, subprocess.TimeoutExpired):
+        raise ValueError('GATEWAY_AUTH: tenants konden niet worden gelezen') from None
+    if len(slugs) < 2:
+        return [options['authority']]
+    if not all(re.fullmatch(r'[a-z0-9][a-z0-9-]*', slug) for slug in slugs):
+        raise ValueError('GATEWAY_AUTH: onverwachte tenantnaam')
+    return [f"{slug}.{options['authority']}" for slug in slugs]
+
+
 def verify_native_auth(options):
     """Verify private Nocturne before removing the outer gate, unless explicitly skipped.
 
@@ -484,7 +501,8 @@ def main():
         supervisor.wait_for('Nocturne API', lambda: api_reachable(options['hostname']), 3600,
                             database_progress)
         if not options['gateway_auth']:
-            verify_native_auth(options)
+            for authority in tenant_authorities(options):
+                verify_native_auth(dict(options, authority=authority))
             auth_check = (
                 'GATEWAY_SKIPPED: gatewaycontrole bewust overgeslagen; Nocturne-toegangs- en deelregels blijven gelden'
                 if options.get('skip_gateway_check', False) else

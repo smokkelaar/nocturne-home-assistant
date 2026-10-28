@@ -51,21 +51,21 @@ class PublicOriginTests(unittest.TestCase):
             config = settings.nginx_config(options, 'cert', 'key')
             with self.subTest(package=package):
                 self.assertEqual('mynocturne.duckdns.org', options['hostname'])
+                self.assertIn('server_name mynocturne.duckdns.org *.mynocturne.duckdns.org;', config)
+                tenant = '~^[a-z0-9][a-z0-9-]*\\.mynocturne\\.duckdns\\.org$ 1;'
+                self.assertIn(tenant, config)
+                pattern = re.compile(tenant[1:-3])
+                self.assertTrue(pattern.match('testa2.mynocturne.duckdns.org'))
+                for host in ('mynocturne.duckdns.org', 'a.b.mynocturne.duckdns.org',
+                             'testa.mynocturne.duckdns.org.evil.test', 'testamynocturne.duckdns.org'):
+                    self.assertFalse(pattern.match(host), host)
+                self.assertIn('"mynocturne.duckdns.org" 1;', config)
+                self.assertIn('if ($ha_allowed_host = 0) { return 421; }', config)
+                share = '~^[a-z0-9]+\\.share\\.mynocturne\\.duckdns\\.org$ 1;'
                 if package == 'nocturne_test_a':
-                    self.assertIn('server_name mynocturne.duckdns.org *.mynocturne.duckdns.org;', config)
-                    tenant = '~^[a-z0-9][a-z0-9-]*\\.mynocturne\\.duckdns\\.org$ 1;'
-                    self.assertIn(tenant, config)
-                    pattern = re.compile(tenant[1:-3])
-                    self.assertTrue(pattern.match('testa2.mynocturne.duckdns.org'))
-                    for host in ('mynocturne.duckdns.org', 'a.b.mynocturne.duckdns.org',
-                                 'testa.mynocturne.duckdns.org.evil.test', 'testamynocturne.duckdns.org'):
-                        self.assertFalse(pattern.match(host), host)
-                    self.assertIn('"mynocturne.duckdns.org" 1;', config)
-                    self.assertIn('~^[a-z0-9]+\\.share\\.mynocturne\\.duckdns\\.org$ 1;', config)
-                    self.assertIn('if ($ha_allowed_host = 0) { return 421; }', config)
+                    self.assertIn(share, config)
                 else:
-                    self.assertIn('server_name mynocturne.duckdns.org;', config)
-                    self.assertIn('if ($host != "mynocturne.duckdns.org") { return 421; }', config)
+                    self.assertNotIn(share, config)
                 self.assertNotIn('server_name mynocturne.duckdns.org:8451;', config)
                 self.assertIn('listen 8448 ssl;', config)
                 self.assertIn('X-Forwarded-Host $http_host', config)

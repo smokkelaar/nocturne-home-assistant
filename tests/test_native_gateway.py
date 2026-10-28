@@ -52,7 +52,9 @@ class NativeGatewayTests(unittest.TestCase):
         config = settings.nginx_config(self.options, 'cert', 'key')
         self.assertIn('auth_basic off;', config)
         self.assertNotIn('auth_basic_user_file', config)
-        self.assertIn('if ($host != "nocturne.example.net") { return 421; }', config)
+        self.assertIn('if ($ha_allowed_host = 0) { return 421; }', config)
+        self.assertIn('"nocturne.example.net" 1;', config)
+        self.assertIn('~^[a-z0-9][a-z0-9-]*\\.nocturne\\.example\\.net$ 1;', config)
         for header in ('X-Instance-Key', 'X-Instance-Service'):
             self.assertIn(f'proxy_set_header {header} "";', config)
         self.assertIn('proxy_set_header Authorization $ha_oauth_authorization;', config)
