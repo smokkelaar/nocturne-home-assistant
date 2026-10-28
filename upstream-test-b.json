@@ -1,15 +1,15 @@
 {
   "channel": "personal-pr",
   "repository": "smokkelaar/nocturne-personal",
-  "pull_request": 78,
-  "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/78",
-  "personal_version": "0.3.42",
-  "commit": "012348422c25dc16f95aac290a1951de2c898975",
-  "commit_at": "2026-10-26T13:53:25Z",
-  "base_commit": "5c6c4079fb1b6644921be2fa4cac5dea2d5852ca",
-  "base_commit_at": "2026-10-25T20:26:13Z",
-  "archive_sha256": "ec94bc7a2f5262e8f0f5281c09c67ce6e489b5b66d5a03be0aa57c2e452771b9",
-  "purpose": "De interactieve grafiekvoorbeelden in de help los bekijken (van #76, aangepast op Personal), plus de nieuwe gidsen Snel starten en Problemen oplossen.",
-  "docs_note": "Personal PR #78 brings #76 onto personal: interactive chart examples in the help for AGP, Daily profile, Prediction accuracy, CGM comparison, IDP and Sleep, plus the Getting started and Troubleshooting guides. Fictional example data only.",
-  "test_plan": "Open het helpboek op Reports → AGP, Loop analysis → Daily profile en Prediction accuracy, Data quality → CGM comparison, IDP en Sleep. Controleer bij elk het blok 'Verken de grafiek': de knoppen wisselen de uitleg, aanwijzen en pijltjestoetsen tonen waarden, en eenheden en themakleuren volgen je instellingen. Klik bij Slaap op een nacht: je blijft in de help. Zoek in de help op 'ontbrekende gegevens' en open Snel starten vanuit de dashboardhulp. Controleer dat je echte gegevens en voorkeuren niet veranderen."
+  "pull_request": 88,
+  "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/88",
+  "personal_version": "0.3.43",
+  "commit": "a7959d715baf544f840d4c51b78764a9c609fe4f",
+  "commit_at": "2026-10-28T17:04:18Z",
+  "base_commit": "3b72219718f496265b22e79ef3bd51fdaf95f3de",
+  "base_commit_at": "2026-10-26T18:10:09Z",
+  "archive_sha256": "be385c8211c7232110825523af54534ed7747f78c9aed0bfbd30a4357d2bce04",
+  "purpose": "De interactieve grafiekvoorbeelden in de help bekijken (#78, nu in Personal), met het helpicoontje linksboven weer terug (#88).",
+  "docs_note": "Personal PR #88 restores the help book icon in the sidebar and mobile header on top of Personal 0.3.43, which already contains #78 (interactive chart examples, Getting started and Troubleshooting guides). #88 also moves ImageSharp to 3.2 with the Six Labors community license. Fictional example data only.",
+  "test_plan": "Controleer eerst dat het boekicoontje linksboven (desktop) en in de mobiele kop zichtbaar is en de help opent. Open daarna het helpboek op Reports → AGP, Loop analysis → Daily profile en Prediction accuracy, Data quality → CGM comparison, IDP en Sleep. Controleer bij elk het blok 'Verken de grafiek': de knoppen wisselen de uitleg, aanwijzen en pijltjestoetsen tonen waarden, en eenheden en themakleuren volgen je instellingen. Klik bij Slaap op een nacht: je blijft in de help. Zoek in de help op 'ontbrekende gegevens' en open Snel starten vanuit de dashboardhulp. Controleer dat je echte gegevens en voorkeuren niet veranderen."
 }
