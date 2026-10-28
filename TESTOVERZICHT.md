@@ -2,7 +2,7 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 28 oktober 2026, 18:15 (NL-tijd)
+**Bijgewerkt:** 29 oktober 2026, 00:40 (NL-tijd)
 
 Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Controleren op updates.
 
@@ -19,7 +19,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 |---|---|---|---|
 | 1 | Test C (8453) | Helpboek op elke pagina controleren | Klaar om te testen in 1.0.102701: help-icoon terug (testbuild #89 = #75 + #88) |
 | 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) en het help-icoon (#88) | Help-icoon hersteld via [#88](https://github.com/smokkelaar/nocturne-personal/pull/88), bovenop Personal 0.3.43 (met #78). Klaar om te testen in 1.0.102701 |
-| 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed, bolletjes en tooltip nog niet goed, help-icoon ontbrak. Personal 0.3.45 bevat de fixes van [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) en het help-icoon van [#88](https://github.com/smokkelaar/nocturne-personal/pull/88). Klaar om te testen in 1.0.102701 (Personal 0.3.45) |
+| 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed, bolletjes en tooltip nog niet goed, help-icoon ontbrak. Personal 0.3.45 bevat de fixes van [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) en het help-icoon van [#88](https://github.com/smokkelaar/nocturne-personal/pull/88). Getest op 0.3.45 (28 okt): kleuren werken. Dim op aparte regel, presets weg, verloop tussen de kleuren: aangepast in [#92](https://github.com/smokkelaar/nocturne-personal/pull/92) (0.3.46, open) |
 
 ## Voorbereiding voor dinsdag 27 oktober
 
@@ -89,6 +89,10 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   - Jaaroverzicht: kleurbereik los van Dim outside, zoals het oude Personal. De twee buitenste bolletjes op de kleurbalk hebben de eindkleuren en bepalen waar de kleuren beginnen en eindigen. Het dimvenster heeft een eigen schuifbalk erboven en verandert de kleuren niet meer.
   - eHbA1c-tooltip: toont een labwaarde binnen 24 px van het driehoekje (32 px bij touch), ruimer dan de 44 px-richtlijn van WCAG.
   - Build: ImageSharp-melding GHSA-v76p-62qx-wwq2 onderdrukt tot nightscout/nocturne een update levert.
+- **Open, wordt 0.3.46** ([#92](https://github.com/smokkelaar/nocturne-personal/pull/92)):
+  - De kleuren lopen alleen nog tussen de ingestelde kleuren (eindkleuren en gekleurde grenzen), dus blauw loopt naar groen zonder geel of grijs ertussen.
+  - De dim-streepjes staan weer op de kleurbalk, hoger dan de bolletjes. Pak een streepje boven of onder het bolletje als ze op dezelfde plek staan.
+  - De standaard kleurschema's zijn weg; Mirror blijft.
 - **Jaaroverzicht op Test A:** Test A (PR #83) is schone main met alleen Google Health en heeft dus het upstream-jaaroverzicht zonder deze Personal-onderdelen. Dat is verwacht; test het jaaroverzicht hier op Personal.
 - **Waarom hier en niet op Test A/B/C:** dit zijn Personal-wensen, en Test A, B en C zijn bezet. De Test B-build van #68 (26 okt) had #79 nog niet; daarom kon je de buitenste kleuren daar niet verplaatsen.
 - **Testen:**
@@ -96,6 +100,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   2. Rapporten → eHbA1c: waarden tonen 2 decimalen in % en 1 in mmol/mol. Voer een lab-waarde in met die precisie en controleer de streefwaardecheck.
   2b. (0.3.44) Beweeg de muis tot ruim een halve centimeter naast een lab-driehoekje: de tooltip toont de labwaarde zonder precies te mikken.
   3. Open de help bij AGP en Slaap: het voorbeeld is interactief.
+  4. (0.3.46) Jaaroverzicht: zet gekleurde grenzen (bijvoorbeeld blauw, groen, rood, geel). Elk stuk loopt rechtstreeks van de ene kleur naar de volgende. De dim-streepjes staan op dezelfde lijn als de kleuren, en de rij kleurschema's is weg.
 - **Status:** getest op 0.3.43 (27 okt). Stap 2 (decimalen) goed. Stap 1 (buitenste bolletjes) werkt niet: niet versleepbaar. Tooltip vraagt nog steeds extreem precies mikken; [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) zat nog niet in deze versie, en de vraag is of 12 px genoeg is (best practices en schermafhankelijkheid bekijken). Stap 3: help-icoon ontbreekt, help niet te openen. Bolletjes en tooltip aangepast in #82 (0.3.44); de help wordt apart uitgezocht. **Nu klaar om te hertesten in 1.0.102701 (Personal 0.3.45), inclusief de help.**
 
 ### Latest (poort 8449)
