@@ -18,7 +18,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 | # | Waar | Wat | Status |
 |---|---|---|---|
 | 1 | Test C (8453) | Helpboek op elke pagina controleren | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
-| 2 | Test A (8451) | Google Health-reset met begindatum (#80, op #69) | Klaar om te testen in 1.0.100501: migratie loopt door, en tenantadressen (testa./testa2.) werken nu. Zet `skip_gateway_check` weer uit. Tenanttoegang van #69 is nu ook testbaar |
+| 2 | Test A (8451) | Google Health-reset met begindatum (#80, op #69) | Tenants en Google in de tenants getest en goed (28 okt). Nog te testen: de reset met begindatum zelf. Zet `skip_gateway_check` weer uit als dat nog niet is gedaan |
 | 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
 | 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed. Buitenste bolletjes nog niet versleepbaar, tooltip vraagt nog steeds extreem precies mikken, help-icoon ontbreekt. Bolletjes en tooltip opgelost in [#82](https://github.com/smokkelaar/nocturne-personal/pull/82), gemerged 28 okt als 0.3.44; wacht op de store-build; help-icoon wordt apart uitgezocht |
 
@@ -26,7 +26,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 
 HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https://github.com/smokkelaar/nocturne-home-assistant/actions/runs/40403185802) zijn geslaagd voor alle drie de kanalen op AMD64 en ARM64, inclusief opstarten, accountherstel, cold restore en upgraden vanaf de vorige versie. Publieke beschikbaarheid en image-labels zijn gecontroleerd. [Storepromotie #177](https://github.com/smokkelaar/nocturne-home-assistant/pull/177) is gemerged.
 
-**Test A staat op store-versie 1.0.100501, Test B en C op 1.0.99301.** Vernieuw de HA-store en update Test A, B en C. 1.0.99301 wacht bij de start op databasemigraties en logt hun voortgang (alleen de wrapper is gewijzigd). Installatie en werking op de eigen HA zijn vanuit deze sessie niet gecontroleerd; dit overzicht bevestigt de gepubliceerde pakketten.
+**Test A staat op store-versie 1.0.100501, alle andere apps op 1.0.101201.** Vernieuw de HA-store en update. Alle apps laten nu tenantadressen (`<tenant>.<hostname>:<poort>`) door en controleren bij meer tenants elke tenant apart (alleen de wrapper is gewijzigd). Installatie en werking op de eigen HA zijn vanuit deze sessie niet gecontroleerd; dit overzicht bevestigt de gepubliceerde pakketten.
 
 ## Per instantie
 
@@ -52,7 +52,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Test B (poort 8452)
 
-- **Store-versie:** 1.0.99301 (alleen wrapper bijgewerkt).
+- **Store-versie:** 1.0.101201 (alleen wrapper bijgewerkt).
 - **Bron:** [Personal PR #78](https://github.com/smokkelaar/nocturne-personal/pull/78), commit `012348422c25dc16f95aac290a1951de2c898975`.
 - **Doel:** interactieve grafiekvoorbeelden in de help, plus Snel starten en Problemen oplossen. Vervangt de achterhaalde #68-test.
 - **Basis:** Personal; #78 is de op Personal aangepaste variant van #76. Dit is geen schone-main-test voor upstream.
@@ -66,7 +66,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Test C (poort 8453)
 
-- **Store-versie:** 1.0.99301 (alleen wrapper bijgewerkt).
+- **Store-versie:** 1.0.101201 (alleen wrapper bijgewerkt).
 - **Bron:** [Personal PR #75](https://github.com/smokkelaar/nocturne-personal/pull/75), commit `e7a4e04059cf438e1b0a011a102c6be85a21e659`.
 - **Doel:** Nederlandse paginahulp met bovenaan het open blok Wat je ziet en wat het betekent.
 - **Basis:** bestaande gecombineerde help-testbuild op Personal 0.3.43, met #70, #72, #77 en #63/#73. Dit is geen geïsoleerde schone-main-test. De bron-PR #75 blijft een testbuild en is niet gemerged.
@@ -80,7 +80,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Personal (poort 8450)
 
-- **Store-versie:** 1.0.99301 = Personal 0.3.43 (commit `3b72219`), Latest-basis nightscout main `3caa43c`.
+- **Store-versie:** 1.0.101201 = Personal 0.3.43 (commit `3b72219`), Latest-basis nightscout main `3caa43c`.
 - **Nieuw in 0.3.43:**
   - [#78](https://github.com/smokkelaar/nocturne-personal/pull/78): interactieve grafiekvoorbeelden in de help (AGP, Dagprofiel, Voorspelnauwkeurigheid, CGM-vergelijking, IDP, Slaap).
   - [#79](https://github.com/smokkelaar/nocturne-personal/pull/79): jaaroverzicht, de twee buitenste bolletjes versmallen het kleurbereik (ook glucose); HbA1c met één decimaal extra (6,54% en 50,3 mmol/mol), ook bij lab-invoer.
@@ -99,12 +99,12 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Latest (poort 8449)
 
-- **Store-versie:** 1.0.88301 = nightscout main `3caa43c`.
+- **Store-versie:** 1.0.101201 = nightscout main `3caa43c`.
 - **Doel:** volgt de nightscout main waarop Personal gebouwd is. Niets specifieks te testen.
 
 ### Official Release (poort 8448)
 
-- **Store-versie:** 1.0.88301 = officiële release 0.2.7.
+- **Store-versie:** 1.0.101201 = officiële release 0.2.7.
 - **Doel:** officiële release. Niets te testen.
 
 ### Stable en Main (repo nocturne-home-assistant-upstream, poort 8448 en 8449)
@@ -122,3 +122,4 @@ Hier komt wat je getest en goedgekeurd hebt, met datum.
 | 26 okt 2026 | Test B (8452) | Personal #68: HbA1c | Werkt; tooltip vraagt precieze muis: verruimd in #82 (0.3.44) |
 | 27 okt 2026 | Test A (8451) | Personal #69: Google Health via instantiebeheer | Goed, behalve tenanttoegang: nu niet testbaar, later oppakken |
 | 27 okt 2026 | Personal (8450) | 0.3.43: HbA1c met extra decimaal | Goed |
+| 28 okt 2026 | Test A (8451) | Personal #69: tenants (testa, testa2) en Google Health per tenant | Goed. Google werkt in elke tenant, met één Google-account door de beperkte toegang van de andere accounts. Jaaroverzicht mist nog functionaliteit: in de jaaroverzicht-thread |
