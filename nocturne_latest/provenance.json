@@ -2,10 +2,10 @@
   "format": 1,
   "channel": "latest",
   "package": "nocturne_latest",
-  "version": "1.0.99301",
+  "version": "1.0.101201",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "4d37539f8497f6586fef7168596d67f10006339a",
-  "recipe": "10955d41c5d2f10388a0e5949e041fe035f9b124d850515e6611ed32cfa13d11",
+  "wrapper_commit": "dea9b31f1ef2d693241302da54f0bbe4c096ae37",
+  "recipe": "76e1fda760f64afeae469e0cdbd35400af9dac57fd0c20842de46748eee28c73",
   "source_repository": "nightscout/nocturne",
   "source_commit": "3caa43cbe614b194cfe6c764714845cd24fc65f6",
   "architectures": [
@@ -24,7 +24,7 @@
   },
   "config": {
     "name": "Nocturne Latest Release",
-    "version": "1.0.99301",
+    "version": "1.0.101201",
     "slug": "nocturne_latest",
     "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Geen release; vastgezette main-snapshot \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
@@ -76,7 +76,7 @@
   },
   "previous_config": {
     "name": "Nocturne Latest Release",
-    "version": "1.0.98601",
+    "version": "1.0.99301",
     "slug": "nocturne_latest",
     "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Geen release; vastgezette main-snapshot \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
@@ -127,7 +127,7 @@
     "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-latest-{arch}"
   },
   "digests": {
-    "amd64": "sha256:12f90549f60a7cacacb769ffdb0ecdc234a499161111b03718935e200611bbfe",
-    "aarch64": "sha256:e8b8ad959b53a08588ae739212bc2bc90fc37f914b5b6e98b4756b15d71f718d"
+    "amd64": "sha256:037ba64969c30f6cf8f5fa2778ef09cd655feb1c0236b38776b0584a52fe6b56",
+    "aarch64": "sha256:f19371bafc177d5c5204b1ae14db657d0551bce7f320f0afdfc25f54c60ad010"
   }
 }
