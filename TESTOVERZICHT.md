@@ -2,7 +2,7 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 27 oktober 2026, 13:50 (NL-tijd)
+**Bijgewerkt:** 28 oktober 2026, 18:15 (NL-tijd)
 
 Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Controleren op updates.
 
@@ -20,7 +20,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 | 1 | Test C (8453) | Helpboek op elke pagina controleren | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
 | 2 | Test A (8451) | Google Health-reset met begindatum (#80, op #69) | Klaar om te testen in 1.0.100501: migratie loopt door, en tenantadressen (testa./testa2.) werken nu. Zet `skip_gateway_check` weer uit. Tenanttoegang van #69 is nu ook testbaar |
 | 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) | Geblokkeerd: het help-icoon linksboven ontbreekt, help is niet te openen. Wordt uitgezocht |
-| 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed. Buitenste bolletjes nog niet versleepbaar, tooltip vraagt nog steeds extreem precies mikken, help-icoon ontbreekt. Bolletjes en tooltip opgelost in [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) (0.3.44, open, nog niet in de store); help-icoon wordt apart uitgezocht |
+| 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed. Buitenste bolletjes nog niet versleepbaar, tooltip vraagt nog steeds extreem precies mikken, help-icoon ontbreekt. Bolletjes en tooltip opgelost in [#82](https://github.com/smokkelaar/nocturne-personal/pull/82), gemerged 28 okt als 0.3.44; wacht op de store-build; help-icoon wordt apart uitgezocht |
 
 ## Voorbereiding voor dinsdag 27 oktober
 
@@ -84,9 +84,11 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 - **Nieuw in 0.3.43:**
   - [#78](https://github.com/smokkelaar/nocturne-personal/pull/78): interactieve grafiekvoorbeelden in de help (AGP, Dagprofiel, Voorspelnauwkeurigheid, CGM-vergelijking, IDP, Slaap).
   - [#79](https://github.com/smokkelaar/nocturne-personal/pull/79): jaaroverzicht, de twee buitenste bolletjes versmallen het kleurbereik (ook glucose); HbA1c met één decimaal extra (6,54% en 50,3 mmol/mol), ook bij lab-invoer.
-- **Open, wordt 0.3.44:** [#82](https://github.com/smokkelaar/nocturne-personal/pull/82):
+- **In `personal`, nog niet in de store: 0.3.44** ([#82](https://github.com/smokkelaar/nocturne-personal/pull/82), gemerged 28 okt, merge `7080e5c`):
   - Jaaroverzicht: kleurbereik los van Dim outside, zoals het oude Personal. De twee buitenste bolletjes op de kleurbalk hebben de eindkleuren en bepalen waar de kleuren beginnen en eindigen. Het dimvenster heeft een eigen schuifbalk erboven en verandert de kleuren niet meer.
   - eHbA1c-tooltip: toont een labwaarde binnen 24 px van het driehoekje (32 px bij touch), ruimer dan de 44 px-richtlijn van WCAG.
+  - Build: ImageSharp-melding GHSA-v76p-62qx-wwq2 onderdrukt tot nightscout/nocturne een update levert.
+- **Jaaroverzicht op Test A:** Test A (PR #83) is schone main met alleen Google Health en heeft dus het upstream-jaaroverzicht zonder deze Personal-onderdelen. Dat is verwacht; test het jaaroverzicht hier op Personal.
 - **Waarom hier en niet op Test A/B/C:** dit zijn Personal-wensen, en Test A, B en C zijn bezet. De Test B-build van #68 (26 okt) had #79 nog niet; daarom kon je de buitenste kleuren daar niet verplaatsen.
 - **Testen:**
   1. (0.3.44) Rapporten → Jaaroverzicht: versleep de buitenste gekleurde bolletjes op de kleurbalk. De kleuren lopen alleen tussen de bolletjes, waarden erbuiten krijgen de eindkleur. Versleep daarna de streepjes op de dunne balk erboven: alleen het dimmen verandert, de kleuren blijven staan. Het bereik onthoudt zich per metriek, en Reset zet alles terug.
