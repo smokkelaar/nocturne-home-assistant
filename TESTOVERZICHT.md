@@ -17,21 +17,21 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 
 | # | Waar | Wat | Status |
 |---|---|---|---|
-| 1 | Test C (8453) | Helpboek op elke pagina controleren | Help-icoon hersteld via [#88](https://github.com/smokkelaar/nocturne-personal/pull/88) (testbuild #89 = #75 + #88). Wacht op de store-build |
-| 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) en het help-icoon (#88) | Help-icoon hersteld via [#88](https://github.com/smokkelaar/nocturne-personal/pull/88), bovenop Personal 0.3.43 (met #78). Wacht op de store-build |
-| 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed, bolletjes en tooltip nog niet goed, help-icoon ontbrak. Personal 0.3.45 bevat de fixes van [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) en het help-icoon van [#88](https://github.com/smokkelaar/nocturne-personal/pull/88). Wacht op de store-build |
+| 1 | Test C (8453) | Helpboek op elke pagina controleren | Klaar om te testen in 1.0.102701: help-icoon terug (testbuild #89 = #75 + #88) |
+| 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) en het help-icoon (#88) | Help-icoon hersteld via [#88](https://github.com/smokkelaar/nocturne-personal/pull/88), bovenop Personal 0.3.43 (met #78). Klaar om te testen in 1.0.102701 |
+| 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed, bolletjes en tooltip nog niet goed, help-icoon ontbrak. Personal 0.3.45 bevat de fixes van [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) en het help-icoon van [#88](https://github.com/smokkelaar/nocturne-personal/pull/88). Klaar om te testen in 1.0.102701 (Personal 0.3.45) |
 
 ## Voorbereiding voor dinsdag 27 oktober
 
 HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https://github.com/smokkelaar/nocturne-home-assistant/actions/runs/40403185802) zijn geslaagd voor alle drie de kanalen op AMD64 en ARM64, inclusief opstarten, accountherstel, cold restore en upgraden vanaf de vorige versie. Publieke beschikbaarheid en image-labels zijn gecontroleerd. [Storepromotie #177](https://github.com/smokkelaar/nocturne-home-assistant/pull/177) is gemerged.
 
-**Test A staat op store-versie 1.0.100501, alle andere apps op 1.0.101201.** Vernieuw de HA-store en update. Alle apps laten nu tenantadressen (`<tenant>.<hostname>:<poort>`) door en controleren bij meer tenants elke tenant apart (alleen de wrapper is gewijzigd). Installatie en werking op de eigen HA zijn vanuit deze sessie niet gecontroleerd; dit overzicht bevestigt de gepubliceerde pakketten.
+**Personal, Test A, B en C staan op store-versie 1.0.102701 (28 okt), Latest en Official op 1.0.101201.** Vernieuw de HA-store en update. Alle apps laten nu tenantadressen (`<tenant>.<hostname>:<poort>`) door en controleren bij meer tenants elke tenant apart (alleen de wrapper is gewijzigd). Installatie en werking op de eigen HA zijn vanuit deze sessie niet gecontroleerd; dit overzicht bevestigt de gepubliceerde pakketten.
 
 ## Per instantie
 
 ### Test A (poort 8451)
 
-- **Store-versie:** 1.0.100501 (#69 + #80 op nightscout main `970031f`, met de herschreven migratiestap). Vernieuw de HA-store en update Test A. De migratie van upstream #2842 is op deze database al klaar.
+- **Store-versie:** 1.0.102701, zelfde bron als 1.0.100501 (#69 + #80 op nightscout main `970031f`, met de herschreven migratiestap). Vernieuw de HA-store en update Test A. De migratie van upstream #2842 is op deze database al klaar.
 - **Wrapper (alleen Test A):** tenantadressen `<tenant>.<hostname>:8451` worden doorgelaten; met meer dan één tenant controleert de start elke tenant apart op privétoegang. `skip_gateway_check` hoeft niet meer aan.
 - **Bron (nieuw):** [Personal PR #83](https://github.com/smokkelaar/nocturne-personal/pull/83), commit `4500f692ff57feebbe6c8c29315b8a79946b2823`. Testbuild, wordt niet gemerged.
 - **Basis:** schone nightscout main `970031f` met alleen [#69](https://github.com/smokkelaar/nocturne-personal/pull/69) (Google Health-instellingen in instantiebeheer) en [#80](https://github.com/smokkelaar/nocturne-personal/pull/80) (reset met begindatum in stukken lezen). Bewust gecombineerd (keuze 27 okt): zonder #69 kan de HA-app Google Health op schone main niet koppelen.
@@ -51,7 +51,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Test B (poort 8452)
 
-- **Store-versie:** 1.0.101201 (alleen wrapper bijgewerkt).
+- **Store-versie:** 1.0.102701 (28 okt), met het help-icoon.
 - **Bron (nieuw):** [Personal PR #88](https://github.com/smokkelaar/nocturne-personal/pull/88), commit `a7959d715baf544f840d4c51b78764a9c609fe4f`.
 - **Doel:** het help-icoon linksboven is terug (de merge van #68 had het weggehaald), zodat de interactieve grafiekvoorbeelden van #78 te testen zijn. #88 zet ook ImageSharp op 3.2 met de Six Labors-licentie.
 - **Basis:** Personal 0.3.43 (`3b72219`, bevat #78) + alleen #88. Dit is geen schone-main-test voor upstream.
@@ -62,11 +62,11 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   3. Klik in het slaapvoorbeeld op een nacht: je blijft in de help.
   4. Bekijk Snel starten en Problemen oplossen in het Nederlands en Engels; zoek op ontbrekende gegevens.
   5. De voorbeelden gebruiken fictieve gegevens; je eigen gegevens en voorkeuren blijven behouden.
-- **Status:** wacht op build (28 okt). Eerder (27 okt) geblokkeerd omdat het help-icoon ontbrak.
+- **Status:** klaar om te testen in 1.0.102701 (28 okt). Eerder (27 okt) geblokkeerd omdat het help-icoon ontbrak.
 
 ### Test C (poort 8453)
 
-- **Store-versie:** 1.0.101201 (alleen wrapper bijgewerkt).
+- **Store-versie:** 1.0.102701 (28 okt), met het help-icoon.
 - **Bron (nieuw):** [Personal draft PR #89](https://github.com/smokkelaar/nocturne-personal/pull/89), commit `227e18b7c83e021c94a0eb7431a1c141d4e672e5`: [#75](https://github.com/smokkelaar/nocturne-personal/pull/75) + [#88](https://github.com/smokkelaar/nocturne-personal/pull/88) (help-icoon terug). Testbuild, wordt niet gemerged.
 - **Doel:** Nederlandse paginahulp met bovenaan het open blok Wat je ziet en wat het betekent.
 - **Basis:** bestaande gecombineerde help-testbuild op Personal 0.3.43, met #70, #72, #77 en #63/#73. Dit is geen geïsoleerde schone-main-test. De bron-PR #75 blijft een testbuild en is niet gemerged.
@@ -77,15 +77,15 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   3. Bovenaan staat Wat je ziet en wat het betekent open; uitleg over kleuren, percentages en drempels moet kloppen met de pagina.
   4. Controleer uitklapblokken en zoek op Health Connect, Garmin, snooze, packing, webhook en Google Health.
   5. Bekijk de teksten in het Nederlands en Engels.
-- **Status:** wacht op build (28 okt). Eerder (27 okt) geblokkeerd omdat het help-icoon ontbrak.
+- **Status:** klaar om te testen in 1.0.102701 (28 okt). Eerder (27 okt) geblokkeerd omdat het help-icoon ontbrak.
 
 ### Personal (poort 8450)
 
-- **Store-versie:** 1.0.101201 = Personal 0.3.43 (commit `3b72219`), Latest-basis nightscout main `3caa43c`.
+- **Store-versie:** 1.0.102701 = Personal 0.3.45 (commit `5adf0ca`), Latest-basis nightscout main `3caa43c`. Bevat 0.3.44 (hieronder) en het help-icoon ([#88](https://github.com/smokkelaar/nocturne-personal/pull/88)).
 - **Nieuw in 0.3.43:**
   - [#78](https://github.com/smokkelaar/nocturne-personal/pull/78): interactieve grafiekvoorbeelden in de help (AGP, Dagprofiel, Voorspelnauwkeurigheid, CGM-vergelijking, IDP, Slaap).
   - [#79](https://github.com/smokkelaar/nocturne-personal/pull/79): jaaroverzicht, de twee buitenste bolletjes versmallen het kleurbereik (ook glucose); HbA1c met één decimaal extra (6,54% en 50,3 mmol/mol), ook bij lab-invoer.
-- **In `personal`, nog niet in de store: 0.3.44** ([#82](https://github.com/smokkelaar/nocturne-personal/pull/82), gemerged 28 okt, merge `7080e5c`):
+- **Nieuw in 0.3.44** ([#82](https://github.com/smokkelaar/nocturne-personal/pull/82), gemerged 28 okt, merge `7080e5c`):
   - Jaaroverzicht: kleurbereik los van Dim outside, zoals het oude Personal. De twee buitenste bolletjes op de kleurbalk hebben de eindkleuren en bepalen waar de kleuren beginnen en eindigen. Het dimvenster heeft een eigen schuifbalk erboven en verandert de kleuren niet meer.
   - eHbA1c-tooltip: toont een labwaarde binnen 24 px van het driehoekje (32 px bij touch), ruimer dan de 44 px-richtlijn van WCAG.
   - Build: ImageSharp-melding GHSA-v76p-62qx-wwq2 onderdrukt tot nightscout/nocturne een update levert.
@@ -96,7 +96,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   2. Rapporten → eHbA1c: waarden tonen 2 decimalen in % en 1 in mmol/mol. Voer een lab-waarde in met die precisie en controleer de streefwaardecheck.
   2b. (0.3.44) Beweeg de muis tot ruim een halve centimeter naast een lab-driehoekje: de tooltip toont de labwaarde zonder precies te mikken.
   3. Open de help bij AGP en Slaap: het voorbeeld is interactief.
-- **Status:** getest op 0.3.43 (27 okt). Stap 2 (decimalen) goed. Stap 1 (buitenste bolletjes) werkt niet: niet versleepbaar. Tooltip vraagt nog steeds extreem precies mikken; [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) zat nog niet in deze versie, en de vraag is of 12 px genoeg is (best practices en schermafhankelijkheid bekijken). Stap 3: help-icoon ontbreekt, help niet te openen. Bolletjes en tooltip aangepast in #82 (0.3.44); de help wordt apart uitgezocht.
+- **Status:** getest op 0.3.43 (27 okt). Stap 2 (decimalen) goed. Stap 1 (buitenste bolletjes) werkt niet: niet versleepbaar. Tooltip vraagt nog steeds extreem precies mikken; [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) zat nog niet in deze versie, en de vraag is of 12 px genoeg is (best practices en schermafhankelijkheid bekijken). Stap 3: help-icoon ontbreekt, help niet te openen. Bolletjes en tooltip aangepast in #82 (0.3.44); de help wordt apart uitgezocht. **Nu klaar om te hertesten in 1.0.102701 (Personal 0.3.45), inclusief de help.**
 
 ### Latest (poort 8449)
 
