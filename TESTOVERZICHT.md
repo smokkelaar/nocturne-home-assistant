@@ -101,8 +101,8 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   2. Rapporten → eHbA1c: waarden tonen 2 decimalen in % en 1 in mmol/mol. Voer een lab-waarde in met die precisie en controleer de streefwaardecheck.
   2b. (0.3.44) Beweeg de muis tot ruim een halve centimeter naast een lab-driehoekje: de tooltip toont de labwaarde zonder precies te mikken.
   3. Open de help bij AGP en Slaap: het voorbeeld is interactief.
-  5. (0.3.47) Jaaroverzicht: naast de lage en hoge waarde staat de eenheid, en de knop heet weer "+ Color boundary". eHbA1c: de tooltip springt alleen naar een labwaarde als de muis bij het driehoekje staat, niet onderaan bij de datums.
   4. (0.3.46) Jaaroverzicht: zet gekleurde grenzen (bijvoorbeeld blauw, groen, rood, geel). Elk stuk loopt rechtstreeks van de ene kleur naar de volgende. De dim-streepjes staan op dezelfde lijn als de kleuren. De rij kleurschema's, Mirror en Swap zijn weg, en de + staat tussen de kleuren waar de nieuwe grens komt.
+  5. (0.3.47) Jaaroverzicht: naast de lage en hoge waarde staat de eenheid, en de knop heet weer "+ Color boundary". eHbA1c: de tooltip springt alleen naar een labwaarde als de muis bij het driehoekje staat, niet onderaan bij de datums.
 - **Status:** getest op 0.3.43 (27 okt). Stap 2 (decimalen) goed. Stap 1 (buitenste bolletjes) werkt niet: niet versleepbaar. Tooltip vraagt nog steeds extreem precies mikken; [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) zat nog niet in deze versie, en de vraag is of 12 px genoeg is (best practices en schermafhankelijkheid bekijken). Stap 3: help-icoon ontbreekt, help niet te openen. Bolletjes en tooltip aangepast in #82 (0.3.44); de help wordt apart uitgezocht. **Nu klaar om te hertesten in 1.0.102701 (Personal 0.3.45), inclusief de help.**
 
 ### Latest (poort 8449)
