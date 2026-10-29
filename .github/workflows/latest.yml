@@ -8,13 +8,13 @@ permissions:
   contents: write
   pull-requests: write
 concurrency:
-  group: latest-upstream-update
+  group: source-promotion
   cancel-in-progress: false
 jobs:
   update:
     if: github.repository == 'smokkelaar/nocturne-home-assistant'
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 270
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -116,3 +116,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PROPOSAL_NUMBER: ${{ steps.proposal.outputs.pull-request-number }}
         run: gh pr merge "$PROPOSAL_NUMBER" --auto --squash
+      - name: Land the proposal and start the store publication
+        if: steps.changes.outputs.changed == 'true' && steps.proposal.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROPOSAL_NUMBER: ${{ steps.proposal.outputs.pull-request-number }}
+        run: python tools/store_pipeline.py land --pr "$PROPOSAL_NUMBER" --wait-minutes 240 --publish-after

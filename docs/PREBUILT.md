@@ -69,7 +69,7 @@ architectuurpackages publiek; de promotie weigert anders een HA-update aan te bi
 Er is geen GitHub-token op HAOS nodig. Het GITHUB_TOKEN van Actions krijgt alleen
 package-schrijfbevoegdheid in de vertrouwde publicatiejobs.
 
-Na bronupdates op main en ieder uur start `prebuilt-auto.yml` een publicatierun.
+Na bronupdates op main en dagelijks om 08:17 UTC start `prebuilt-auto.yml` een publicatierun.
 Ongewijzigde bronfingerprints leveren geen nieuwe images op. Official's bronrelease
 blijft een handmatig beoordeelde promotie; deze pipeline kiest geen nieuwe
 Official-Nocturne-versie op eigen initiatief. De dagelijkse Latest/Personal-bronchecks
@@ -79,6 +79,35 @@ blijven bestaan. Containerpublicatie en storepromotie gebeuren daarna afzonderli
 alle zes opnieuw. Beide architecturen moeten slagen. Een mislukking laat de
 laatst gepubliceerde HA-versie beschikbaar. Runtime/download op echte HAOS en
 echte browserauthenticators blijven aanvullend te controleren.
+
+## Van publicatie tot zichtbaar in HA
+
+Niemand hoeft meer een automatische PR te mergen. `tools/store_pipeline.py land`
+brengt de PR bij met main (branchbeveiliging eist dat), start de verplichte
+Validate-controles voor precies die commit, wacht erop en squash-merget die commit.
+Een rode controle of een conflict stopt de run met een foutmelding; een verloren
+of geannuleerde controle wordt opnieuw gestart.
+
+- De publicatierun (`Validate` met `publish=true`) maakt de storepromotie-PR,
+  landt hem en controleert daarna met `store_pipeline.py status` dat main elke
+  nieuwe versie aanbiedt en beide architecturen anoniem te downloaden zijn. Het
+  resultaat staat in de samenvatting van de run.
+- De Personal- en Latest-runs landen hun bron-PR en starten daarna zelf de
+  publicatierun: een merge met het Actions-token start geen workflows.
+- Publicatieruns delen de concurrency-groep `prebuilt-publication`, Personal en
+  Latest de groep `source-promotion`, zodat merges niet door elkaar lopen.
+- Image-pushes en registry-controles worden bij tijdelijke fouten herhaald.
+
+Een versie is pas klaar als dit zegt dat hij in de store staat:
+
+```bash
+python tools/store_pipeline.py status --expect test-b=1.0.102701
+```
+
+`IN STORE` betekent: main biedt de versie aan en HA kan hem downloaden. Bij
+`NOT YET` noemt de uitvoer de open PR of lopende run waar het op wacht. HA
+haalt de store zelf maar eens per 3 uur op; direct zien kan via Instellingen →
+Apps → App store → ⋮ → **Controleren op updates**.
 
 ## Broncode en licenties
 

@@ -138,6 +138,7 @@ The initial wrapper uses Dutch runtime messages. Preserve tested behavior while 
 - Latest is named **Nocturne Latest Release**, uses slug `nocturne_latest`, defaults to host 8449 and is checked daily from upstream `main`.
 - Shared runtime/security files in both package directories must remain byte-identical; `tests/test_channels.py` enforces this. Channel manifests, pins and changelogs intentionally differ.
 - A Latest automation PR must change only `upstream-latest.json` and the five allowed Latest metadata/build files, explicitly dispatch required Validate, and rely on branch protection before auto-merge.
+- Never report an HA version as available before `python tools/store_pipeline.py status --expect CHANNEL=VERSION` says `IN STORE`, and tell the user to use **Check for updates** in the app store, since HA refreshes it only every 3 hours. Automation PRs land themselves; see [PREBUILT.md](PREBUILT.md).
 - Adding the repository shows both apps. Installing one never creates, migrates or modifies the other. HA's per-app auto-update switch is the final delivery control.
 
 ## 0.1.1 handoff
