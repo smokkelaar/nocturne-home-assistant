@@ -31,8 +31,7 @@ Nocturne-bronpins: geen Nocturne-upgrade wordt met deze distributiewijziging ver
 | Test C | nocturne_test_c | 8453 | AMD64 |
 
 Sinds 30 oktober 2026 wordt alleen AMD64 gebouwd (`publication.json`); ARM64
-(`aarch64` in HA) wordt niet meer gepubliceerd. De images bouwen op de eigen
-Linux-runner. De PostgreSQL-versie blijft 17.
+(`aarch64` in HA) wordt niet meer gepubliceerd. De PostgreSQL-versie blijft 17.
 
 ## Bouwen, testen, publiceren, daarna aanbieden
 

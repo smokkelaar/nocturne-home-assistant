@@ -3,7 +3,6 @@ on:
   workflow_call:
     inputs:
       runner:
-        description: JSON runs-on value, a label string or a list of labels
         type: string
         required: true
       context:
@@ -32,7 +31,7 @@ on:
         default: false
 jobs:
   native:
-    runs-on: ${{ fromJSON(inputs.runner) }}
+    runs-on: ${{ inputs.runner }}
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1

@@ -16,9 +16,9 @@ Invalid names fail before any image build or registry request.
 
 Leave `publish` disabled to validate. Enable it to publish tested images and
 prepare the HA-appstore promotion. Only AMD64 is built: one native job per
-channel. The image builds and container tests run on the self-hosted Linux
-runner (`self-hosted, Linux, X64`); a pull request from a fork uses GitHub's
-`ubuntu-24.04` instead, so outside code never runs on that machine.
+channel, on GitHub's `ubuntu-24.04` runners. A trial on a self-hosted runner
+(30 October 2026) took 1 h 50 min for all six channels against about 22 min on
+GitHub, which runs the channels in parallel.
 
 Each selected image is built once, with build cache, and checked for startup,
 owner recovery, cold restore and upgrade from its published predecessor.
