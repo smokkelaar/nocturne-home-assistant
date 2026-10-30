@@ -72,6 +72,6 @@ class CookieProbeTests(unittest.TestCase):
     def test_workflow_keeps_three_instance_and_recovery_gates(self):
         root = Path(__file__).resolve().parents[1]
         workflow = (root / '.github/workflows/native-prebuilt.yml').read_text()
-        self.assertIn('python tools/selected_cookie_smoke.py', workflow)
-        self.assertIn('python tools/recovery_smoke.py --image "$IMAGE" --baseline "$BASELINE"', workflow)
+        self.assertIn('python3 tools/selected_cookie_smoke.py', workflow)
+        self.assertIn('python3 tools/recovery_smoke.py --image "$IMAGE" --baseline "$BASELINE"', workflow)
         self.assertLess(workflow.index('Three-instance session isolation'), workflow.index('docker push "$IMAGE"'))

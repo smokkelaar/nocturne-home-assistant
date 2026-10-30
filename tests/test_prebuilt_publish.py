@@ -53,7 +53,7 @@ class PrebuiltTests(unittest.TestCase):
             with self.subTest(selection=selection), tempfile.TemporaryDirectory() as temporary, patch.object(publisher.registry, 'image', side_effect=inspected):
                 matrix = publisher.prepare(ROOT, Path(temporary), 'd' * 40, 1, 1, 'e' * 40, channels=selection)
                 self.assertEqual(expected, {item['channel'] for item in matrix['include']})
-                self.assertEqual(len(expected) * 2, len(matrix['include']))
+                self.assertEqual(len(expected) * len(publisher.PLATFORMS), len(matrix['include']))
 
     def test_invalid_channels_fail_before_network_access_or_creating_output(self):
         for selection in ('', 'personal,', 'all,personal', 'personal;echo', 'unknown'):
@@ -80,7 +80,7 @@ class PrebuiltTests(unittest.TestCase):
             value['personal'] = '0.3.99'
             publisher.write(runtime, value)
             matrix = publisher.prepare(root, root / 'work/personal', 'f' * 40, 2, 1, 'e' * 40)
-            self.assertEqual(['personal', 'personal'], [item['channel'] for item in matrix['include']])
+            self.assertEqual(['personal'], [item['channel'] for item in matrix['include']])
 
     def test_license_is_a_build_input_and_fingerprint_is_platform_independent(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -103,12 +103,12 @@ class PrebuiltTests(unittest.TestCase):
                 publisher.require_upgrade(candidate, version)
         self.assertEqual('1.0.102', next_package(ROOT, '1.0.101'))
 
-    def test_prepare_builds_twelve_native_contexts_without_changing_the_store(self):
+    def test_prepare_builds_one_native_amd64_context_per_channel_without_changing_the_store(self):
         before = {package: (ROOT / package / 'config.json').read_bytes() for package in publisher.CHANNELS.values()}
         with tempfile.TemporaryDirectory() as temporary, patch.object(publisher.registry, 'image', side_effect=inspected):
             target = Path(temporary)
             matrix = publisher.prepare(ROOT, target, 'd' * 40, 1, 1, 'e' * 40, force=True)
-            self.assertEqual(12, len(matrix['include']))
+            self.assertEqual(len(publisher.CHANNELS), len(matrix['include']))
             self.assertEqual({(channel, arch) for channel in publisher.CHANNELS for arch in publisher.PLATFORMS},
                              {(item['channel'], item['arch']) for item in matrix['include']})
             for item in matrix['include']:
@@ -118,7 +118,7 @@ class PrebuiltTests(unittest.TestCase):
                 self.assertEqual(old['slug'], config['slug'])
                 self.assertEqual(old['options'], config['options'])
                 self.assertEqual(old['ports'], config['ports'])
-                self.assertEqual(['amd64', 'aarch64'], config['arch'])
+                self.assertEqual(['amd64'], config['arch'])
                 self.assertIn('nocturne-' + item['channel'] + '-{arch}', config['image'])
                 recipe = (context / 'Dockerfile').read_text()
                 self.assertIn('ARG BUILD_ARCH=' + item['hass_arch'], recipe)
@@ -148,8 +148,8 @@ class PrebuiltTests(unittest.TestCase):
                 publisher.prepare(root, output, 'd' * 40, 1, 1, 'e' * 40, force=True)
             before = {package: (root / package / 'config.json').read_bytes() for package in publisher.CHANNELS.values()}
             def public_image(repository, reference, arch, *args, **kwargs):
-                if arch == 'arm64':
-                    raise ValueError('Anonymous ARM64 pull failed')
+                if repository.endswith('nocturne-test-c-amd64'):
+                    raise ValueError('Anonymous Test C pull failed')
                 return inspected(repository, reference, arch, *args, **kwargs)
             with patch.object(publisher.registry, 'image', side_effect=public_image), self.assertRaises(ValueError):
                 publisher.promote(root, output / 'candidates.json')

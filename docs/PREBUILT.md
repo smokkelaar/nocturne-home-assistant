@@ -23,36 +23,34 @@ Nocturne-bronpins: geen Nocturne-upgrade wordt met deze distributiewijziging ver
 
 | Variant | Slug | HTTPS-hostpoort | Architecturen |
 |---|---|---:|---|
-| Official | nocturne_local | 8448 | AMD64 en ARM64 |
-| Latest | nocturne_latest | 8449 | AMD64 en ARM64 |
-| Personal | nocturne_personal | 8450 | AMD64 en ARM64 |
-| Test A | nocturne_test_a | 8451 | AMD64 en ARM64 |
-| Test B | nocturne_test_b | 8452 | AMD64 en ARM64 |
-| Test C | nocturne_test_c | 8453 | AMD64 en ARM64 |
+| Official | nocturne_local | 8448 | AMD64 |
+| Latest | nocturne_latest | 8449 | AMD64 |
+| Personal | nocturne_personal | 8450 | AMD64 |
+| Test A | nocturne_test_a | 8451 | AMD64 |
+| Test B | nocturne_test_b | 8452 | AMD64 |
+| Test C | nocturne_test_c | 8453 | AMD64 |
 
-HA noemt ARM64 `aarch64`; Docker noemt het `arm64`. De native GitHub-runner
-en architectuurspecifieke SDK/Rust/runtime-pins worden daarop afgestemd.
-De PostgreSQL-versie blijft 17. Cross-architecture migratie van een bestaande
-database is niet onderdeel van deze omschakeling; restore wordt per architectuur getest.
+Sinds 30 oktober 2026 wordt alleen AMD64 gebouwd (`publication.json`); ARM64
+(`aarch64` in HA) wordt niet meer gepubliceerd. De images bouwen op de eigen
+Linux-runner. De PostgreSQL-versie blijft 17.
 
 ## Bouwen, testen, publiceren, daarna aanbieden
 
 1. Bronpromoties wijzigen de vastgezette bron en buildinformatie, maar verhogen
    de zichtbare HA-versie nog niet. `publication.json` activeert deze scheiding.
 2. `tools/prebuilt_publish.py prepare` maakt losse kandidaten en een matrix van
-   zes varianten × twee native architecturen. Een source fingerprint selecteert
+   zes varianten, elk één AMD64-job. Een source fingerprint selecteert
    alleen gewijzigde varianten; een force-run en PR-validatie testen alles.
 3. Native runners bouwen met digest-pins en buildcache. Ze controleren opstart,
    gatewaybeveiliging, eigenaarherstel, de TOTP-knop en native passkeyherstel.
 4. Cold restore en upgrade worden per variant/architectuur getest. Bij de eerste
    AMD64-publicatie wordt ook de bestaande lokale-build-receptuur als baseline
-   gebouwd; ARM64 heeft nog geen oude installatie en gebruikt een cold restore
-   van de kandidaat. De bestaande gecombineerde cookie-isolatietests blijven behouden.
+   gebouwd. De bestaande gecombineerde cookie-isolatietests blijven behouden.
 5. Alleen een vertrouwde publicatierun mag de exact geteste image pushen.
    Een bestaand versietag wordt nooit overschreven. PR-runs krijgen geen
    package-schrijfbevoegdheid.
 6. Pas na succes van alle vereiste jobs controleert de promotie **anoniem**
-   beide GHCR-images, platform, bronrevision en HA-labels. Bij een ontbrekende,
+   de GHCR-image, platform, bronrevision en HA-labels. Bij een ontbrekende,
    private of verkeerde image verandert geen enkele appstoreconfiguratie.
 7. De promotie-PR voegt het eigen `image`-veld en de nieuwe 1.x-versie toe aan
    de bestaande appconfiguraties. `provenance.json` bewaart de bron en image-digests.
@@ -76,7 +74,7 @@ Official-Nocturne-versie op eigen initiatief. De dagelijkse Latest/Personal-bron
 blijven bestaan. Containerpublicatie en storepromotie gebeuren daarna afzonderlijk.
 
 `Validate` kan handmatig worden gestart met `publish=true`; `force=true` bouwt
-alle zes opnieuw. Beide architecturen moeten slagen. Een mislukking laat de
+alle zes opnieuw. De AMD64-job moet slagen. Een mislukking laat de
 laatst gepubliceerde HA-versie beschikbaar. Runtime/download op echte HAOS en
 echte browserauthenticators blijven aanvullend te controleren.
 
