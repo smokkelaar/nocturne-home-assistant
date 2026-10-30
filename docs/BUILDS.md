@@ -15,8 +15,10 @@ Explicit names always build the requested channels, even when unchanged. The
 Invalid names fail before any image build or registry request.
 
 Leave `publish` disabled to validate. Enable it to publish tested images and
-prepare the HA-appstore promotion. Both AMD64 and ARM64 remain required: one
-channel means two native jobs, four means eight, and all six means twelve.
+prepare the HA-appstore promotion. Only AMD64 is built: one native job per
+channel, on GitHub's `ubuntu-24.04` runners. A trial on a self-hosted runner
+(30 October 2026) took 1 h 50 min for all six channels against about 22 min on
+GitHub, which runs the channels in parallel.
 
 Each selected image is built once, with build cache, and checked for startup,
 owner recovery, cold restore and upgrade from its published predecessor.

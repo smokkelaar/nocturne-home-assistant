@@ -55,7 +55,7 @@ jobs:
       - name: Native startup, gateway, owner recovery and standalone TOTP
         env:
           IMAGE: ${{ inputs.image }}
-        run: python tools/smoke.py --image "$IMAGE"
+        run: python3 tools/smoke.py --image "$IMAGE"
       - name: Cold restore and previous-version upgrade
         env:
           IMAGE: ${{ inputs.image }}
@@ -76,13 +76,13 @@ jobs:
           else
             BASELINE="$IMAGE"
           fi
-          python tools/recovery_smoke.py --image "$IMAGE" --baseline "$BASELINE"
+          python3 tools/recovery_smoke.py --image "$IMAGE" --baseline "$BASELINE"
       - name: Three-instance session isolation with published peers
         if: ${{ !inputs.publish && inputs.arch == 'amd64' && (inputs.channel == 'official' || inputs.channel == 'latest' || inputs.channel == 'personal') }}
         env:
           CHANNEL: ${{ inputs.channel }}
           IMAGE: ${{ inputs.image }}
-        run: python tools/selected_cookie_smoke.py --channel "$CHANNEL" --image "$IMAGE"
+        run: python3 tools/selected_cookie_smoke.py --channel "$CHANNEL" --image "$IMAGE"
       - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
         if: inputs.publish && github.repository == 'smokkelaar/nocturne-home-assistant'
         with:
@@ -95,5 +95,12 @@ jobs:
           IMAGE: ${{ inputs.image }}
           GHCR_PUBLISH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python tools/registry.py --require-absent "$IMAGE"
+          python3 tools/registry.py --require-absent "$IMAGE"
           docker push "$IMAGE"
+      # Self-hosted runners keep their Docker images between jobs.
+      - name: Remove this job's images from the runner
+        if: always()
+        env:
+          IMAGE: ${{ inputs.image }}
+          BASELINE: ${{ inputs.baseline }}
+        run: docker image rm -f "$IMAGE" ${BASELINE:+"$BASELINE"} nocturne-legacy:ci 2>/dev/null || true

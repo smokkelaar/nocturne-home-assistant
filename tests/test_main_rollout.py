@@ -20,7 +20,7 @@ class MainRolloutTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary, patch.object(prebuilt_publish.registry, 'image', side_effect=inspect):
             destination = Path(temporary)
             result = prebuilt_publish.prepare(ROOT, destination, 'd' * 40, 1000, 1, 'e' * 40, channels='all')
-            self.assertEqual(12, len(result['include']))
+            self.assertEqual(6, len(result['include']))
             for item in result['include']:
                 context = Path(item['context'])
                 original = prebuilt_publish.read(ROOT / item['package'] / 'config.json')

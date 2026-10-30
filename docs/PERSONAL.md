@@ -32,7 +32,7 @@ hidden help can be enabled again from Appearance.
 
 The functional HA wrapper remains **0.1.13**. Personal keeps its existing slug,
 port, options, cookie namespace and private data. HA package versions become
-available once the AMD64 and ARM64 images have been built and published. This
+available once the AMD64 image has been built and published. This
 repository offers an update; it does not restart a running HA installation.
 
 The Google Health instructions below describe functionality now present upstream,

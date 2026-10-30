@@ -18,8 +18,9 @@ ROOT = Path(__file__).resolve().parents[1]
 CHANNELS = {'official': 'nocturne_local', 'latest': 'nocturne_latest',
             'personal': 'nocturne_personal', 'test-a': 'nocturne_test_a',
             'test-b': 'nocturne_test_b', 'test-c': 'nocturne_test_c'}
-PLATFORMS = {'amd64': {'hass': 'amd64', 'runner': 'ubuntu-24.04', 'rid': 'linux-x64'},
-             'arm64': {'hass': 'aarch64', 'runner': 'ubuntu-24.04-arm', 'rid': 'linux-arm64'}}
+# AMD64 only: every HA install served from this repository runs on amd64.
+PLATFORMS = {'amd64': {'hass': 'amd64', 'rid': 'linux-x64'}}
+HASS_ARCHES = [platform['hass'] for platform in PLATFORMS.values()]
 
 
 def read(path):
@@ -144,7 +145,7 @@ def prepare(root, destination, wrapper_commit, run_number, attempt, baseline_ref
     policy, tools = read(root / 'publication.json'), read(root / 'build-platforms.json')
     repo = policy['repository']
     if policy['architectures'] != list(PLATFORMS) or not re.fullmatch('[0-9a-f]{40}', wrapper_commit):
-        raise ValueError('All publications require native amd64 and arm64 and exact source SHA')
+        raise ValueError('Publication architectures must match PLATFORMS and need an exact source SHA')
     configs = {channel: read(root / package / 'config.json') for channel, package in CHANNELS.items()}
     version = next_version([config['version'] for config in configs.values()], run_number, attempt)
     locks = {'official': read(root / 'upstream.json'), 'latest': read(root / 'upstream-latest.json')}
@@ -174,8 +175,8 @@ def prepare(root, destination, wrapper_commit, run_number, attempt, baseline_ref
         pins = {arch: {kind: runtime_pin(lock, kind, arch, tools)
                       for kind in (('api', 'web') if channel in ('official', 'latest') else ('api',))}
                 for arch in PLATFORMS}
-        config.update(version=version, image=image_name(repo, channel), arch=['amd64', 'aarch64'],
-                      description=f"Vooraf gebouwd 1.x · AMD64/ARM64 · {metadata.get('release', metadata['nocturne'])} · HA wrapper {metadata['app']}. Experimental; not for clinical use.")
+        config.update(version=version, image=image_name(repo, channel), arch=HASS_ARCHES,
+                      description=f"Vooraf gebouwd 1.x · AMD64 · {metadata.get('release', metadata['nocturne'])} · HA wrapper {metadata['app']}. Experimental; not for clinical use.")
         proof = {'format': 1, 'channel': channel, 'package': package, 'version': version,
                  'repository': repo, 'wrapper_commit': wrapper_commit, 'recipe': recipe,
                  'source_repository': metadata['repository'], 'source_commit': metadata['source_commit'],
@@ -202,7 +203,7 @@ def prepare(root, destination, wrapper_commit, run_number, attempt, baseline_ref
             (context / 'Dockerfile').write_bytes(recipe_text.encode())
             write(context / 'config.json', config)
             runtime = {**metadata, 'package': version, 'distribution': 'prebuilt-ghcr',
-                       'architectures': ['amd64', 'aarch64'], 'wrapper_commit': wrapper_commit}
+                       'architectures': HASS_ARCHES, 'wrapper_commit': wrapper_commit}
             write(context / 'rootfs/opt/nocturne-ha/version.json', runtime)
             legal = context / 'rootfs/usr/share/doc/nocturne-ha'
             legal.mkdir(parents=True, exist_ok=True)
@@ -213,7 +214,7 @@ def prepare(root, destination, wrapper_commit, run_number, attempt, baseline_ref
                 'archive': f"https://codeload.github.com/{metadata['repository']}/tar.gz/{metadata['source_commit']}",
                 'upstream_notices': 'Nocturne and dependency copyrights/licenses remain applicable.'})
             matrix.append({'channel': channel, 'package': package, 'arch': arch,
-                           'hass_arch': platform['hass'], 'runner': platform['runner'],
+                           'hass_arch': platform['hass'],
                            'context': str(context.as_posix()), 'version': version,
                            'image': image_name(repo, channel, platform['hass']) + ':' + version,
                            'baseline': baseline(read(root / package / 'config.json'), channel, arch, repo),
@@ -260,7 +261,7 @@ def promote(root, candidates):
             section, separator, remainder = history.partition('\n## ')
             pending += section.split('\n\n', 1)[1].replace('The existing published image remains advertised until registry promotion.', '')
             history = '## ' + remainder if separator else ''
-        note = f"## {proof['version']}\n\n- New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.\n- Existing app identity, options, private data and Nocturne source remain intact.\n\n"
+        note = f"## {proof['version']}\n\n- New 1.x distribution: prebuilt GitHub/GHCR images for AMD64. HAOS downloads the tested image; no local compilation.\n- Existing app identity, options, private data and Nocturne source remain intact.\n\n"
         changelog.write_bytes((note + pending + history).encode())
 
 

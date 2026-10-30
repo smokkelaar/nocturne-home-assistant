@@ -59,7 +59,8 @@ jobs:
       - name: Test maintenance with deliberately broken Nocturne configuration
         run: |
           docker build --build-arg CHANNEL=${{ matrix.channel }} -f tools/personal-maintenance/Dockerfile.smoke -t nocturne-maintenance:ci .
-          mkdir "$RUNNER_TEMP/maintenance-data"
+          docker rm -f maintenance-test >/dev/null 2>&1 || true
+          mkdir -p "$RUNNER_TEMP/maintenance-data"
           printf '%s' '{"public_url":"invalid","maintenance_enabled":true,"maintenance_password":"ci-disposable-maintenance-password"}' > "$RUNNER_TEMP/maintenance-data/options.json"
           docker run -d --name maintenance-test --cap-add NET_ADMIN -v "$RUNNER_TEMP/maintenance-data:/data" nocturne-maintenance:ci
           trap 'docker rm -f maintenance-test >/dev/null' EXIT
@@ -155,7 +156,7 @@ jobs:
       packages: read
     uses: ./.github/workflows/native-prebuilt.yml
     with:
-      runner: ${{ matrix.runner }}
+      runner: ubuntu-24.04
       context: ${{ matrix.context }}
       arch: ${{ matrix.arch }}
       channel: ${{ matrix.channel }}
@@ -176,7 +177,7 @@ jobs:
       packages: write
     uses: ./.github/workflows/native-prebuilt.yml
     with:
-      runner: ${{ matrix.runner }}
+      runner: ubuntu-24.04
       context: ${{ matrix.context }}
       arch: ${{ matrix.arch }}
       channel: ${{ matrix.channel }}
@@ -201,7 +202,7 @@ jobs:
           path: work/prebuilt
       - name: Check all selected cookie channels together without rebuilding peers
         run: |
-          python - <<'PY'
+          python3 - <<'PY'
           from pathlib import Path
           import sys
           sys.path.insert(0, 'tools')
@@ -240,15 +241,15 @@ jobs:
         with:
           name: prebuilt-candidates
           path: work/prebuilt
-      - name: Require anonymous pulls, both native architectures, labels and HA upgrade order
+      - name: Require anonymous pulls, labels and HA upgrade order
         run: python tools/prebuilt_publish.py promote --candidates work/prebuilt/candidates.json
       - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1
         id: proposal
         with:
           base: main
           branch: automation/prebuilt-store
-          title: Publish tested prebuilt AMD64 and ARM64 HA images
-          commit-message: Publish verified dual-architecture GHCR images in the existing HA store
+          title: Publish tested prebuilt AMD64 HA images
+          commit-message: Publish verified AMD64 GHCR images in the existing HA store
           add-paths: |
             nocturne_local
             nocturne_latest
@@ -257,7 +258,7 @@ jobs:
             nocturne_test_b
             nocturne_test_c
           body: |
-            Both native architectures passed startup, owner/TOTP recovery and cold-restore/upgrade tests before image publication. Anonymous GHCR pulls and HA image labels were verified for every advertised image.
+            The AMD64 images passed startup, owner/TOTP recovery and cold-restore/upgrade tests before image publication. Anonymous GHCR pulls and HA image labels were verified for every advertised image.
             The 1.x package series marks prebuilt distribution. Existing repository URL, slugs, options, ports and private data identities are retained. No local HA compilation is required.
       - name: Dispatch protected checks for the publication proposal
         if: steps.proposal.outputs.pull-request-number != ''
