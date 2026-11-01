@@ -1,15 +1,21 @@
 {
   "channel": "personal-pr",
   "repository": "smokkelaar/nocturne-personal",
-  "pull_request": 88,
-  "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/88",
-  "personal_version": "0.3.43",
-  "commit": "a7959d715baf544f840d4c51b78764a9c609fe4f",
-  "commit_at": "2026-10-28T17:04:18Z",
-  "base_commit": "3b72219718f496265b22e79ef3bd51fdaf95f3de",
-  "base_commit_at": "2026-10-26T18:10:09Z",
-  "archive_sha256": "be385c8211c7232110825523af54534ed7747f78c9aed0bfbd30a4357d2bce04",
-  "purpose": "De interactieve grafiekvoorbeelden in de help bekijken (#78, nu in Personal), met het helpicoontje linksboven weer terug (#88).",
-  "docs_note": "Personal PR #88 restores the help book icon in the sidebar and mobile header on top of Personal 0.3.43, which already contains #78 (interactive chart examples, Getting started and Troubleshooting guides). #88 also moves ImageSharp to 3.2 with the Six Labors community license. Fictional example data only.",
-  "test_plan": "Controleer eerst dat het boekicoontje linksboven (desktop) en in de mobiele kop zichtbaar is en de help opent. Open daarna het helpboek op Reports → AGP, Loop analysis → Daily profile en Prediction accuracy, Data quality → CGM comparison, IDP en Sleep. Controleer bij elk het blok 'Verken de grafiek': de knoppen wisselen de uitleg, aanwijzen en pijltjestoetsen tonen waarden, en eenheden en themakleuren volgen je instellingen. Klik bij Slaap op een nacht: je blijft in de help. Zoek in de help op 'ontbrekende gegevens' en open Snel starten vanuit de dashboardhulp. Controleer dat je echte gegevens en voorkeuren niet veranderen."
+  "pull_request": 98,
+  "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/98",
+  "commit": "2da2069e86419bde229d753353e5260949d634e3",
+  "commit_at": "2026-11-01T20:14:00Z",
+  "base_commit": "c25350697410ad29bdc76993046adf5a477fa0f9",
+  "base_commit_at": "2026-11-01T19:30:39Z",
+  "archive_sha256": "63c02df3e672b1fc433ad8db5bca02240bcddc4a7efdd0b8b11d44d0e3d0d0ee",
+  "purpose": "Upstream-PR nightscout/nocturne#3080 na de Copilot-review: jaaroverzicht met kleurbereik los van het dimvenster en één kleurenrij, op schone nightscout main c253506.",
+  "docs_note": "Personal PR #98 is the branch of nightscout/nocturne#3080 (year overview color range apart from the focus window, one color row) after the review fixes, on clean nightscout main `c253506`.",
+  "test_plan": "Rapporten → Jaaroverzicht, kies TDD. Versleep de dim-streepjes boven of onder de balk: de kleuren blijven staan. Versleep de gekleurde bolletjes op de balk: de kleuren verschuiven, het venster niet. Voeg een kleurgrens toe en kleur die; zet het kleurbereik zo dat de grens erbuiten valt: de grens staat in de rij aan die kant en houdt zijn kleur, en + werkt nog. Reset zet alles terug.",
+  "submodules": [
+    {
+      "path": "src/Web/vendor/water-ui",
+      "repository": "ryceg/water-ui",
+      "commit": "30918ec89bd1f400a86cc427c95d7679dc2eed4a"
+    }
+  ]
 }
