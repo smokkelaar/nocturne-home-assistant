@@ -11,7 +11,7 @@ ENV CI=true DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@11.5.0
-ADD --checksum=sha256:2ba0a40b92a3f0be03c5108af664d2c46ba73c339396508d204bb59b83295e6b https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/4500f692ff57feebbe6c8c29315b8a79946b2823 /tmp/source.tar.gz
+ADD --checksum=sha256:5a962ffa3ee8c1bfe2ac22c5d13a3e3405e7d01a54ef7c44b3e362b7be67035b https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/28a9bcfd8ff4dcc4180f12cda7db37152c6e8468 /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
 ADD --keep-git-dir=false https://github.com/ryceg/water-ui.git#30918ec89bd1f400a86cc427c95d7679dc2eed4a /src/src/Web/vendor/water-ui

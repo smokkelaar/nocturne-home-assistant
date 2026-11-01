@@ -11,9 +11,10 @@ ENV CI=true DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@11.5.0
-ADD --checksum=sha256:ac44a0feda8f0d6982feddfc84c40a9b7a389062cf5afa10ba6eaa817b85d8d1 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/227e18b7c83e021c94a0eb7431a1c141d4e672e5 /tmp/source.tar.gz
+ADD --checksum=sha256:309b9e53b36347d41d6975ec0d6fd199ba39bab35a67a9a86bc700e47e49182d https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/acb156ca4cb7b7ebb7f4e15491df042184ba8848 /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
+ADD --keep-git-dir=false https://github.com/ryceg/water-ui.git#30918ec89bd1f400a86cc427c95d7679dc2eed4a /src/src/Web/vendor/water-ui
 WORKDIR /src/src/Web
 RUN printf '\n=== Nocturne build phase 3/7: install web dependencies and build bridge ===\n' \
     && pnpm install --frozen-lockfile && pnpm --filter @nocturne/bridge run build

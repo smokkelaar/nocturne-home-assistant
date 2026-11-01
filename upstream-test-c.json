@@ -1,15 +1,21 @@
 {
   "channel": "personal-pr",
   "repository": "smokkelaar/nocturne-personal",
-  "pull_request": 89,
-  "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/89",
-  "personal_version": "0.3.43",
-  "commit": "227e18b7c83e021c94a0eb7431a1c141d4e672e5",
-  "commit_at": "2026-10-28T17:06:04Z",
-  "base_commit": "3b72219718f496265b22e79ef3bd51fdaf95f3de",
-  "base_commit_at": "2026-10-26T18:10:09Z",
-  "archive_sha256": "ac44a0feda8f0d6982feddfc84c40a9b7a389062cf5afa10ba6eaa817b85d8d1",
-  "purpose": "Helptekst met echte inhoud bekijken: elke pagina begint met een open blok Wat je ziet en wat het betekent (kleuren, percentages, drempels, routes voor stappen/hartslag/slaap), nu ook voor instellingen, beheer en koppelingen, op de nieuwste personal. De help is in het Nederlands vertaald.",
-  "docs_note": "Personal draft PR #89 combines help test build #75 (the open help PRs #70, #72, #77, #63 with connector help #73) with #88, which restores the help book icon. It is a test build only and is not merged.",
-  "test_plan": "Controleer eerst dat het boekicoontje linksboven (desktop) en in de mobiele kop zichtbaar is en de help opent. Zet de interfacetaal op Nederlands (Settings → Appearance). Open het helpboek op Dashboard, Calendar, Time spans, Clock, Food, Meals, Tools → Packing, Alerts (Rules, History, Do not disturb, Simulator, een regel), Notifications, de rapporten (onder andere AGP, Executive summary, Steps, Heart rate en Sleep) en enkele instellingen (Therapy, Appearance, Connectors & Apps, een koppeling). Controleer dat bovenaan Wat je ziet en wat het betekent open staat met uitleg die klopt met de pagina. Zoek in de help op Health Connect, Garmin en snooze."
+  "pull_request": 99,
+  "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/99",
+  "commit": "acb156ca4cb7b7ebb7f4e15491df042184ba8848",
+  "commit_at": "2026-11-01T20:32:59Z",
+  "base_commit": "c25350697410ad29bdc76993046adf5a477fa0f9",
+  "base_commit_at": "2026-11-01T19:30:39Z",
+  "archive_sha256": "309b9e53b36347d41d6975ec0d6fd199ba39bab35a67a9a86bc700e47e49182d",
+  "purpose": "Upstream-PR nightscout/nocturne#3078 na de Copilot-review: eHbA1c met een extra decimaal en een lab-tooltip die bij het driehoekje snapt, op schone nightscout main c253506.",
+  "docs_note": "Personal PR #99 is the branch of nightscout/nocturne#3078 (one more A1c digit, lab tooltip snapping) after the review fixes, on clean nightscout main `c253506`.",
+  "test_plan": "Rapporten → eHbA1c. Waarden tonen 2 decimalen in % en 1 in mmol/mol. Voer een labwaarde in (bijvoorbeeld 6,54%) met een datum: die staat op de juiste dag. Beweeg de muis vlak naast het driehoekje: de tooltip toont de labwaarde. Op dezelfde dag maar onderaan bij de datums toont hij alleen de schatting. Een notitie langer dan 500 tekens kan niet.",
+  "submodules": [
+    {
+      "path": "src/Web/vendor/water-ui",
+      "repository": "ryceg/water-ui",
+      "commit": "30918ec89bd1f400a86cc427c95d7679dc2eed4a"
+    }
+  ]
 }
