@@ -2,7 +2,7 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 29 oktober 2026, 00:40 (NL-tijd)
+**Bijgewerkt:** 1 november 2026, 21:45 (NL-tijd)
 
 Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Controleren op updates.
 
@@ -20,6 +20,17 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 | 1 | Test C (8453) | Helpboek op elke pagina controleren | Klaar om te testen in 1.0.102701: help-icoon terug (testbuild #89 = #75 + #88) |
 | 3 | Test B (8452) | Interactieve grafiekvoorbeelden in de help (#78) en het help-icoon (#88) | Help-icoon hersteld via [#88](https://github.com/smokkelaar/nocturne-personal/pull/88), bovenop Personal 0.3.43 (met #78). Klaar om te testen in 1.0.102701 |
 | 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed, bolletjes en tooltip nog niet goed, help-icoon ontbrak. Personal 0.3.45 bevat de fixes van [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) en het help-icoon van [#88](https://github.com/smokkelaar/nocturne-personal/pull/88). Getest op 0.3.45 (28 okt): kleuren werken. Dim op aparte regel, presets, Mirror en Swap weg, + in de kleurenrij, verloop tussen de kleuren: aangepast in [#92](https://github.com/smokkelaar/nocturne-personal/pull/92) (0.3.46). Getest op 0.3.46 (29 okt): teksten in de kleurenrij ontbraken en het HbA1c-vangbereik was te groot; beide aangepast in [#93](https://github.com/smokkelaar/nocturne-personal/pull/93) (0.3.47, in de store als 1.0.104301 sinds 30 okt) |
+
+## Upstream-PR's na de Copilot-reviews (1 nov)
+
+De reviewpunten zijn verwerkt op de PR-branches en upstream main is erin gemerged. Nog niet op een testinstantie gezet; elk hoort geïsoleerd op Test A, B of C (schone main + alleen die PR) voordat de PR uit draft gaat.
+
+| PR | Branch | Wat handmatig te bekijken |
+|---|---|---|
+| [#3080](https://github.com/nightscout/nocturne/pull/3080) jaaroverzicht | `claude/project-thread-ivzrbr` | Een eerder opgeslagen TDD/bolus-venster houdt dezelfde kleuren. Eerste keer het venster verschuiven verandert de kleuren niet. Boven en onder de balk pak je de dim-streepjes, op de balk de bolletjes. Een grens buiten het kleurbereik staat in de rij aan de goede kant en houdt zijn eigen kleur; + werkt dan nog. |
+| [#3073](https://github.com/nightscout/nocturne/pull/3073) Google Health in beheer | `claude/project-thread-tt1qyl` | Alleen het secret opslaan laat de callback-URL ongemoeid. Spaties rond client-ID/secret geen probleem. Foute client-ID geeft een leesbare melding. Client-ID wijzigen tijdens het Google-scherm geeft "Start again" in plaats van een fout. |
+| [#3078](https://github.com/nightscout/nocturne/pull/3078) eHbA1c | `claude/project-thread-6a05k1` | Tooltip toont een labwaarde alleen bij het driehoekje, ook op dezelfde dag eronder niet. Datumfix komt nu uit upstream (#3120). |
+| [#3075](https://github.com/nightscout/nocturne/pull/3075) ImageSharp | `claude/project-thread-let525` | Ongewijzigd; zie Test A-notitie over #84. |
 
 ## Voorbereiding voor dinsdag 27 oktober
 
