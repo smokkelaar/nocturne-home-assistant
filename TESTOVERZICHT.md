@@ -17,7 +17,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 
 | # | Waar | Wat | Status |
 |---|---|---|---|
-| 1 | Test A, B, C | Upstream-PR's #3073, #3080, #3078 na de review | Wacht op publicatie, zie Per instantie |
+| 1 | Test A, B, C | Upstream-PR's #3073, #3080, #3078 na de review | Klaar om te testen: in de store als 1.0.105701 (1 nov), zie Per instantie |
 | 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed, bolletjes en tooltip nog niet goed, help-icoon ontbrak. Personal 0.3.45 bevat de fixes van [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) en het help-icoon van [#88](https://github.com/smokkelaar/nocturne-personal/pull/88). Getest op 0.3.45 (28 okt): kleuren werken. Dim op aparte regel, presets, Mirror en Swap weg, + in de kleurenrij, verloop tussen de kleuren: aangepast in [#92](https://github.com/smokkelaar/nocturne-personal/pull/92) (0.3.46). Getest op 0.3.46 (29 okt): teksten in de kleurenrij ontbraken en het HbA1c-vangbereik was te groot; beide aangepast in [#93](https://github.com/smokkelaar/nocturne-personal/pull/93) (0.3.47, in de store als 1.0.104301 sinds 30 okt) |
 
 ## Upstream-PR's na de Copilot-reviews (1 nov)
@@ -35,7 +35,7 @@ De reviewpunten zijn verwerkt op de PR-branches en upstream main is erin gemerge
 
 HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https://github.com/smokkelaar/nocturne-home-assistant/actions/runs/40403185802) zijn geslaagd voor alle drie de kanalen op AMD64 en ARM64, inclusief opstarten, accountherstel, cold restore en upgraden vanaf de vorige versie. Publieke beschikbaarheid en image-labels zijn gecontroleerd. [Storepromotie #177](https://github.com/smokkelaar/nocturne-home-assistant/pull/177) is gemerged.
 
-**Personal staat op store-versie 1.0.104301 (0.3.47, 30 okt), Test A, B en C op 1.0.102701 (28 okt), Latest en Official op 1.0.101201.** Vernieuw de HA-store en update. Alle apps laten nu tenantadressen (`<tenant>.<hostname>:<poort>`) door en controleren bij meer tenants elke tenant apart (alleen de wrapper is gewijzigd). Installatie en werking op de eigen HA zijn vanuit deze sessie niet gecontroleerd; dit overzicht bevestigt de gepubliceerde pakketten.
+**Personal staat op store-versie 1.0.104301 (0.3.47, 30 okt), Test A, B en C op 1.0.105701 (1 nov, [publicatie #214](https://github.com/smokkelaar/nocturne-home-assistant/pull/214)), Latest en Official op 1.0.101201.** Vernieuw de HA-store en update. Alle apps laten nu tenantadressen (`<tenant>.<hostname>:<poort>`) door en controleren bij meer tenants elke tenant apart (alleen de wrapper is gewijzigd). Installatie en werking op de eigen HA zijn vanuit deze sessie niet gecontroleerd; dit overzicht bevestigt de gepubliceerde pakketten.
 
 ## Per instantie
 
@@ -48,7 +48,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   3. Een client-ID zonder `.apps.googleusercontent.com` geeft een leesbare melding.
   4. Koppel Google Health als gebruiker. Wijzig je tijdens het Google-scherm de client-ID, dan vraagt Nocturne je opnieuw te beginnen.
 - **Database:** de migratie van upstream #2842 is op deze database al klaar, dus de trage legacy-id-reparatie draait niet opnieuw.
-- **Status:** wacht op publicatie.
+- **Status:** klaar om te testen in 1.0.105701 (1 nov). Vernieuw de store: Instellingen → Apps → App store → ⋮ → Controleren op updates.
 
 **Wacht op een vrije testinstantie:**
 - [Personal PR #83](https://github.com/smokkelaar/nocturne-personal/pull/83): Google Health-reset met begindatum (#80) bovenop #69. Stond hier tot 1 nov.
@@ -64,7 +64,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   2. Versleep de gekleurde bolletjes op de balk: de kleuren verschuiven, het venster niet.
   3. Voeg een kleurgrens toe en kleur die. Zet het kleurbereik zo dat de grens erbuiten valt: de grens staat in de rij aan die kant en houdt zijn kleur, en + werkt nog.
   4. Reset zet alles terug.
-- **Status:** wacht op publicatie.
+- **Status:** klaar om te testen in 1.0.105701 (1 nov). Vernieuw de store: Instellingen → Apps → App store → ⋮ → Controleren op updates.
 
 ### Test C (poort 8453)
 
@@ -74,7 +74,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   2. Voer een labwaarde in (bijvoorbeeld 6,54%) met een datum: die staat op de juiste dag.
   3. Beweeg de muis vlak naast het driehoekje: de tooltip toont de labwaarde. Op dezelfde dag maar onderaan bij de datums toont hij alleen de schatting.
   4. Een notitie langer dan 500 tekens kan niet.
-- **Status:** wacht op publicatie.
+- **Status:** klaar om te testen in 1.0.105701 (1 nov). Vernieuw de store: Instellingen → Apps → App store → ⋮ → Controleren op updates.
 
 ### Personal (poort 8450)
 
