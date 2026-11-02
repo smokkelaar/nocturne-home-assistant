@@ -96,4 +96,11 @@ jobs:
           GHCR_PUBLISH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python tools/registry.py --require-absent "$IMAGE"
-          docker push "$IMAGE"
+          # Pushing the same tested image again is idempotent; GHCR uploads fail transiently.
+          for delay in 15 45 120 0; do
+            docker push "$IMAGE" && exit 0
+            [ "$delay" = 0 ] && break
+            echo "::warning::Push of $IMAGE failed; retrying in ${delay}s"
+            sleep "$delay"
+          done
+          exit 1

@@ -221,7 +221,7 @@ jobs:
     needs: [container-gate, prebuilt-select]
     if: always() && needs.container-gate.result == 'success' && github.event_name == 'workflow_dispatch' && inputs.publish && needs.prebuilt-select.outputs.changed == 'true' && github.repository == 'smokkelaar/nocturne-home-assistant'
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 60
     permissions:
       contents: write
       pull-requests: write
@@ -259,9 +259,14 @@ jobs:
           body: |
             Both native architectures passed startup, owner/TOTP recovery and cold-restore/upgrade tests before image publication. Anonymous GHCR pulls and HA image labels were verified for every advertised image.
             The 1.x package series marks prebuilt distribution. Existing repository URL, slugs, options, ports and private data identities are retained. No local HA compilation is required.
-      - name: Dispatch protected checks for the publication proposal
+      - name: Land the publication proposal once its required checks pass
         if: steps.proposal.outputs.pull-request-number != ''
         env:
           GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        run: gh workflow run validate.yml --ref automation/prebuilt-store -f publish=false -f channels=changed
+          PR: ${{ steps.proposal.outputs.pull-request-number }}
+        run: python tools/store_pipeline.py land --pr "$PR" --wait-minutes 40
+      - name: Confirm HA can install every published version from main
+        if: steps.proposal.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/store_pipeline.py status --candidates work/prebuilt/candidates.json --wait-minutes 5

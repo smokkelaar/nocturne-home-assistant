@@ -7,6 +7,7 @@ import hashlib
 import json
 import re
 import os
+import time
 import urllib.error
 import urllib.request
 
@@ -16,7 +17,23 @@ ACCEPT = ', '.join(('application/vnd.oci.image.index.v1+json',
                    'application/vnd.docker.distribution.manifest.v2+json'))
 
 
-def fetch(url, headers=None, expected=None):
+def transient(error):
+    if isinstance(error, urllib.error.HTTPError):
+        return error.code == 429 or error.code >= 500
+    return isinstance(error, (urllib.error.URLError, TimeoutError, ConnectionError))
+
+
+def fetch(url, headers=None, expected=None, attempts=4, sleep=time.sleep):
+    for attempt in range(attempts):
+        try:
+            return _fetch(url, headers, expected)
+        except OSError as error:
+            if attempt == attempts - 1 or not transient(error):
+                raise
+            sleep(5 * 3 ** attempt)
+
+
+def _fetch(url, headers=None, expected=None):
     request = urllib.request.Request(url, headers={'User-Agent': 'nocturne-ha-prebuilt', **(headers or {})})
     with urllib.request.urlopen(request, timeout=30) as response:
         raw = response.read(10_000_001)
