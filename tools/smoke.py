@@ -131,6 +131,12 @@ def wait_ready(name, probe=PROBE):
                 ('JS_SYNTAX', 'SyntaxError'), ('JS_REFERENCE', 'ReferenceError'),
                 ('NGINX_CONFIG', 'nginx:'), ('JS_NAMESPACE', 'Invalid cookie namespace'),
                 ('PY_KEY', 'KeyError'), ('PERMISSION', 'Permission denied'),
+                # The disposable recovery rehearsal may encounter an upstream
+                # database guard.  Surface only this fixed category, never its
+                # database message, settings, or container output.
+                ('DB_MIGRATION', 'EnsureReachesBaselineAsync'),
+                ('DB_MIGRATION', 'last migrated by a Nocturne release older'),
+                ('DB_MIGRATION', 'PendingModelChangesWarning'),
             ) if signature in logs]
             raise RuntimeError('Container exited before becoming ready; safe markers: '
                                + (','.join(markers) or 'NONE'))
