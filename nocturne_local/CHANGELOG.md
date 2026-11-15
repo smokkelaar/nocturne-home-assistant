@@ -1,3 +1,7 @@
+## Unreleased source candidate
+
+- Required one-time Nocturne 0.2.7 to 0.3.0 database migration bridge. It retains the add-on identity and private data; install and start it successfully before 0.3.1 or later.
+
 ## 1.0.101201
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.

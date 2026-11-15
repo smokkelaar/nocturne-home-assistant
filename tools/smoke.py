@@ -20,6 +20,10 @@ def docker(*args, check=True, input=None):
         marker = safe_failure_marker(result.stdout + result.stderr)
         detail = ' (' + marker.group(0) + ')' if marker else ''
         raise RuntimeError('Docker operation failed: ' + args[0] + detail)
+    # Docker logs routes container stderr to its own stderr stream. This value
+    # is used only by the bounded marker classifier below, never printed.
+    if args and args[0] == 'logs':
+        return (result.stdout + result.stderr).strip()
     return result.stdout.strip()
 
 
@@ -131,7 +135,35 @@ def wait_ready(name, probe=PROBE):
                 ('JS_SYNTAX', 'SyntaxError'), ('JS_REFERENCE', 'ReferenceError'),
                 ('NGINX_CONFIG', 'nginx:'), ('JS_NAMESPACE', 'Invalid cookie namespace'),
                 ('PY_KEY', 'KeyError'), ('PERMISSION', 'Permission denied'),
+                # The disposable recovery rehearsal may encounter an upstream
+                # database guard.  Surface only this fixed category, never its
+                # database message, settings, or container output.
+                ('DB_MIGRATION', 'EnsureReachesBaselineAsync'),
+                ('DB_MIGRATION', 'last migrated by a Nocturne release older'),
+                ('DB_MIGRATION', 'PendingModelChangesWarning'),
             ) if signature in logs]
+            if 'Nocturne API is gestopt (code' in logs:
+                markers.append('API_EXIT')
+            # Only expose exception classes and SQLSTATE categories from the
+            # disposable CI instance. Never emit raw application logs.
+            for kind in ('PostgresException', 'NpgsqlException', 'InvalidOperationException',
+                         'DbUpdateException', 'TimeoutException'):
+                if kind in logs:
+                    markers.append(kind.upper())
+            sqlstates = sorted(set(re.findall(r'\b(?:SqlState|SQLSTATE):?\s*([A-Z0-9]{5})\b', logs)))
+            markers.extend('SQLSTATE_' + state for state in sqlstates[:3])
+            for line in logs.splitlines():
+                if 'Permission denied' not in line and 'permission denied' not in line:
+                    continue
+                for category, signature in (
+                    ('DATA', '/data/'), ('RUNTIME', '/run/'),
+                    ('APP', '/app/'), ('WEB', '/opt/nocturne-web/'),
+                    ('POSTGRES', 'postgres'), ('SCHEMA', 'schema '),
+                    ('TABLE', 'table '), ('RELATION', 'relation '),
+                ):
+                    if signature in line:
+                        markers.append('PERMISSION_' + category)
+                break
             raise RuntimeError('Container exited before becoming ready; safe markers: '
                                + (','.join(markers) or 'NONE'))
         try:

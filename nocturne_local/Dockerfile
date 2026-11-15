@@ -1,7 +1,7 @@
 # API and frontend are paired by upstream.json and pinned by OCI digest.
-FROM ghcr.io/nightscout/nocturne/nocturne-web@sha256:a90ff908372af0dba0bc1b26871343e5fcfa27a39615ec3672fcaee3917d7339 AS web
+FROM ghcr.io/nightscout/nocturne/nocturne-web@sha256:9892f18a671f42fc12f6b3191080724ccfce06d3336a14f1a2a325bc0bc7609b AS web
 FROM node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d AS node
-FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:01f5ec038da453330db709ac5dabc6abd907411190b76511fffced8e9d945d50
+FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:1b8b753c0782d69c3585fc815aa902cd35d4495cb954ce1e885bac7f3960cd97
 
 USER root
 ARG BUILD_VERSION=1.0.101201
@@ -54,5 +54,5 @@ RUN python3 -m compileall -q /opt/nocturne-ha \
 ENV NODE_ENV=production DOTNET_ENVIRONMENT=Production ASPNETCORE_ENVIRONMENT=Production
 WORKDIR /app
 EXPOSE 8099 8448
-ENTRYPOINT ["/usr/bin/tini", "--", "python3", "/opt/nocturne-ha/personal_entry.py"]
+ENTRYPOINT ["/usr/bin/tini", "--", "python3", "/opt/nocturne-ha/bridge_entry.py"]
 CMD []

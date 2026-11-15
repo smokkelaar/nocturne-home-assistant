@@ -30,6 +30,15 @@ class UpdateTests(unittest.TestCase):
             value[kind] = {'tag': value['version'], 'digest': 'sha256:' + ('a' if kind == 'api' else 'b') * 64}
         return value
 
+    @staticmethod
+    def legacy_027_lock():
+        return {
+            'version': '0.2.7', 'tag': 'v0.2.7',
+            'commit': 'd9e1430975c7a05967cba66374392f75f08c858f',
+            'api': {'tag': '0.2.7', 'digest': 'sha256:' + '1' * 64},
+            'web': {'tag': '0.2.7', 'digest': 'sha256:' + '2' * 64},
+        }
+
     def test_numeric_semver_order_not_string_order(self):
         self.assertGreater(updater.semver('0.2.10'), updater.semver('0.2.9'))
 
@@ -100,6 +109,32 @@ class UpdateTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 updater.apply_update(root, self.lock, older)
             self.assertEqual(before, (root / 'nocturne_local/config.json').read_bytes())
+
+    def test_migration_bridge_is_pinned_upgrade_and_preserves_identity(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = self.fixture(directory)
+            original = json.loads((root / 'nocturne_local/config.json').read_text(encoding='utf-8'))
+            legacy = self.legacy_027_lock()
+            (root / 'upstream.json').write_text(json.dumps(legacy))
+            version = updater.apply_migration_bridge(root, legacy)
+            lock = json.loads((root / 'upstream.json').read_text(encoding='utf-8'))
+            config = json.loads((root / 'nocturne_local/config.json').read_text(encoding='utf-8'))
+            self.assertEqual(updater.MIGRATION_BRIDGE, lock)
+            self.assertEqual(version, config['version'])
+            self.assertEqual(original['slug'], config['slug'])
+            self.assertEqual(original['options'], config['options'])
+            self.assertEqual(original['ports'], config['ports'])
+            self.assertIn('one-time database migration bridge',
+                          (root / 'nocturne_local/CHANGELOG.md').read_text(encoding='utf-8'))
+
+    def test_migration_bridge_refuses_any_non_027_baseline(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = self.fixture(directory)
+            current = self.candidate()
+            before = (root / 'upstream.json').read_bytes()
+            with self.assertRaisesRegex(ValueError, 'published 0.2.7 baseline'):
+                updater.apply_migration_bridge(root, current)
+            self.assertEqual(before, (root / 'upstream.json').read_bytes())
 
     def test_signature_failure_writes_nothing(self):
         with tempfile.TemporaryDirectory() as directory:
