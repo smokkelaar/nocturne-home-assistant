@@ -54,5 +54,5 @@ RUN python3 -m compileall -q /opt/nocturne-ha \
 ENV NODE_ENV=production DOTNET_ENVIRONMENT=Production ASPNETCORE_ENVIRONMENT=Production
 WORKDIR /app
 EXPOSE 8099 8448
-ENTRYPOINT ["/usr/bin/tini", "--", "python3", "/opt/nocturne-ha/personal_entry.py"]
+ENTRYPOINT ["/usr/bin/tini", "--", "python3", "/opt/nocturne-ha/bridge_entry.py"]
 CMD []
