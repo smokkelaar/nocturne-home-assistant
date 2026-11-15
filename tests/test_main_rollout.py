@@ -14,7 +14,10 @@ import update_test_channels
 
 class MainRolloutTests(unittest.TestCase):
     def test_official_images_and_four_personal_sources_preserve_storage_identity(self):
+        inspected = []
+
         def inspect(repository, reference, arch, *args):
+            inspected.append((repository, reference, arch, args))
             return {'digest': reference if reference.startswith('sha256:') else 'sha256:' + 'a' * 64}
 
         with tempfile.TemporaryDirectory() as temporary, patch.object(prebuilt_publish.registry, 'image', side_effect=inspect):
@@ -39,6 +42,13 @@ class MainRolloutTests(unittest.TestCase):
                     previous = prebuilt_publish.read(ROOT / item['package'] / 'rootfs/opt/nocturne-ha/version.json')
                     self.assertEqual(previous['cookie_namespace'], metadata['cookie_namespace'])
                     self.assertEqual(previous['default_public_url'], metadata['default_public_url'])
+                elif item['channel'] == 'official':
+                    release = prebuilt_publish.read(ROOT / 'upstream.json')
+                    self.assertEqual(release['commit'], metadata['source_commit'])
+                    self.assertEqual(release['version'], metadata['nocturne'])
+                    self.assertEqual('nightscout/nocturne', metadata['repository'])
+                    self.assertEqual({'api', 'web'}, set(prebuilt_publish.read(destination / 'candidates.json')['official']['runtime_pins'][item['arch']]))
+                    self.assertNotIn('COPY --from=source', recipe)
                 elif item['channel'] == 'latest':
                     approved = prebuilt_publish.read(ROOT / 'upstream-latest.json')
                     self.assertEqual('nightscout/nocturne', metadata['repository'])
@@ -57,8 +67,14 @@ class MainRolloutTests(unittest.TestCase):
                     self.assertIn('COPY --from=source /out/api/ /app/', recipe)
                     self.assertIn('COPY --from=source /out/web/', recipe)
 
+            release = prebuilt_publish.read(ROOT / 'upstream.json')
+            for kind in ('api', 'web'):
+                for arch in ('amd64', 'arm64'):
+                    self.assertIn((f'nightscout/nocturne/nocturne-{kind}', release[kind]['digest'], arch,
+                                   (release['commit'],) if kind == 'api' else (None,)), inspected)
+
     def test_invalid_source_cannot_enter_a_build(self):
-        manifest = json.loads((ROOT / 'main-rollout.json').read_text())
+        manifest = {'repository': 'nightscout/nocturne', 'source': 'approved-latest', 'channels': ['official']}
         for field, value in [('source', 'unverified'), ('channels', ['latest']), ('repository', 'smokkelaar/nocturne-personal')]:
             with self.subTest(field=field), tempfile.TemporaryDirectory() as temporary:
                 path = Path(temporary)
@@ -67,6 +83,7 @@ class MainRolloutTests(unittest.TestCase):
                     main_rollout.load(path, 'latest')
 
     def test_other_channels_keep_their_source_policy(self):
+        self.assertIsNone(main_rollout.load(ROOT, 'official'))
         self.assertIsNone(main_rollout.load(ROOT, 'personal'))
         self.assertIsNone(main_rollout.load(ROOT, 'unknown'))
 
