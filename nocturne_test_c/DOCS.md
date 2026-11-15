@@ -79,8 +79,12 @@ Automatic app updates are optional per app in HA. Enable them only for **Nocturn
 
 From wrapper **0.1.10**, all six variants offer **Consciously skip gateway check** (`skip_gateway_check`, default false). Only effective with `gateway_auth: false`; save and restart this app. It skips only the wrapper authentication probe; Nocturne access/share permissions and TLS/host checks still apply. The helper prominently shows `GATEWAY_SKIPPED`. Test A now uses the same visible settings: migrate old `verify_native_auth: false` to `skip_gateway_check: true`, remove the old YAML key, save and restart. The canonical option takes precedence; restore the guard with `skip_gateway_check: false`. [Configuration and rollback](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/GATEWAY.md).
 
-This isolated channel tests [Personal PR #99](https://github.com/smokkelaar/nocturne-personal/pull/99) at `acb156ca4cb7b7ebb7f4e15491df042184ba8848`. Personal PR #99 is the branch of nightscout/nocturne#3078 (one more A1c digit, lab tooltip snapping) after the review fixes, on clean nightscout main `c253506`.
-
 ## Experimental maintenance
 
 Opt-in CLI, ingress terminal and guided recovery for this app only. See [step-by-step maintenance guide](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL-MAINTENANCE.md). Disabled by default; requires its own maintenance password. Each image build checks the pinned recovery source contract and binds the result to the API binary. Unrelated source updates remain compatible; changed or unavailable recovery contracts block only new owner recovery. The actual database is checked before writes. No Nocturne source or schema changes; explicit owner recovery adds a native recovery-code hash.
+
+This isolated channel uses unmodified upstream main `892fb0f0aa1a70d0b415aa795911e10eeeba2981`, without additional PR patches.
+
+## Experimental maintenance
+
+Opt-in CLI, ingress terminal and guided recovery for this app only. Disabled by default; requires its own maintenance password.

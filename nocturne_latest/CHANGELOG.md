@@ -1,3 +1,9 @@
+## 1.0.101202
+
+- Update Nocturne Latest from `3caa43c` to [`892fb0f`](https://github.com/nightscout/nocturne/compare/3caa43cbe614b194cfe6c764714845cd24fc65f6...892fb0f0aa1a70d0b415aa795911e10eeeba2981).
+- Upstream paired-image build: https://github.com/nightscout/nocturne/actions/runs/43647173892
+- Automated container and previous-Latest upgrade tests are required before merge. Keep a cold backup; rollback after a development schema migration is not guaranteed.
+
 ## 1.0.101201
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.

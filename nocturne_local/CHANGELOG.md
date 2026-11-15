@@ -1,3 +1,9 @@
+## 1.0.101202
+
+- Update paired Nocturne API/web to 0.3.1.
+- [Upstream release](https://github.com/nightscout/nocturne/releases/tag/v0.3.1).
+- Maintainer review and backup required before installation; database migrations may occur.
+
 ## 1.0.101201
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.

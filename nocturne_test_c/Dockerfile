@@ -11,10 +11,9 @@ ENV CI=true DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@11.5.0
-ADD --checksum=sha256:309b9e53b36347d41d6975ec0d6fd199ba39bab35a67a9a86bc700e47e49182d https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/acb156ca4cb7b7ebb7f4e15491df042184ba8848 /tmp/source.tar.gz
+ADD --checksum=sha256:9764d1de0535c3b55d862f12badd081ced82f91f7625d20b4d5065355374305a https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/736d3bed8a6f0aa4a49931b5c5d60eef85349ff8 /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
-ADD --keep-git-dir=false https://github.com/ryceg/water-ui.git#30918ec89bd1f400a86cc427c95d7679dc2eed4a /src/src/Web/vendor/water-ui
 WORKDIR /src/src/Web
 RUN printf '\n=== Nocturne build phase 3/7: install web dependencies and build bridge ===\n' \
     && pnpm install --frozen-lockfile && pnpm --filter @nocturne/bridge run build
@@ -42,7 +41,7 @@ RUN mkdir -p /out/web/packages/app /out/web/packages/bridge \
     && cp packages/bridge/package.json /out/web/packages/bridge/ \
     && cp -r packages/bridge/dist /out/web/packages/bridge/
 # Use the matching approved Daily runtime/OS; replace its application with our source build.
-FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:eb6c38c252abdfecab469e0cdc9b12d9f939ac5df608d3b2965c18a202860d99
+FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:b37c9df5d6b4909706ecdf23b1b5e0276effdb309242d1404f447a07d3d23bb0
 USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /out/api-build-date /opt/nocturne-ha/api-build-date

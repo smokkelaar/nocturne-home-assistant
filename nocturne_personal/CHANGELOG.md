@@ -1,3 +1,7 @@
+## 1.0.104302
+
+Personal 0.3.47; source `736d3bed8a6f0aa4a49931b5c5d60eef85349ff8`; Daily base `892fb0f0aa1a70d0b415aa795911e10eeeba2981`; source tree verified identical to upstream.
+
 ## 1.0.104301
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.

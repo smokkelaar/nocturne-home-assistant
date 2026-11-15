@@ -1,21 +1,33 @@
 {
-  "channel": "personal-pr",
+  "channel": "personal",
   "repository": "smokkelaar/nocturne-personal",
-  "pull_request": 99,
-  "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/99",
-  "commit": "acb156ca4cb7b7ebb7f4e15491df042184ba8848",
-  "commit_at": "2026-11-01T20:32:59Z",
-  "base_commit": "c25350697410ad29bdc76993046adf5a477fa0f9",
-  "base_commit_at": "2026-11-01T19:30:39Z",
-  "archive_sha256": "309b9e53b36347d41d6975ec0d6fd199ba39bab35a67a9a86bc700e47e49182d",
-  "purpose": "Upstream-PR nightscout/nocturne#3078 na de Copilot-review: eHbA1c met een extra decimaal en een lab-tooltip die bij het driehoekje snapt, op schone nightscout main c253506.",
-  "docs_note": "Personal PR #99 is the branch of nightscout/nocturne#3078 (one more A1c digit, lab tooltip snapping) after the review fixes, on clean nightscout main `c253506`.",
-  "test_plan": "Rapporten → eHbA1c. Waarden tonen 2 decimalen in % en 1 in mmol/mol. Voer een labwaarde in (bijvoorbeeld 6,54%) met een datum: die staat op de juiste dag. Beweeg de muis vlak naast het driehoekje: de tooltip toont de labwaarde. Op dezelfde dag maar onderaan bij de datums toont hij alleen de schatting. Een notitie langer dan 500 tekens kan niet.",
-  "submodules": [
-    {
-      "path": "src/Web/vendor/water-ui",
-      "repository": "ryceg/water-ui",
-      "commit": "30918ec89bd1f400a86cc427c95d7679dc2eed4a"
+  "version": "0.3.47",
+  "commit": "736d3bed8a6f0aa4a49931b5c5d60eef85349ff8",
+  "commit_at": "2026-11-15T00:49:55Z",
+  "upstream": {
+    "channel": "main",
+    "commit": "892fb0f0aa1a70d0b415aa795911e10eeeba2981",
+    "workflow_run": 43647173892,
+    "commit_at": "2026-11-14T22:15:59Z",
+    "published_at": "2026-11-14T22:16:02Z",
+    "api": {
+      "tag": "main-892fb0f",
+      "digest": "sha256:b37c9df5d6b4909706ecdf23b1b5e0276effdb309242d1404f447a07d3d23bb0",
+      "platforms": {
+        "amd64": "sha256:b37c9df5d6b4909706ecdf23b1b5e0276effdb309242d1404f447a07d3d23bb0",
+        "arm64": "sha256:7993734c591dd3f8a254b670e62cbf05c533e9ede581164786b53e10d45a8ad7"
+      }
+    },
+    "web": {
+      "tag": "main-892fb0f",
+      "digest": "sha256:691f27a7558b582b09ac73ef964ed84a7e33374cde983f710787601d97c8b10d",
+      "platforms": {
+        "amd64": "sha256:691f27a7558b582b09ac73ef964ed84a7e33374cde983f710787601d97c8b10d",
+        "arm64": "sha256:cdb6406bded5ca63d0a8fcdb78d68ec236bb036371c385518c639cfbe78be349"
+      }
     }
-  ]
+  },
+  "tree": "ff5750bf85401b647d93161768b5d65b36bc931e",
+  "upstream_tree": "ff5750bf85401b647d93161768b5d65b36bc931e",
+  "archive_sha256": "9764d1de0535c3b55d862f12badd081ced82f91f7625d20b4d5065355374305a"
 }

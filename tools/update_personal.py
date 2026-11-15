@@ -12,6 +12,7 @@ from versioning import publication_mode, published_number, next_package
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO = 'smokkelaar/nocturne-personal'
+UPSTREAM_REPO = 'nightscout/nocturne'
 SDK = 'mcr.microsoft.com/dotnet/sdk@sha256:0e53453ccfc8ff2d51319fe80c678971c6d0f8008dff3565fa88e15840b69854'
 RUST = 'rust@sha256:4673f78db88b71f09d5451bbc404734807918161241215ba0a50bbbe9b448117'
 COMMON = ('build/check_web.mjs', 'build/prepare_web.py', 'build/check_cookies.conf',
@@ -31,12 +32,32 @@ def github(path, raw=False):
         return json.load(response)
 
 
+def upstream_github(path):
+    """Read the approved upstream commit when Personal deliberately mirrors it.
+
+    A protected Personal branch cannot be rewritten to an upstream commit SHA.
+    It may therefore contain a local fast-forward commit with an identical tree.
+    The tree equality is verified online here before that special source is used.
+    """
+    headers = {'User-Agent': 'nocturne-personal-updater'}
+    token = os.environ.get('GH_TOKEN')
+    if token:
+        headers['Authorization'] = 'Bearer ' + token
+    request = urllib.request.Request(f'https://api.github.com/repos/{UPSTREAM_REPO}/{path}', headers=headers)
+    with urllib.request.urlopen(request, timeout=60) as response:
+        return json.load(response)
+
+
 def validate(lock):
     if lock['channel'] != 'personal' or lock['repository'] != REPO:
         raise ValueError('Wrong Personal source identity')
     for value in (lock['commit'], lock['upstream']['commit']):
         if not re.fullmatch(r'[0-9a-f]{40}', value):
             raise ValueError('Invalid source commit')
+    if ('tree' in lock or 'upstream_tree' in lock) and (
+            not re.fullmatch(r'[0-9a-f]{40}', lock.get('tree', '')) or
+            lock.get('tree') != lock.get('upstream_tree')):
+        raise ValueError('Invalid upstream-equivalent Personal tree')
     if not re.fullmatch(r'[0-9a-f]{64}', lock['archive_sha256']):
         raise ValueError('Invalid source archive checksum')
     if not re.fullmatch(r'\d+\.\d+\.\d+', lock['version']):
@@ -51,6 +72,11 @@ def validate(lock):
 
 def source_url(lock):
     return f'https://codeload.github.com/{REPO}/tar.gz/{lock["commit"]}'
+
+
+def unmodified_upstream(lock):
+    return (lock['commit'] == lock['upstream']['commit'] or
+            lock.get('tree') == lock.get('upstream_tree'))
 
 
 def require_merged_base(approved, base, commit):
@@ -69,28 +95,49 @@ def resolve():
     head = github('commits/personal')
     commit = head['sha']
     previous = json.loads((ROOT / 'upstream-personal.json').read_text())
+    equivalent_tree = None
     if commit != approved['commit'] and head['commit'].get('tree'):
-        canonical = github(f"commits/{approved['commit']}")
-        baseline = canonical
-        if previous['commit'] == previous['upstream']['commit'] and previous['commit'] != approved['commit']:
-            baseline = github(f"commits/{previous['commit']}")
-        if head['commit']['tree']['sha'] in (canonical['commit']['tree']['sha'], baseline['commit']['tree']['sha']):
-            head = canonical
-            commit = head['sha']
+        # The upstream commit object is normally absent from a protected fork.
+        # That is expected for a clean tree mirror; continue with the upstream
+        # tree proof below instead of treating the missing object as a failure.
+        try:
+            canonical = github(f"commits/{approved['commit']}")
+        except urllib.error.HTTPError as error:
+            if error.code != 404:
+                raise
+            canonical = None
+        if canonical:
+            baseline = canonical
+            if previous['commit'] == previous['upstream']['commit'] and previous['commit'] != approved['commit']:
+                baseline = github(f"commits/{previous['commit']}")
+            if head['commit']['tree']['sha'] in (canonical['commit']['tree']['sha'], baseline['commit']['tree']['sha']):
+                head = canonical
+                commit = head['sha']
+    # A protected Personal branch may retain its own commit identity while its
+    # application tree is exactly the approved upstream tree.  Keep the real
+    # Personal SHA for reproducible source downloads, but treat this verified
+    # mirror as the clean base (not as an unreviewed fork extension).
+    if commit != approved['commit'] and head['commit'].get('tree'):
+        upstream = upstream_github(f"commits/{approved['commit']}")
+        if head['commit']['tree']['sha'] == upstream['commit']['tree']['sha']:
+            equivalent_tree = head['commit']['tree']['sha']
     if commit == previous['commit'] == previous['upstream']['commit'] and commit != approved['commit']:
         head = github(f"commits/{approved['commit']}")
         commit = head['sha']
-    if commit == approved['commit']:
+    if commit == approved['commit'] or equivalent_tree:
         meta = {'base_commit': commit,
                 'version': previous['version']}
     else:
         meta = github(f'contents/.personal/version.json?ref={commit}', raw=True)
-    require_merged_base(approved['commit'], meta['base_commit'], commit)
-    comparison = github(f'compare/{approved["commit"]}...{commit}')
-    if comparison['status'] not in ('ahead', 'identical') or comparison['merge_base_commit']['sha'] != approved['commit']:
-        raise ValueError('Personal does not descend from the approved Daily commit')
+    if not equivalent_tree:
+        require_merged_base(approved['commit'], meta['base_commit'], commit)
+        comparison = github(f'compare/{approved["commit"]}...{commit}')
+        if comparison['status'] not in ('ahead', 'identical') or comparison['merge_base_commit']['sha'] != approved['commit']:
+            raise ValueError('Personal does not descend from the approved Daily commit')
     lock = dict(channel='personal', repository=REPO, version=meta['version'],
                 commit=commit, commit_at=head['commit']['committer']['date'], upstream=approved)
+    if equivalent_tree:
+        lock.update(tree=equivalent_tree, upstream_tree=equivalent_tree)
     digest = hashlib.sha256()
     total = 0
     with urllib.request.urlopen(source_url(lock), timeout=120) as response:
@@ -127,7 +174,7 @@ def validate_transition(old, new):
     if tuple(map(int, new['version'].split('.'))) < tuple(map(int, old['version'].split('.'))):
         raise ValueError('Personal extension version cannot move backwards')
     if old['commit'] != new['commit']:
-        if new['commit'] == new['upstream']['commit']:
+        if unmodified_upstream(new):
             return
         comparison = github(f'compare/{old["commit"]}...{new["commit"]}')
         if comparison['status'] != 'ahead' or comparison['merge_base_commit']['sha'] != old['commit']:
@@ -186,12 +233,18 @@ def files(lock, delivery, maintenance=True):
     docs = docs.replace('Leave the Latest host port', 'Leave the Personal host port')
     docs = docs.replace('isolated from Official even', 'isolated from Official and Latest even')
     features = f"Personal {lock['version']} includes Google Health imports for steps, heart rate, weight and sleep. Progress refreshes while the connector page is open; the percentage estimates data-type stages, not remaining time. The reviewed documentation adds searchable page-specific help, visual reading aids, one shared glucose reference and direct settings links. Dashboard help now includes every widget with fictional data, complete selectable situations, one explanation at a time and an interactive chart that does not change your settings. The book opens independently navigable documentation; help scrolls while the background stays in place. Appearance controls layout, transparency and blur. Google Health setup has a step-by-step guide; imports support steps, heart rate, weight and sleep. No dosing advice or insulin/IOB changes."
-    if lock['commit'] == lock['upstream']['commit']:
+    if unmodified_upstream(lock):
         features = 'Personal uses unmodified upstream main, without Personal extensions.'
-    source_note = f"Personal source `{lock['commit']}` follows upstream main `{lock['upstream']['commit']}`. API and web are compiled together on GitHub, then delivered as tested prebuilt AMD64 and ARM64 images. Home Assistant downloads the image; it does not compile Nocturne locally."
+    if unmodified_upstream(lock):
+        source_note = (f"Personal source `{lock['commit']}` has an application tree verified identical to "
+                       f"upstream main `{lock['upstream']['commit']}`. API and web are compiled together on GitHub, "
+                       "then delivered as tested prebuilt AMD64 and ARM64 images. Home Assistant downloads the image; "
+                       "it does not compile Nocturne locally.")
+    else:
+        source_note = f"Personal source `{lock['commit']}` follows upstream main `{lock['upstream']['commit']}`. API and web are compiled together on GitHub, then delivered as tested prebuilt AMD64 and ARM64 images. Home Assistant downloads the image; it does not compile Nocturne locally."
     generated['DOCS.md'] = docs + '\n' + source_note + ' ' + features + ' [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
     generated['README.md'] = '# Nocturne Personal Release\n\nIndependent Personal fork on the tested Daily base. Default host port 8450, separate data and cookies.\n\n' + features + '\n\n[Installation and updates](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
-    if lock['commit'] == lock['upstream']['commit']:
+    if unmodified_upstream(lock):
         generated['README.md'] = generated['README.md'].replace('Independent Personal fork', 'Clean Personal development channel')
     runtime = dict(app=wrapper, package=delivery, personal=lock['version'],
                    repository=lock['repository'],

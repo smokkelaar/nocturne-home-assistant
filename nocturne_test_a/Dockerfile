@@ -1,4 +1,4 @@
-# Both API and web are compiled from the same checksum-verified Google Health source.
+# Both API and web are compiled from the same checksum-verified Personal source.
 FROM node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d AS node
 FROM rust@sha256:4673f78db88b71f09d5451bbc404734807918161241215ba0a50bbbe9b448117 AS rust
 FROM mcr.microsoft.com/dotnet/sdk@sha256:0e53453ccfc8ff2d51319fe80c678971c6d0f8008dff3565fa88e15840b69854 AS source
@@ -11,10 +11,9 @@ ENV CI=true DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@11.5.0
-ADD --checksum=sha256:5a962ffa3ee8c1bfe2ac22c5d13a3e3405e7d01a54ef7c44b3e362b7be67035b https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/28a9bcfd8ff4dcc4180f12cda7db37152c6e8468 /tmp/source.tar.gz
+ADD --checksum=sha256:9764d1de0535c3b55d862f12badd081ced82f91f7625d20b4d5065355374305a https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/736d3bed8a6f0aa4a49931b5c5d60eef85349ff8 /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
-ADD --keep-git-dir=false https://github.com/ryceg/water-ui.git#30918ec89bd1f400a86cc427c95d7679dc2eed4a /src/src/Web/vendor/water-ui
 WORKDIR /src/src/Web
 RUN printf '\n=== Nocturne build phase 3/7: install web dependencies and build bridge ===\n' \
     && pnpm install --frozen-lockfile && pnpm --filter @nocturne/bridge run build
@@ -42,7 +41,7 @@ RUN mkdir -p /out/web/packages/app /out/web/packages/bridge \
     && cp packages/bridge/package.json /out/web/packages/bridge/ \
     && cp -r packages/bridge/dist /out/web/packages/bridge/
 # Use the matching approved Daily runtime/OS; replace its application with our source build.
-FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:eb6c38c252abdfecab469e0cdc9b12d9f939ac5df608d3b2965c18a202860d99
+FROM ghcr.io/nightscout/nocturne/nocturne-api@sha256:b37c9df5d6b4909706ecdf23b1b5e0276effdb309242d1404f447a07d3d23bb0
 USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /out/api-build-date /opt/nocturne-ha/api-build-date
