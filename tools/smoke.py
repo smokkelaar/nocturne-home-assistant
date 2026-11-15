@@ -138,6 +138,16 @@ def wait_ready(name, probe=PROBE):
                 ('DB_MIGRATION', 'last migrated by a Nocturne release older'),
                 ('DB_MIGRATION', 'PendingModelChangesWarning'),
             ) if signature in logs]
+            if 'Nocturne API is gestopt (code' in logs:
+                markers.append('API_EXIT')
+            # Only expose exception classes and SQLSTATE categories from the
+            # disposable CI instance. Never emit raw application logs.
+            for kind in ('PostgresException', 'NpgsqlException', 'InvalidOperationException',
+                         'DbUpdateException', 'TimeoutException'):
+                if kind in logs:
+                    markers.append(kind.upper())
+            sqlstates = sorted(set(re.findall(r'\b(?:SqlState|SQLSTATE):?\s*([A-Z0-9]{5})\b', logs)))
+            markers.extend('SQLSTATE_' + state for state in sqlstates[:3])
             raise RuntimeError('Container exited before becoming ready; safe markers: '
                                + (','.join(markers) or 'NONE'))
         try:
