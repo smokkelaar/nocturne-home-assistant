@@ -1,0 +1,5 @@
+{
+  "source": "upstream.json",
+  "version": "0.3.0",
+  "channels": ["latest", "personal", "test-a", "test-b", "test-c"]
+}
