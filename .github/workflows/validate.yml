@@ -258,7 +258,7 @@ jobs:
             nocturne_test_c
           body: |
             Both native architectures passed startup, owner/TOTP recovery and cold-restore/upgrade tests before image publication. Anonymous GHCR pulls and HA image labels were verified for every advertised image.
-            The 1.x package series marks prebuilt distribution. Existing repository URL, slugs, options, ports and private data identities are retained. No local HA compilation is required.
+            The 1.x package series marks prebuilt distribution. Existing repository URL, slugs, options, ports and private data identities are retained. A channel marked as a database bridge temporarily uses the official Nocturne 0.3.0 source before newer builds. No local HA compilation is required.
       - name: Dispatch protected checks for the publication proposal
         if: steps.proposal.outputs.pull-request-number != ''
         env:

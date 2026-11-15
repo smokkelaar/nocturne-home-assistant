@@ -122,9 +122,12 @@ class PrebuiltTests(unittest.TestCase):
                 self.assertIn('nocturne-' + item['channel'] + '-{arch}', config['image'])
                 recipe = (context / 'Dockerfile').read_text()
                 self.assertIn('ARG BUILD_ARCH=' + item['hass_arch'], recipe)
-                if item['channel'] not in ('official', 'latest'):
+                if item['channel'] not in ('official', 'latest') and item['channel'] not in publisher.bridge_channels(ROOT):
                     self.assertIn('ARG DOTNET_RID=' + publisher.PLATFORMS[item['arch']]['rid'], recipe)
                     self.assertIn(publisher.read(ROOT / 'build-platforms.json')['sdk'][item['arch']], recipe)
+                if item['channel'] in publisher.bridge_channels(ROOT):
+                    self.assertNotIn('COPY --from=source', recipe)
+                    self.assertIn('bridge_entry.py', recipe)
             self.assertEqual(before, {package: (ROOT / package / 'config.json').read_bytes() for package in publisher.CHANNELS.values()})
 
     def fixture(self, target):
@@ -133,8 +136,43 @@ class PrebuiltTests(unittest.TestCase):
             shutil.copyfile(ROOT / name, target / name)
         (target / 'tools').mkdir()
         shutil.copyfile(ROOT / 'tools/prebuilt_publish.py', target / 'tools/prebuilt_publish.py')
+        shutil.copyfile(ROOT / 'tools/update_upstream.py', target / 'tools/update_upstream.py')
         for package in publisher.CHANNELS.values():
             shutil.copytree(ROOT / package, target / package, ignore=shutil.ignore_patterns('__pycache__'))
+
+    def test_migration_bridge_promotion_preserves_identity_and_stops_republishing(self):
+        with tempfile.TemporaryDirectory() as temporary, patch.object(publisher.registry, 'image', side_effect=inspected):
+            root = Path(temporary)
+            self.fixture(root)
+            for name in ('upstream.json', 'upstream-latest.json', 'upstream-personal.json', 'migration-bridge.json'):
+                shutil.copyfile(ROOT / name, root / name)
+            output = root / 'work/bridge'
+            matrix = publisher.prepare(root, output, 'd' * 40, 1200, 1, 'e' * 40)
+            self.assertEqual(set(publisher.BRIDGE_CHANNELS), {item['channel'] for item in matrix['include']})
+            publisher.promote(root, output / 'candidates.json')
+            self.assertEqual([], publisher.prepare(root, root / 'work/next', 'f' * 40, 1201, 1, 'e' * 40)['include'])
+            for channel in publisher.BRIDGE_CHANNELS:
+                package = publisher.CHANNELS[channel]
+                runtime = publisher.read(root / package / 'rootfs/opt/nocturne-ha/version.json')
+                config = publisher.read(root / package / 'config.json')
+                self.assertEqual(update_upstream.MIGRATION_BRIDGE['commit'], runtime['source_commit'])
+                self.assertNotIn('personal', runtime)
+                self.assertEqual(package, config['slug'])
+                self.assertEqual({'api', 'web'}, set(publisher.read(root / package / 'provenance.json')['runtime_pins']['amd64']))
+
+    def test_migration_bridge_rejects_moving_or_partial_source(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            shutil.copyfile(ROOT / 'upstream.json', root / 'upstream.json')
+            publisher.write(root / 'migration-bridge.json', {'source': 'upstream.json', 'version': '0.3.0', 'channels': ['latest']})
+            with self.assertRaisesRegex(ValueError, 'exactly the five'):
+                publisher.bridge_channels(root)
+            shutil.copyfile(ROOT / 'migration-bridge.json', root / 'migration-bridge.json')
+            source = publisher.read(root / 'upstream.json')
+            source['version'] = '0.3.1'
+            publisher.write(root / 'upstream.json', source)
+            with self.assertRaisesRegex(ValueError, 'exact immutable'):
+                publisher.bridge_channels(root)
 
     def test_failed_public_pull_never_changes_any_store_configuration(self):
         with tempfile.TemporaryDirectory() as temporary:

@@ -49,6 +49,15 @@ class MainRolloutTests(unittest.TestCase):
                     self.assertEqual('nightscout/nocturne', metadata['repository'])
                     self.assertEqual({'api', 'web'}, set(prebuilt_publish.read(destination / 'candidates.json')['official']['runtime_pins'][item['arch']]))
                     self.assertNotIn('COPY --from=source', recipe)
+                elif item['channel'] in prebuilt_publish.BRIDGE_CHANNELS:
+                    release = prebuilt_publish.read(ROOT / 'upstream.json')
+                    self.assertEqual(release['commit'], metadata['source_commit'])
+                    self.assertEqual('nightscout/nocturne', metadata['repository'])
+                    self.assertEqual('Nocturne 0.3.0 database bridge', metadata['release'])
+                    self.assertEqual({'api', 'web'}, set(prebuilt_publish.read(destination / 'candidates.json')[item['channel']]['runtime_pins'][item['arch']]))
+                    self.assertNotIn('COPY --from=source', recipe)
+                    self.assertIn('bridge_entry.py', recipe)
+                    self.assertEqual(prebuilt_publish.read(ROOT / item['package'] / 'rootfs/opt/nocturne-ha/version.json')['cookie_namespace'], metadata['cookie_namespace'])
                 elif item['channel'] == 'latest':
                     approved = prebuilt_publish.read(ROOT / 'upstream-latest.json')
                     self.assertEqual('nightscout/nocturne', metadata['repository'])
