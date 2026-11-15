@@ -127,7 +127,7 @@ def nginx_config(options, cert_path, key_path):
         # Nocturne still validates their signature, expiry, tenant and scopes.
         oauth_rule = '"~*^Bearer [A-Za-z0-9._~+/-]+=*$" $http_authorization;'
     namespace = options['cookie_namespace']
-    if namespace not in ('NocturneOfficial_', 'NocturneLatest_'):
+    if namespace not in ('NocturnePersonal_',):
         raise ValueError('Ongeldige cookieruimte')
     return f'''load_module /usr/lib/nginx/modules/ngx_http_js_module.so;
 user www-data;

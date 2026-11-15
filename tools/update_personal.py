@@ -259,8 +259,14 @@ def files(lock, delivery, maintenance=True):
                        test_plan='Basiswerking en upgrade van de bestaande Personal-instantie controleren.')
     generated['rootfs/opt/nocturne-ha/version.json'] = json.dumps(runtime, indent=2) + '\n'
     settings = (latest / 'rootfs/opt/nocturne-ha/settings.py').read_text(encoding='utf-8')
-    settings = settings.replace("('NocturneOfficial_', 'NocturneLatest_')",
-                                "('NocturnePersonal_',)")
+    # The upstream configuration checks the cookie namespace both when options
+    # are parsed and when the nginx configuration is rendered.  Transform both
+    # guards: changing only the first one creates a package which validates but
+    # cannot start nginx.
+    upstream_namespaces = "('NocturneOfficial_', 'NocturneLatest_')"
+    if settings.count(upstream_namespaces) != 2:
+        raise ValueError('Personal settings compatibility signature changed')
+    settings = settings.replace(upstream_namespaces, "('NocturnePersonal_',)")
     generated['rootfs/opt/nocturne-ha/settings.py'] = settings
     cookies = (latest / 'rootfs/opt/nocturne-ha/cookies.mjs').read_text(encoding='utf-8')
     generated['rootfs/opt/nocturne-ha/cookies.mjs'] = replace_once(cookies,
