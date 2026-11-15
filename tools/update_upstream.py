@@ -15,6 +15,23 @@ from versioning import advertised_version, publication_mode, next_package, packa
 
 ROOT = Path(__file__).resolve().parents[1]
 PROJECT = 'nightscout/nocturne'
+MIGRATION_BRIDGE = {
+    # Nocturne deliberately requires this release to have run once before a
+    # database created by pre-0.3 releases can start a newer release.  Keep
+    # every part immutable: this is a one-time migration bridge, not a moving
+    # "latest" fallback.
+    'version': '0.3.0',
+    'tag': 'v0.3.0',
+    'commit': 'fe91be237ae7d2e4ea920ce67b77b4e33d50dc3b',
+    'api': {
+        'tag': '0.3.0',
+        'digest': 'sha256:1b8b753c0782d69c3585fc815aa902cd35d4495cb954ce1e885bac7f3960cd97',
+    },
+    'web': {
+        'tag': '0.3.0',
+        'digest': 'sha256:9892f18a671f42fc12f6b3191080724ccfce06d3336a14f1a2a325bc0bc7609b',
+    },
+}
 ACCEPT = ', '.join([
     'application/vnd.oci.image.index.v1+json',
     'application/vnd.docker.distribution.manifest.list.v2+json',
@@ -173,12 +190,48 @@ def apply_update(root, current, candidate):
     return next_version
 
 
+def apply_migration_bridge(root, current):
+    """Prepare the one supported pre-0.3 database migration step.
+
+    It intentionally permits the upstream version to move from 0.2.7 to
+    0.3.0 only.  Normal release updates remain monotonic and must use
+    ``apply_update``.  The package delivery number still increases, so Home
+    Assistant treats this as an upgrade while retaining the existing slug and
+    data directory.
+    """
+    validate_lock(current)
+    candidate = MIGRATION_BRIDGE
+    validate_lock(candidate)
+    if current['version'] != '0.2.7':
+        raise ValueError('Migration bridge only supports the published 0.2.7 baseline')
+    version = json.loads((root / 'nocturne_local/config.json').read_text(encoding='utf-8'))['version']
+    next_version = next_package(root, version)
+    prepared = render(root, candidate, next_version)  # Validate ALL before writing ANY.
+    changelog = root / 'nocturne_local/CHANGELOG.md'
+    note = (f"## {next_version}\n\n"
+            '- Required one-time database migration bridge: Nocturne 0.2.7 to 0.3.0.\n'
+            '- Retains this add-on slug, options, ports and private data directory.\n'
+            '- Install this release and wait for a successful start before installing Nocturne 0.3.1 or later.\n'
+            '- Make a cold backup before installation; rollback after a database migration is not guaranteed.\n\n')
+    prepared['nocturne_local/CHANGELOG.md'] = note + changelog.read_text(encoding='utf-8')
+    if publication_mode(root):
+        prepared['nocturne_local/CHANGELOG.md'] = ('## Unreleased source candidate\n\n'
+            '- Required one-time Nocturne 0.2.7 to 0.3.0 database migration bridge. '
+            'It retains the add-on identity and private data; install and start it successfully before 0.3.1 or later.\n\n'
+            + changelog.read_text(encoding='utf-8'))
+    for name, content in prepared.items():
+        (root / name).write_text(content, encoding='utf-8', newline='\n')
+    return next_version
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument('--check', action='store_true', help='Offline: verify the lock and generated version fields')
     mode.add_argument('--check-upstream', action='store_true', help='Online read-only: compare latest stable release')
     mode.add_argument('--update', action='store_true', help='Online: prepare a newer stable release in this checkout')
+    mode.add_argument('--prepare-migration-bridge', action='store_true',
+                      help='Offline: prepare the pinned 0.2.7 to 0.3.0 database migration bridge')
     args = parser.parse_args()
     current = json.loads((ROOT / 'upstream.json').read_text(encoding='utf-8'))
     validate_lock(current)
@@ -190,6 +243,10 @@ def main():
             if not same:
                 raise ValueError('Inconsistent generated metadata: ' + name)
         print('Version and image pins are consistent.')
+        return
+    if args.prepare_migration_bridge:
+        next_version = apply_migration_bridge(ROOT, current)
+        print('Prepared required Nocturne 0.2.7 to 0.3.0 migration bridge as HA app version ' + next_version + '.')
         return
     release = github('releases/latest')
     version = release_version(release)
