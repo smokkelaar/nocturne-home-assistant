@@ -174,7 +174,7 @@ def validate_transition(old, new):
     if tuple(map(int, new['version'].split('.'))) < tuple(map(int, old['version'].split('.'))):
         raise ValueError('Personal extension version cannot move backwards')
     if old['commit'] != new['commit']:
-        if unmodified_upstream(new):
+        if new['commit'] == new['upstream']['commit']:
             return
         comparison = github(f'compare/{old["commit"]}...{new["commit"]}')
         if comparison['status'] != 'ahead' or comparison['merge_base_commit']['sha'] != old['commit']:
@@ -233,18 +233,12 @@ def files(lock, delivery, maintenance=True):
     docs = docs.replace('Leave the Latest host port', 'Leave the Personal host port')
     docs = docs.replace('isolated from Official even', 'isolated from Official and Latest even')
     features = f"Personal {lock['version']} includes Google Health imports for steps, heart rate, weight and sleep. Progress refreshes while the connector page is open; the percentage estimates data-type stages, not remaining time. The reviewed documentation adds searchable page-specific help, visual reading aids, one shared glucose reference and direct settings links. Dashboard help now includes every widget with fictional data, complete selectable situations, one explanation at a time and an interactive chart that does not change your settings. The book opens independently navigable documentation; help scrolls while the background stays in place. Appearance controls layout, transparency and blur. Google Health setup has a step-by-step guide; imports support steps, heart rate, weight and sleep. No dosing advice or insulin/IOB changes."
-    if unmodified_upstream(lock):
+    if lock['commit'] == lock['upstream']['commit']:
         features = 'Personal uses unmodified upstream main, without Personal extensions.'
-    if unmodified_upstream(lock):
-        source_note = (f"Personal source `{lock['commit']}` has an application tree verified identical to "
-                       f"upstream main `{lock['upstream']['commit']}`. API and web are compiled together on GitHub, "
-                       "then delivered as tested prebuilt AMD64 and ARM64 images. Home Assistant downloads the image; "
-                       "it does not compile Nocturne locally.")
-    else:
-        source_note = f"Personal source `{lock['commit']}` follows upstream main `{lock['upstream']['commit']}`. API and web are compiled together on GitHub, then delivered as tested prebuilt AMD64 and ARM64 images. Home Assistant downloads the image; it does not compile Nocturne locally."
+    source_note = f"Personal source `{lock['commit']}` follows upstream main `{lock['upstream']['commit']}`. API and web are compiled together on GitHub, then delivered as tested prebuilt AMD64 and ARM64 images. Home Assistant downloads the image; it does not compile Nocturne locally."
     generated['DOCS.md'] = docs + '\n' + source_note + ' ' + features + ' [Personal versions, source and update behavior](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
     generated['README.md'] = '# Nocturne Personal Release\n\nIndependent Personal fork on the tested Daily base. Default host port 8450, separate data and cookies.\n\n' + features + '\n\n[Installation and updates](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL.md).\n'
-    if unmodified_upstream(lock):
+    if lock['commit'] == lock['upstream']['commit']:
         generated['README.md'] = generated['README.md'].replace('Independent Personal fork', 'Clean Personal development channel')
     runtime = dict(app=wrapper, package=delivery, personal=lock['version'],
                    repository=lock['repository'],

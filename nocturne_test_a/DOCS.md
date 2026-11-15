@@ -83,8 +83,8 @@ From wrapper **0.1.10**, all six variants offer **Consciously skip gateway check
 
 Opt-in CLI, ingress terminal and guided recovery for this app only. See [step-by-step maintenance guide](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL-MAINTENANCE.md). Disabled by default; requires its own maintenance password. Each image build checks the pinned recovery source contract and binds the result to the API binary. Unrelated source updates remain compatible; changed or unavailable recovery contracts block only new owner recovery. The actual database is checked before writes. No Nocturne source or schema changes; explicit owner recovery adds a native recovery-code hash.
 
-This isolated channel uses unmodified upstream main `892fb0f0aa1a70d0b415aa795911e10eeeba2981`, without additional PR patches.
+This isolated channel uses the same source as Personal 0.3.47: `736d3bed8a6f0aa4a49931b5c5d60eef85349ff8`.
 
 ## Experimental maintenance
 
-Opt-in CLI, ingress terminal and guided recovery for this app only. Disabled by default; requires its own maintenance password.
+Opt-in CLI, ingress terminal and guided recovery for this app only. See [step-by-step maintenance guide](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/PERSONAL-MAINTENANCE.md). Disabled by default; requires its own maintenance password. Each image build checks the pinned recovery source contract and binds the result to the API binary. Unrelated source updates remain compatible; changed or unavailable recovery contracts block only new owner recovery. The actual database is checked before writes. No Nocturne source or schema changes; explicit owner recovery adds a native recovery-code hash.

@@ -134,15 +134,13 @@ def files():
                        latest["commit"])
         base_at = (source.get("base_commit_at") or source.get("upstream", {}).get("commit_at") or
                    latest["commit_at"])
-        clean_personal = (source.get("channel") == "personal" and
-                          update_personal.unmodified_upstream(source))
         runtime.update(package=version, name=name, cookie_namespace="NocturneTest" + letter.upper() + "_",
                        default_public_url=f"https://homeassistant.local:{port}",
                        repository=source.get("repository", runtime.get("repository")),
                        source_commit=source["commit"], source_at=source.get("commit_at"),
                        base_commit=base_commit, commit_at=base_at,
                        nocturne="main@" + base_commit[:7])
-        if source.get("channel") == "personal" and not clean_personal:
+        if source.get("channel") == "personal":
             label = "Personal " + personal["version"]
             purpose = "Dezelfde bijgewerkte Personal-bron testen met een eigen database en sessie."
             description = label + " · main " + base_commit[:7]
@@ -155,7 +153,7 @@ def files():
             docs = (ROOT / "nocturne_latest/DOCS.md").read_text(encoding="utf-8")
             generated[package + "/DOCS.md"] = docs.replace("Nocturne Latest Release", name).replace("8449", str(port)) + (
                 f"\nThis isolated channel uses the same source as Personal {personal['version']}: `{source['commit']}`.\n")
-        elif source.get("channel") == "main" or clean_personal:
+        elif source.get("channel") == "main":
             purpose = "Ongewijzigde Nocturne main testen als basis voor nieuwe ontwikkeling."
             description = f"Nocturne main {base_commit[:7]}"
             runtime.pop("personal", None)
