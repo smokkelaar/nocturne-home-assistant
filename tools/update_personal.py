@@ -279,10 +279,14 @@ FROM ghcr.io/nightscout/nocturne/nocturne-api@{lock['upstream']['api']['digest']
 
 
 def check(lock=None):
+    import bridge_check
     lock = lock or json.loads((ROOT / 'upstream-personal.json').read_text())
     directory = ROOT / 'nocturne_personal'
     delivery = json.loads((directory / 'config.json').read_text())['version']
+    bridged = bridge_check.require(ROOT, 'personal')
     for path, expected in files(lock, delivery).items():
+        if bridged and path == 'rootfs/opt/nocturne-ha/version.json':
+            continue
         if (directory / path).read_bytes() != expected:
             raise ValueError('Generated Personal file differs: ' + path)
     print('Personal pins, source recipe, identity and wrapper compatibility verified.')

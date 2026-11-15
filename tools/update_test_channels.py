@@ -259,6 +259,7 @@ def follow_personal():
 
 
 def main():
+    import bridge_check
     parser = argparse.ArgumentParser()
     parser.add_argument("--update", action="store_true")
     parser.add_argument("--check", action="store_true")
@@ -273,6 +274,9 @@ def main():
         if args.update:
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(expected)
+        elif path.endswith('/rootfs/opt/nocturne-ha/version.json') and \
+                bridge_check.require(ROOT, path.split('/')[0].replace('nocturne_test_', 'test-')):
+            continue
         elif target.read_bytes() != expected:
             raise ValueError("Test channel differs from pinned source: " + path)
     print("Independently pinned Test A, Test B and Test C verified.")

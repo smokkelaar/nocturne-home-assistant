@@ -17,6 +17,7 @@ import update_personal
 import update_test_channels
 import update_latest
 import update_upstream
+import bridge_check
 from versioning import next_package
 
 
@@ -139,6 +140,19 @@ class PrebuiltTests(unittest.TestCase):
         shutil.copyfile(ROOT / 'tools/update_upstream.py', target / 'tools/update_upstream.py')
         for package in publisher.CHANNELS.values():
             shutil.copytree(ROOT / package, target / package, ignore=shutil.ignore_patterns('__pycache__'))
+        # A fixture without migration-bridge.json models the pinned source
+        # templates rather than the temporarily advertised bridge images.
+        latest_version = publisher.read(target / 'nocturne_latest/config.json')['version']
+        latest_generated = update_latest.render(ROOT, publisher.read(ROOT / 'upstream-latest.json'), latest_version)
+        (target / 'nocturne_latest/rootfs/opt/nocturne-ha/version.json').write_text(
+            latest_generated['nocturne_latest/rootfs/opt/nocturne-ha/version.json'], encoding='utf-8')
+        personal_version = publisher.read(target / 'nocturne_personal/config.json')['version']
+        (target / 'nocturne_personal/rootfs/opt/nocturne-ha/version.json').write_bytes(
+            update_personal.files(publisher.read(ROOT / 'upstream-personal.json'), personal_version)['rootfs/opt/nocturne-ha/version.json'])
+        generated_tests = update_test_channels.files()
+        for letter in 'abc':
+            path = f'nocturne_test_{letter}/rootfs/opt/nocturne-ha/version.json'
+            (target / path).write_bytes(generated_tests[path])
 
     def test_migration_bridge_promotion_preserves_identity_and_stops_republishing(self):
         with tempfile.TemporaryDirectory() as temporary, patch.object(publisher.registry, 'image', side_effect=inspected):
@@ -146,6 +160,8 @@ class PrebuiltTests(unittest.TestCase):
             self.fixture(root)
             for name in ('upstream.json', 'upstream-latest.json', 'upstream-personal.json', 'migration-bridge.json'):
                 shutil.copyfile(ROOT / name, root / name)
+            for channel in publisher.BRIDGE_CHANNELS:
+                (root / publisher.CHANNELS[channel] / 'provenance.json').unlink()
             output = root / 'work/bridge'
             matrix = publisher.prepare(root, output, 'd' * 40, 1200, 1, 'e' * 40)
             self.assertEqual(set(publisher.BRIDGE_CHANNELS), {item['channel'] for item in matrix['include']})
@@ -159,6 +175,13 @@ class PrebuiltTests(unittest.TestCase):
                 self.assertNotIn('personal', runtime)
                 self.assertEqual(package, config['slug'])
                 self.assertEqual({'api', 'web'}, set(publisher.read(root / package / 'provenance.json')['runtime_pins']['amd64']))
+                self.assertTrue(bridge_check.require(root, channel))
+            runtime_path = root / 'nocturne_personal/rootfs/opt/nocturne-ha/version.json'
+            altered = publisher.read(runtime_path)
+            altered['source_commit'] = '0' * 40
+            publisher.write(runtime_path, altered)
+            with self.assertRaisesRegex(ValueError, 'inconsistent'):
+                bridge_check.require(root, 'personal')
 
     def test_migration_bridge_rejects_moving_or_partial_source(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -245,6 +268,8 @@ class PrebuiltTests(unittest.TestCase):
                 for name, value in generated.items():
                     self.assertEqual((root / 'nocturne_personal' / name).read_bytes(), value, name)
                 for name, value in update_test_channels.files().items():
+                    if name.endswith('/rootfs/opt/nocturne-ha/version.json'):
+                        continue
                     self.assertEqual((root / name).read_bytes(), value, name)
 
     def test_unreleased_source_notes_receive_only_the_published_version(self):
