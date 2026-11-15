@@ -65,9 +65,10 @@ jobs:
           ARCH: ${{ inputs.arch }}
         shell: bash
         run: |
-          if [ -n "$BASELINE" ]; then
-            docker pull "$BASELINE"
+          if [ -n "$BASELINE" ] && docker pull "$BASELINE"; then
+            echo "Using published recovery baseline $BASELINE"
           elif [ -n "$LEGACY_REF" ]; then
+            echo "Published recovery baseline unavailable; building source baseline from $LEGACY_REF"
             git fetch --no-tags origin "$LEGACY_REF"
             mkdir -p work/legacy
             git archive "$LEGACY_REF" "$PACKAGE" | tar -x -C work/legacy

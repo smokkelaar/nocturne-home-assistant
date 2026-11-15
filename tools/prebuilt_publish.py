@@ -217,7 +217,10 @@ def prepare(root, destination, wrapper_commit, run_number, attempt, baseline_ref
                            'context': str(context.as_posix()), 'version': version,
                            'image': image_name(repo, channel, platform['hass']) + ':' + version,
                            'baseline': baseline(read(root / package / 'config.json'), channel, arch, repo),
-                           'legacy_baseline_ref': baseline_ref if arch == 'amd64' and 'image' not in proof['previous_config'] else ''})
+                           # Store metadata can name a package image that was never promoted.
+                           # Keep an immutable source fallback for every native platform so
+                           # recovery validation remains meaningful in that case.
+                           'legacy_baseline_ref': baseline_ref})
     write(destination / 'matrix.json', {'include': matrix})
     write(destination / 'candidates.json', proofs)
     return {'include': matrix}
