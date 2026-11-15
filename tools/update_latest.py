@@ -282,8 +282,12 @@ def main():
     current = json.loads((ROOT / 'upstream-latest.json').read_text(encoding='utf-8'))
     validate_lock(current)
     if args.check:
+        import bridge_check
+        bridged = bridge_check.require(ROOT, 'latest')
         version = json.loads((ROOT / 'nocturne_latest/config.json').read_text(encoding='utf-8'))['version']
         for name, expected in render(ROOT, current, version).items():
+            if bridged and name == 'nocturne_latest/rootfs/opt/nocturne-ha/version.json':
+                continue
             actual = (ROOT / name).read_text(encoding='utf-8')
             same = json.loads(actual) == json.loads(expected) if name.endswith('.json') else actual == expected
             if not same:

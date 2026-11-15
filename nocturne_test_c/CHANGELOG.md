@@ -1,3 +1,10 @@
+## 1.0.111401
+
+- New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
+- Required one-time Nocturne 0.3.0 database migration bridge. Install and start it successfully before updating to 0.3.1 or newer.
+- This bridge temporarily runs the official Nightscout source; channel-specific features can return after migration.
+- Existing app identity, options and private data remain intact.
+
 ## 1.0.105701
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.

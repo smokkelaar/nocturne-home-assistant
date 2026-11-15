@@ -2,25 +2,79 @@
   "format": 1,
   "channel": "test-c",
   "package": "nocturne_test_c",
-  "version": "1.0.105701",
+  "version": "1.0.111401",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "45462297ce371adecd480c0672e2cd9ac8f9a692",
-  "recipe": "7666763961af9c8cfa9fa834144abfe86455cb683a3bb22159b9341378d76ac2",
-  "source_repository": "smokkelaar/nocturne-personal",
-  "source_commit": "acb156ca4cb7b7ebb7f4e15491df042184ba8848",
+  "wrapper_commit": "58b1c52fdb469f221139e0c9db6512201b5f62be",
+  "recipe": "afe440dd265ed5fc94df84377283d0e65910e9c6d31e3ebe5d336da111712737",
+  "source_repository": "nightscout/nocturne",
+  "source_commit": "fe91be237ae7d2e4ea920ce67b77b4e33d50dc3b",
   "architectures": [
     "amd64",
     "arm64"
   ],
   "runtime_pins": {
     "amd64": {
-      "api": "sha256:eb6c38c252abdfecab469e0cdc9b12d9f939ac5df608d3b2965c18a202860d99"
+      "api": "sha256:c4c02395abdfc5576e95597e65ce4f54fbaa4b698215abace039ce48ca76d07d",
+      "web": "sha256:575271d6f7f710e1576fea18d72275dc08baf5f820b31bc373502eaa2f228b03"
     },
     "arm64": {
-      "api": "sha256:f8969b40b1847b21960c174f9de5c86d9fffaa8c613f1804210c182b5608a331"
+      "api": "sha256:02810850db44d80878e04190d8368b29190ecc5de5adb5481e0370a8b218b333",
+      "web": "sha256:dfa849e841b9a9b13c2a955625da42be80373b451b93fae674bbe1dd132e2654"
     }
   },
   "config": {
+    "name": "Nocturne Test C",
+    "version": "1.0.111401",
+    "slug": "nocturne_test_c",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Nocturne 0.3.0 database bridge \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+    "url": "https://github.com/smokkelaar/nocturne-home-assistant",
+    "arch": [
+      "amd64",
+      "aarch64"
+    ],
+    "startup": "application",
+    "boot": "manual",
+    "init": false,
+    "timeout": 120,
+    "ingress": true,
+    "ingress_port": 8099,
+    "panel_icon": "mdi:heart-pulse",
+    "panel_title": "Nocturne Test C",
+    "panel_admin": true,
+    "ports": {
+      "8448/tcp": 8453
+    },
+    "ports_description": {
+      "8448/tcp": "Nocturne HTTPS - alleen lokaal gebruiken; extra toegangscode staat in de HA-webinterface"
+    },
+    "map": [
+      {
+        "type": "ssl",
+        "read_only": true
+      }
+    ],
+    "backup": "cold",
+    "options": {
+      "public_url": "https://homeassistant.local:8453",
+      "certificate": "",
+      "private_key": "",
+      "gateway_auth": true,
+      "skip_gateway_check": false,
+      "maintenance_enabled": false,
+      "maintenance_password": ""
+    },
+    "schema": {
+      "public_url": "url",
+      "certificate": "str",
+      "private_key": "str",
+      "gateway_auth": "bool",
+      "skip_gateway_check": "bool",
+      "maintenance_enabled": "bool",
+      "maintenance_password": "password"
+    },
+    "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-c-{arch}"
+  },
+  "previous_config": {
     "name": "Nocturne Test C",
     "version": "1.0.105701",
     "slug": "nocturne_test_c",
@@ -72,60 +126,27 @@
     },
     "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-c-{arch}"
   },
-  "previous_config": {
+  "runtime_metadata": {
+    "app": "0.1.13",
     "name": "Nocturne Test C",
-    "version": "1.0.102701",
-    "slug": "nocturne_test_c",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal PR #89 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
-    "url": "https://github.com/smokkelaar/nocturne-home-assistant",
-    "arch": [
-      "amd64",
-      "aarch64"
-    ],
-    "startup": "application",
-    "boot": "manual",
-    "init": false,
-    "timeout": 120,
-    "ingress": true,
-    "ingress_port": 8099,
-    "panel_icon": "mdi:heart-pulse",
-    "panel_title": "Nocturne Test C",
-    "panel_admin": true,
-    "ports": {
-      "8448/tcp": 8453
-    },
-    "ports_description": {
-      "8448/tcp": "Nocturne HTTPS - alleen lokaal gebruiken; extra toegangscode staat in de HA-webinterface"
-    },
-    "map": [
-      {
-        "type": "ssl",
-        "read_only": true
-      }
-    ],
-    "backup": "cold",
-    "options": {
-      "public_url": "https://homeassistant.local:8453",
-      "certificate": "",
-      "private_key": "",
-      "gateway_auth": true,
-      "skip_gateway_check": false,
-      "maintenance_enabled": false,
-      "maintenance_password": ""
-    },
-    "schema": {
-      "public_url": "url",
-      "certificate": "str",
-      "private_key": "str",
-      "gateway_auth": "bool",
-      "skip_gateway_check": "bool",
-      "maintenance_enabled": "bool",
-      "maintenance_password": "password"
-    },
-    "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-c-{arch}"
+    "default_public_url": "https://homeassistant.local:8453",
+    "cookie_namespace": "NocturneTestC_",
+    "nocturne": "0.3.0",
+    "repository": "nightscout/nocturne",
+    "source_commit": "fe91be237ae7d2e4ea920ce67b77b4e33d50dc3b",
+    "base": "Nocturne v0.3.0",
+    "base_commit": "fe91be237ae7d2e4ea920ce67b77b4e33d50dc3b",
+    "release_url": "https://github.com/nightscout/nocturne/releases/tag/v0.3.0",
+    "purpose_url": "https://github.com/nightscout/nocturne/releases/tag/v0.3.0",
+    "test_url": "https://github.com/nightscout/nocturne/releases/tag/v0.3.0",
+    "release": "Nocturne 0.3.0 database bridge",
+    "purpose": "Eenmalige databasemigratie; installeer en start deze versie v\u00f3\u00f3r een nieuwere bron.",
+    "test_plan": "Koude herstelproef, databasemigratie, tenantwerking en onderhoud via HA controleren.",
+    "previous_source_commit": "acb156ca4cb7b7ebb7f4e15491df042184ba8848"
   },
+  "migration_bridge": "0.3.0",
   "digests": {
-    "amd64": "sha256:699d0be6d9157cb5f96d421337fdbc11395f0ae639673d5fd949b3935abac004",
-    "aarch64": "sha256:61e47ead84b823a57db8dc1a036bc71fcd8bc48435def927723cc19b343a1cfe"
+    "amd64": "sha256:e29852717196086a7a7ad96546839f4f5e8d9346209c7de003066b8637b82e73",
+    "aarch64": "sha256:916547006bd10bae73b2709e523c7a13abacf68300ec9f6275f668ccdb89e3e3"
   }
 }

@@ -86,8 +86,12 @@ class LatestUpdateTests(unittest.TestCase):
         updater.validate_lock(legacy)
 
     def test_generated_metadata_matches_both_digests_and_commit(self):
+        import bridge_check
+        bridged = bridge_check.require(ROOT, 'latest')
         version = json.loads((ROOT / 'nocturne_latest/config.json').read_text(encoding='utf-8'))['version']
         for name, expected in updater.render(ROOT, self.lock, version).items():
+            if bridged and name == 'nocturne_latest/rootfs/opt/nocturne-ha/version.json':
+                continue
             actual = (ROOT / name).read_text(encoding='utf-8')
             self.assertEqual(json.loads(expected), json.loads(actual)) if name.endswith('.json') else self.assertEqual(expected, actual)
 

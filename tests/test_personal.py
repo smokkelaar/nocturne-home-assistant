@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 import update_personal as updater
 import update_test_channels
+import bridge_check
 
 
 class PersonalTests(unittest.TestCase):
@@ -71,6 +72,9 @@ class PersonalTests(unittest.TestCase):
 
     def test_generated_test_channels_match_their_pins(self):
         for path, expected in update_test_channels.files().items():
+            if path.endswith('/rootfs/opt/nocturne-ha/version.json') and \
+                    bridge_check.require(ROOT, path.split('/')[0].replace('nocturne_test_', 'test-')):
+                continue
             self.assertEqual(expected, (ROOT / path).read_bytes(), path)
 
     def test_generated_feature_docs_follow_extension_version(self):
@@ -133,20 +137,31 @@ class PersonalTests(unittest.TestCase):
                     update_test_channels.validate_test_pr_source(source, 'Test ' + letter.upper())
                 else:
                     self.assertEqual(personal, source)
-                self.assertEqual(source['commit'], runtime['source_commit'])
-                self.assertEqual(source.get('base_commit', latest['commit']), runtime['base_commit'])
-                self.assertEqual(source['repository'], runtime['repository'])
+                bridged = bridge_check.require(ROOT, 'test-' + letter)
+                if bridged:
+                    self.assertEqual(json.loads((ROOT / 'upstream.json').read_text())['commit'], runtime['source_commit'])
+                    self.assertEqual(source['commit'], runtime['previous_source_commit'])
+                    self.assertEqual('nightscout/nocturne', runtime['repository'])
+                else:
+                    self.assertEqual(source['commit'], runtime['source_commit'])
+                    self.assertEqual(source.get('base_commit', latest['commit']), runtime['base_commit'])
+                    self.assertEqual(source['repository'], runtime['repository'])
                 self.assertEqual(config['version'], runtime['package'])
                 self.assertEqual('Nocturne Test ' + letter.upper(), config['name'])
                 self.assertEqual('NocturneTest' + letter.upper() + '_', runtime['cookie_namespace'])
                 self.assertEqual(port, config['ports']['8448/tcp'])
                 self.assertEqual(f'https://homeassistant.local:{port}', runtime['default_public_url'])
-                self.assertEqual('Personal PR #' + str(source['pull_request']) if source['channel'] == 'personal-pr' else 'Personal ' + personal['version'], runtime['release'])
-                self.assertEqual(source.get('personal_version', personal['version']), runtime['personal'])
+                if bridged:
+                    self.assertEqual('Nocturne 0.3.0 database bridge', runtime['release'])
+                    self.assertNotIn('personal', runtime)
+                else:
+                    self.assertEqual('Personal PR #' + str(source['pull_request']) if source['channel'] == 'personal-pr' else 'Personal ' + personal['version'], runtime['release'])
+                    self.assertEqual(source.get('personal_version', personal['version']), runtime['personal'])
                 self.assertNotIn('PR #', runtime['purpose'])
                 if source['channel'] != 'personal-pr':
                     self.assertNotIn('pull_request', source)
-                self.assertEqual(source.get('pull_request_url', 'https://github.com/' + personal['repository'] + '/tree/' + personal['commit']), runtime['release_url'])
+                if not bridged:
+                    self.assertEqual(source.get('pull_request_url', 'https://github.com/' + personal['repository'] + '/tree/' + personal['commit']), runtime['release_url'])
                 recipe = (package / 'Dockerfile').read_text()
                 self.assertIn('--checksum=sha256:' + source['archive_sha256'], recipe)
                 self.assertIn(source['commit'], recipe)
@@ -248,8 +263,9 @@ class PersonalTests(unittest.TestCase):
         self.assertEqual('https://homeassistant.local:8450', options['public_url'])
         page = settings.status_page(options, {}, '', True)
         self.assertIn('Nocturne Personal Release', page)
-        self.assertIn('Nocturne main', page)
-        self.assertIn(self.lock['commit'][:12], page)
+        runtime = json.loads((self.directory / 'rootfs/opt/nocturne-ha/version.json').read_text())
+        self.assertIn(runtime['base'], page)
+        self.assertIn(runtime['source_commit'][:12], page)
         options['cookie_namespace'] = 'NocturneLatest_'
         with self.assertRaises(ValueError):
             settings.nginx_config(options, '/cert', '/key')
