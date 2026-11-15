@@ -1,4 +1,4 @@
-"""Let the existing Official installation follow the approved upstream main pair."""
+"""Optional explicit main rollout; absent policy keeps Official on upstream.json."""
 import json
 import re
 
