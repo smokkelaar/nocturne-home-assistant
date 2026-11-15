@@ -13,7 +13,7 @@ from versioning import publication_mode, published_number, next_package
 ROOT = Path(__file__).resolve().parents[1]
 REPO = 'smokkelaar/nocturne-personal'
 UPSTREAM_REPO = 'nightscout/nocturne'
-SDK = 'mcr.microsoft.com/dotnet/sdk@sha256:0e53453ccfc8ff2d51319fe80c678971c6d0f8008dff3565fa88e15840b69854'
+SDK = 'mcr.microsoft.com/dotnet/sdk@sha256:7913685c883a29dd8ba79da96172f5c6b29ed9be706ebe95935e3ef45f19c9c1'
 RUST = 'rust@sha256:4673f78db88b71f09d5451bbc404734807918161241215ba0a50bbbe9b448117'
 COMMON = ('build/check_web.mjs', 'build/prepare_web.py', 'build/check_cookies.conf',
           'rootfs/opt/nocturne-ha/bootstrap.sql', 'rootfs/opt/nocturne-ha/run.py',
@@ -346,8 +346,17 @@ def update():
     old = json.loads(lock_path.read_text()) if lock_path.exists() else None
     lock = resolve()
     if old == lock:
+        # A build-toolchain or wrapper change can alter generated files without
+        # changing the immutable Personal source lock.  Refresh those files so
+        # CI never keeps a stale recipe that cannot build the current source.
+        directory = ROOT / 'nocturne_personal'
+        delivery = json.loads((directory / 'config.json').read_text())['version']
+        for path, data in files(lock, delivery).items():
+            target = directory / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(data)
         check(lock)
-        print('No new Personal source; no package change.')
+        print('No new Personal source; regenerated the current package recipe.')
         return
     if old:
         validate_transition(old, lock)
