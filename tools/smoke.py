@@ -152,6 +152,18 @@ def wait_ready(name, probe=PROBE):
                     markers.append(kind.upper())
             sqlstates = sorted(set(re.findall(r'\b(?:SqlState|SQLSTATE):?\s*([A-Z0-9]{5})\b', logs)))
             markers.extend('SQLSTATE_' + state for state in sqlstates[:3])
+            for line in logs.splitlines():
+                if 'Permission denied' not in line and 'permission denied' not in line:
+                    continue
+                for category, signature in (
+                    ('DATA', '/data/'), ('RUNTIME', '/run/'),
+                    ('APP', '/app/'), ('WEB', '/opt/nocturne-web/'),
+                    ('POSTGRES', 'postgres'), ('SCHEMA', 'schema '),
+                    ('TABLE', 'table '), ('RELATION', 'relation '),
+                ):
+                    if signature in line:
+                        markers.append('PERMISSION_' + category)
+                break
             raise RuntimeError('Container exited before becoming ready; safe markers: '
                                + (','.join(markers) or 'NONE'))
         try:
