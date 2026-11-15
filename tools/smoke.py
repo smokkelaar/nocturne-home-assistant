@@ -20,6 +20,10 @@ def docker(*args, check=True, input=None):
         marker = safe_failure_marker(result.stdout + result.stderr)
         detail = ' (' + marker.group(0) + ')' if marker else ''
         raise RuntimeError('Docker operation failed: ' + args[0] + detail)
+    # Docker logs routes container stderr to its own stderr stream. This value
+    # is used only by the bounded marker classifier below, never printed.
+    if args and args[0] == 'logs':
+        return (result.stdout + result.stderr).strip()
     return result.stdout.strip()
 
 
