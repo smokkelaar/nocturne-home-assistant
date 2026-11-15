@@ -125,7 +125,7 @@ class PrebuiltTests(unittest.TestCase):
                 if item['channel'] not in ('official', 'latest'):
                     self.assertIn('ARG DOTNET_RID=' + publisher.PLATFORMS[item['arch']]['rid'], recipe)
                     self.assertIn(publisher.read(ROOT / 'build-platforms.json')['sdk'][item['arch']], recipe)
-                self.assertEqual('e' * 40, item['legacy_baseline_ref'])
+                self.assertEqual('e' * 40 if item['arch'] == 'amd64' else '', item['legacy_baseline_ref'])
             self.assertEqual(before, {package: (ROOT / package / 'config.json').read_bytes() for package in publisher.CHANNELS.values()})
 
     def fixture(self, target):

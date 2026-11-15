@@ -218,9 +218,10 @@ def prepare(root, destination, wrapper_commit, run_number, attempt, baseline_ref
                            'image': image_name(repo, channel, platform['hass']) + ':' + version,
                            'baseline': baseline(read(root / package / 'config.json'), channel, arch, repo),
                            # Store metadata can name a package image that was never promoted.
-                           # Keep an immutable source fallback for every native platform so
-                           # recovery validation remains meaningful in that case.
-                           'legacy_baseline_ref': baseline_ref})
+                           # The historical Dockerfiles predate multi-architecture pins, so
+                           # only build their immutable source fallback on AMD64. ARM still
+                           # validates a cold restore against the candidate when no image exists.
+                           'legacy_baseline_ref': baseline_ref if arch == 'amd64' else ''})
     write(destination / 'matrix.json', {'include': matrix})
     write(destination / 'candidates.json', proofs)
     return {'include': matrix}

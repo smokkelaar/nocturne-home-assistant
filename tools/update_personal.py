@@ -19,6 +19,11 @@ COMMON = ('build/check_web.mjs', 'build/prepare_web.py', 'build/check_cookies.co
           'rootfs/opt/nocturne-ha/bootstrap.sql', 'rootfs/opt/nocturne-ha/run.py',
           'rootfs/opt/nocturne-ha/tls.py', 'rootfs/opt/nocturne-ha/diagnostic_cli.py',
           'rootfs/usr/local/bin/nocturne-ha', 'translations/nl.json', 'translations/en.json')
+KNOWN_SUBMODULES = {
+    # Nocturne's web workspace declares this package with workspace:*. Source
+    # archives omit gitlinks, so compiling the archive requires this exact pin.
+    'src/Web/vendor/water-ui': 'ryceg/water-ui',
+}
 
 
 def github(path, raw=False):
@@ -79,6 +84,20 @@ def unmodified_upstream(lock):
             lock.get('tree') == lock.get('upstream_tree'))
 
 
+def source_submodules(commit):
+    tree = github(f'git/trees/{commit}?recursive=1').get('tree', [])
+    pins = []
+    for entry in tree:
+        if entry.get('mode') != '160000':
+            continue
+        path = entry.get('path')
+        repository = KNOWN_SUBMODULES.get(path)
+        if not repository:
+            raise ValueError('Unreviewed Personal source submodule: ' + str(path))
+        pins.append({'path': path, 'repository': repository, 'commit': entry.get('sha')})
+    return pins
+
+
 def require_merged_base(approved, base, commit):
     if not re.fullmatch(r'[0-9a-f]{40}', base):
         raise ValueError('Invalid Personal upstream base')
@@ -135,7 +154,8 @@ def resolve():
         if comparison['status'] not in ('ahead', 'identical') or comparison['merge_base_commit']['sha'] != approved['commit']:
             raise ValueError('Personal does not descend from the approved Daily commit')
     lock = dict(channel='personal', repository=REPO, version=meta['version'],
-                commit=commit, commit_at=head['commit']['committer']['date'], upstream=approved)
+                commit=commit, commit_at=head['commit']['committer']['date'], upstream=approved,
+                submodules=source_submodules(commit))
     if equivalent_tree:
         lock.update(tree=equivalent_tree, upstream_tree=equivalent_tree)
     digest = hashlib.sha256()

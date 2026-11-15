@@ -185,12 +185,13 @@ class PersonalTests(unittest.TestCase):
             def __enter__(self): return self
             def __exit__(self, *args): pass
             def read(self, size): return b''
-        with patch.object(updater, 'github', side_effect=[head, comparison]) as github, \
+        with patch.object(updater, 'github', side_effect=[head, comparison, {'tree': []}]) as github, \
              patch.object(updater.urllib.request, 'urlopen', return_value=Archive()):
             resolved = updater.resolve()
         self.assertEqual(self.clean_lock['commit'], resolved['commit'])
         self.assertEqual(self.clean_lock['version'], resolved['version'])
-        self.assertEqual(['commits/personal', f"compare/{self.clean_lock['commit']}...{self.clean_lock['commit']}"],
+        self.assertEqual(['commits/personal', f"compare/{self.clean_lock['commit']}...{self.clean_lock['commit']}",
+                          f"git/trees/{self.clean_lock['commit']}?recursive=1"],
                          [call.args[0] for call in github.call_args_list])
 
     def test_history_preserving_reset_resolves_exact_upstream_source(self):
@@ -202,7 +203,7 @@ class PersonalTests(unittest.TestCase):
             def __enter__(self): return self
             def __exit__(self, *args): pass
             def read(self, size): return b''
-        with patch.object(updater, 'github', side_effect=[reset, canonical, comparison]), \
+        with patch.object(updater, 'github', side_effect=[reset, canonical, comparison, {'tree': []}]), \
              patch.object(updater.urllib.request, 'urlopen', return_value=Archive()):
             resolved = updater.resolve()
         self.assertEqual(self.clean_lock['commit'], resolved['commit'])
