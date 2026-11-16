@@ -2,31 +2,31 @@
   "format": 1,
   "channel": "personal",
   "package": "nocturne_personal",
-  "version": "1.0.111401",
+  "version": "1.0.112301",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "58b1c52fdb469f221139e0c9db6512201b5f62be",
-  "recipe": "2d44bfe5198a0b2bfa891caf1d95f47c9d2b66bfc6abb817e5fe3ccd9dab850e",
+  "wrapper_commit": "6208fb94222e76642034155a8bd00d9f870479cc",
+  "recipe": "36c312467305b51fcce86fe32b402b9fe25ec5bcb3eaa2d46af400be7a9c57ae",
   "source_repository": "nightscout/nocturne",
-  "source_commit": "fe91be237ae7d2e4ea920ce67b77b4e33d50dc3b",
+  "source_commit": "ea4e97c380005dfdd53c157720bd93ba30ef9050",
   "architectures": [
     "amd64",
     "arm64"
   ],
   "runtime_pins": {
     "amd64": {
-      "api": "sha256:c4c02395abdfc5576e95597e65ce4f54fbaa4b698215abace039ce48ca76d07d",
-      "web": "sha256:575271d6f7f710e1576fea18d72275dc08baf5f820b31bc373502eaa2f228b03"
+      "api": "sha256:d8a8391b519a8ece4ac8decd292eee6a8400b08ea81746a61c11a74b4c0fc123",
+      "web": "sha256:c0840e89ff4406acd2e8473fc4106a2f4917c6aecb41cdd25dbe6e0f64cd7bb8"
     },
     "arm64": {
-      "api": "sha256:02810850db44d80878e04190d8368b29190ecc5de5adb5481e0370a8b218b333",
-      "web": "sha256:dfa849e841b9a9b13c2a955625da42be80373b451b93fae674bbe1dd132e2654"
+      "api": "sha256:2128a7531fc276322bd16641a320b9343cc4c52f5a8afbb4169550b554b6f0de",
+      "web": "sha256:cdec0c7810675a27f370766c98b5b4bb0200af69d423865a1ff8e68faab5b58d"
     }
   },
   "config": {
     "name": "Nocturne Personal Release",
-    "version": "1.0.111401",
+    "version": "1.0.112301",
     "slug": "nocturne_personal",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Nocturne 0.3.0 database bridge \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 0.3.2 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
       "amd64",
@@ -76,9 +76,9 @@
   },
   "previous_config": {
     "name": "Nocturne Personal Release",
-    "version": "1.0.104301",
+    "version": "1.0.111401",
     "slug": "nocturne_personal",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal 0.3.47 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Nocturne 0.3.0 database bridge \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
       "amd64",
@@ -131,22 +131,22 @@
     "name": "Nocturne Personal Release",
     "default_public_url": "https://homeassistant.local:8450",
     "cookie_namespace": "NocturnePersonal_",
-    "nocturne": "0.3.0",
+    "nocturne": "0.3.2",
     "repository": "nightscout/nocturne",
-    "source_commit": "fe91be237ae7d2e4ea920ce67b77b4e33d50dc3b",
-    "base": "Nocturne v0.3.0",
-    "base_commit": "fe91be237ae7d2e4ea920ce67b77b4e33d50dc3b",
-    "release_url": "https://github.com/nightscout/nocturne/releases/tag/v0.3.0",
-    "purpose_url": "https://github.com/nightscout/nocturne/releases/tag/v0.3.0",
-    "test_url": "https://github.com/nightscout/nocturne/releases/tag/v0.3.0",
-    "release": "Nocturne 0.3.0 database bridge",
-    "purpose": "Eenmalige databasemigratie; installeer en start deze versie v\u00f3\u00f3r een nieuwere bron.",
-    "test_plan": "Koude herstelproef, databasemigratie, tenantwerking en onderhoud via HA controleren.",
-    "previous_source_commit": "ec9545a15d29cc2e8197f078c44f1c7be5b8ef78"
+    "source_commit": "ea4e97c380005dfdd53c157720bd93ba30ef9050",
+    "base": "Nocturne v0.3.2",
+    "base_commit": "ea4e97c380005dfdd53c157720bd93ba30ef9050",
+    "release": "0.3.2",
+    "release_url": "https://github.com/nightscout/nocturne/releases/tag/v0.3.2",
+    "purpose": "De stabiele, officieel gepubliceerde Nocturne-release gebruiken.",
+    "purpose_url": "https://github.com/nightscout/nocturne/releases/tag/v0.3.2",
+    "test_plan": "Reguliere werking, upgrades en databasemigraties van de offici\u00eble release controleren.",
+    "test_url": "https://github.com/nightscout/nocturne/releases/tag/v0.3.2",
+    "previous_source_commit": "fe91be237ae7d2e4ea920ce67b77b4e33d50dc3b"
   },
-  "migration_bridge": "0.3.0",
+  "release_rollout": "0.3.2",
   "digests": {
-    "amd64": "sha256:00c86ef1a8122b2bfef2be1bd185bb7864afb475feab606cc8e1824936d6fc60",
-    "aarch64": "sha256:213216114923b8e5f470cb110b9faf88be90aa62fa5811d7df95664014620c1b"
+    "amd64": "sha256:a7d46676f6c54ecb0b7e49352f0ce99b3486f66aa56a0f7fbab0916668921f95",
+    "aarch64": "sha256:4f7ad5d1b7e277c5cf6b6e5304a3e34c93e8765e3efefe759aa0ea8ac6f93ba3"
   }
 }

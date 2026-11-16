@@ -1,7 +1,9 @@
-## Unreleased source candidate
+## 1.0.112301
 
-- Official source prepared: Nocturne 0.3.2. The existing published image remains advertised until registry promotion.
+- New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
+- Existing app identity, options, private data and Nocturne source remain intact.
 
+- Official source prepared: Nocturne 0.3.2. 
 ## 1.0.110801
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
