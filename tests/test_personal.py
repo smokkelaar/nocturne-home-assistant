@@ -141,8 +141,13 @@ class PersonalTests(unittest.TestCase):
                 if bridged:
                     proof = json.loads((package / 'provenance.json').read_text())
                     self.assertEqual(proof['source_commit'], runtime['source_commit'])
-                    self.assertEqual(source['commit'], runtime['previous_source_commit'])
                     self.assertEqual('nightscout/nocturne', runtime['repository'])
+                    if proof.get('release_rollout') == '0.3.2':
+                        self.assertEqual(bridge_check.MIGRATION_BRIDGE['commit'],
+                                         runtime['previous_source_commit'])
+                        self.assertEqual('0.3.2', runtime['release'])
+                    else:
+                        self.assertEqual(source['commit'], runtime['previous_source_commit'])
                 else:
                     self.assertEqual(source['commit'], runtime['source_commit'])
                     self.assertEqual(source.get('base_commit', latest['commit']), runtime['base_commit'])
@@ -152,10 +157,10 @@ class PersonalTests(unittest.TestCase):
                 self.assertEqual('NocturneTest' + letter.upper() + '_', runtime['cookie_namespace'])
                 self.assertEqual(port, config['ports']['8448/tcp'])
                 self.assertEqual(f'https://homeassistant.local:{port}', runtime['default_public_url'])
-                if bridged:
+                if bridged and proof.get('migration_bridge') == '0.3.0':
                     self.assertEqual('Nocturne 0.3.0 database bridge', runtime['release'])
                     self.assertNotIn('personal', runtime)
-                else:
+                elif not bridged:
                     self.assertEqual('Personal PR #' + str(source['pull_request']) if source['channel'] == 'personal-pr' else 'Personal ' + personal['version'], runtime['release'])
                     self.assertEqual(source.get('personal_version', personal['version']), runtime['personal'])
                 self.assertNotIn('PR #', runtime['purpose'])

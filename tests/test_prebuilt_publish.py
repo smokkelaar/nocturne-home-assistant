@@ -164,10 +164,10 @@ class PrebuiltTests(unittest.TestCase):
                 (root / publisher.CHANNELS[channel] / 'provenance.json').unlink()
             output = root / 'work/bridge'
             matrix = publisher.prepare(root, output, 'd' * 40, 1200, 1, 'e' * 40)
-            self.assertEqual({'official', *publisher.BRIDGE_CHANNELS},
+            self.assertEqual(set(publisher.BRIDGE_CHANNELS),
                              {item['channel'] for item in matrix['include']})
             proofs = publisher.read(output / 'candidates.json')
-            for channel in publisher.CHANNELS:
+            for channel in publisher.BRIDGE_CHANNELS:
                 self.assertEqual(publisher.RELEASE_032_COMMIT, proofs[channel]['source_commit'])
                 self.assertEqual({'api', 'web'}, set(proofs[channel]['runtime_pins']['amd64']))
             publisher.promote(root, output / 'candidates.json')
