@@ -4,6 +4,8 @@ Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar no
 
 **Bijgewerkt:** 1 november 2026, 22:15 (NL-tijd)
 
+**Release-overgang 16 november:** na de verplichte v0.3.0-migratiebridge gaan alle zes HA-apps naar dezelfde officiële Nocturne v0.3.2-bron. De onderstaande featuretests beschrijven de eerdere Personal- en Test-bronnen; die staan op [archive/channel-source-pre-v032](https://github.com/smokkelaar/nocturne-home-assistant/tree/archive/channel-source-pre-v032) en zijn in deze release niet actief. De afzonderlijke HA-installaties, tenantgegevens en onderhoudsfuncties blijven bestaan.
+
 Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Controleren op updates.
 
 ## Spelregels

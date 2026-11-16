@@ -19,7 +19,7 @@ For the **Stable and Main distribution with prebuilt images**, use [nocturne-hom
 [![Official release check](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/upstream.yml/badge.svg)](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/upstream.yml)
 [![Latest daily](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/latest.yml/badge.svg)](https://github.com/smokkelaar/nocturne-home-assistant/actions/workflows/latest.yml)
 
-Six **experimental, unofficial Home Assistant apps** that each run [Nocturne](https://github.com/nightscout/nocturne), PostgreSQL and an HTTPS gateway in one container. Official remains on its existing release; the separate [Personal app](docs/PERSONAL.md) adds contextual documentation on the approved upstream main base used by Latest and Test A/B/C.
+Six **experimental, unofficial Home Assistant apps** that each run [Nocturne](https://github.com/nightscout/nocturne), PostgreSQL and an HTTPS gateway in one container. The current release rollout puts all six existing HA identities on official Nocturne v0.3.2 after the required v0.3.0 database bridge. Their private data, tenant configuration, ports, cookie namespaces and HA maintenance tools stay separate. Earlier Personal and Test source remains on [the archive branch](https://github.com/smokkelaar/nocturne-home-assistant/tree/archive/channel-source-pre-v032) for later selective restoration.
 
 This repository is **Nocturne only**. It contains the HA wrapper, its small upstream compatibility patches, tests and contributor documentation; it is not a fork of the entire Nocturne application. Upstream Nocturne remains the source of the API and web interface. [Compare the two channels](docs/CHANNELS.md).
 
@@ -37,10 +37,7 @@ This repository is **Nocturne only**. It contains the HA wrapper, its small upst
 4. Open its HA web interface for service status, the Nocturne link and the extra gateway access code. Complete Nocturne's own passkey setup in the separate tab. From wrapper 0.1.4 an existing configured instance can [safely opt out of only that extra popup](docs/GATEWAY.md); Nocturne's passkey login stays enabled.
 
 **Personal development channel:** choose **Nocturne Personal Release** as a separate third
-installation, default port **8450**. It starts with its own empty database/account
-and compiles [the Personal fork](https://github.com/smokkelaar/nocturne-personal).
-Personal 0.3.30 shows searchable help in the normal page area, using the existing sidebar and a book button to switch back.
-Latest and Test A/B/C keep their existing source baseline.
+installation, default port **8450**. The release rollout moves its published image to official Nocturne v0.3.2 after validation; its prior Personal source and features are retained on the archive branch for later review. Its own database/account and HA maintenance interface remain in place.
 Your own Google OAuth client and consent are required; real Google account access remains a user test.
 [Personal installation, feature setup and daily updates](docs/PERSONAL.md).
 

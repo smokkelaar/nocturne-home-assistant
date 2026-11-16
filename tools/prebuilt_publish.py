@@ -22,6 +22,7 @@ CHANNELS = {'official': 'nocturne_local', 'latest': 'nocturne_latest',
 PLATFORMS = {'amd64': {'hass': 'amd64', 'runner': 'ubuntu-24.04', 'rid': 'linux-x64'},
              'arm64': {'hass': 'aarch64', 'runner': 'ubuntu-24.04-arm', 'rid': 'linux-arm64'}}
 BRIDGE_CHANNELS = ['latest', 'personal', 'test-a', 'test-b', 'test-c']
+RELEASE_032_COMMIT = 'ea4e97c380005dfdd53c157720bd93ba30ef9050'
 
 
 def read(path):
@@ -45,6 +46,20 @@ def bridge_channels(root):
     return set(BRIDGE_CHANNELS)
 
 
+def release_channels(root):
+    path = root / 'release-rollout.json'
+    if not path.is_file():
+        return set()
+    policy = read(path)
+    if policy != {'source': 'upstream.json', 'version': '0.3.2',
+                  'commit': RELEASE_032_COMMIT, 'channels': BRIDGE_CHANNELS}:
+        raise ValueError('Release rollout must cover exactly the five remaining HA identities')
+    lock = read(root / 'upstream.json')
+    if lock['version'] != '0.3.2' or lock['tag'] != 'v0.3.2' or lock['commit'] != RELEASE_032_COMMIT:
+        raise ValueError('Release rollout requires exact official Nocturne v0.3.2 source')
+    return set(BRIDGE_CHANNELS)
+
+
 def bridge_metadata(root, original):
     release = read(root / 'nocturne_local/rootfs/opt/nocturne-ha/version.json')
     if release['source_commit'] != MIGRATION_BRIDGE['commit']:
@@ -57,6 +72,18 @@ def bridge_metadata(root, original):
             'release': 'Nocturne 0.3.0 database bridge',
             'purpose': 'Eenmalige databasemigratie; installeer en start deze versie vóór een nieuwere bron.',
             'test_plan': 'Koude herstelproef, databasemigratie, tenantwerking en onderhoud via HA controleren.',
+            'previous_source_commit': original['source_commit']}
+
+
+def release_metadata(root, original):
+    release = read(root / 'nocturne_local/rootfs/opt/nocturne-ha/version.json')
+    if release['source_commit'] != RELEASE_032_COMMIT or release['nocturne'] != '0.3.2':
+        raise ValueError('Official release metadata does not match the rollout')
+    fields = ('nocturne', 'repository', 'source_commit', 'base', 'base_commit',
+              'release', 'release_url', 'purpose', 'purpose_url', 'test_plan', 'test_url')
+    identity = ('app', 'name', 'default_public_url', 'cookie_namespace')
+    return {**{key: original[key] for key in identity},
+            **{key: release[key] for key in fields},
             'previous_source_commit': original['source_commit']}
 
 
@@ -98,8 +125,10 @@ def recipe_hash(root, package, legacy_builder=None):
     paths += [root / package / 'Dockerfile', root / package / 'config.json', root / 'LICENSE', root / 'build-platforms.json',
               root / 'publication.json']
     channel = next((key for key, value in CHANNELS.items() if value == package), None)
-    if channel in bridge_channels(root):
-        paths += [root / 'migration-bridge.json', root / 'upstream.json',
+    overlay = channel in bridge_channels(root) or channel in release_channels(root)
+    if overlay:
+        policy = 'migration-bridge.json' if channel in bridge_channels(root) else 'release-rollout.json'
+        paths += [root / policy, root / 'upstream.json',
                   root / 'nocturne_local/Dockerfile',
                   root / 'nocturne_local/rootfs/opt/nocturne-ha/bridge_entry.py',
                   root / 'nocturne_local/rootfs/opt/nocturne-ha/version.json',
@@ -124,7 +153,7 @@ def recipe_hash(root, package, legacy_builder=None):
             value = json.loads(raw)
             for field in ('package', 'distribution', 'architectures', 'wrapper_commit'):
                 value.pop(field, None)
-            if channel in bridge_channels(root) and path == root / package / 'rootfs/opt/nocturne-ha/version.json':
+            if overlay and path == root / package / 'rootfs/opt/nocturne-ha/version.json':
                 # The migration image replaces source metadata while retaining
                 # the channel's stable HA identity.
                 value = {field: value[field] for field in ('app', 'name', 'default_public_url', 'cookie_namespace')}
@@ -189,6 +218,10 @@ def prepare(root, destination, wrapper_commit, run_number, attempt, baseline_ref
     version = next_version([config['version'] for config in configs.values()], run_number, attempt)
     locks = {'official': read(root / 'upstream.json'), 'latest': read(root / 'upstream-latest.json')}
     bridges = bridge_channels(root)
+    releases = release_channels(root)
+    if bridges & releases:
+        raise ValueError('A channel cannot be both migration bridge and release rollout')
+    overlays = bridges | releases
     matrix = []
     proofs = {}
     for channel, package in CHANNELS.items():
@@ -206,18 +239,20 @@ def prepare(root, destination, wrapper_commit, run_number, attempt, baseline_ref
             metadata = main_rollout.metadata(metadata, rollout)
         elif channel in bridges:
             metadata = bridge_metadata(root, metadata)
+        elif channel in releases:
+            metadata = release_metadata(root, metadata)
         lock = locks['official' if channel == 'official' else 'latest']
         # Source-built variants use Personal's separately approved runtime base.
         if rollout:
             lock = read(root / 'upstream-latest.json')
             if lock['commit'] != rollout['commit']:
                 raise ValueError('Official main metadata and runtime images must match')
-        elif channel in bridges:
+        elif channel in overlays:
             lock = locks['official']
         elif channel not in ('official', 'latest'):
             lock = read(root / 'upstream-personal.json')['upstream']
         pins = {arch: {kind: runtime_pin(lock, kind, arch, tools)
-                      for kind in (('api', 'web') if channel in ('official', 'latest') or channel in bridges else ('api',))}
+                      for kind in (('api', 'web') if channel in ('official', 'latest') or channel in overlays else ('api',))}
                 for arch in PLATFORMS}
         config.update(version=version, image=image_name(repo, channel), arch=['amd64', 'aarch64'],
                       description=f"Vooraf gebouwd 1.x · AMD64/ARM64 · {metadata.get('release', metadata['nocturne'])} · HA wrapper {metadata['app']}. Experimental; not for clinical use.")
@@ -229,18 +264,21 @@ def prepare(root, destination, wrapper_commit, run_number, attempt, baseline_ref
         if channel in bridges:
             proof['runtime_metadata'] = metadata
             proof['migration_bridge'] = '0.3.0'
+        elif channel in releases:
+            proof['runtime_metadata'] = metadata
+            proof['release_rollout'] = '0.3.2'
         # configs[channel] was mutated above; read the actual published store again.
         proof['previous_config'] = read(root / package / 'config.json')
         proofs[channel] = proof
         for arch, platform in PLATFORMS.items():
             context = destination / f'{channel}-{arch}'
             shutil.copytree(root / package, context, ignore=shutil.ignore_patterns('__pycache__', 'provenance.json'), dirs_exist_ok=True)
-            if channel in bridges:
+            if channel in overlays:
                 shutil.copyfile(root / 'nocturne_local/Dockerfile', context / 'Dockerfile')
                 shutil.copyfile(root / 'nocturne_local/rootfs/opt/nocturne-ha/bridge_entry.py',
                                 context / 'rootfs/opt/nocturne-ha/bridge_entry.py')
             recipe_text = (context / 'Dockerfile').read_text(encoding='utf-8')
-            if channel in bridges:
+            if channel in overlays:
                 recipe_text = recipe_text.replace('Nocturne Official Release - Home Assistant app',
                                                   config['name'] + ' - Home Assistant app')
                 port = next(iter(config['ports'])).split('/')[0]
@@ -306,7 +344,7 @@ def promote(root, candidates):
         write(directory / 'config.json', proof['config'])
         write(directory / 'provenance.json', proof)
         runtime = read(directory / 'rootfs/opt/nocturne-ha/version.json')
-        if proof.get('migration_bridge') == '0.3.0':
+        if proof.get('migration_bridge') == '0.3.0' or proof.get('release_rollout') == '0.3.2':
             runtime = proof['runtime_metadata']
         runtime['package'] = proof['version']
         write(directory / 'rootfs/opt/nocturne-ha/version.json', runtime)
@@ -324,6 +362,10 @@ def promote(root, candidates):
             note += ('- Required one-time Nocturne 0.3.0 database migration bridge. Install and start it successfully before updating to 0.3.1 or newer.\n'
                      '- This bridge temporarily runs the official Nightscout source; channel-specific features can return after migration.\n'
                      '- Existing app identity, options and private data remain intact.\n\n')
+        elif proof.get('release_rollout') == '0.3.2':
+            note += ('- Update to the official Nocturne v0.3.2 release after the required v0.3.0 bridge.\n'
+                     '- Existing app identity, options, private data, tenants and HA maintenance remain intact.\n'
+                     '- Previous channel-specific source remains available on the archived branch.\n\n')
         else:
             note += '- Existing app identity, options, private data and Nocturne source remain intact.\n\n'
         changelog.write_bytes((note + pending + history).encode())
