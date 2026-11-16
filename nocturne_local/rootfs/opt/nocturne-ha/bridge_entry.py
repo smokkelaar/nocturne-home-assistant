@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""One-time embedded PostgreSQL ownership adjustment for the 0.3.0 bridge.
+"""Check embedded PostgreSQL ownership before starting the HA runtime.
 
 The old and new API base images may assign different numeric UIDs to the
-``postgres`` account.  A Docker volume retains numeric ownership across the
-image upgrade.  Only the embedded database tree is touched; contents, modes,
+``postgres`` account. A Docker volume retains numeric ownership across image
+upgrades. Only the embedded database tree is touched; contents, modes,
 secrets, and tenant records remain unchanged.
 """
 import os

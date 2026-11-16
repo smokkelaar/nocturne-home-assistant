@@ -1,5 +1,6 @@
 {
   "source": "upstream.json",
-  "version": "0.3.0",
+  "version": "0.3.2",
+  "commit": "ea4e97c380005dfdd53c157720bd93ba30ef9050",
   "channels": ["latest", "personal", "test-a", "test-b", "test-c"]
 }

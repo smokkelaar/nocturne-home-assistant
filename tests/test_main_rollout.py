@@ -53,7 +53,7 @@ class MainRolloutTests(unittest.TestCase):
                     release = prebuilt_publish.read(ROOT / 'upstream.json')
                     self.assertEqual(release['commit'], metadata['source_commit'])
                     self.assertEqual('nightscout/nocturne', metadata['repository'])
-                    self.assertEqual('Nocturne 0.3.0 database bridge', metadata['release'])
+                    self.assertEqual('0.3.2', metadata['release'])
                     self.assertEqual({'api', 'web'}, set(prebuilt_publish.read(destination / 'candidates.json')[item['channel']]['runtime_pins'][item['arch']]))
                     self.assertNotIn('COPY --from=source', recipe)
                     self.assertIn('bridge_entry.py', recipe)

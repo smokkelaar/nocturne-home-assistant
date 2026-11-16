@@ -8,6 +8,7 @@ on:
       - 'nocturne_*/**'
       - 'upstream*.json'
       - 'main-rollout.json'
+      - 'release-rollout.json'
       - 'tools/**'
       - 'publication.json'
       - 'build-platforms.json'

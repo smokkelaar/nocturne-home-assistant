@@ -123,10 +123,10 @@ class PrebuiltTests(unittest.TestCase):
                 self.assertIn('nocturne-' + item['channel'] + '-{arch}', config['image'])
                 recipe = (context / 'Dockerfile').read_text()
                 self.assertIn('ARG BUILD_ARCH=' + item['hass_arch'], recipe)
-                if item['channel'] not in ('official', 'latest') and item['channel'] not in publisher.bridge_channels(ROOT):
+                if item['channel'] not in ('official', 'latest') and item['channel'] not in publisher.bridge_channels(ROOT) | publisher.release_channels(ROOT):
                     self.assertIn('ARG DOTNET_RID=' + publisher.PLATFORMS[item['arch']]['rid'], recipe)
                     self.assertIn(publisher.read(ROOT / 'build-platforms.json')['sdk'][item['arch']], recipe)
-                if item['channel'] in publisher.bridge_channels(ROOT):
+                if item['channel'] in publisher.bridge_channels(ROOT) | publisher.release_channels(ROOT):
                     self.assertNotIn('COPY --from=source', recipe)
                     self.assertIn('bridge_entry.py', recipe)
             self.assertEqual(before, {package: (ROOT / package / 'config.json').read_bytes() for package in publisher.CHANNELS.values()})
@@ -154,27 +154,33 @@ class PrebuiltTests(unittest.TestCase):
             path = f'nocturne_test_{letter}/rootfs/opt/nocturne-ha/version.json'
             (target / path).write_bytes(generated_tests[path])
 
-    def test_migration_bridge_promotion_preserves_identity_and_stops_republishing(self):
+    def test_release_rollout_promotion_preserves_identity_and_stops_republishing(self):
         with tempfile.TemporaryDirectory() as temporary, patch.object(publisher.registry, 'image', side_effect=inspected):
             root = Path(temporary)
             self.fixture(root)
-            for name in ('upstream.json', 'upstream-latest.json', 'upstream-personal.json', 'migration-bridge.json'):
+            for name in ('upstream.json', 'upstream-latest.json', 'upstream-personal.json', 'release-rollout.json'):
                 shutil.copyfile(ROOT / name, root / name)
             for channel in publisher.BRIDGE_CHANNELS:
                 (root / publisher.CHANNELS[channel] / 'provenance.json').unlink()
             output = root / 'work/bridge'
             matrix = publisher.prepare(root, output, 'd' * 40, 1200, 1, 'e' * 40)
-            self.assertEqual(set(publisher.BRIDGE_CHANNELS), {item['channel'] for item in matrix['include']})
+            self.assertEqual({'official', *publisher.BRIDGE_CHANNELS},
+                             {item['channel'] for item in matrix['include']})
+            proofs = publisher.read(output / 'candidates.json')
+            for channel in publisher.CHANNELS:
+                self.assertEqual(publisher.RELEASE_032_COMMIT, proofs[channel]['source_commit'])
+                self.assertEqual({'api', 'web'}, set(proofs[channel]['runtime_pins']['amd64']))
             publisher.promote(root, output / 'candidates.json')
             self.assertEqual([], publisher.prepare(root, root / 'work/next', 'f' * 40, 1201, 1, 'e' * 40)['include'])
             for channel in publisher.BRIDGE_CHANNELS:
                 package = publisher.CHANNELS[channel]
                 runtime = publisher.read(root / package / 'rootfs/opt/nocturne-ha/version.json')
                 config = publisher.read(root / package / 'config.json')
-                self.assertEqual(update_upstream.MIGRATION_BRIDGE['commit'], runtime['source_commit'])
+                self.assertEqual(publisher.RELEASE_032_COMMIT, runtime['source_commit'])
                 self.assertNotIn('personal', runtime)
                 self.assertEqual(package, config['slug'])
                 self.assertEqual({'api', 'web'}, set(publisher.read(root / package / 'provenance.json')['runtime_pins']['amd64']))
+                self.assertEqual('0.3.2', publisher.read(root / package / 'provenance.json')['release_rollout'])
                 self.assertTrue(bridge_check.require(root, channel))
             runtime_path = root / 'nocturne_personal/rootfs/opt/nocturne-ha/version.json'
             altered = publisher.read(runtime_path)
@@ -186,16 +192,35 @@ class PrebuiltTests(unittest.TestCase):
     def test_migration_bridge_rejects_moving_or_partial_source(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            shutil.copyfile(ROOT / 'upstream.json', root / 'upstream.json')
+            publisher.write(root / 'upstream.json', update_upstream.MIGRATION_BRIDGE)
             publisher.write(root / 'migration-bridge.json', {'source': 'upstream.json', 'version': '0.3.0', 'channels': ['latest']})
             with self.assertRaisesRegex(ValueError, 'exactly the five'):
                 publisher.bridge_channels(root)
-            shutil.copyfile(ROOT / 'migration-bridge.json', root / 'migration-bridge.json')
+            publisher.write(root / 'migration-bridge.json', {'source': 'upstream.json', 'version': '0.3.0',
+                                                            'channels': publisher.BRIDGE_CHANNELS})
             source = publisher.read(root / 'upstream.json')
             source['version'] = '0.3.1'
             publisher.write(root / 'upstream.json', source)
             with self.assertRaisesRegex(ValueError, 'exact immutable'):
                 publisher.bridge_channels(root)
+
+    def test_release_rollout_rejects_other_source_and_partial_channels(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            shutil.copyfile(ROOT / 'upstream.json', root / 'upstream.json')
+            shutil.copyfile(ROOT / 'release-rollout.json', root / 'release-rollout.json')
+            self.assertEqual(set(publisher.BRIDGE_CHANNELS), publisher.release_channels(root))
+            policy = publisher.read(root / 'release-rollout.json')
+            policy['channels'] = ['latest']
+            publisher.write(root / 'release-rollout.json', policy)
+            with self.assertRaisesRegex(ValueError, 'exactly the five'):
+                publisher.release_channels(root)
+            shutil.copyfile(ROOT / 'release-rollout.json', root / 'release-rollout.json')
+            lock = publisher.read(root / 'upstream.json')
+            lock['commit'] = '0' * 40
+            publisher.write(root / 'upstream.json', lock)
+            with self.assertRaisesRegex(ValueError, 'exact official'):
+                publisher.release_channels(root)
 
     def test_failed_public_pull_never_changes_any_store_configuration(self):
         with tempfile.TemporaryDirectory() as temporary:

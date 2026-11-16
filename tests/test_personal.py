@@ -139,7 +139,8 @@ class PersonalTests(unittest.TestCase):
                     self.assertEqual(personal, source)
                 bridged = bridge_check.require(ROOT, 'test-' + letter)
                 if bridged:
-                    self.assertEqual(json.loads((ROOT / 'upstream.json').read_text())['commit'], runtime['source_commit'])
+                    proof = json.loads((package / 'provenance.json').read_text())
+                    self.assertEqual(proof['source_commit'], runtime['source_commit'])
                     self.assertEqual(source['commit'], runtime['previous_source_commit'])
                     self.assertEqual('nightscout/nocturne', runtime['repository'])
                 else:
