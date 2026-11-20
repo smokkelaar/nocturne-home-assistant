@@ -2,9 +2,22 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 1 november 2026, 22:15 (NL-tijd)
+**Bijgewerkt:** 20 november 2026, 23:45 (NL-tijd)
 
-**Release-overgang 16 november:** na de verplichte v0.3.0-migratiebridge gaan alle zes HA-apps naar dezelfde officiële Nocturne v0.3.2-bron. De onderstaande featuretests beschrijven de eerdere Personal- en Test-bronnen; die staan op [archive/channel-source-pre-v032](https://github.com/smokkelaar/nocturne-home-assistant/tree/archive/channel-source-pre-v032) en zijn in deze release niet actief. De afzonderlijke HA-installaties, tenantgegevens en onderhoudsfuncties blijven bestaan.
+**Stand 20 november:**
+
+| App | Poort | Bron | Doel |
+|---|---|---|---|
+| Official (deze repo) | 8448 | officiële release v0.3.2 | nieuwste release |
+| Latest (deze repo) | 8449 | nightscout main `cf719c4` (19 nov), volgt main daarna dagelijks | nieuwste main |
+| Personal | 8450 | blijft op v0.3.2 | wacht tot de help (boekicoon) terug is op de nieuwste main; daarna gaat Personal mee |
+| Test A, B, C | 8451-8453 | schone v0.3.2 | vrij voor de volgende featuretest |
+| Stable (upstream-repo) | 8448 | officiële release v0.3.2, store 0.2.44701 | nieuwste release |
+| Main (upstream-repo) | 8449 | nightscout main `cf719c4`, store 0.2.44701, volgt main daarna dagelijks | nieuwste main |
+
+Personal en Test A/B/C krijgen bij deze publicatie een nieuw pakketnummer met dezelfde v0.3.2-inhoud; dat komt doordat hun bouwrecept meeschuift met Latest.
+
+**Release-overgang 16 november:** na de verplichte v0.3.0-migratiebridge gingen alle HA-apps naar de officiële Nocturne v0.3.2. De onderstaande featuretests beschrijven de eerdere Personal- en Test-bronnen; die staan op [archive/channel-source-pre-v032](https://github.com/smokkelaar/nocturne-home-assistant/tree/archive/channel-source-pre-v032) en zijn nu niet actief. De afzonderlijke HA-installaties, tenantgegevens en onderhoudsfuncties blijven bestaan.
 
 Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Controleren op updates.
 
@@ -106,18 +119,18 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Latest (poort 8449)
 
-- **Store-versie:** 1.0.101201 = nightscout main `3caa43c`.
+- **Bron:** nightscout main `cf719c4` (19 nov 2026); volgt daarna dagelijks de nieuwste gepubliceerde main.
 - **Doel:** volgt de nightscout main waarop Personal gebouwd is. Niets specifieks te testen.
 
 ### Official Release (poort 8448)
 
-- **Store-versie:** 1.0.101201 = officiële release 0.2.7.
+- **Bron:** officiële release v0.3.2.
 - **Doel:** officiële release. Niets te testen.
 
 ### Stable en Main (repo nocturne-home-assistant-upstream, poort 8448 en 8449)
 
-- **Store-versie:** 0.2.40801 = nightscout main `971dd4a`.
-- **Status:** loopt achter op main. Bijwerken staat op de lijst van de HA-onderhoudsthread.
+- **Store-versie:** 0.2.44701. Stable = officiële release v0.3.2, Main = nightscout main `cf719c4` (20 nov).
+- **Status:** bij. Stable volgt voortaan zelf de nieuwste release en Main de nieuwste main.
 
 ## Klaar met testen
 
