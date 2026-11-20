@@ -41,6 +41,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # While Personal is pinned to the release rollout, nothing descends from Latest,
+          # so Latest follows the newest published main on its own.
+          if python -c 'import json, pathlib, sys; p = pathlib.Path("release-rollout.json"); sys.exit(0 if p.is_file() and "personal" in json.loads(p.read_text())["channels"] else 1)'; then
+            python tools/update_latest.py --update --target main
+            exit 0
+          fi
           base=$(gh api -H 'Accept: application/vnd.github.raw' \
             'repos/smokkelaar/nocturne-personal/contents/.personal/version.json?ref=personal' \
             | python -c 'import json, sys; print(json.load(sys.stdin)["base_commit"])')

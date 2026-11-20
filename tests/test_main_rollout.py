@@ -49,7 +49,7 @@ class MainRolloutTests(unittest.TestCase):
                     self.assertEqual('nightscout/nocturne', metadata['repository'])
                     self.assertEqual({'api', 'web'}, set(prebuilt_publish.read(destination / 'candidates.json')['official']['runtime_pins'][item['arch']]))
                     self.assertNotIn('COPY --from=source', recipe)
-                elif item['channel'] in prebuilt_publish.BRIDGE_CHANNELS:
+                elif item['channel'] in prebuilt_publish.RELEASE_CHANNELS:
                     release = prebuilt_publish.read(ROOT / 'upstream.json')
                     self.assertEqual(release['commit'], metadata['source_commit'])
                     self.assertEqual('nightscout/nocturne', metadata['repository'])
