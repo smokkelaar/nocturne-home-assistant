@@ -287,6 +287,8 @@ class PrebuiltTests(unittest.TestCase):
                 rendered = updater.render(root, publisher.read(root / lockfile), '1.0.102')
                 for name, value in rendered.items():
                     self.assertEqual((root / name).read_bytes(), value.encode('utf-8'), name)
+            # Personal's pin to the release is what lets Latest move past Personal's base.
+            shutil.copyfile(ROOT / 'release-rollout.json', root / 'release-rollout.json')
             with patch.object(update_personal, 'ROOT', root), patch.object(update_test_channels, 'ROOT', root):
                 delivery = publisher.read(root / 'nocturne_personal/config.json')['version']
                 generated = update_personal.files(publisher.read(root / 'upstream-personal.json'), delivery)

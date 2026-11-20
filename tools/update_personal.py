@@ -319,9 +319,26 @@ def update():
     check(lock)
 
 
+def refresh():
+    """Offline: regenerate Personal from the current lock after Latest's shared files moved."""
+    import bridge_check
+    lock = json.loads((ROOT / 'upstream-personal.json').read_text())
+    directory = ROOT / 'nocturne_personal'
+    delivery = json.loads((directory / 'config.json').read_text())['version']
+    bridged = bridge_check.require(ROOT, 'personal')
+    for path, data in files(lock, delivery).items():
+        if bridged and path == 'rootfs/opt/nocturne-ha/version.json':
+            continue
+        target = directory / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
+    check(lock)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--update', action='store_true')
     parser.add_argument('--check', action='store_true')
+    parser.add_argument('--refresh', action='store_true', help='Offline: regenerate from the current lock')
     args = parser.parse_args()
-    update() if args.update else check()
+    refresh() if args.refresh else update() if args.update else check()

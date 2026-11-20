@@ -274,12 +274,14 @@ def main():
         follow_personal()
     for path, expected in files().items():
         target = ROOT / path
+        bridged = path.endswith('/rootfs/opt/nocturne-ha/version.json') and \
+            bridge_check.require(ROOT, path.split('/')[0].replace('nocturne_test_', 'test-'))
+        if bridged:
+            # The published bridge or release metadata stays until the channel leaves it.
+            continue
         if args.update:
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(expected)
-        elif path.endswith('/rootfs/opt/nocturne-ha/version.json') and \
-                bridge_check.require(ROOT, path.split('/')[0].replace('nocturne_test_', 'test-')):
-            continue
         elif target.read_bytes() != expected:
             raise ValueError("Test channel differs from pinned source: " + path)
     print("Independently pinned Test A, Test B and Test C verified.")
