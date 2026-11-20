@@ -2,10 +2,10 @@
   "format": 1,
   "channel": "test-b",
   "package": "nocturne_test_b",
-  "version": "1.0.112301",
+  "version": "1.0.114601",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "6208fb94222e76642034155a8bd00d9f870479cc",
-  "recipe": "1bc082fe666e8b04b602419b58b030922c909ceb06c8a76eea3f9f4d552daf72",
+  "wrapper_commit": "c86ca212978af2775b02578d588b2e3ea73da026",
+  "recipe": "e1340cb45d594ca28c276ec3ea8f3438e34983c64e4f63ac4c1edb362b13aee2",
   "source_repository": "nightscout/nocturne",
   "source_commit": "ea4e97c380005dfdd53c157720bd93ba30ef9050",
   "architectures": [
@@ -24,7 +24,7 @@
   },
   "config": {
     "name": "Nocturne Test B",
-    "version": "1.0.112301",
+    "version": "1.0.114601",
     "slug": "nocturne_test_b",
     "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 0.3.2 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
@@ -76,9 +76,9 @@
   },
   "previous_config": {
     "name": "Nocturne Test B",
-    "version": "1.0.111401",
+    "version": "1.0.112301",
     "slug": "nocturne_test_b",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Nocturne 0.3.0 database bridge \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 0.3.2 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
       "amd64",
@@ -142,11 +142,11 @@
     "purpose_url": "https://github.com/nightscout/nocturne/releases/tag/v0.3.2",
     "test_plan": "Reguliere werking, upgrades en databasemigraties van de offici\u00eble release controleren.",
     "test_url": "https://github.com/nightscout/nocturne/releases/tag/v0.3.2",
-    "previous_source_commit": "fe91be237ae7d2e4ea920ce67b77b4e33d50dc3b"
+    "previous_source_commit": "ea4e97c380005dfdd53c157720bd93ba30ef9050"
   },
   "release_rollout": "0.3.2",
   "digests": {
-    "amd64": "sha256:cf3ea87894d5d970c3d49cfeb83a201fbb12b90697699404d41a44015d731cf6",
-    "aarch64": "sha256:9a8623284e808b04250de5b4fe30a7dad748fc12890d5280815d3c50708f11c7"
+    "amd64": "sha256:f5e674571f08ffe003fa100c998d150f8bcdfa8b4aa7264a41f73dc0bc74b462",
+    "aarch64": "sha256:1aa0787d0a9a76324716b629e08e24fe4034aff2e2b8f07f5f0c2b4b9e5593c5"
   }
 }
