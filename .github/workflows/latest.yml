@@ -81,9 +81,15 @@ jobs:
         run: |
           docker build --platform linux/amd64 --tag nocturne-latest:candidate nocturne_latest
           python tools/smoke.py --image nocturne-latest:candidate
-          mkdir -p "$RUNNER_TEMP/nocturne-latest-baseline"
-          git archive HEAD nocturne_latest | tar -x -C "$RUNNER_TEMP/nocturne-latest-baseline"
-          docker build --platform linux/amd64 --tag nocturne-latest:baseline "$RUNNER_TEMP/nocturne-latest-baseline/nocturne_latest"
+          # Upgrade from what HA installations run: the published store image when there is one.
+          published=$(git show HEAD:nocturne_latest/config.json | python -c 'import json, sys; c = json.load(sys.stdin); print(c["image"].replace("{arch}", "amd64") + ":" + c["version"] if "image" in c else "")')
+          if [ -n "$published" ] && docker pull --platform linux/amd64 "$published"; then
+            docker tag "$published" nocturne-latest:baseline
+          else
+            mkdir -p "$RUNNER_TEMP/nocturne-latest-baseline"
+            git archive HEAD nocturne_latest | tar -x -C "$RUNNER_TEMP/nocturne-latest-baseline"
+            docker build --platform linux/amd64 --tag nocturne-latest:baseline "$RUNNER_TEMP/nocturne-latest-baseline/nocturne_latest"
+          fi
           python tools/recovery_smoke.py --image nocturne-latest:candidate --baseline nocturne-latest:baseline
       - name: Open or refresh the isolated Latest proposal
         id: proposal
