@@ -160,19 +160,19 @@ class PrebuiltTests(unittest.TestCase):
             self.fixture(root)
             for name in ('upstream.json', 'upstream-latest.json', 'upstream-personal.json', 'release-rollout.json'):
                 shutil.copyfile(ROOT / name, root / name)
-            for channel in publisher.BRIDGE_CHANNELS:
+            for channel in publisher.RELEASE_CHANNELS:
                 (root / publisher.CHANNELS[channel] / 'provenance.json').unlink()
             output = root / 'work/bridge'
             matrix = publisher.prepare(root, output, 'd' * 40, 1200, 1, 'e' * 40)
-            self.assertEqual(set(publisher.BRIDGE_CHANNELS),
-                             {item['channel'] for item in matrix['include']})
+            self.assertLessEqual(set(publisher.RELEASE_CHANNELS),
+                                 {item['channel'] for item in matrix['include']})
             proofs = publisher.read(output / 'candidates.json')
-            for channel in publisher.BRIDGE_CHANNELS:
+            for channel in publisher.RELEASE_CHANNELS:
                 self.assertEqual(publisher.RELEASE_032_COMMIT, proofs[channel]['source_commit'])
                 self.assertEqual({'api', 'web'}, set(proofs[channel]['runtime_pins']['amd64']))
             publisher.promote(root, output / 'candidates.json')
             self.assertEqual([], publisher.prepare(root, root / 'work/next', 'f' * 40, 1201, 1, 'e' * 40)['include'])
-            for channel in publisher.BRIDGE_CHANNELS:
+            for channel in publisher.RELEASE_CHANNELS:
                 package = publisher.CHANNELS[channel]
                 runtime = publisher.read(root / package / 'rootfs/opt/nocturne-ha/version.json')
                 config = publisher.read(root / package / 'config.json')
@@ -209,11 +209,11 @@ class PrebuiltTests(unittest.TestCase):
             root = Path(temporary)
             shutil.copyfile(ROOT / 'upstream.json', root / 'upstream.json')
             shutil.copyfile(ROOT / 'release-rollout.json', root / 'release-rollout.json')
-            self.assertEqual(set(publisher.BRIDGE_CHANNELS), publisher.release_channels(root))
+            self.assertEqual(set(publisher.RELEASE_CHANNELS), publisher.release_channels(root))
             policy = publisher.read(root / 'release-rollout.json')
             policy['channels'] = ['latest']
             publisher.write(root / 'release-rollout.json', policy)
-            with self.assertRaisesRegex(ValueError, 'exactly the five'):
+            with self.assertRaisesRegex(ValueError, 'exactly Personal'):
                 publisher.release_channels(root)
             shutil.copyfile(ROOT / 'release-rollout.json', root / 'release-rollout.json')
             lock = publisher.read(root / 'upstream.json')
@@ -287,6 +287,8 @@ class PrebuiltTests(unittest.TestCase):
                 rendered = updater.render(root, publisher.read(root / lockfile), '1.0.102')
                 for name, value in rendered.items():
                     self.assertEqual((root / name).read_bytes(), value.encode('utf-8'), name)
+            # Personal's pin to the release is what lets Latest move past Personal's base.
+            shutil.copyfile(ROOT / 'release-rollout.json', root / 'release-rollout.json')
             with patch.object(update_personal, 'ROOT', root), patch.object(update_test_channels, 'ROOT', root):
                 delivery = publisher.read(root / 'nocturne_personal/config.json')['version']
                 generated = update_personal.files(publisher.read(root / 'upstream-personal.json'), delivery)

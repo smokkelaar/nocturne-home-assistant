@@ -67,6 +67,15 @@ class PersonalTests(unittest.TestCase):
         self.directory = ROOT / 'nocturne_personal'
         self.config = json.loads((self.directory / 'config.json').read_text())
 
+    def resolve_on_personal_base(self):
+        # Latest may have moved past Personal's base while Personal is pinned to a release.
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'upstream-latest.json').write_text(json.dumps(self.lock['upstream']))
+            (root / 'upstream-personal.json').write_text(json.dumps(self.lock))
+            with patch.object(updater, 'ROOT', root):
+                return updater.resolve()
+
     def test_generated_package_matches_exact_source_and_recipe(self):
         updater.check()
 
@@ -208,7 +217,7 @@ class PersonalTests(unittest.TestCase):
             def read(self, size): return b''
         with patch.object(updater, 'github', side_effect=[head, comparison]) as github, \
              patch.object(updater.urllib.request, 'urlopen', return_value=Archive()):
-            resolved = updater.resolve()
+            resolved = self.resolve_on_personal_base()
         self.assertEqual(self.clean_lock['commit'], resolved['commit'])
         self.assertEqual(self.clean_lock['version'], resolved['version'])
         self.assertEqual(['commits/personal', f"compare/{self.clean_lock['commit']}...{self.clean_lock['commit']}"],
@@ -225,7 +234,7 @@ class PersonalTests(unittest.TestCase):
             def read(self, size): return b''
         with patch.object(updater, 'github', side_effect=[reset, canonical, comparison]), \
              patch.object(updater.urllib.request, 'urlopen', return_value=Archive()):
-            resolved = updater.resolve()
+            resolved = self.resolve_on_personal_base()
         self.assertEqual(self.clean_lock['commit'], resolved['commit'])
 
     def test_personal_source_replaces_both_api_and_web(self):

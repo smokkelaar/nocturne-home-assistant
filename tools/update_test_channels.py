@@ -75,7 +75,10 @@ def files():
     test_b = read("upstream-test-b.json")
     test_a = read("upstream-test-a.json")
     test_c = read("upstream-test-c.json")
-    if personal["upstream"] != latest:
+    # Personal and Test A/B/C pinned to the release rollout no longer build on Latest.
+    rollout = ROOT / "release-rollout.json"
+    pinned = rollout.is_file() and "personal" in json.loads(rollout.read_text(encoding="utf-8"))["channels"]
+    if personal["upstream"] != latest and not pinned:
         raise ValueError("All development channels must use the approved Latest base")
     validate_test_b_source(test_b)
     if test_a.get("channel") in ("main", "personal", "personal-pr"):
@@ -271,12 +274,14 @@ def main():
         follow_personal()
     for path, expected in files().items():
         target = ROOT / path
+        bridged = path.endswith('/rootfs/opt/nocturne-ha/version.json') and \
+            bridge_check.require(ROOT, path.split('/')[0].replace('nocturne_test_', 'test-'))
+        if bridged:
+            # The published bridge or release metadata stays until the channel leaves it.
+            continue
         if args.update:
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(expected)
-        elif path.endswith('/rootfs/opt/nocturne-ha/version.json') and \
-                bridge_check.require(ROOT, path.split('/')[0].replace('nocturne_test_', 'test-')):
-            continue
         elif target.read_bytes() != expected:
             raise ValueError("Test channel differs from pinned source: " + path)
     print("Independently pinned Test A, Test B and Test C verified.")

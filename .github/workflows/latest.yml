@@ -41,6 +41,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # While Personal is pinned to the release rollout, nothing descends from Latest,
+          # so Latest follows the newest published main on its own.
+          if python -c 'import json, pathlib, sys; p = pathlib.Path("release-rollout.json"); sys.exit(0 if p.is_file() and "personal" in json.loads(p.read_text())["channels"] else 1)'; then
+            python tools/update_latest.py --update --target main
+            # Their source locks stay pinned; only the files they share with Latest follow.
+            python tools/update_personal.py --refresh
+            python tools/update_test_channels.py --update
+            exit 0
+          fi
           base=$(gh api -H 'Accept: application/vnd.github.raw' \
             'repos/smokkelaar/nocturne-personal/contents/.personal/version.json?ref=personal' \
             | python -c 'import json, sys; print(json.load(sys.stdin)["base_commit"])')
@@ -72,9 +81,15 @@ jobs:
         run: |
           docker build --platform linux/amd64 --tag nocturne-latest:candidate nocturne_latest
           python tools/smoke.py --image nocturne-latest:candidate
-          mkdir -p "$RUNNER_TEMP/nocturne-latest-baseline"
-          git archive HEAD nocturne_latest | tar -x -C "$RUNNER_TEMP/nocturne-latest-baseline"
-          docker build --platform linux/amd64 --tag nocturne-latest:baseline "$RUNNER_TEMP/nocturne-latest-baseline/nocturne_latest"
+          # Upgrade from what HA installations run: the published store image when there is one.
+          published=$(git show HEAD:nocturne_latest/config.json | python -c 'import json, sys; c = json.load(sys.stdin); print(c["image"].replace("{arch}", "amd64") + ":" + c["version"] if "image" in c else "")')
+          if [ -n "$published" ] && docker pull --platform linux/amd64 "$published"; then
+            docker tag "$published" nocturne-latest:baseline
+          else
+            mkdir -p "$RUNNER_TEMP/nocturne-latest-baseline"
+            git archive HEAD nocturne_latest | tar -x -C "$RUNNER_TEMP/nocturne-latest-baseline"
+            docker build --platform linux/amd64 --tag nocturne-latest:baseline "$RUNNER_TEMP/nocturne-latest-baseline/nocturne_latest"
+          fi
           python tools/recovery_smoke.py --image nocturne-latest:candidate --baseline nocturne-latest:baseline
       - name: Open or refresh the isolated Latest proposal
         id: proposal
