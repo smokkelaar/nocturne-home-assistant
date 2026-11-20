@@ -1,3 +1,7 @@
+## Unreleased source candidate
+
+- Latest source prepared: `cf719c4af20f1eba12bf9a25dab65d392cdc0adc`. The existing published image remains advertised until registry promotion.
+
 ## 1.0.112301
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
