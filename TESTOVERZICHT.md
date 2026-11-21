@@ -2,20 +2,20 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 20 november 2026, 23:45 (NL-tijd)
+**Bijgewerkt:** 21 november 2026, 04:05 (NL-tijd)
 
-**Stand 20 november:**
+**Stand 21 november** (HA-store, [publicatie #230](https://github.com/smokkelaar/nocturne-home-assistant/pull/230)):
 
 | App | Poort | Bron | Doel |
 |---|---|---|---|
-| Official (deze repo) | 8448 | officiële release v0.3.2 | nieuwste release |
-| Latest (deze repo) | 8449 | nightscout main `cf719c4` (19 nov), volgt main daarna dagelijks | nieuwste main |
-| Personal | 8450 | blijft op v0.3.2 | wacht tot de help (boekicoon) terug is op de nieuwste main; daarna gaat Personal mee |
-| Test A, B, C | 8451-8453 | schone v0.3.2 | vrij voor de volgende featuretest |
+| Official (deze repo) | 8448 | officiële release v0.3.2, store 1.0.112301 | nieuwste release |
+| Latest (deze repo) | 8449 | nightscout main `cf719c4` (19 nov), store 1.0.114601, volgt main daarna dagelijks | nieuwste main |
+| Personal | 8450 | blijft op v0.3.2, store 1.0.114601 | wacht tot de help (boekicoon) terug is op de nieuwste main; daarna gaat Personal mee |
+| Test A, B, C | 8451-8453 | schone v0.3.2, store 1.0.114601 | vrij voor de volgende featuretest |
 | Stable (upstream-repo) | 8448 | officiële release v0.3.2, store 0.2.44701 | nieuwste release |
 | Main (upstream-repo) | 8449 | nightscout main `cf719c4`, store 0.2.44701, volgt main daarna dagelijks | nieuwste main |
 
-Personal en Test A/B/C krijgen bij deze publicatie een nieuw pakketnummer met dezelfde v0.3.2-inhoud; dat komt doordat hun bouwrecept meeschuift met Latest.
+Personal en Test A/B/C hebben bij deze publicatie een nieuw pakketnummer gekregen met dezelfde v0.3.2-inhoud; dat komt doordat hun bouwrecept meeschuift met Latest.
 
 **Release-overgang 16 november:** na de verplichte v0.3.0-migratiebridge gingen alle HA-apps naar de officiële Nocturne v0.3.2. De onderstaande featuretests beschrijven de eerdere Personal- en Test-bronnen; die staan op [archive/channel-source-pre-v032](https://github.com/smokkelaar/nocturne-home-assistant/tree/archive/channel-source-pre-v032) en zijn nu niet actief. De afzonderlijke HA-installaties, tenantgegevens en onderhoudsfuncties blijven bestaan.
 
@@ -50,7 +50,7 @@ De reviewpunten zijn verwerkt op de PR-branches en upstream main is erin gemerge
 
 HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https://github.com/smokkelaar/nocturne-home-assistant/actions/runs/40403185802) zijn geslaagd voor alle drie de kanalen op AMD64 en ARM64, inclusief opstarten, accountherstel, cold restore en upgraden vanaf de vorige versie. Publieke beschikbaarheid en image-labels zijn gecontroleerd. [Storepromotie #177](https://github.com/smokkelaar/nocturne-home-assistant/pull/177) is gemerged.
 
-**Personal staat op store-versie 1.0.104301 (0.3.47, 30 okt), Test A, B en C op 1.0.105701 (1 nov, [publicatie #214](https://github.com/smokkelaar/nocturne-home-assistant/pull/214)), Latest en Official op 1.0.101201.** Vernieuw de HA-store en update. Alle apps laten nu tenantadressen (`<tenant>.<hostname>:<poort>`) door en controleren bij meer tenants elke tenant apart (alleen de wrapper is gewijzigd). Installatie en werking op de eigen HA zijn vanuit deze sessie niet gecontroleerd; dit overzicht bevestigt de gepubliceerde pakketten.
+**Stand 1 november (vervangen door de stand hierboven):** Personal stond op store-versie 1.0.104301 (0.3.47, 30 okt), Test A, B en C op 1.0.105701 (1 nov, [publicatie #214](https://github.com/smokkelaar/nocturne-home-assistant/pull/214)), Latest en Official op 1.0.101201. Alle apps laten nu tenantadressen (`<tenant>.<hostname>:<poort>`) door en controleren bij meer tenants elke tenant apart (alleen de wrapper is gewijzigd). Installatie en werking op de eigen HA zijn vanuit deze sessie niet gecontroleerd; dit overzicht bevestigt de gepubliceerde pakketten.
 
 ## Per instantie
 
