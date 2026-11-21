@@ -141,13 +141,20 @@ def wait_ready(name, probe=PROBE):
                 ('DB_MIGRATION', 'EnsureReachesBaselineAsync'),
                 ('DB_MIGRATION', 'last migrated by a Nocturne release older'),
                 ('DB_MIGRATION', 'PendingModelChangesWarning'),
+                # The API stops at startup when the alerts native library fails its probe.
+                ('ALERTS_NATIVE_THREW', 'nocturne_alerts native library, and probing it threw'),
+                ('ALERTS_NATIVE_PROBE', 'nocturne_alerts native library, which failed its probe'),
+                ('ALERTS_NATIVE_HANDLE', 'its handle could not be obtained'),
+                ('ALERTS_NATIVE_TZDB', 'the library reports no tzdb release'),
             ) if signature in logs]
             if 'Nocturne API is gestopt (code' in logs:
                 markers.append('API_EXIT')
             # Only expose exception classes and SQLSTATE categories from the
             # disposable CI instance. Never emit raw application logs.
             for kind in ('PostgresException', 'NpgsqlException', 'InvalidOperationException',
-                         'DbUpdateException', 'TimeoutException'):
+                         'DbUpdateException', 'TimeoutException', 'DllNotFoundException',
+                         'EntryPointNotFoundException', 'BadImageFormatException',
+                         'TypeInitializationException'):
                 if kind in logs:
                     markers.append(kind.upper())
             sqlstates = sorted(set(re.findall(r'\b(?:SqlState|SQLSTATE):?\s*([A-Z0-9]{5})\b', logs)))
