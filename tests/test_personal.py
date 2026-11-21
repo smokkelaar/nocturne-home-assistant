@@ -152,8 +152,9 @@ class PersonalTests(unittest.TestCase):
                     self.assertEqual(proof['source_commit'], runtime['source_commit'])
                     self.assertEqual('nightscout/nocturne', runtime['repository'])
                     if proof.get('release_rollout') == '0.3.2':
-                        self.assertEqual(bridge_check.MIGRATION_BRIDGE['commit'],
-                                         runtime['previous_source_commit'])
+                        # The first 0.3.2 package follows the bridge; a republish follows 0.3.2 itself.
+                        self.assertIn(runtime['previous_source_commit'],
+                                      (bridge_check.MIGRATION_BRIDGE['commit'], runtime['source_commit']))
                         self.assertEqual('0.3.2', runtime['release'])
                     else:
                         self.assertEqual(source['commit'], runtime['previous_source_commit'])
