@@ -2,10 +2,10 @@
   "format": 1,
   "channel": "latest",
   "package": "nocturne_latest",
-  "version": "1.0.114601",
+  "version": "1.0.115601",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "c86ca212978af2775b02578d588b2e3ea73da026",
-  "recipe": "a9da56e95b3858c86db2e30b928ea18a563496fc3c6d5ed9438d1f77b9984796",
+  "wrapper_commit": "8c3ef723f69a73729adaecf9c8ca07d40e6e67cc",
+  "recipe": "ff519ddf4f70a73d4979fc61eb00fcb74abeb1634734bd1cb1b995523abf8e32",
   "source_repository": "nightscout/nocturne",
   "source_commit": "cf719c4af20f1eba12bf9a25dab65d392cdc0adc",
   "architectures": [
@@ -24,7 +24,7 @@
   },
   "config": {
     "name": "Nocturne Latest Release",
-    "version": "1.0.114601",
+    "version": "1.0.115601",
     "slug": "nocturne_latest",
     "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Geen release; vastgezette main-snapshot \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
@@ -76,9 +76,9 @@
   },
   "previous_config": {
     "name": "Nocturne Latest Release",
-    "version": "1.0.112301",
+    "version": "1.0.114601",
     "slug": "nocturne_latest",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 0.3.2 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Geen release; vastgezette main-snapshot \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
       "amd64",
@@ -127,7 +127,7 @@
     "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-latest-{arch}"
   },
   "digests": {
-    "amd64": "sha256:b894c089113261d25cda662a6c330d23164854f8402cc448716e500a949c8aef",
-    "aarch64": "sha256:253e2f4fea1a49cbc6f592f1d09c0c52d7bd1ec8131cc3450bcdc504c6411a59"
+    "amd64": "sha256:ee9a2990729fcfc5cbbd73f42c870b7503efd2fa758e1d4f554a8d0ea0ae0641",
+    "aarch64": "sha256:277f53837f765fcad2322bb03a813503df33338d8b73edaa96ef8470baf99494"
   }
 }
