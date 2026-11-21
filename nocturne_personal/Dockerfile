@@ -47,6 +47,9 @@ USER root
 COPY --from=source /out/api/ /app/
 COPY --from=source /out/api-build-date /opt/nocturne-ha/api-build-date
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so
+# The alerts resolver probes runtimes/<rid>/native before /app, and the base image holds an older library there.
+COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/runtimes/linux-x64/native/libnocturne_alerts.so
+COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/runtimes/linux-arm64/native/libnocturne_alerts.so
 ARG BUILD_VERSION=1.0.115601
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
