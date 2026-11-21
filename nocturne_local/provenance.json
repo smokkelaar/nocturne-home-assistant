@@ -2,10 +2,10 @@
   "format": 1,
   "channel": "official",
   "package": "nocturne_local",
-  "version": "1.0.112301",
+  "version": "1.0.115601",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "6208fb94222e76642034155a8bd00d9f870479cc",
-  "recipe": "d4105ff70d33cf73e5f71ef211c92a61edfe21ef5f04e8682a1eaa706219fdcf",
+  "wrapper_commit": "8c3ef723f69a73729adaecf9c8ca07d40e6e67cc",
+  "recipe": "1e4c1f523d40cc6c910d1699f2d643099e2658d5a85c109c3c19d27f563213f6",
   "source_repository": "nightscout/nocturne",
   "source_commit": "ea4e97c380005dfdd53c157720bd93ba30ef9050",
   "architectures": [
@@ -24,7 +24,7 @@
   },
   "config": {
     "name": "Nocturne Official Release",
-    "version": "1.0.112301",
+    "version": "1.0.115601",
     "slug": "nocturne_local",
     "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 0.3.2 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
@@ -76,9 +76,9 @@
   },
   "previous_config": {
     "name": "Nocturne Official Release",
-    "version": "1.0.110801",
+    "version": "1.0.112301",
     "slug": "nocturne_local",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 0.3.0 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 0.3.2 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
       "amd64",
@@ -127,7 +127,7 @@
     "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-official-{arch}"
   },
   "digests": {
-    "amd64": "sha256:29003ac4f0be400f6d65add89845b4b77ae804a061c483220d40b744cd19f622",
-    "aarch64": "sha256:9cbd0485b6fb7ca767cbca7e7a4ec47f949a785f10b371787a057f2667384c06"
+    "amd64": "sha256:2f2eb9d446bd4990b6b95ea0306127d9012e75a5f59d80bd865caa350978a79e",
+    "aarch64": "sha256:b873ee522e4b6398d737fb79531702b091abdf7a2089a08df69ebf0ad9bb6541"
   }
 }

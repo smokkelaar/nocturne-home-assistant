@@ -2,27 +2,77 @@
   "format": 1,
   "channel": "personal",
   "package": "nocturne_personal",
-  "version": "1.0.114601",
+  "version": "1.0.115601",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "c86ca212978af2775b02578d588b2e3ea73da026",
-  "recipe": "0b1c045a6e7d2a92d0eb3b853835da7034a33e3bd73c697e159f38d4d819205a",
-  "source_repository": "nightscout/nocturne",
-  "source_commit": "ea4e97c380005dfdd53c157720bd93ba30ef9050",
+  "wrapper_commit": "8c3ef723f69a73729adaecf9c8ca07d40e6e67cc",
+  "recipe": "9aef8c8043a0cdcb66875ebdb1bd47b4c8df1d9aa65ac5a08b2763fb00b168f7",
+  "source_repository": "smokkelaar/nocturne-personal",
+  "source_commit": "701a28933f07ce3b727166d8857d0b47dbf695fd",
   "architectures": [
     "amd64",
     "arm64"
   ],
   "runtime_pins": {
     "amd64": {
-      "api": "sha256:d8a8391b519a8ece4ac8decd292eee6a8400b08ea81746a61c11a74b4c0fc123",
-      "web": "sha256:c0840e89ff4406acd2e8473fc4106a2f4917c6aecb41cdd25dbe6e0f64cd7bb8"
+      "api": "sha256:755565a87e390f9ff596fa45c83c6a466ecfe85dcbebbce7269bc56de5ccf5e2"
     },
     "arm64": {
-      "api": "sha256:2128a7531fc276322bd16641a320b9343cc4c52f5a8afbb4169550b554b6f0de",
-      "web": "sha256:cdec0c7810675a27f370766c98b5b4bb0200af69d423865a1ff8e68faab5b58d"
+      "api": "sha256:258c0485d506d1bbcc69830ba0909f85673bd6f5e141f11d12f2603e93d8b334"
     }
   },
   "config": {
+    "name": "Nocturne Personal Release",
+    "version": "1.0.115601",
+    "slug": "nocturne_personal",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal 0.4.0 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+    "url": "https://github.com/smokkelaar/nocturne-home-assistant",
+    "arch": [
+      "amd64",
+      "aarch64"
+    ],
+    "startup": "application",
+    "boot": "manual",
+    "init": false,
+    "timeout": 120,
+    "ingress": true,
+    "ingress_port": 8099,
+    "panel_icon": "mdi:heart-pulse",
+    "panel_title": "Nocturne Personal",
+    "panel_admin": true,
+    "ports": {
+      "8448/tcp": 8450
+    },
+    "ports_description": {
+      "8448/tcp": "Nocturne HTTPS - alleen lokaal gebruiken; extra toegangscode staat in de HA-webinterface"
+    },
+    "map": [
+      {
+        "type": "ssl",
+        "read_only": true
+      }
+    ],
+    "backup": "cold",
+    "options": {
+      "public_url": "https://homeassistant.local:8450",
+      "certificate": "",
+      "private_key": "",
+      "gateway_auth": true,
+      "skip_gateway_check": false,
+      "maintenance_enabled": false,
+      "maintenance_password": ""
+    },
+    "schema": {
+      "public_url": "url",
+      "certificate": "str",
+      "private_key": "str",
+      "gateway_auth": "bool",
+      "skip_gateway_check": "bool",
+      "maintenance_enabled": "bool",
+      "maintenance_password": "password"
+    },
+    "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-personal-{arch}"
+  },
+  "previous_config": {
     "name": "Nocturne Personal Release",
     "version": "1.0.114601",
     "slug": "nocturne_personal",
@@ -74,79 +124,8 @@
     },
     "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-personal-{arch}"
   },
-  "previous_config": {
-    "name": "Nocturne Personal Release",
-    "version": "1.0.112301",
-    "slug": "nocturne_personal",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 0.3.2 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
-    "url": "https://github.com/smokkelaar/nocturne-home-assistant",
-    "arch": [
-      "amd64",
-      "aarch64"
-    ],
-    "startup": "application",
-    "boot": "manual",
-    "init": false,
-    "timeout": 120,
-    "ingress": true,
-    "ingress_port": 8099,
-    "panel_icon": "mdi:heart-pulse",
-    "panel_title": "Nocturne Personal",
-    "panel_admin": true,
-    "ports": {
-      "8448/tcp": 8450
-    },
-    "ports_description": {
-      "8448/tcp": "Nocturne HTTPS - alleen lokaal gebruiken; extra toegangscode staat in de HA-webinterface"
-    },
-    "map": [
-      {
-        "type": "ssl",
-        "read_only": true
-      }
-    ],
-    "backup": "cold",
-    "options": {
-      "public_url": "https://homeassistant.local:8450",
-      "certificate": "",
-      "private_key": "",
-      "gateway_auth": true,
-      "skip_gateway_check": false,
-      "maintenance_enabled": false,
-      "maintenance_password": ""
-    },
-    "schema": {
-      "public_url": "url",
-      "certificate": "str",
-      "private_key": "str",
-      "gateway_auth": "bool",
-      "skip_gateway_check": "bool",
-      "maintenance_enabled": "bool",
-      "maintenance_password": "password"
-    },
-    "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-personal-{arch}"
-  },
-  "runtime_metadata": {
-    "app": "0.1.13",
-    "name": "Nocturne Personal Release",
-    "default_public_url": "https://homeassistant.local:8450",
-    "cookie_namespace": "NocturnePersonal_",
-    "nocturne": "0.3.2",
-    "repository": "nightscout/nocturne",
-    "source_commit": "ea4e97c380005dfdd53c157720bd93ba30ef9050",
-    "base": "Nocturne v0.3.2",
-    "base_commit": "ea4e97c380005dfdd53c157720bd93ba30ef9050",
-    "release": "0.3.2",
-    "release_url": "https://github.com/nightscout/nocturne/releases/tag/v0.3.2",
-    "purpose": "De stabiele, officieel gepubliceerde Nocturne-release gebruiken.",
-    "purpose_url": "https://github.com/nightscout/nocturne/releases/tag/v0.3.2",
-    "test_plan": "Reguliere werking, upgrades en databasemigraties van de offici\u00eble release controleren.",
-    "test_url": "https://github.com/nightscout/nocturne/releases/tag/v0.3.2",
-    "previous_source_commit": "ea4e97c380005dfdd53c157720bd93ba30ef9050"
-  },
-  "release_rollout": "0.3.2",
   "digests": {
-    "amd64": "sha256:cd0314499af50e2c7db0c511bf5ca08d8d4347c93d37b86d7d7b5c13bf787d88",
-    "aarch64": "sha256:19d051251e1d045e98fc5656f1266c354344d3db2b914cf04bb4328a9f60aca6"
+    "amd64": "sha256:649eaea8d1bf18db70c94d6d3b86cc3bf3931473729f168949d6b7a34e5a9598",
+    "aarch64": "sha256:a0ef9490f333108a2678a1ca9ce89ac805f841f048bd2a0bf773bc0c2fd52535"
   }
 }
