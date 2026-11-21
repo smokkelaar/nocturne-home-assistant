@@ -15,5 +15,5 @@
   "test_plan": "Reguliere werking, upgrades en databasemigraties van de offici\u00eble release controleren.",
   "test_url": "https://github.com/nightscout/nocturne/releases/tag/v0.3.2",
   "previous_source_commit": "ea4e97c380005dfdd53c157720bd93ba30ef9050",
-  "package": "1.0.115601"
+  "package": "1.0.116501"
 }
