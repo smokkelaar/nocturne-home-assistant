@@ -2,7 +2,7 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 21 november 2026, 05:25 (NL-tijd)
+**Bijgewerkt:** 21 november 2026, 15:25 (NL-tijd)
 
 **Stand 21 november** (HA-store, [publicatie #234](https://github.com/smokkelaar/nocturne-home-assistant/pull/234)):
 
@@ -11,7 +11,8 @@ Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar no
 | Official (deze repo) | 8448 | officiële release v0.3.2, store 1.0.115601 | nieuwste release |
 | Latest (deze repo) | 8449 | nightscout main `cf719c4` (19 nov), store 1.0.115601, volgt main daarna dagelijks | nieuwste main |
 | Personal | 8450 | Personal 0.4.0 = nightscout main `cf719c4` + de help (boekicoon), commit `701a289`, store 1.0.115601 | eigen wensen op de nieuwste main; volgt Latest weer |
-| Test A, B, C | 8451-8453 | schone v0.3.2, store 1.0.115601 | vrij voor de volgende featuretest |
+| Test A | 8451 | Personal PR #104 (meervoudsvormen) op schone nightscout main `a29dbba` | featuretest meervoudsvormen |
+| Test B, C | 8452-8453 | schone v0.3.2, store 1.0.115601 | vrij voor de volgende featuretest |
 | Stable (upstream-repo) | 8448 | officiële release v0.3.2, store 0.2.44701 | nieuwste release |
 | Main (upstream-repo) | 8449 | nightscout main `cf719c4`, store 0.2.44701, volgt main daarna dagelijks | nieuwste main |
 
@@ -32,7 +33,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 
 | # | Waar | Wat | Status |
 |---|---|---|---|
-| 1 | Test A, B, C | Upstream-PR's #3073, #3080, #3078 na de review | Klaar om te testen: in de store als 1.0.105701 (1 nov), zie Per instantie |
+| 1 | Test A (8451) | Meervoudsvormen ([Personal PR #104](https://github.com/smokkelaar/nocturne-personal/pull/104)), voor een upstream issue + draft-PR | Wordt gepubliceerd (21 nov), zie Per instantie → Test A |
 | 2 | Personal (8450) | Help terug op de nieuwste main (0.4.0) | Klaar om te testen in 1.0.115601 (21 nov), zie Per instantie → Personal |
 | 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed, bolletjes en tooltip nog niet goed, help-icoon ontbrak. Personal 0.3.45 bevat de fixes van [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) en het help-icoon van [#88](https://github.com/smokkelaar/nocturne-personal/pull/88). Getest op 0.3.45 (28 okt): kleuren werken. Dim op aparte regel, presets, Mirror en Swap weg, + in de kleurenrij, verloop tussen de kleuren: aangepast in [#92](https://github.com/smokkelaar/nocturne-personal/pull/92) (0.3.46). Getest op 0.3.46 (29 okt): teksten in de kleurenrij ontbraken en het HbA1c-vangbereik was te groot; beide aangepast in [#93](https://github.com/smokkelaar/nocturne-personal/pull/93) (0.3.47). **Let op:** deze jaaroverzicht- en eHbA1c-onderdelen zitten niet in Personal 0.4.0; ze lopen via upstream-PR's #3080 en #3078 (Test B en C) |
 
@@ -57,14 +58,11 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Test A (poort 8451)
 
-- **Bron (1 nov):** [Personal PR #97](https://github.com/smokkelaar/nocturne-personal/pull/97) = branch van upstream [#3073](https://github.com/nightscout/nocturne/pull/3073) (Google Health OAuth-client in instantiebeheer) na de review, commit `28a9bcf`, op schone nightscout main `c253506`. Testbuild, wordt niet gemerged.
+- **Bron (21 nov):** [Personal PR #104](https://github.com/smokkelaar/nocturne-personal/pull/104), branch `claude/project-thread-6r1zdz`, commit `b3a7b67`, op schone nightscout main `a29dbba`. Tellingen gaan via `plural()` in plaats van een Engelse s-uitgang, en de Plural-Forms van ru, fr, pt, ja, ko en zh zijn gecorrigeerd. Testbuild, wordt niet gemerged; de upstream issue- en PR-tekst staat in `upstream-pr/plural-forms-issue-en-pr.md`.
 - **Testen:**
-  1. Instellingen → Administratie → Integraties → Google Health: vul client-ID en secret in (spaties eromheen mogen) en sla op. De callback-URL blijft staan.
-  2. Sla alleen een nieuw secret op: de callback-URL verandert niet.
-  3. Een client-ID zonder `.apps.googleusercontent.com` geeft een leesbare melding.
-  4. Koppel Google Health als gebruiker. Wijzig je tijdens het Google-scherm de client-ID, dan vraagt Nocturne je opnieuw te beginnen.
-- **Database:** de migratie van upstream #2842 is op deze database al klaar, dus de trage legacy-id-reparatie draait niet opnieuw.
-- **Status:** klaar om te testen in 1.0.105701 (1 nov). Vernieuw de store: Instellingen → Apps → App store → ⋮ → Controleren op updates.
+  1. In het Engels leest alles als voorheen. Controleer tellingen met 1 en met meer: Instellingen → Leden, Rapporten → Slaap (nachten), Rapporten → Batterij (apparaten, dagen), Rapporten → Behandelingen (records selecteren en verwijderen), het dashboard (maaltijden), Community → Vertalingen (concepten).
+  2. Zet de taal op Nederlands: deze teksten vallen terug op Engels tot ze vertaald zijn, en tonen nergens een losse `{1}` of Engelse s-uitgang.
+- **Status:** wordt gepubliceerd (21 nov). Vernieuw daarna de store: Instellingen → Apps → App store → ⋮ → Controleren op updates.
 
 **Wacht op een vrije testinstantie:**
 - [Personal PR #83](https://github.com/smokkelaar/nocturne-personal/pull/83): Google Health-reset met begindatum (#80) bovenop #69. Stond hier tot 1 nov.
