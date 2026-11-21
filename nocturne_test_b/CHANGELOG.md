@@ -1,3 +1,10 @@
+## 1.0.116501
+
+- New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.
+- Update to the official Nocturne v0.3.2 release after the required v0.3.0 bridge.
+- Existing app identity, options, private data, tenants and HA maintenance remain intact.
+- Previous channel-specific source remains available on the archived branch.
+
 ## 1.0.115601
 
 - New 1.x distribution: prebuilt GitHub/GHCR images for AMD64 and ARM64. HAOS downloads the tested image; no local compilation.

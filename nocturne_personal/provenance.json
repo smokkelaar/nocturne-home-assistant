@@ -2,10 +2,10 @@
   "format": 1,
   "channel": "personal",
   "package": "nocturne_personal",
-  "version": "1.0.115601",
+  "version": "1.0.116501",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "8c3ef723f69a73729adaecf9c8ca07d40e6e67cc",
-  "recipe": "9aef8c8043a0cdcb66875ebdb1bd47b4c8df1d9aa65ac5a08b2763fb00b168f7",
+  "wrapper_commit": "64393de934e8067701c8ab5507c444cb71776928",
+  "recipe": "f038e7973ad40970d6827e05d4d614767353d25290c6922fcd2294b96c8b132d",
   "source_repository": "smokkelaar/nocturne-personal",
   "source_commit": "701a28933f07ce3b727166d8857d0b47dbf695fd",
   "architectures": [
@@ -22,7 +22,7 @@
   },
   "config": {
     "name": "Nocturne Personal Release",
-    "version": "1.0.115601",
+    "version": "1.0.116501",
     "slug": "nocturne_personal",
     "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal 0.4.0 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
@@ -74,9 +74,9 @@
   },
   "previous_config": {
     "name": "Nocturne Personal Release",
-    "version": "1.0.114601",
+    "version": "1.0.115601",
     "slug": "nocturne_personal",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 0.3.2 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal 0.4.0 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
       "amd64",
@@ -125,7 +125,7 @@
     "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-personal-{arch}"
   },
   "digests": {
-    "amd64": "sha256:649eaea8d1bf18db70c94d6d3b86cc3bf3931473729f168949d6b7a34e5a9598",
-    "aarch64": "sha256:a0ef9490f333108a2678a1ca9ce89ac805f841f048bd2a0bf773bc0c2fd52535"
+    "amd64": "sha256:45ec82f2b9b6cdb2385724387296e6edaddddfb3d9514d46d1810be55db7128e",
+    "aarch64": "sha256:aad29b18e91cd649bc2fa1f8b0fe1e90f2d81eaeac9ca8d350b02c65dabace86"
   }
 }
