@@ -1,31 +1,31 @@
 {
   "channel": "personal",
   "repository": "smokkelaar/nocturne-personal",
-  "version": "0.3.47",
-  "commit": "ec9545a15d29cc2e8197f078c44f1c7be5b8ef78",
-  "commit_at": "2026-10-29T23:16:21Z",
+  "version": "0.4.0",
+  "commit": "701a28933f07ce3b727166d8857d0b47dbf695fd",
+  "commit_at": "2026-11-21T02:51:28Z",
   "upstream": {
     "channel": "main",
-    "commit": "3caa43cbe614b194cfe6c764714845cd24fc65f6",
-    "workflow_run": 40147188351,
-    "commit_at": "2026-10-25T00:33:52Z",
-    "published_at": "2026-10-25T00:33:55Z",
+    "commit": "cf719c4af20f1eba12bf9a25dab65d392cdc0adc",
+    "workflow_run": 44516685161,
+    "commit_at": "2026-11-19T11:38:47Z",
+    "published_at": "2026-11-19T11:38:51Z",
     "api": {
-      "tag": "main-3caa43c",
-      "digest": "sha256:eb6c38c252abdfecab469e0cdc9b12d9f939ac5df608d3b2965c18a202860d99",
+      "tag": "main-cf719c4",
+      "digest": "sha256:755565a87e390f9ff596fa45c83c6a466ecfe85dcbebbce7269bc56de5ccf5e2",
       "platforms": {
-        "amd64": "sha256:eb6c38c252abdfecab469e0cdc9b12d9f939ac5df608d3b2965c18a202860d99",
-        "arm64": "sha256:f8969b40b1847b21960c174f9de5c86d9fffaa8c613f1804210c182b5608a331"
+        "amd64": "sha256:755565a87e390f9ff596fa45c83c6a466ecfe85dcbebbce7269bc56de5ccf5e2",
+        "arm64": "sha256:258c0485d506d1bbcc69830ba0909f85673bd6f5e141f11d12f2603e93d8b334"
       }
     },
     "web": {
-      "tag": "main-3caa43c",
-      "digest": "sha256:956de2131fecc5edffaef004ebbab70de35e6f060836d73129b4260ce79a6eae",
+      "tag": "main-cf719c4",
+      "digest": "sha256:371a3862241b13489c4961ba7ab7785f870fb09e928078ba04295647c59da084",
       "platforms": {
-        "amd64": "sha256:956de2131fecc5edffaef004ebbab70de35e6f060836d73129b4260ce79a6eae",
-        "arm64": "sha256:9eb834b4208938679f2bbf6decb2c1a76d0525b9830d8bbeb5571dd7e9973223"
+        "amd64": "sha256:371a3862241b13489c4961ba7ab7785f870fb09e928078ba04295647c59da084",
+        "arm64": "sha256:378ea52757505e84d93add6a0ca841bb5d439e5562b522dbfd283e62c70dd1d9"
       }
     }
   },
-  "archive_sha256": "00a05e451946fbc5f3f56879f4c2b4b7c6b04bbb60401bd449038dd09d912b50"
+  "archive_sha256": "a29175f93a26c27f5d766f21d0a40db68645f5b192bf9a906534923ef4ce38a8"
 }
