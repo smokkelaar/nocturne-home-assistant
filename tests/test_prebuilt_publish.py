@@ -182,12 +182,12 @@ class PrebuiltTests(unittest.TestCase):
                 self.assertEqual({'api', 'web'}, set(publisher.read(root / package / 'provenance.json')['runtime_pins']['amd64']))
                 self.assertEqual('0.3.2', publisher.read(root / package / 'provenance.json')['release_rollout'])
                 self.assertTrue(bridge_check.require(root, channel))
-            runtime_path = root / 'nocturne_test_a/rootfs/opt/nocturne-ha/version.json'
+            runtime_path = root / 'nocturne_test_b/rootfs/opt/nocturne-ha/version.json'
             altered = publisher.read(runtime_path)
             altered['source_commit'] = '0' * 40
             publisher.write(runtime_path, altered)
             with self.assertRaisesRegex(ValueError, 'inconsistent'):
-                bridge_check.require(root, 'test-a')
+                bridge_check.require(root, 'test-b')
 
     def test_migration_bridge_rejects_moving_or_partial_source(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -213,7 +213,7 @@ class PrebuiltTests(unittest.TestCase):
             policy = publisher.read(root / 'release-rollout.json')
             policy['channels'] = ['latest']
             publisher.write(root / 'release-rollout.json', policy)
-            with self.assertRaisesRegex(ValueError, 'exactly Test A/B/C'):
+            with self.assertRaisesRegex(ValueError, 'exactly Test B/C'):
                 publisher.release_channels(root)
             shutil.copyfile(ROOT / 'release-rollout.json', root / 'release-rollout.json')
             lock = publisher.read(root / 'upstream.json')
