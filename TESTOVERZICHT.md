@@ -2,20 +2,20 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 21 november 2026, 04:35 (NL-tijd)
+**Bijgewerkt:** 21 november 2026, 05:25 (NL-tijd)
 
-**Stand 21 november** (HA-store, [publicatie #230](https://github.com/smokkelaar/nocturne-home-assistant/pull/230)):
+**Stand 21 november** (HA-store, [publicatie #234](https://github.com/smokkelaar/nocturne-home-assistant/pull/234)):
 
 | App | Poort | Bron | Doel |
 |---|---|---|---|
-| Official (deze repo) | 8448 | officiële release v0.3.2, store 1.0.112301 | nieuwste release |
-| Latest (deze repo) | 8449 | nightscout main `cf719c4` (19 nov), store 1.0.114601, volgt main daarna dagelijks | nieuwste main |
-| Personal | 8450 | Personal 0.4.0 = nightscout main `cf719c4` + de help (boekicoon), commit `701a289`; komt in de store na [HA #232](https://github.com/smokkelaar/nocturne-home-assistant/pull/232) | eigen wensen op de nieuwste main; volgt Latest weer |
-| Test A, B, C | 8451-8453 | schone v0.3.2, store 1.0.114601 | vrij voor de volgende featuretest |
+| Official (deze repo) | 8448 | officiële release v0.3.2, store 1.0.115601 | nieuwste release |
+| Latest (deze repo) | 8449 | nightscout main `cf719c4` (19 nov), store 1.0.115601, volgt main daarna dagelijks | nieuwste main |
+| Personal | 8450 | Personal 0.4.0 = nightscout main `cf719c4` + de help (boekicoon), commit `701a289`, store 1.0.115601 | eigen wensen op de nieuwste main; volgt Latest weer |
+| Test A, B, C | 8451-8453 | schone v0.3.2, store 1.0.115601 | vrij voor de volgende featuretest |
 | Stable (upstream-repo) | 8448 | officiële release v0.3.2, store 0.2.44701 | nieuwste release |
 | Main (upstream-repo) | 8449 | nightscout main `cf719c4`, store 0.2.44701, volgt main daarna dagelijks | nieuwste main |
 
-Test A/B/C krijgen bij de publicatie van Personal 0.4.0 nog een keer een nieuw pakketnummer met dezelfde v0.3.2-inhoud; dat komt doordat hun bouwrecept meeschuift (.NET 11 en Rust 1.99 voor de nieuwe main).
+Alle apps kregen bij deze publicatie pakket 1.0.115601. Alleen Personal kreeg nieuwe inhoud; de rest heeft dezelfde inhoud als in 1.0.114601, met een bijgewerkt bouwrecept (.NET 11 en Rust 1.99).
 
 **Release-overgang 16 november:** na de verplichte v0.3.0-migratiebridge gingen alle HA-apps naar de officiële Nocturne v0.3.2. De onderstaande featuretests beschrijven de eerdere Personal- en Test-bronnen; die staan op [archive/channel-source-pre-v032](https://github.com/smokkelaar/nocturne-home-assistant/tree/archive/channel-source-pre-v032) en zijn nu niet actief. De afzonderlijke HA-installaties, tenantgegevens en onderhoudsfuncties blijven bestaan.
 
@@ -33,7 +33,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 | # | Waar | Wat | Status |
 |---|---|---|---|
 | 1 | Test A, B, C | Upstream-PR's #3073, #3080, #3078 na de review | Klaar om te testen: in de store als 1.0.105701 (1 nov), zie Per instantie |
-| 2 | Personal (8450) | Help terug op de nieuwste main (0.4.0) | Klaar om te testen zodra de store-update er is, zie Per instantie → Personal |
+| 2 | Personal (8450) | Help terug op de nieuwste main (0.4.0) | Klaar om te testen in 1.0.115601 (21 nov), zie Per instantie → Personal |
 | 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed, bolletjes en tooltip nog niet goed, help-icoon ontbrak. Personal 0.3.45 bevat de fixes van [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) en het help-icoon van [#88](https://github.com/smokkelaar/nocturne-personal/pull/88). Getest op 0.3.45 (28 okt): kleuren werken. Dim op aparte regel, presets, Mirror en Swap weg, + in de kleurenrij, verloop tussen de kleuren: aangepast in [#92](https://github.com/smokkelaar/nocturne-personal/pull/92) (0.3.46). Getest op 0.3.46 (29 okt): teksten in de kleurenrij ontbraken en het HbA1c-vangbereik was te groot; beide aangepast in [#93](https://github.com/smokkelaar/nocturne-personal/pull/93) (0.3.47). **Let op:** deze jaaroverzicht- en eHbA1c-onderdelen zitten niet in Personal 0.4.0; ze lopen via upstream-PR's #3080 en #3078 (Test B en C) |
 
 ## Upstream-PR's na de Copilot-reviews (1 nov)
@@ -103,7 +103,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   3. Open de help op het dashboard, bij Rapporten en bij Instellingen: elke pagina toont zijn eigen uitleg in het Nederlands.
   4. Dashboardhulp: de widgets tonen voorbeeldgegevens, en de voorspelknop in het voorbeeld verandert je eigen instellingen niet.
   5. Instellingen → Weergave: de helpvoorkeuren (indeling, transparantie, vervaging) werken.
-- **Status:** gemerged 21 nov; wacht op de store-publicatie.
+- **Status:** klaar om te testen in 1.0.115601 (21 nov). Vernieuw de store: Instellingen → Apps → Store → ⋮ → Controleren op updates.
 
 ### Latest (poort 8449)
 
