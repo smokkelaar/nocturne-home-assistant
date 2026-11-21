@@ -2,21 +2,21 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 21 november 2026, 15:25 (NL-tijd)
+**Bijgewerkt:** 21 november 2026, 16:50 (NL-tijd)
 
-**Stand 21 november** (HA-store, [publicatie #234](https://github.com/smokkelaar/nocturne-home-assistant/pull/234)):
+**Stand 21 november** (HA-store, [publicatie #237](https://github.com/smokkelaar/nocturne-home-assistant/pull/237)):
 
 | App | Poort | Bron | Doel |
 |---|---|---|---|
 | Official (deze repo) | 8448 | officiële release v0.3.2, store 1.0.115601 | nieuwste release |
 | Latest (deze repo) | 8449 | nightscout main `cf719c4` (19 nov), store 1.0.115601, volgt main daarna dagelijks | nieuwste main |
-| Personal | 8450 | Personal 0.4.0 = nightscout main `cf719c4` + de help (boekicoon), commit `701a289`, store 1.0.115601 | eigen wensen op de nieuwste main; volgt Latest weer |
-| Test A | 8451 | Personal PR #104 (meervoudsvormen) op schone nightscout main `a29dbba` | featuretest meervoudsvormen |
-| Test B, C | 8452-8453 | schone v0.3.2, store 1.0.115601 | vrij voor de volgende featuretest |
+| Personal | 8450 | Personal 0.4.0 = nightscout main `cf719c4` + de help (boekicoon), commit `701a289`, store 1.0.116501 | eigen wensen op de nieuwste main; volgt Latest weer |
+| Test A | 8451 | Personal PR #104 (meervoudsvormen) op schone nightscout main `a29dbba`, store 1.0.116501 | featuretest meervoudsvormen |
+| Test B, C | 8452-8453 | schone v0.3.2, store 1.0.116501 | vrij voor de volgende featuretest |
 | Stable (upstream-repo) | 8448 | officiële release v0.3.2, store 0.2.44701 | nieuwste release |
 | Main (upstream-repo) | 8449 | nightscout main `cf719c4`, store 0.2.44701, volgt main daarna dagelijks | nieuwste main |
 
-Alle apps kregen bij deze publicatie pakket 1.0.115601. Alleen Personal kreeg nieuwe inhoud; de rest heeft dezelfde inhoud als in 1.0.114601, met een bijgewerkt bouwrecept (.NET 11 en Rust 1.99).
+Op 21 nov 16:45 kregen Test A, B, C en Personal pakket 1.0.116501. Alleen Test A kreeg nieuwe inhoud (meervoudsvormen). Personal en Test B/C hebben dezelfde inhoud, met een herstel in het bouwrecept: de ARM64-build laadde een oude alarm-bibliotheek uit het basisimage. Official en Latest blijven op 1.0.115601.
 
 **Release-overgang 16 november:** na de verplichte v0.3.0-migratiebridge gingen alle HA-apps naar de officiële Nocturne v0.3.2. De onderstaande featuretests beschrijven de eerdere Personal- en Test-bronnen; die staan op [archive/channel-source-pre-v032](https://github.com/smokkelaar/nocturne-home-assistant/tree/archive/channel-source-pre-v032) en zijn nu niet actief. De afzonderlijke HA-installaties, tenantgegevens en onderhoudsfuncties blijven bestaan.
 
@@ -33,7 +33,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 
 | # | Waar | Wat | Status |
 |---|---|---|---|
-| 1 | Test A (8451) | Meervoudsvormen ([Personal PR #104](https://github.com/smokkelaar/nocturne-personal/pull/104)), voor een upstream issue + draft-PR | Wordt gepubliceerd (21 nov), zie Per instantie → Test A |
+| 1 | Test A (8451) | Meervoudsvormen ([Personal PR #104](https://github.com/smokkelaar/nocturne-personal/pull/104)), voor een upstream issue + draft-PR | Klaar om te testen in 1.0.116501 (21 nov), zie Per instantie → Test A |
 | 2 | Personal (8450) | Help terug op de nieuwste main (0.4.0) | Klaar om te testen in 1.0.115601 (21 nov), zie Per instantie → Personal |
 | 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed, bolletjes en tooltip nog niet goed, help-icoon ontbrak. Personal 0.3.45 bevat de fixes van [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) en het help-icoon van [#88](https://github.com/smokkelaar/nocturne-personal/pull/88). Getest op 0.3.45 (28 okt): kleuren werken. Dim op aparte regel, presets, Mirror en Swap weg, + in de kleurenrij, verloop tussen de kleuren: aangepast in [#92](https://github.com/smokkelaar/nocturne-personal/pull/92) (0.3.46). Getest op 0.3.46 (29 okt): teksten in de kleurenrij ontbraken en het HbA1c-vangbereik was te groot; beide aangepast in [#93](https://github.com/smokkelaar/nocturne-personal/pull/93) (0.3.47). **Let op:** deze jaaroverzicht- en eHbA1c-onderdelen zitten niet in Personal 0.4.0; ze lopen via upstream-PR's #3080 en #3078 (Test B en C) |
 
@@ -62,7 +62,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 - **Testen:**
   1. In het Engels leest alles als voorheen. Controleer tellingen met 1 en met meer: Instellingen → Leden, Rapporten → Slaap (nachten), Rapporten → Batterij (apparaten, dagen), Rapporten → Behandelingen (records selecteren en verwijderen), het dashboard (maaltijden), Community → Vertalingen (concepten).
   2. Zet de taal op Nederlands: deze teksten vallen terug op Engels tot ze vertaald zijn, en tonen nergens een losse `{1}` of Engelse s-uitgang.
-- **Status:** wordt gepubliceerd (21 nov). Vernieuw daarna de store: Instellingen → Apps → App store → ⋮ → Controleren op updates.
+- **Status:** klaar om te testen in 1.0.116501 (21 nov). Vernieuw de store: Instellingen → Apps → App store → ⋮ → Controleren op updates.
 
 **Wacht op een vrije testinstantie:**
 - [Personal PR #83](https://github.com/smokkelaar/nocturne-personal/pull/83): Google Health-reset met begindatum (#80) bovenop #69. Stond hier tot 1 nov.
