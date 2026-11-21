@@ -251,7 +251,7 @@ def files(lock, delivery, maintenance=True):
     tail = re.sub(r'ARG BUILD_VERSION=\S+', 'ARG BUILD_VERSION=' + delivery, tail)
     tail = replace_once(tail, 'COPY --from=web /app/ /opt/nocturne-web/',
                         'COPY --from=source /out/web/ /opt/nocturne-web/')
-    tail = replace_once(tail, 'USER root\nARG BUILD_VERSION=', 'USER root\nCOPY --from=source /out/api/ /app/\nCOPY --from=source /out/api-build-date /opt/nocturne-ha/api-build-date\nCOPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so\nARG BUILD_VERSION=')
+    tail = replace_once(tail, 'USER root\nARG BUILD_VERSION=', 'USER root\nCOPY --from=source /out/api/ /app/\nCOPY --from=source /out/api-build-date /opt/nocturne-ha/api-build-date\nCOPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnocturne_alerts.so\n# The alerts resolver probes runtimes/<rid>/native before /app, and the base image holds an older library there.\nCOPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/runtimes/linux-x64/native/libnocturne_alerts.so\nCOPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/runtimes/linux-arm64/native/libnocturne_alerts.so\nARG BUILD_VERSION=')
     generated['Dockerfile'] = f'''# Both API and web are compiled from the same checksum-verified Personal source.
 {node}
 FROM {RUST} AS rust
