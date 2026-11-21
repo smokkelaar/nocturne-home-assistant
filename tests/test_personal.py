@@ -217,7 +217,8 @@ class PersonalTests(unittest.TestCase):
             def __exit__(self, *args): pass
             def read(self, size): return b''
         with patch.object(updater, 'github', side_effect=[head, comparison]) as github, \
-             patch.object(updater.urllib.request, 'urlopen', return_value=Archive()):
+             patch.object(updater.urllib.request, 'urlopen', return_value=Archive()), \
+             patch.object(updater, 'source_submodules', return_value=[]):
             resolved = self.resolve_on_personal_base()
         self.assertEqual(self.clean_lock['commit'], resolved['commit'])
         self.assertEqual(self.clean_lock['version'], resolved['version'])
@@ -234,7 +235,8 @@ class PersonalTests(unittest.TestCase):
             def __exit__(self, *args): pass
             def read(self, size): return b''
         with patch.object(updater, 'github', side_effect=[reset, canonical, comparison]), \
-             patch.object(updater.urllib.request, 'urlopen', return_value=Archive()):
+             patch.object(updater.urllib.request, 'urlopen', return_value=Archive()), \
+             patch.object(updater, 'source_submodules', return_value=[]):
             resolved = self.resolve_on_personal_base()
         self.assertEqual(self.clean_lock['commit'], resolved['commit'])
 
@@ -260,6 +262,26 @@ class PersonalTests(unittest.TestCase):
         for bad in ({'commit': 'main'}, {'path': '../etc'}, {'repository': 'x y/z'}):
             with self.subTest(bad=bad), self.assertRaises(ValueError):
                 updater.submodules({'submodules': [{**module, **bad}]})
+
+    def test_resolve_pins_each_submodule_at_the_commit_the_source_tree_records(self):
+        gitmodules = '[submodule "src/Web/vendor/water-ui"]\n\tpath = src/Web/vendor/water-ui\n\turl = https://github.com/ryceg/water-ui.git\n'
+        def fake(path, raw=False, text=False):
+            if path.startswith('contents/.gitmodules'):
+                return gitmodules
+            self.assertEqual('contents/src/Web/vendor/water-ui?ref=' + 'c' * 40, path)
+            return {'type': 'submodule', 'sha': 'b' * 40}
+        with patch.object(updater, 'github', side_effect=fake):
+            self.assertEqual([{'path': 'src/Web/vendor/water-ui', 'repository': 'ryceg/water-ui', 'commit': 'b' * 40}],
+                             updater.source_submodules('c' * 40))
+
+    def test_personal_recipe_adds_its_pinned_submodules(self):
+        lock = json.loads((ROOT / 'upstream-personal.json').read_text())
+        recipe = (self.directory / 'Dockerfile').read_text()
+        self.assertTrue(lock.get('submodules'))
+        for module in lock['submodules']:
+            add = f"https://github.com/{module['repository']}.git#{module['commit']} /src/{module['path']}"
+            self.assertLess(recipe.index('tar -xzf /tmp/source.tar.gz'), recipe.index(add))
+            self.assertLess(recipe.index(add), recipe.index('pnpm install --frozen-lockfile'))
 
     def test_test_a_recipe_adds_water_ui_after_unpacking_the_source(self):
         recipe = (ROOT / 'nocturne_test_a/Dockerfile').read_text()

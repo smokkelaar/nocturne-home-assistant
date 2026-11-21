@@ -2,7 +2,7 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 21 november 2026, 04:05 (NL-tijd)
+**Bijgewerkt:** 21 november 2026, 04:35 (NL-tijd)
 
 **Stand 21 november** (HA-store, [publicatie #230](https://github.com/smokkelaar/nocturne-home-assistant/pull/230)):
 
@@ -10,12 +10,12 @@ Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar no
 |---|---|---|---|
 | Official (deze repo) | 8448 | officiële release v0.3.2, store 1.0.112301 | nieuwste release |
 | Latest (deze repo) | 8449 | nightscout main `cf719c4` (19 nov), store 1.0.114601, volgt main daarna dagelijks | nieuwste main |
-| Personal | 8450 | blijft op v0.3.2, store 1.0.114601 | wacht tot de help (boekicoon) terug is op de nieuwste main; daarna gaat Personal mee |
+| Personal | 8450 | Personal 0.4.0 = nightscout main `cf719c4` + de help (boekicoon), commit `701a289`; komt in de store na [HA #232](https://github.com/smokkelaar/nocturne-home-assistant/pull/232) | eigen wensen op de nieuwste main; volgt Latest weer |
 | Test A, B, C | 8451-8453 | schone v0.3.2, store 1.0.114601 | vrij voor de volgende featuretest |
 | Stable (upstream-repo) | 8448 | officiële release v0.3.2, store 0.2.44701 | nieuwste release |
 | Main (upstream-repo) | 8449 | nightscout main `cf719c4`, store 0.2.44701, volgt main daarna dagelijks | nieuwste main |
 
-Personal en Test A/B/C hebben bij deze publicatie een nieuw pakketnummer gekregen met dezelfde v0.3.2-inhoud; dat komt doordat hun bouwrecept meeschuift met Latest.
+Test A/B/C krijgen bij de publicatie van Personal 0.4.0 nog een keer een nieuw pakketnummer met dezelfde v0.3.2-inhoud; dat komt doordat hun bouwrecept meeschuift (.NET 11 en Rust 1.99 voor de nieuwe main).
 
 **Release-overgang 16 november:** na de verplichte v0.3.0-migratiebridge gingen alle HA-apps naar de officiële Nocturne v0.3.2. De onderstaande featuretests beschrijven de eerdere Personal- en Test-bronnen; die staan op [archive/channel-source-pre-v032](https://github.com/smokkelaar/nocturne-home-assistant/tree/archive/channel-source-pre-v032) en zijn nu niet actief. De afzonderlijke HA-installaties, tenantgegevens en onderhoudsfuncties blijven bestaan.
 
@@ -33,7 +33,8 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 | # | Waar | Wat | Status |
 |---|---|---|---|
 | 1 | Test A, B, C | Upstream-PR's #3073, #3080, #3078 na de review | Klaar om te testen: in de store als 1.0.105701 (1 nov), zie Per instantie |
-| 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed, bolletjes en tooltip nog niet goed, help-icoon ontbrak. Personal 0.3.45 bevat de fixes van [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) en het help-icoon van [#88](https://github.com/smokkelaar/nocturne-personal/pull/88). Getest op 0.3.45 (28 okt): kleuren werken. Dim op aparte regel, presets, Mirror en Swap weg, + in de kleurenrij, verloop tussen de kleuren: aangepast in [#92](https://github.com/smokkelaar/nocturne-personal/pull/92) (0.3.46). Getest op 0.3.46 (29 okt): teksten in de kleurenrij ontbraken en het HbA1c-vangbereik was te groot; beide aangepast in [#93](https://github.com/smokkelaar/nocturne-personal/pull/93) (0.3.47, in de store als 1.0.104301 sinds 30 okt) |
+| 2 | Personal (8450) | Help terug op de nieuwste main (0.4.0) | Klaar om te testen zodra de store-update er is, zie Per instantie → Personal |
+| 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed, bolletjes en tooltip nog niet goed, help-icoon ontbrak. Personal 0.3.45 bevat de fixes van [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) en het help-icoon van [#88](https://github.com/smokkelaar/nocturne-personal/pull/88). Getest op 0.3.45 (28 okt): kleuren werken. Dim op aparte regel, presets, Mirror en Swap weg, + in de kleurenrij, verloop tussen de kleuren: aangepast in [#92](https://github.com/smokkelaar/nocturne-personal/pull/92) (0.3.46). Getest op 0.3.46 (29 okt): teksten in de kleurenrij ontbraken en het HbA1c-vangbereik was te groot; beide aangepast in [#93](https://github.com/smokkelaar/nocturne-personal/pull/93) (0.3.47). **Let op:** deze jaaroverzicht- en eHbA1c-onderdelen zitten niet in Personal 0.4.0; ze lopen via upstream-PR's #3080 en #3078 (Test B en C) |
 
 ## Upstream-PR's na de Copilot-reviews (1 nov)
 
@@ -93,29 +94,16 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Personal (poort 8450)
 
-- **Store-versie:** 1.0.102701 = Personal 0.3.45 (commit `5adf0ca`), Latest-basis nightscout main `3caa43c`. Bevat 0.3.44 (hieronder) en het help-icoon ([#88](https://github.com/smokkelaar/nocturne-personal/pull/88)).
-- **Nieuw in 0.3.43:**
-  - [#78](https://github.com/smokkelaar/nocturne-personal/pull/78): interactieve grafiekvoorbeelden in de help (AGP, Dagprofiel, Voorspelnauwkeurigheid, CGM-vergelijking, IDP, Slaap).
-  - [#79](https://github.com/smokkelaar/nocturne-personal/pull/79): jaaroverzicht, de twee buitenste bolletjes versmallen het kleurbereik (ook glucose); HbA1c met één decimaal extra (6,54% en 50,3 mmol/mol), ook bij lab-invoer.
-- **Nieuw in 0.3.44** ([#82](https://github.com/smokkelaar/nocturne-personal/pull/82), gemerged 28 okt, merge `7080e5c`):
-  - Jaaroverzicht: kleurbereik los van Dim outside, zoals het oude Personal. De twee buitenste bolletjes op de kleurbalk hebben de eindkleuren en bepalen waar de kleuren beginnen en eindigen. Het dimvenster heeft een eigen schuifbalk erboven en verandert de kleuren niet meer.
-  - eHbA1c-tooltip: toont een labwaarde binnen 24 px van het driehoekje (32 px bij touch), ruimer dan de 44 px-richtlijn van WCAG.
-  - Build: ImageSharp-melding GHSA-v76p-62qx-wwq2 onderdrukt tot nightscout/nocturne een update levert.
-- **Open, wordt 0.3.46** ([#92](https://github.com/smokkelaar/nocturne-personal/pull/92)):
-  - De kleuren lopen alleen nog tussen de ingestelde kleuren (eindkleuren en gekleurde grenzen), dus blauw loopt naar groen zonder geel of grijs ertussen.
-  - De dim-streepjes staan weer op de kleurbalk, hoger dan de bolletjes. Pak een streepje boven of onder het bolletje als ze op dezelfde plek staan.
-  - De standaard kleurschema's zijn weg, en Mirror en Swap ook.
-  - De knop + voor een kleurgrens staat in de rij met de kleuren, op de plek waar de nieuwe grens komt.
-- **Jaaroverzicht op Test A:** Test A (PR #83) is schone main met alleen Google Health en heeft dus het upstream-jaaroverzicht zonder deze Personal-onderdelen. Dat is verwacht; test het jaaroverzicht hier op Personal.
-- **Waarom hier en niet op Test A/B/C:** dit zijn Personal-wensen, en Test A, B en C zijn bezet. De Test B-build van #68 (26 okt) had #79 nog niet; daarom kon je de buitenste kleuren daar niet verplaatsen.
+- **Bron (21 nov):** Personal 0.4.0, commit `701a289` ([PR #103](https://github.com/smokkelaar/nocturne-personal/pull/103)) = nightscout main `cf719c4` met de in-app help erbij. Gebouwd met .NET 11 en Rust 1.99.
+- **Wat erin zit:** het boekicoon linksboven in de zijbalk en in de mobiele kop, de help per pagina (ook nieuwe pagina's zoals Site, Uitnodigingen, Trackers, Community en Eigen rapport), dashboardvoorbeelden met fictieve gegevens, de leeshulp en de Nederlandse helpteksten. Google Health-hulp beschrijft de client in Instellingen → Administratie → Integraties.
+- **Wat er niet meer in zit:** de oude Personal-extra's van 0.3.47 (jaaroverzicht-kleurbereik, eHbA1c-tooltip). Die staan op `archive/personal-feature-base-before-v032` en lopen via upstream #3080 en #3078.
 - **Testen:**
-  1. (0.3.44) Rapporten → Jaaroverzicht: versleep de buitenste gekleurde bolletjes op de kleurbalk. De kleuren lopen alleen tussen de bolletjes, waarden erbuiten krijgen de eindkleur. Versleep daarna de streepjes op de dunne balk erboven: alleen het dimmen verandert, de kleuren blijven staan. Het bereik onthoudt zich per metriek, en Reset zet alles terug.
-  2. Rapporten → eHbA1c: waarden tonen 2 decimalen in % en 1 in mmol/mol. Voer een lab-waarde in met die precisie en controleer de streefwaardecheck.
-  2b. (0.3.44) Beweeg de muis tot ruim een halve centimeter naast een lab-driehoekje: de tooltip toont de labwaarde zonder precies te mikken.
-  3. Open de help bij AGP en Slaap: het voorbeeld is interactief.
-  4. (0.3.46) Jaaroverzicht: zet gekleurde grenzen (bijvoorbeeld blauw, groen, rood, geel). Elk stuk loopt rechtstreeks van de ene kleur naar de volgende. De dim-streepjes staan op dezelfde lijn als de kleuren. De rij kleurschema's, Mirror en Swap zijn weg, en de + staat tussen de kleuren waar de nieuwe grens komt.
-  5. (0.3.47) Jaaroverzicht: naast de lage en hoge waarde staat de eenheid, en de knop heet weer "+ Color boundary". eHbA1c: de tooltip springt alleen naar een labwaarde als de muis bij het driehoekje staat, niet onderaan bij de datums.
-- **Status:** getest op 0.3.43 (27 okt). Stap 2 (decimalen) goed. Stap 1 (buitenste bolletjes) werkt niet: niet versleepbaar. Tooltip vraagt nog steeds extreem precies mikken; [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) zat nog niet in deze versie, en de vraag is of 12 px genoeg is (best practices en schermafhankelijkheid bekijken). Stap 3: help-icoon ontbreekt, help niet te openen. Bolletjes en tooltip aangepast in #82 (0.3.44); de help wordt apart uitgezocht. **Nu klaar om te hertesten in 1.0.102701 (Personal 0.3.45), inclusief de help.**
+  1. Vernieuw de store: Instellingen → Apps → Store → ⋮ → Controleren op updates, en update Personal.
+  2. Het boekicoon staat linksboven in de zijbalk. Op een telefoon staat het in de kop.
+  3. Open de help op het dashboard, bij Rapporten en bij Instellingen: elke pagina toont zijn eigen uitleg in het Nederlands.
+  4. Dashboardhulp: de widgets tonen voorbeeldgegevens, en de voorspelknop in het voorbeeld verandert je eigen instellingen niet.
+  5. Instellingen → Weergave: de helpvoorkeuren (indeling, transparantie, vervaging) werken.
+- **Status:** gemerged 21 nov; wacht op de store-publicatie.
 
 ### Latest (poort 8449)
 
