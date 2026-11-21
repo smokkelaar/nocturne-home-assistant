@@ -27,5 +27,12 @@
       }
     }
   },
-  "archive_sha256": "a29175f93a26c27f5d766f21d0a40db68645f5b192bf9a906534923ef4ce38a8"
+  "archive_sha256": "a29175f93a26c27f5d766f21d0a40db68645f5b192bf9a906534923ef4ce38a8",
+  "submodules": [
+    {
+      "path": "src/Web/vendor/water-ui",
+      "repository": "ryceg/water-ui",
+      "commit": "30918ec89bd1f400a86cc427c95d7679dc2eed4a"
+    }
+  ]
 }

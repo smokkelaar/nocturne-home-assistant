@@ -14,6 +14,7 @@ RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
 ADD --checksum=sha256:a29175f93a26c27f5d766f21d0a40db68645f5b192bf9a906534923ef4ce38a8 https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/701a28933f07ce3b727166d8857d0b47dbf695fd /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
+ADD --keep-git-dir=false https://github.com/ryceg/water-ui.git#30918ec89bd1f400a86cc427c95d7679dc2eed4a /src/src/Web/vendor/water-ui
 WORKDIR /src/src/Web
 RUN printf '\n=== Nocturne build phase 3/7: install web dependencies and build bridge ===\n' \
     && pnpm install --frozen-lockfile && pnpm --filter @nocturne/bridge run build

@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import re
+import urllib.error
 import urllib.request
 import personal_maintenance
 from versioning import publication_mode, published_number, next_package
@@ -20,7 +21,7 @@ COMMON = ('build/check_web.mjs', 'build/prepare_web.py', 'build/check_cookies.co
           'rootfs/usr/local/bin/nocturne-ha', 'translations/nl.json', 'translations/en.json')
 
 
-def github(path, raw=False):
+def github(path, raw=False, text=False):
     headers = {'User-Agent': 'nocturne-personal-updater',
                'Accept': 'application/vnd.github.raw+json' if raw else 'application/vnd.github+json'}
     token = os.environ.get('GH_TOKEN')
@@ -28,7 +29,7 @@ def github(path, raw=False):
         headers['Authorization'] = 'Bearer ' + token
     request = urllib.request.Request(f'https://api.github.com/repos/{REPO}/{path}', headers=headers)
     with urllib.request.urlopen(request, timeout=60) as response:
-        return json.load(response)
+        return response.read().decode('utf-8') if text else json.load(response)
 
 
 def validate(lock):
@@ -100,8 +101,31 @@ def resolve():
                 raise ValueError('Source archive exceeds safety limit')
             digest.update(block)
     lock['archive_sha256'] = digest.hexdigest()
+    modules = source_submodules(commit)
+    if modules:
+        lock['submodules'] = modules
     validate(lock)
     return lock
+
+
+def source_submodules(commit):
+    """The source archive omits submodules, so pin each at the commit the Personal tree records."""
+    try:
+        text = github(f'contents/.gitmodules?ref={commit}', raw=True, text=True)
+    except urllib.error.HTTPError as error:
+        if error.code == 404:
+            return []
+        raise
+    modules = []
+    for path, url in re.findall(r'path\s*=\s*(\S+)\s*\n\s*url\s*=\s*(\S+)', text):
+        match = re.fullmatch(r'https://github\.com/([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+?)(?:\.git)?', url)
+        if not match:
+            raise ValueError('Unsupported submodule source: ' + url)
+        entry = github(f'contents/{path}?ref={commit}')
+        if entry.get('type') != 'submodule':
+            raise ValueError('Submodule path is not a submodule: ' + path)
+        modules.append({'path': path, 'repository': match.group(1), 'commit': entry['sha']})
+    return modules
 
 
 def submodules(lock):
