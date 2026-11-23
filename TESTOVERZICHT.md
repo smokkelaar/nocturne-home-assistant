@@ -2,7 +2,7 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 23 november 2026, 16:30 (NL-tijd)
+**Bijgewerkt:** 23 november 2026, 17:00 (NL-tijd)
 
 **Stand 21 november** (HA-store, [publicatie #237](https://github.com/smokkelaar/nocturne-home-assistant/pull/237)):
 
@@ -35,7 +35,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 | # | Waar | Wat | Status |
 |---|---|---|---|
 | 1 | Test A (8451) | Meervoudsvormen ([Personal PR #104](https://github.com/smokkelaar/nocturne-personal/pull/104)), voor een upstream issue + draft-PR | Klaar om te testen in 1.0.116501 (21 nov), zie Per instantie → Test A |
-| 5 | Test B (8452) en C (8453) | eHbA1c-grafiek: de gekozen combinatie op Test B controleren (C blijft ontwerp C ter vergelijking), en eHbA1c in Eigen rapport ([#105](https://github.com/smokkelaar/nocturne-personal/pull/105), [#106](https://github.com/smokkelaar/nocturne-personal/pull/106)) | Klaar om te testen in 1.0.117601 (23 nov), zie Per instantie → Test B en C |
+| 5 | Test B (8452) en C (8453) | eHbA1c-grafiek: de gekozen combinatie op Test B controleren (C blijft ontwerp C ter vergelijking), en eHbA1c in Eigen rapport ([#105](https://github.com/smokkelaar/nocturne-personal/pull/105), [#106](https://github.com/smokkelaar/nocturne-personal/pull/106)) | Test B: labels boven en onder de lijnen, wordt gepubliceerd (23 nov). Test C: klaar in 1.0.117601. Zie Per instantie → Test B en C |
 | 2 | Personal (8450) | Help terug op de nieuwste main (0.4.0) | Klaar om te testen in 1.0.115601 (21 nov), zie Per instantie → Personal |
 | 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed, bolletjes en tooltip nog niet goed, help-icoon ontbrak. Personal 0.3.45 bevat de fixes van [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) en het help-icoon van [#88](https://github.com/smokkelaar/nocturne-personal/pull/88). Getest op 0.3.45 (28 okt): kleuren werken. Dim op aparte regel, presets, Mirror en Swap weg, + in de kleurenrij, verloop tussen de kleuren: aangepast in [#92](https://github.com/smokkelaar/nocturne-personal/pull/92) (0.3.46). Getest op 0.3.46 (29 okt): teksten in de kleurenrij ontbraken en het HbA1c-vangbereik was te groot; beide aangepast in [#93](https://github.com/smokkelaar/nocturne-personal/pull/93) (0.3.47). **Let op:** deze jaaroverzicht- en eHbA1c-onderdelen zitten niet in Personal 0.4.0; ze lopen via upstream-PR's #3080 en #3078 (Test B en C) |
 
@@ -74,16 +74,16 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Test B (poort 8452)
 
-- **Bron (23 nov):** [Personal PR #105](https://github.com/smokkelaar/nocturne-personal/pull/105), branch `claude/project-thread-bn7dz0`, commit `f6ffc8e`, op schone nightscout main `d112136`. eHbA1c-grafiek in de **gekozen combinatie** en eHbA1c als signaal in Eigen rapport. Testbuild, wordt niet gemerged.
+- **Bron (23 nov):** [Personal PR #105](https://github.com/smokkelaar/nocturne-personal/pull/105), branch `claude/project-thread-bn7dz0`, commit `0c7e077`, op schone nightscout main `d112136`. eHbA1c-grafiek in de **gekozen combinatie** en eHbA1c als signaal in Eigen rapport. Testbuild, wordt niet gemerged.
 - **Combinatie (keuze 23 nov):** harde zonekleuren uit ontwerp B, stippellijnen in de kleur van de zone erboven uit ontwerp C, met het label bij de lijn uit ontwerp B, en de overzichtsbalk om in te zoomen uit ontwerp C.
 - **Testen:**
   1. Rapporten → eHbA1c: de grafiek staat op de gewone (donkere) kaartachtergrond, zonder kleurvlakken.
-  2. De lijnkleur volgt de zone: groen onder 5,7%, geelgroen tot 7%, oranje tot 9%, rood daarboven. Stippellijnen in de zonekleur met label bij 5,7%, 7% en 9%.
+  2. De lijnkleur volgt de zone: groen onder 5,7%, geelgroen tot 7%, oranje tot 9%, rood daarboven. Stippellijnen in de zonekleur bij 5,7%, 7% en 9%. Direct boven en onder elke lijn staan de naam en het bereik van de zone aan die kant (aangepast 23 nov, `0c7e077`).
   3. Zoom met 3 maanden, 6 maanden, 1 jaar en Alles, en met de overzichtsbalk onder de grafiek. Reset zoom gaat terug.
   4. Bekijk het ook in het lichte schema (Instellingen → Weergave).
   5. Labwaarden staan als driehoekje; de tooltip werkt zoals voorheen.
   6. Rapporten → Eigen rapport: voeg het signaal Estimated HbA1c (eHbA1c) toe (Glucose → Statistieken). De lijn verschijnt, ook samen met Lab HbA1c.
-- **Status:** klaar om te testen in pakket 1.0.117601 (23 nov). Vernieuw de store: Instellingen → Apps → App store → ⋮ → Controleren op updates.
+- **Status:** labels boven en onder de lijnen: wordt gepubliceerd (23 nov). Vernieuw daarna de store: Instellingen → Apps → App store → ⋮ → Controleren op updates.
 
 ### Test C (poort 8453)
 
