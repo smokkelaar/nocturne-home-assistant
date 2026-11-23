@@ -2,7 +2,7 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 23 november 2026, 17:05 (NL-tijd)
+**Bijgewerkt:** 23 november 2026, 18:10 (NL-tijd)
 
 **Stand 21 november** (HA-store, [publicatie #237](https://github.com/smokkelaar/nocturne-home-assistant/pull/237)):
 
@@ -13,7 +13,7 @@ Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar no
 | Personal | 8450 | Personal 0.4.0 = nightscout main `cf719c4` + de help (boekicoon), commit `701a289`, store 1.0.116501 | eigen wensen op de nieuwste main; volgt Latest weer |
 | Test A | 8451 | Personal PR #104 (meervoudsvormen) op schone nightscout main `a29dbba`, store 1.0.116501 | featuretest meervoudsvormen |
 | Test B | 8452 | Personal PR #105 (eHbA1c-grafiek, gekozen combinatie van B en C + eHbA1c in Eigen rapport) op schone nightscout main `d112136` | featuretest eHbA1c, combinatie |
-| Test C | 8453 | Personal PR #106 (eHbA1c-grafiek ontwerp C + eHbA1c in Eigen rapport) op schone nightscout main `d112136` | featuretest eHbA1c, ontwerp C |
+| Test C | 8453 | Personal PR #107 (jaaroverzicht: alleen gekozen kleuren) op schone nightscout main `20aa623` | featuretest kleuren jaaroverzicht |
 | Stable (upstream-repo) | 8448 | officiële release v0.3.2, store 0.2.44701 | nieuwste release |
 | Main (upstream-repo) | 8449 | nightscout main `cf719c4`, store 0.2.44701, volgt main daarna dagelijks | nieuwste main |
 
@@ -35,7 +35,8 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 | # | Waar | Wat | Status |
 |---|---|---|---|
 | 1 | Test A (8451) | Meervoudsvormen ([Personal PR #104](https://github.com/smokkelaar/nocturne-personal/pull/104)), voor een upstream issue + draft-PR | Klaar om te testen in 1.0.116501 (21 nov), zie Per instantie → Test A |
-| 5 | Test B (8452) en C (8453) | eHbA1c-grafiek: de gekozen combinatie op Test B controleren (C blijft ontwerp C ter vergelijking), en eHbA1c in Eigen rapport ([#105](https://github.com/smokkelaar/nocturne-personal/pull/105), [#106](https://github.com/smokkelaar/nocturne-personal/pull/106)) | Test B: labels boven en onder de lijnen, mmol/mol en tijdlijn in Eigen rapport, wordt gepubliceerd (23 nov). Test C: klaar in 1.0.117601. Zie Per instantie → Test B en C |
+| 5 | Test B (8452) | eHbA1c-grafiek: de gekozen combinatie controleren, en eHbA1c in Eigen rapport ([#105](https://github.com/smokkelaar/nocturne-personal/pull/105)). Ontwerp C ([#106](https://github.com/smokkelaar/nocturne-personal/pull/106)) staat niet meer op Test C | Labels boven en onder de lijnen, mmol/mol en tijdlijn in Eigen rapport, wordt gepubliceerd (23 nov). Zie Per instantie → Test B |
+| 6 | Test C (8453) | Jaaroverzicht: gekozen kleuren leiden, Reset brengt de standaardkleuren terug ([Personal PR #107](https://github.com/smokkelaar/nocturne-personal/pull/107)) | Wordt gepubliceerd (23 nov), zie Per instantie → Test C |
 | 2 | Personal (8450) | Help terug op de nieuwste main (0.4.0) | Klaar om te testen in 1.0.115601 (21 nov), zie Per instantie → Personal |
 | 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed, bolletjes en tooltip nog niet goed, help-icoon ontbrak. Personal 0.3.45 bevat de fixes van [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) en het help-icoon van [#88](https://github.com/smokkelaar/nocturne-personal/pull/88). Getest op 0.3.45 (28 okt): kleuren werken. Dim op aparte regel, presets, Mirror en Swap weg, + in de kleurenrij, verloop tussen de kleuren: aangepast in [#92](https://github.com/smokkelaar/nocturne-personal/pull/92) (0.3.46). Getest op 0.3.46 (29 okt): teksten in de kleurenrij ontbraken en het HbA1c-vangbereik was te groot; beide aangepast in [#93](https://github.com/smokkelaar/nocturne-personal/pull/93) (0.3.47). **Let op:** deze jaaroverzicht- en eHbA1c-onderdelen zitten niet in Personal 0.4.0; ze lopen via upstream-PR's #3080 en #3078 (Test B en C) |
 
@@ -88,10 +89,15 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Test C (poort 8453)
 
-- **Bron (23 nov):** [Personal PR #106](https://github.com/smokkelaar/nocturne-personal/pull/106), branch `claude/project-thread-bn7dz0-c`, commit `9300d54`, op schone nightscout main `d112136`. Hetzelfde als Test B, met **ontwerp C**. Testbuild, wordt niet gemerged.
-- **Ontwerp C:** de lijnkleur loopt vloeiend over tussen de zones (zoals de glucosegrafiek met "doorlopende" kleuring), je zoomt in met een overzichtsbalk onder de grafiek (zoals op het dashboard), en de stippellijnen hebben de kleur van de zone erboven, met de uitleg alleen in de legenda.
-- **Testen:** alleen ter vergelijking met Test B; de keuze is de combinatie op Test B.
-- **Status:** klaar om te testen in pakket 1.0.117601 (23 nov). Vernieuw de store: Instellingen → Apps → App store → ⋮ → Controleren op updates.
+- **Bron (23 nov):** [Personal PR #107](https://github.com/smokkelaar/nocturne-personal/pull/107), branch `claude/project-thread-2zvg70`, commit `6dc80d0`, op schone nightscout main `20aa623`. Testbuild, wordt niet gemerged. Daarvoor stond hier eHbA1c-ontwerp C ([#106](https://github.com/smokkelaar/nocturne-personal/pull/106)), alleen ter vergelijking.
+- **Wat:** in het jaaroverzicht bleven de standaardkleuren (groen-geel-oranje-rood) tussen je gekozen kleuren zichtbaar. Nu bepalen alleen de uiteinden en de gekozen kleuren het verloop zodra je een kleur kiest; Reset brengt de standaardkleuren terug.
+- **Testen:**
+  1. Rapporten → Jaaroverzicht, Avg glucose, zonder gekozen kleuren (eerst Reset): de kleuren zijn zoals voorheen.
+  2. Voeg kleurgrenzen toe en kies kleuren (bijv. zwart, oranje, blauw): de balk en de dagen lopen nu alleen tussen de uiteinden en jouw kleuren, zonder tussenliggend geel of rood.
+  3. Kies ook een kleur voor een uiteinde: die neemt het uiteinde over.
+  4. Reset: de standaardkleuren komen terug.
+  5. Hetzelfde bij een ander type, bijv. TDD.
+- **Status:** wordt gepubliceerd (23 nov). Vernieuw daarna de store: Instellingen → Apps → App store → ⋮ → Controleren op updates.
 
 ### Personal (poort 8450)
 
