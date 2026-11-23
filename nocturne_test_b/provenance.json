@@ -2,12 +2,12 @@
   "format": 1,
   "channel": "test-b",
   "package": "nocturne_test_b",
-  "version": "1.0.118301",
+  "version": "1.0.119501",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "9f02c06d133dec25fe7948620ce9c973a254e117",
-  "recipe": "a90ed07070ee8a4686553e1fea7977a8d34f934f1eccf6bf29c14ff447393694",
+  "wrapper_commit": "0ce868c04c0bf63f0ff9ec225ec61899f0d56d5d",
+  "recipe": "c958679a10171fe437b9e5fc118349076214941fd09dc456d4f31cde5bcec222",
   "source_repository": "smokkelaar/nocturne-personal",
-  "source_commit": "6132256b4a53199d31050286d155c81bdc4528a5",
+  "source_commit": "5f3d449aa63a73a654e451bf1b63ba0a1879057b",
   "architectures": [
     "amd64",
     "arm64"
@@ -22,7 +22,7 @@
   },
   "config": {
     "name": "Nocturne Test B",
-    "version": "1.0.118301",
+    "version": "1.0.119501",
     "slug": "nocturne_test_b",
     "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal PR #105 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
@@ -74,7 +74,7 @@
   },
   "previous_config": {
     "name": "Nocturne Test B",
-    "version": "1.0.117601",
+    "version": "1.0.118301",
     "slug": "nocturne_test_b",
     "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal PR #105 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
@@ -125,7 +125,7 @@
     "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-b-{arch}"
   },
   "digests": {
-    "amd64": "sha256:a592fe1470a35afb0293386795126912bed22ab4ac305eadbe8dffbca49d572a",
-    "aarch64": "sha256:8917cdbc04d79cb8fcd9641eccecf995fcb8dc435547e15c105c97e8d9e21ffd"
+    "amd64": "sha256:60650a4d917ba365fb1c15d4a06520059c1ca8180e057ae23c6a45c732929b65",
+    "aarch64": "sha256:908f029c1a7ecf0ee774e31f1774567f2fec75e16cde41648c2560cbc2fa6ef4"
   }
 }
