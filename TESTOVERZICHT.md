@@ -2,7 +2,7 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 23 november 2026, 18:10 (NL-tijd)
+**Bijgewerkt:** 23 november 2026, 18:55 (NL-tijd)
 
 **Stand 21 november** (HA-store, [publicatie #237](https://github.com/smokkelaar/nocturne-home-assistant/pull/237)):
 
@@ -36,7 +36,7 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 |---|---|---|---|
 | 1 | Test A (8451) | Meervoudsvormen ([Personal PR #104](https://github.com/smokkelaar/nocturne-personal/pull/104)), voor een upstream issue + draft-PR | Klaar om te testen in 1.0.116501 (21 nov), zie Per instantie → Test A |
 | 5 | Test B (8452) | eHbA1c-grafiek in de gekozen combinatie, met naam en bereik boven en onder elke grenslijn, en eHbA1c in Eigen rapport, in % of mmol/mol ([#105](https://github.com/smokkelaar/nocturne-personal/pull/105)) | Klaar om te testen in 1.0.118301 (23 nov), zie Per instantie → Test B. Test C (ontwerp C) gaat over naar de kleuren van het jaaroverzicht |
-| 6 | Test C (8453) | Jaaroverzicht: gekozen kleuren leiden, Reset brengt de standaardkleuren terug ([Personal PR #107](https://github.com/smokkelaar/nocturne-personal/pull/107)) | Wordt gepubliceerd (23 nov), zie Per instantie → Test C |
+| 6 | Test C (8453) | Jaaroverzicht: gekozen kleuren leiden, Reset brengt de standaardkleuren terug ([Personal PR #107](https://github.com/smokkelaar/nocturne-personal/pull/107)) | Klaar om te testen in 1.0.118901 (23 nov), zie Per instantie → Test C |
 | 2 | Personal (8450) | Help terug op de nieuwste main (0.4.0) | Klaar om te testen in 1.0.115601 (21 nov), zie Per instantie → Personal |
 | 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed, bolletjes en tooltip nog niet goed, help-icoon ontbrak. Personal 0.3.45 bevat de fixes van [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) en het help-icoon van [#88](https://github.com/smokkelaar/nocturne-personal/pull/88). Getest op 0.3.45 (28 okt): kleuren werken. Dim op aparte regel, presets, Mirror en Swap weg, + in de kleurenrij, verloop tussen de kleuren: aangepast in [#92](https://github.com/smokkelaar/nocturne-personal/pull/92) (0.3.46). Getest op 0.3.46 (29 okt): teksten in de kleurenrij ontbraken en het HbA1c-vangbereik was te groot; beide aangepast in [#93](https://github.com/smokkelaar/nocturne-personal/pull/93) (0.3.47). **Let op:** deze jaaroverzicht- en eHbA1c-onderdelen zitten niet in Personal 0.4.0; ze lopen via upstream-PR's #3080 en #3078 (Test B en C) |
 
@@ -97,7 +97,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   3. Kies ook een kleur voor een uiteinde: die neemt het uiteinde over.
   4. Reset: de standaardkleuren komen terug.
   5. Hetzelfde bij een ander type, bijv. TDD.
-- **Status:** wordt gepubliceerd (23 nov). Vernieuw daarna de store: Instellingen → Apps → App store → ⋮ → Controleren op updates.
+- **Status:** klaar om te testen in pakket 1.0.118901 (23 nov, [publicatie #247](https://github.com/smokkelaar/nocturne-home-assistant/pull/247)). Vernieuw de store: Instellingen → Apps → App store → ⋮ → Controleren op updates.
 
 ### Personal (poort 8450)
 
