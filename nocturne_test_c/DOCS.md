@@ -79,7 +79,7 @@ Automatic app updates are optional per app in HA. Enable them only for **Nocturn
 
 From wrapper **0.1.10**, all six variants offer **Consciously skip gateway check** (`skip_gateway_check`, default false). Only effective with `gateway_auth: false`; save and restart this app. It skips only the wrapper authentication probe; Nocturne access/share permissions and TLS/host checks still apply. The helper prominently shows `GATEWAY_SKIPPED`. Test A now uses the same visible settings: migrate old `verify_native_auth: false` to `skip_gateway_check: true`, remove the old YAML key, save and restart. The canonical option takes precedence; restore the guard with `skip_gateway_check: false`. [Configuration and rollback](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/GATEWAY.md).
 
-This isolated channel tests [Personal PR #99](https://github.com/smokkelaar/nocturne-personal/pull/99) at `acb156ca4cb7b7ebb7f4e15491df042184ba8848`. Personal PR #99 is the branch of nightscout/nocturne#3078 (one more A1c digit, lab tooltip snapping) after the review fixes, on clean nightscout main `c253506`.
+This isolated channel tests [Personal PR #106](https://github.com/smokkelaar/nocturne-personal/pull/106) at `9300d54ea3a8963872fe1c80bac1b835d5bcc21e`. Personal PR #106 is eHbA1c chart design C (blended line colour, overview strip to zoom, colour-coded dashed boundaries) plus an eHbA1c dataset in custom reports, on clean nightscout main `d112136`.
 
 ## Experimental maintenance
 
