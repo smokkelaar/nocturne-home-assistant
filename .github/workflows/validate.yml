@@ -242,7 +242,7 @@ jobs:
           path: work/prebuilt
       - name: Require anonymous pulls, both native architectures, labels and HA upgrade order
         run: python tools/prebuilt_publish.py promote --candidates work/prebuilt/candidates.json
-      - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1
+      - uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1
         id: proposal
         with:
           base: main
