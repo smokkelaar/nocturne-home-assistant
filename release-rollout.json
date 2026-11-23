@@ -2,5 +2,5 @@
   "source": "upstream.json",
   "version": "0.3.2",
   "commit": "ea4e97c380005dfdd53c157720bd93ba30ef9050",
-  "channels": ["test-b", "test-c"]
+  "channels": []
 }

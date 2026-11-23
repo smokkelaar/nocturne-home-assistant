@@ -23,7 +23,7 @@ PLATFORMS = {'amd64': {'hass': 'amd64', 'runner': 'ubuntu-24.04', 'rid': 'linux-
              'arm64': {'hass': 'aarch64', 'runner': 'ubuntu-24.04-arm', 'rid': 'linux-arm64'}}
 BRIDGE_CHANNELS = ['latest', 'personal', 'test-a', 'test-b', 'test-c']
 # Latest, Personal and Test A follow their own sources; Test B/C stay pinned to v0.3.2 until released.
-RELEASE_CHANNELS = ['test-b', 'test-c']
+RELEASE_CHANNELS = []
 RELEASE_032_COMMIT = 'ea4e97c380005dfdd53c157720bd93ba30ef9050'
 
 
@@ -55,7 +55,7 @@ def release_channels(root):
     policy = read(path)
     if policy != {'source': 'upstream.json', 'version': '0.3.2',
                   'commit': RELEASE_032_COMMIT, 'channels': RELEASE_CHANNELS}:
-        raise ValueError('Release rollout must cover exactly Test B/C')
+        raise ValueError('Release rollout must cover exactly the listed channels')
     lock = read(root / 'upstream.json')
     if lock['version'] != '0.3.2' or lock['tag'] != 'v0.3.2' or lock['commit'] != RELEASE_032_COMMIT:
         raise ValueError('Release rollout requires exact official Nocturne v0.3.2 source')

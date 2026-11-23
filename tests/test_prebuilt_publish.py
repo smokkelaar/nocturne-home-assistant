@@ -155,6 +155,8 @@ class PrebuiltTests(unittest.TestCase):
             (target / path).write_bytes(generated_tests[path])
 
     def test_release_rollout_promotion_preserves_identity_and_stops_republishing(self):
+        if not publisher.RELEASE_CHANNELS:
+            self.skipTest('No HA identity follows the release rollout now')
         with tempfile.TemporaryDirectory() as temporary, patch.object(publisher.registry, 'image', side_effect=inspected):
             root = Path(temporary)
             self.fixture(root)
@@ -213,7 +215,7 @@ class PrebuiltTests(unittest.TestCase):
             policy = publisher.read(root / 'release-rollout.json')
             policy['channels'] = ['latest']
             publisher.write(root / 'release-rollout.json', policy)
-            with self.assertRaisesRegex(ValueError, 'exactly Test B/C'):
+            with self.assertRaisesRegex(ValueError, 'exactly the listed channels'):
                 publisher.release_channels(root)
             shutil.copyfile(ROOT / 'release-rollout.json', root / 'release-rollout.json')
             lock = publisher.read(root / 'upstream.json')
