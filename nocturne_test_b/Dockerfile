@@ -50,7 +50,7 @@ COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnoct
 # The alerts resolver probes runtimes/<rid>/native before /app, and the base image holds an older library there.
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/runtimes/linux-x64/native/libnocturne_alerts.so
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/runtimes/linux-arm64/native/libnocturne_alerts.so
-ARG BUILD_VERSION=1.0.116501
+ARG BUILD_VERSION=1.0.117601
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Test B - Home Assistant app" \
