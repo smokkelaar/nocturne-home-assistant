@@ -2,12 +2,12 @@
   "format": 1,
   "channel": "test-b",
   "package": "nocturne_test_b",
-  "version": "1.0.117601",
+  "version": "1.0.118301",
   "repository": "smokkelaar/nocturne-home-assistant",
-  "wrapper_commit": "a4a10a0082b5c2efd4e091f3789f817f29b03114",
-  "recipe": "3727b91e47f4a9caf0cd09918c8431f46a0aff22a0f46a1b196447f281959c91",
+  "wrapper_commit": "9f02c06d133dec25fe7948620ce9c973a254e117",
+  "recipe": "a90ed07070ee8a4686553e1fea7977a8d34f934f1eccf6bf29c14ff447393694",
   "source_repository": "smokkelaar/nocturne-personal",
-  "source_commit": "f6ffc8e587913ead58d3c33e19d11dce159c328b",
+  "source_commit": "6132256b4a53199d31050286d155c81bdc4528a5",
   "architectures": [
     "amd64",
     "arm64"
@@ -22,7 +22,7 @@
   },
   "config": {
     "name": "Nocturne Test B",
-    "version": "1.0.117601",
+    "version": "1.0.118301",
     "slug": "nocturne_test_b",
     "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal PR #105 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
@@ -74,9 +74,9 @@
   },
   "previous_config": {
     "name": "Nocturne Test B",
-    "version": "1.0.116501",
+    "version": "1.0.117601",
     "slug": "nocturne_test_b",
-    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 0.3.2 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
+    "description": "Vooraf gebouwd 1.x \u00b7 AMD64/ARM64 \u00b7 Personal PR #105 \u00b7 HA wrapper 0.1.13. Experimental; not for clinical use.",
     "url": "https://github.com/smokkelaar/nocturne-home-assistant",
     "arch": [
       "amd64",
@@ -125,7 +125,7 @@
     "image": "ghcr.io/smokkelaar/nocturne-home-assistant/nocturne-test-b-{arch}"
   },
   "digests": {
-    "amd64": "sha256:582a955716a39ab646d7d0e0ae6a3fdd9609e46adc030bf16302dd94e03c65db",
-    "aarch64": "sha256:602714dadda85252083bee35e115032f6ef00950e747ad261366dbfa57f31f40"
+    "amd64": "sha256:a592fe1470a35afb0293386795126912bed22ab4ac305eadbe8dffbca49d572a",
+    "aarch64": "sha256:8917cdbc04d79cb8fcd9641eccecf995fcb8dc435547e15c105c97e8d9e21ffd"
   }
 }
