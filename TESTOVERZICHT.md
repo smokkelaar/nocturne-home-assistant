@@ -23,6 +23,15 @@ Op 21 nov 16:45 kregen Test A, B, C en Personal pakket 1.0.116501. Alleen Test A
 
 Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Controleren op updates.
 
+## Reviewcontrole voor 26 november 2026
+
+Test A blijft ongewijzigd op de meervoudsvormentest. Test B combineert de bijgewerkte upstream-PR's [#4060](https://github.com/nightscout/nocturne/pull/4060) en [#4061](https://github.com/nightscout/nocturne/pull/4061); Test C bevat [#3080](https://github.com/nightscout/nocturne/pull/3080). De bron is per kanaal op een volledige commit en archiefchecksum vastgezet. De publicatie moet beide architecturen en de start-, herstel- en upgradetests doorlopen voordat de storeversie wordt verhoogd.
+
+- **Test B, poort 8452:** [testbron #108](https://github.com/smokkelaar/nocturne-personal/pull/108). Controleer de eHbA1c-grafiek in % en mmol/mol. Test de periodeknoppen, een maandgrens zoals 31 augustus, de overzichtsbalk, Alles en Reset. Print een ingezoomde grafiek: de gekozen datums moeten zichtbaar blijven. Labuitslagen vóór/na de glucosehistorie en boven/onder de schattingen moeten volledig zichtbaar zijn en een tooltip tonen. Een lege plek bij een labdatum mag geen lege tooltip tonen.
+- **Test B, Eigen rapport:** voeg eHbA1c en Lab HbA1c toe, ook voor één dag. Controleer de eenheden bij de signaalkeuze, assen, legenda, waarden en afgeleide verhoudingen. In procenten kunnen lab HbA1c, TIR en gemiddelde glucose samen op twee assen. In mmol/mol zijn dat drie verschillende eenheden en moet de validator uitleggen waarom een extra track nodig is. Test een beperkte gebruiker en een profiel zonder tijdzone: er mag geen misleidende schatting verschijnen. Een korte periode zonder nieuwe metingen kan met oudere glucose uit het terugkijkvenster wel een schatting hebben.
+- **Test C, poort 8453:** [testbron #109](https://github.com/smokkelaar/nocturne-personal/pull/109). Begin bij Avg glucose in mmol/L: wit en rood als uiteinden, zwart op 9,2, Dim outside 70%. Het verloop moet wit–zwart–rood zijn. Verplaats kleur- en focusbereik afzonderlijk. Zet een kleurgrens precies op een kleuruiteinde: beide grepen moeten apart sleepbaar blijven, ook op mobiel. Een heel smal bereik mag geen grens op het uiteinde toevoegen. Test bij TDD/Carbs zonder geladen gegevens: de automatische focusbediening is uitgeschakeld, en na laden blijft geen onbedoeld kleurbereik van 0–1 opgeslagen. Een negatief bereik moet minimum 0 noemen. Test Reset en de bijgewerkte handleiding.
+
+**Publicatiestatus:** bron voorbereid; native bouw, controles en storepromotie lopen via de gekoppelde publicatierun. De definitieve versies worden na de succesvolle publicatie hieronder vastgelegd.
 ## Spelregels
 
 - Een nieuwe feature test je op Test A, B of C tegen een **schone nightscout main met alleen die ene feature erbij**, tenzij expliciet anders is afgesproken.

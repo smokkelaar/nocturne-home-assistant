@@ -1,21 +1,21 @@
 {
   "channel": "personal-pr",
   "repository": "smokkelaar/nocturne-personal",
-  "pull_request": 107,
-  "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/107",
-  "commit": "6dc80d0d44957c72be0298964fef3420d52a751b",
-  "commit_at": "2026-11-23T16:55:32Z",
-  "base_commit": "20aa623caeb28833581911499f0bfda8b4aa2f6f",
-  "base_commit_at": "2026-11-23T14:12:01Z",
-  "archive_sha256": "60f612e22d01b18603817bcdd6a67d01c5e97b7186001d3c1214b37e23255bca",
-  "purpose": "Jaaroverzicht: zodra je een kleur kiest (uiteinde of kleurgrens) bepalen alleen de gekozen kleuren de kleuring; Reset brengt de standaardkleuren terug, op schone nightscout main 20aa623.",
-  "docs_note": "Personal PR #107 makes the year overview colour scale follow only the chosen colours once an end or boundary colour is picked (the theme ramp's inner stops drop out); Reset restores the theme ramp, on clean nightscout main `20aa623`.",
-  "test_plan": "Rapporten → Jaaroverzicht, Avg glucose: zonder gekozen kleuren ziet het er uit als voorheen (groen-geel-oranje-rood). Voeg kleurgrenzen toe en kies kleuren (bijv. zwart, oranje, blauw): het verloop op de balk en de dagen volgen nu alleen de uiteinden en jouw gekozen kleuren, zonder tussenliggend geel of rood. Kies ook een kleur voor een uiteinde. Reset brengt de standaardkleuren terug. Doe hetzelfde bij een ander type (bijv. TDD).",
+  "pull_request": 109,
+  "pull_request_url": "https://github.com/smokkelaar/nocturne-personal/pull/109",
+  "commit": "a2be5df3c9c7b422d44a3fddc56108c69e24ec39",
+  "commit_at": "2026-11-25T21:59:41Z",
+  "base_commit": "c8d288bcb063ac19b0a586763bb83988cf1ac3e0",
+  "base_commit_at": "2026-11-25T20:34:37Z",
+  "archive_sha256": "595b8ccc9f022c45f10a7600bef04af04af2f597542b1e86b0a57b3aa07f627a",
+  "purpose": "Reviewfixes van upstream #3080: onafhankelijk kleur- en focusbereik in het jaaroverzicht, op schone nightscout main.",
+  "docs_note": "Reviewfixes van upstream #3080: onafhankelijk kleur- en focusbereik in het jaaroverzicht, op schone nightscout main.",
+  "test_plan": "Avg glucose in mmol/L: wit en rood als uiteinden, zwart op 9,2, Dim outside 70%. Controleer een doorlopend wit-zwart-rood verloop. Verplaats kleur- en focusbereik afzonderlijk. Zet een kleurgrens precies op een kleuruiteinde: beide blijven sleepbaar. Een zeer smal bereik mag geen ongeldige extra grens maken. Bij TDD/Carbs zonder geladen gegevens zijn automatische focusgrepen uitgeschakeld; na laden mogen geen waarden boven 1 vast op de eindkleur staan. Negatief bereik geeft uitleg met minimum 0. Controleer ook mobiel en Reset.",
   "submodules": [
     {
       "path": "src/Web/vendor/water-ui",
       "repository": "ryceg/water-ui",
-      "commit": "30918ec89bd1f400a86cc427c95d7679dc2eed4a"
+      "commit": "8acf0dd2dc9a521bc571bada8f5c00880fb76a70"
     }
   ]
 }
