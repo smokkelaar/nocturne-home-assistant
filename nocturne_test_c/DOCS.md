@@ -79,7 +79,7 @@ Automatic app updates are optional per app in HA. Enable them only for **Nocturn
 
 From wrapper **0.1.10**, all six variants offer **Consciously skip gateway check** (`skip_gateway_check`, default false). Only effective with `gateway_auth: false`; save and restart this app. It skips only the wrapper authentication probe; Nocturne access/share permissions and TLS/host checks still apply. The helper prominently shows `GATEWAY_SKIPPED`. Test A now uses the same visible settings: migrate old `verify_native_auth: false` to `skip_gateway_check: true`, remove the old YAML key, save and restart. The canonical option takes precedence; restore the guard with `skip_gateway_check: false`. [Configuration and rollback](https://github.com/smokkelaar/nocturne-home-assistant/blob/main/docs/GATEWAY.md).
 
-This isolated channel tests [Personal PR #107](https://github.com/smokkelaar/nocturne-personal/pull/107) at `6dc80d0d44957c72be0298964fef3420d52a751b`. Personal PR #107 makes the year overview colour scale follow only the chosen colours once an end or boundary colour is picked (the theme ramp's inner stops drop out); Reset restores the theme ramp, on clean nightscout main `20aa623`.
+This isolated channel tests [Personal PR #109](https://github.com/smokkelaar/nocturne-personal/pull/109) at `a2be5df3c9c7b422d44a3fddc56108c69e24ec39`. Reviewfixes van upstream #3080: onafhankelijk kleur- en focusbereik in het jaaroverzicht, op schone nightscout main.
 
 ## Experimental maintenance
 
