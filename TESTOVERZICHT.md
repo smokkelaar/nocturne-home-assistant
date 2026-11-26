@@ -2,7 +2,7 @@
 
 Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar nog bekijken, en hoe.
 
-**Bijgewerkt:** 23 november 2026, 22:15 (NL-tijd)
+**Bijgewerkt:** 26 november 2026 (NL-tijd)
 
 **Stand 21 november** (HA-store, [publicatie #237](https://github.com/smokkelaar/nocturne-home-assistant/pull/237)):
 
@@ -12,8 +12,8 @@ Wat staat er op elke Nocturne-app in Home Assistant, wat moet Sebastiaan daar no
 | Latest (deze repo) | 8449 | nightscout main `cf719c4` (19 nov), store 1.0.115601, volgt main daarna dagelijks | nieuwste main |
 | Personal | 8450 | Personal 0.4.0 = nightscout main `cf719c4` + de help (boekicoon), commit `701a289`, store 1.0.116501 | eigen wensen op de nieuwste main; volgt Latest weer |
 | Test A | 8451 | Personal PR #104 (meervoudsvormen) op schone nightscout main `a29dbba`, store 1.0.116501 | featuretest meervoudsvormen |
-| Test B | 8452 | Personal PR #105 (eHbA1c-grafiek, gekozen combinatie van B en C + eHbA1c in Eigen rapport) op schone nightscout main `d112136` | featuretest eHbA1c, combinatie |
-| Test C | 8453 | Personal PR #107 (jaaroverzicht: alleen gekozen kleuren) op schone nightscout main `20aa623` | featuretest kleuren jaaroverzicht |
+| Test B | 8452 | Personal PR #108, commit `06bc5e3`, upstream #4060 + #4061 met reviewfixes, store 1.0.120201 | eHbA1c-grafiek en Eigen rapport |
+| Test C | 8453 | Personal PR #109, commit `a2be5df`, upstream #3080 met reviewfixes, store 1.0.120201 | kleuren en focus in het jaaroverzicht |
 | Stable (upstream-repo) | 8448 | officiële release v0.3.2, store 0.2.44701 | nieuwste release |
 | Main (upstream-repo) | 8449 | nightscout main `cf719c4`, store 0.2.44701, volgt main daarna dagelijks | nieuwste main |
 
@@ -23,6 +23,15 @@ Op 21 nov 16:45 kregen Test A, B, C en Personal pakket 1.0.116501. Alleen Test A
 
 Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Controleren op updates.
 
+## Reviewcontrole voor 26 november 2026
+
+Test A blijft ongewijzigd op de meervoudsvormentest. Test B combineert de bijgewerkte upstream-PR's [#4060](https://github.com/nightscout/nocturne/pull/4060) en [#4061](https://github.com/nightscout/nocturne/pull/4061); Test C bevat [#3080](https://github.com/nightscout/nocturne/pull/3080). De bron is per kanaal op een volledige commit en archiefchecksum vastgezet. De publicatie moet beide architecturen en de start-, herstel- en upgradetests doorlopen voordat de storeversie wordt verhoogd.
+
+- **Test B, poort 8452:** [testbron #108](https://github.com/smokkelaar/nocturne-personal/pull/108). Controleer de eHbA1c-grafiek in % en mmol/mol. Test de periodeknoppen, een maandgrens zoals 31 augustus, de overzichtsbalk, Alles en Reset. Print een ingezoomde grafiek: de gekozen datums moeten zichtbaar blijven. Labuitslagen vóór/na de glucosehistorie en boven/onder de schattingen moeten volledig zichtbaar zijn en een tooltip tonen. Een lege plek bij een labdatum mag geen lege tooltip tonen.
+- **Test B, Eigen rapport:** voeg eHbA1c en Lab HbA1c toe, ook voor één dag. Controleer de eenheden bij de signaalkeuze, assen, legenda, waarden en afgeleide verhoudingen. In procenten kunnen lab HbA1c, TIR en gemiddelde glucose samen op twee assen. In mmol/mol zijn dat drie verschillende eenheden en moet de validator uitleggen waarom een extra track nodig is. Test een beperkte gebruiker en een profiel zonder tijdzone: er mag geen misleidende schatting verschijnen. Een korte periode zonder nieuwe metingen kan met oudere glucose uit het terugkijkvenster wel een schatting hebben.
+- **Test C, poort 8453:** [testbron #109](https://github.com/smokkelaar/nocturne-personal/pull/109). Begin bij Avg glucose in mmol/L: wit en rood als uiteinden, zwart op 9,2, Dim outside 70%. Het verloop moet wit–zwart–rood zijn. Verplaats kleur- en focusbereik afzonderlijk. Zet een kleurgrens precies op een kleuruiteinde: beide grepen moeten apart sleepbaar blijven, ook op mobiel. Een heel smal bereik mag geen grens op het uiteinde toevoegen. Test bij TDD/Carbs zonder geladen gegevens: de automatische focusbediening is uitgeschakeld, en na laden blijft geen onbedoeld kleurbereik van 0–1 opgeslagen. Een negatief bereik moet minimum 0 noemen. Test Reset en de bijgewerkte handleiding.
+
+**Publicatiestatus:** Test B en C zijn gebouwd als **1.0.120201**. Beide architecturen zijn geslaagd voor start, eigenaar-/TOTP-herstel, koude back-up/herstel en upgrade; de publieke images en bronlabels zijn gecontroleerd in [publicatierun 45709881230](https://github.com/smokkelaar/nocturne-home-assistant/actions/runs/45709881230). [Storepublicatie #252](https://github.com/smokkelaar/nocturne-home-assistant/pull/252) bevat ook de bijbehorende bronpinnen en deze testinstructies. Vernieuw na de storepublicatie de HA-store en update Test B en C. Test A blijft op 1.0.116501.
 ## Spelregels
 
 - Een nieuwe feature test je op Test A, B of C tegen een **schone nightscout main met alleen die ene feature erbij**, tenzij expliciet anders is afgesproken.
@@ -35,8 +44,8 @@ Vernieuw eerst de store in HA: Instellingen → Apps → Store → ⋮ → Contr
 | # | Waar | Wat | Status |
 |---|---|---|---|
 | 1 | Test A (8451) | Meervoudsvormen ([Personal PR #104](https://github.com/smokkelaar/nocturne-personal/pull/104)), voor een upstream issue + draft-PR | Klaar om te testen in 1.0.116501 (21 nov), zie Per instantie → Test A |
-| 5 | Test B (8452) | eHbA1c-grafiek in de gekozen combinatie, met naam en bereik boven en onder elke grenslijn, en eHbA1c in Eigen rapport, in % of mmol/mol ([#105](https://github.com/smokkelaar/nocturne-personal/pull/105)) | Klaar om te testen in 1.0.119501 (23 nov), met het aslabel in mmol/mol hersteld. Upstream: twee concept-PR-branches klaar (zie upstream-pr/ehba1c-chart-en-custom-reports-pr.md). Zie Per instantie → Test B. Test C (ontwerp C) gaat over naar de kleuren van het jaaroverzicht |
-| 6 | Test C (8453) | Jaaroverzicht: gekozen kleuren leiden, Reset brengt de standaardkleuren terug ([Personal PR #107](https://github.com/smokkelaar/nocturne-personal/pull/107)) | Klaar om te testen in 1.0.118901 (23 nov), zie Per instantie → Test C |
+| 5 | Test B (8452) | eHbA1c-grafiek en Eigen rapport, inclusief reviewfixes voor upstream #4060 en #4061 ([testbron #108](https://github.com/smokkelaar/nocturne-personal/pull/108)) | Pakket 1.0.120201; zie Reviewcontrole voor 26 november en Per instantie → Test B |
+| 6 | Test C (8453) | Jaaroverzichtkleuren, inclusief reviewfixes voor upstream #3080 ([testbron #109](https://github.com/smokkelaar/nocturne-personal/pull/109)) | Pakket 1.0.120201; zie Reviewcontrole voor 26 november en Per instantie → Test C |
 | 2 | Personal (8450) | Help terug op de nieuwste main (0.4.0) | Klaar om te testen in 1.0.115601 (21 nov), zie Per instantie → Personal |
 | 4 | Personal (8450) | Jaaroverzicht: buitenste bolletjes verplaatsen; eHbA1c-tooltip; help | Getest op 0.3.43 (27 okt): extra decimalen goed, bolletjes en tooltip nog niet goed, help-icoon ontbrak. Personal 0.3.45 bevat de fixes van [#82](https://github.com/smokkelaar/nocturne-personal/pull/82) en het help-icoon van [#88](https://github.com/smokkelaar/nocturne-personal/pull/88). Getest op 0.3.45 (28 okt): kleuren werken. Dim op aparte regel, presets, Mirror en Swap weg, + in de kleurenrij, verloop tussen de kleuren: aangepast in [#92](https://github.com/smokkelaar/nocturne-personal/pull/92) (0.3.46). Getest op 0.3.46 (29 okt): teksten in de kleurenrij ontbraken en het HbA1c-vangbereik was te groot; beide aangepast in [#93](https://github.com/smokkelaar/nocturne-personal/pull/93) (0.3.47). **Let op:** deze jaaroverzicht- en eHbA1c-onderdelen zitten niet in Personal 0.4.0; ze lopen via upstream-PR's #3080 en #3078 (Test B en C) |
 
@@ -75,7 +84,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
 
 ### Test B (poort 8452)
 
-- **Bron (23 nov):** [Personal PR #105](https://github.com/smokkelaar/nocturne-personal/pull/105), branch `claude/project-thread-bn7dz0`, commit `5f3d449`, op schone nightscout main `d112136`. eHbA1c-grafiek in de **gekozen combinatie** en eHbA1c als signaal in Eigen rapport. Testbuild, wordt niet gemerged.
+- **Bron (26 nov):** [testbron #108](https://github.com/smokkelaar/nocturne-personal/pull/108), commit `06bc5e3`, op schone nightscout main `c8d288b`. Combineert upstream #4060 en #4061 met alle reviewfixes. Testbuild, wordt niet gemerged.
 - **Combinatie (keuze 23 nov):** harde zonekleuren uit ontwerp B, stippellijnen in de kleur van de zone erboven uit ontwerp C, met het label bij de lijn uit ontwerp B, en de overzichtsbalk om in te zoomen uit ontwerp C.
 - **Testen:**
   1. Rapporten → eHbA1c: de grafiek staat op de gewone (donkere) kaartachtergrond, zonder kleurvlakken.
@@ -85,11 +94,11 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   5. Labwaarden staan als driehoekje; de tooltip werkt zoals voorheen.
   6. Rapporten → Eigen rapport: voeg het signaal Estimated HbA1c (eHbA1c) toe (Glucose → Statistieken). De lijn verschijnt, ook samen met Lab HbA1c, en ook als eHbA1c het enige signaal op de tijdlijn is (hersteld 23 nov, `6132256`).
   7. Zet je HbA1c-eenheid op mmol/mol (Instellingen → Weergave). In Eigen rapport staan eHbA1c en Lab HbA1c dan in mmol/mol, ook het aslabel (nieuw 23 nov; aslabel hersteld in `5f3d449`).
-- **Status:** klaar om te testen in pakket 1.0.119501 (23 nov), met het aslabel in mmol/mol hersteld. Vernieuw de store: Instellingen → Apps → App store → ⋮ → Controleren op updates.
+- **Status:** pakket 1.0.120201, [storepublicatie #252](https://github.com/smokkelaar/nocturne-home-assistant/pull/252). Zie ook de aanvullende reviewcontroles hierboven. Vernieuw de store: Instellingen → Apps → App store → ⋮ → Controleren op updates.
 
 ### Test C (poort 8453)
 
-- **Bron (23 nov):** [Personal PR #107](https://github.com/smokkelaar/nocturne-personal/pull/107), branch `claude/project-thread-2zvg70`, commit `6dc80d0`, op schone nightscout main `20aa623`. Testbuild, wordt niet gemerged. Daarvoor stond hier eHbA1c-ontwerp C ([#106](https://github.com/smokkelaar/nocturne-personal/pull/106)), alleen ter vergelijking.
+- **Bron (26 nov):** [testbron #109](https://github.com/smokkelaar/nocturne-personal/pull/109), commit `a2be5df`, met de reviewfixes van upstream #3080. Testbuild, wordt niet gemerged.
 - **Wat:** in het jaaroverzicht bleven de standaardkleuren (groen-geel-oranje-rood) tussen je gekozen kleuren zichtbaar. Nu bepalen alleen de uiteinden en de gekozen kleuren het verloop zodra je een kleur kiest; Reset brengt de standaardkleuren terug.
 - **Testen:**
   1. Rapporten → Jaaroverzicht, Avg glucose, zonder gekozen kleuren (eerst Reset): de kleuren zijn zoals voorheen.
@@ -97,7 +106,7 @@ HA #176 (A), #175 (B) en #172 (C) zijn samengevoegd. [Publicatie en tests](https
   3. Kies ook een kleur voor een uiteinde: die neemt het uiteinde over.
   4. Reset: de standaardkleuren komen terug.
   5. Hetzelfde bij een ander type, bijv. TDD.
-- **Status:** klaar om te testen in pakket 1.0.118901 (23 nov, [publicatie #247](https://github.com/smokkelaar/nocturne-home-assistant/pull/247)). Vernieuw de store: Instellingen → Apps → App store → ⋮ → Controleren op updates.
+- **Status:** pakket 1.0.120201, [storepublicatie #252](https://github.com/smokkelaar/nocturne-home-assistant/pull/252). Zie ook de aanvullende reviewcontroles hierboven. Vernieuw de store: Instellingen → Apps → App store → ⋮ → Controleren op updates.
 
 ### Personal (poort 8450)
 

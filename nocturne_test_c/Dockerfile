@@ -11,10 +11,10 @@ ENV CI=true DOTNET_CLI_TELEMETRY_OPTOUT=1 NODE_OPTIONS=--max-old-space-size=6144
 RUN printf '\n=== Nocturne build phase 1/7: install build tools ===\n' \
     && apt-get update && apt-get install -y --no-install-recommends build-essential pkg-config libssl-dev ca-certificates \
     && npm install -g pnpm@11.5.0
-ADD --checksum=sha256:60f612e22d01b18603817bcdd6a67d01c5e97b7186001d3c1214b37e23255bca https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/6dc80d0d44957c72be0298964fef3420d52a751b /tmp/source.tar.gz
+ADD --checksum=sha256:595b8ccc9f022c45f10a7600bef04af04af2f597542b1e86b0a57b3aa07f627a https://codeload.github.com/smokkelaar/nocturne-personal/tar.gz/a2be5df3c9c7b422d44a3fddc56108c69e24ec39 /tmp/source.tar.gz
 RUN printf '\n=== Nocturne build phase 2/7: verify and unpack source ===\n' \
     && mkdir /src && tar -xzf /tmp/source.tar.gz --strip-components=1 -C /src
-ADD --keep-git-dir=false https://github.com/ryceg/water-ui.git#30918ec89bd1f400a86cc427c95d7679dc2eed4a /src/src/Web/vendor/water-ui
+ADD --keep-git-dir=false https://github.com/ryceg/water-ui.git#8acf0dd2dc9a521bc571bada8f5c00880fb76a70 /src/src/Web/vendor/water-ui
 WORKDIR /src/src/Web
 RUN printf '\n=== Nocturne build phase 3/7: install web dependencies and build bridge ===\n' \
     && pnpm install --frozen-lockfile && pnpm --filter @nocturne/bridge run build
@@ -50,7 +50,7 @@ COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/libnoct
 # The alerts resolver probes runtimes/<rid>/native before /app, and the base image holds an older library there.
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/runtimes/linux-x64/native/libnocturne_alerts.so
 COPY --from=source /src/crates/target/release/libnocturne_alerts.so /app/runtimes/linux-arm64/native/libnocturne_alerts.so
-ARG BUILD_VERSION=1.0.118901
+ARG BUILD_VERSION=1.0.120201
 ARG BUILD_ARCH=amd64
 LABEL io.hass.version="${BUILD_VERSION}" io.hass.type="app" io.hass.arch="${BUILD_ARCH}" \
       org.opencontainers.image.title="Nocturne Test C - Home Assistant app" \
