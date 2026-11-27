@@ -1,13 +1,13 @@
 {
-  "version": "0.3.2",
-  "tag": "v0.3.2",
-  "commit": "ea4e97c380005dfdd53c157720bd93ba30ef9050",
+  "version": "0.3.3",
+  "tag": "v0.3.3",
+  "commit": "0160c0d30378ac36c01457f6b847bdab2acfc62d",
   "api": {
-    "tag": "0.3.2",
-    "digest": "sha256:c8a6a83f7e23edfca5611f92bddd970177bac0b099186c84eb1a8254b6ac2cc8"
+    "tag": "0.3.3",
+    "digest": "sha256:2e34703748d778a6a17e4b56d3c968b8ec610918a16cc426b14dafedde9d248f"
   },
   "web": {
-    "tag": "0.3.2",
-    "digest": "sha256:0f0dd9ea90d372c3459866843270fa7356c5d4203f811a7071ce8280a11c27a5"
+    "tag": "0.3.3",
+    "digest": "sha256:5f75754bdacb25ce7df60b8faf6a42e6d9c5b095c5fb6250b219d822e4fa5e69"
   }
 }
