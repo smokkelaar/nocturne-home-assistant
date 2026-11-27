@@ -221,8 +221,9 @@ class PrebuiltTests(unittest.TestCase):
             lock = publisher.read(root / 'upstream.json')
             lock['commit'] = '0' * 40
             publisher.write(root / 'upstream.json', lock)
-            with self.assertRaisesRegex(ValueError, 'exact official'):
-                publisher.release_channels(root)
+            # No channel currently consumes the historical rollout, so a newer
+            # Official source must not block an otherwise valid publication.
+            self.assertEqual(set(), publisher.release_channels(root))
 
     def test_failed_public_pull_never_changes_any_store_configuration(self):
         with tempfile.TemporaryDirectory() as temporary:
