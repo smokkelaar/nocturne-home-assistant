@@ -56,9 +56,12 @@ def release_channels(root):
     if policy != {'source': 'upstream.json', 'version': '0.3.2',
                   'commit': RELEASE_032_COMMIT, 'channels': RELEASE_CHANNELS}:
         raise ValueError('Release rollout must cover exactly the listed channels')
-    lock = read(root / 'upstream.json')
-    if lock['version'] != '0.3.2' or lock['tag'] != 'v0.3.2' or lock['commit'] != RELEASE_032_COMMIT:
-        raise ValueError('Release rollout requires exact official Nocturne v0.3.2 source')
+    # The historical rollout is inactive once every channel has its own source.
+    # Do not pin future Official releases to the old rollout's source commit.
+    if RELEASE_CHANNELS:
+        lock = read(root / 'upstream.json')
+        if lock['version'] != '0.3.2' or lock['tag'] != 'v0.3.2' or lock['commit'] != RELEASE_032_COMMIT:
+            raise ValueError('Release rollout requires exact official Nocturne v0.3.2 source')
     return set(RELEASE_CHANNELS)
 
 
